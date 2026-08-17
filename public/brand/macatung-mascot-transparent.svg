@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 280" width="240" height="280" fill="none">
+  <defs>
+    <linearGradient id="transRobeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#151d33" />
+      <stop offset="60%" stop-color="#0c1220" />
+      <stop offset="100%" stop-color="#04070d" />
+    </linearGradient>
+    <linearGradient id="transHatGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#070b14" />
+    </linearGradient>
+    <linearGradient id="transTalismanGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffe57f" />
+      <stop offset="50%" stop-color="#ffd166" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+    <radialGradient id="transGhostSkin" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#e2fbeb" />
+      <stop offset="70%" stop-color="#b7e4c7" />
+      <stop offset="100%" stop-color="#74c69d" />
+    </radialGradient>
+    <filter id="mascotGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Dynamic Ground Shadow -->
+  <ellipse cx="120" cy="265" rx="55" ry="9" fill="rgba(0,0,0,0.5)" />
+
+  <!-- Outstretched Hopping Arms -->
+  <g>
+    <!-- Left Arm -->
+    <path d="M75 145 C40 145 25 155 18 160" stroke="#0c1220" stroke-width="16" stroke-linecap="round" fill="none" />
+    <circle cx="16" cy="160" r="9" fill="#00f5a0" />
+    <path d="M12 155 L8 153 M10 162 L5 163 M14 168 L10 171" stroke="#04070d" stroke-width="2" stroke-linecap="round" />
+
+    <!-- Right Arm -->
+    <path d="M165 145 C200 145 215 155 222 160" stroke="#0c1220" stroke-width="16" stroke-linecap="round" fill="none" />
+    <circle cx="224" cy="160" r="9" fill="#00f5a0" />
+    <path d="M228 155 L232 153 M230 162 L235 163 M226 168 L230 171" stroke="#04070d" stroke-width="2" stroke-linecap="round" />
+  </g>
+
+  <!-- Main Jiangshi Robe -->
+  <g>
+    <path d="M75 130 C75 130, 95 125, 120 125 C145 125, 165 130, 165 130 L182 245 C182 245, 120 252, 58 245 Z" fill="url(#transRobeGrad)" stroke="#00f5a0" stroke-width="2" />
+    <!-- Collar Trim -->
+    <path d="M100 132 L120 162 L140 132" stroke="#00f5a0" stroke-width="2.5" fill="none" stroke-linecap="round" />
+    <!-- Hexagon Core Rune -->
+    <polygon points="120,172 132,179 132,193 120,200 108,193 108,179" fill="#070b14" stroke="#ffd166" stroke-width="1.5" />
+    <text x="120" y="190" text-anchor="middle" font-size="9" font-family="monospace" font-weight="bold" fill="#00f5a0">{ }</text>
+  </g>
+
+  <!-- Hopping Feet -->
+  <ellipse cx="96" cy="248" rx="14" ry="7" fill="#070b14" stroke="#00f5a0" stroke-width="1.5" />
+  <ellipse cx="144" cy="248" rx="14" ry="7" fill="#070b14" stroke="#00f5a0" stroke-width="1.5" />
+
+  <!-- Ghost Head & Headphone Band -->
+  <circle cx="120" cy="95" r="48" fill="url(#transGhostSkin)" stroke="#00f5a0" stroke-width="2" />
+  <path d="M68 95 C68 58, 172 58, 172 95" stroke="#11182c" stroke-width="8" fill="none" stroke-linecap="round" />
+  <!-- Headphone Ear Cups -->
+  <rect x="62" y="80" width="12" height="30" rx="6" fill="#00f5a0" stroke="#070b14" stroke-width="1.5" />
+  <rect x="166" y="80" width="12" height="30" rx="6" fill="#00f5a0" stroke="#070b14" stroke-width="1.5" />
+
+  <!-- Jiangshi Mandarin Hat with Antenna -->
+  <g>
+    <path d="M74 68 C76 28, 164 28, 166 68 Z" fill="url(#transHatGrad)" stroke="#ffd166" stroke-width="2" />
+    <ellipse cx="120" cy="68" rx="54" ry="14" fill="#0c1220" stroke="#ffd166" stroke-width="2" />
+    <!-- Hat Golden Gem -->
+    <circle cx="120" cy="50" r="6" fill="#ff0054" stroke="#ffd166" stroke-width="1.5" />
+    <!-- Cyber Antenna & Jade Tip -->
+    <line x1="120" y1="44" x2="120" y2="24" stroke="#00f5a0" stroke-width="2" />
+    <circle cx="120" cy="22" r="4" fill="#00f5a0" />
+  </g>
+
+  <!-- Blushing Cheeks -->
+  <ellipse cx="92" cy="116" rx="7" ry="4" fill="#ff0054" opacity="0.35" />
+  <ellipse cx="148" cy="116" rx="7" ry="4" fill="#ff0054" opacity="0.35" />
+
+  <!-- Eyes -->
+  <circle cx="102" cy="98" r="6" fill="#00f5a0" />
+  <circle cx="104" cy="96" r="2" fill="#ffffff" />
+  <circle cx="138" cy="98" r="6" fill="#00f5a0" />
+  <circle cx="140" cy="96" r="2" fill="#ffffff" />
+
+  <!-- Cute Vampire Mouth with Fangs -->
+  <path d="M112 120 Q120 127 128 120" stroke="#070b14" stroke-width="2.5" fill="none" stroke-linecap="round" />
+  <polygon points="114,120 117,126 119,120" fill="#ffffff" />
+  <polygon points="121,120 123,126 126,120" fill="#ffffff" />
+
+  <!-- Forehead Yellow Paper Talisman -->
+  <g>
+    <rect x="105" y="55" width="30" height="62" rx="3" fill="url(#transTalismanGrad)" stroke="#c9182b" stroke-width="1.2" />
+    <!-- Red Header Seal -->
+    <circle cx="120" cy="65" r="5" fill="#c9182b" />
+    <text x="120" y="68" text-anchor="middle" font-size="6" font-family="monospace" font-weight="bold" fill="#ffd166">&lt;/&gt;</text>
+    <!-- Code Inscription -->
+    <text x="120" y="85" text-anchor="middle" font-size="8" font-family="monospace" font-weight="bold" fill="#c9182b" letter-spacing="0.5">0 BUG</text>
+    <path d="M112 98 L120 102 L128 98 M120 102 L120 108" stroke="#c9182b" stroke-width="1.5" stroke-linecap="round" fill="none" />
+  </g>
+</svg>

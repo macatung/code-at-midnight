@@ -1,0 +1,70 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\Api\AnalyticsEventController;
+use App\Http\Controllers\Admin\AdminAuthController;
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminAnalyticsController;
+use App\Http\Controllers\Admin\AdminProjectController;
+use App\Http\Controllers\Admin\AdminSkillController;
+use App\Http\Controllers\Admin\AdminExperienceController;
+use App\Http\Controllers\Admin\AdminArticleController;
+use App\Http\Controllers\Admin\AdminSettingController;
+use App\Http\Controllers\Admin\AdminContactController;
+
+// Public Portfolio Routes
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+Route::post('/summon', [ContactController::class, 'store'])->name('contact.summon');
+
+// Client Beacon Interaction Analytics API
+Route::post('/api/analytics/event', [AnalyticsEventController::class, 'store'])->name('api.analytics.event');
+
+// Admin Authentication Shield
+Route::get('/admin/login', [AdminAuthController::class, 'showLogin'])->name('admin.login');
+Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
+Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
+
+// Protected Admin CMS Routes
+Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function () {
+    Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [AdminDashboardController::class, 'index']);
+
+    // Traffic & Interaction Analytics
+    Route::get('/analytics', [AdminAnalyticsController::class, 'index'])->name('analytics.index');
+
+    // Projects CMS
+    Route::get('/projects', [AdminProjectController::class, 'index'])->name('projects.index');
+    Route::post('/projects', [AdminProjectController::class, 'store'])->name('projects.store');
+    Route::put('/projects/{project}', [AdminProjectController::class, 'update'])->name('projects.update');
+    Route::patch('/projects/{project}/toggle-featured', [AdminProjectController::class, 'toggleFeatured'])->name('projects.toggle-featured');
+    Route::delete('/projects/{project}', [AdminProjectController::class, 'destroy'])->name('projects.destroy');
+
+    // Skills & Arsenal CMS
+    Route::get('/skills', [AdminSkillController::class, 'index'])->name('skills.index');
+    Route::post('/skills', [AdminSkillController::class, 'store'])->name('skills.store');
+    Route::put('/skills/{skill}', [AdminSkillController::class, 'update'])->name('skills.update');
+    Route::delete('/skills/{skill}', [AdminSkillController::class, 'destroy'])->name('skills.destroy');
+
+    // Career Chronicles CMS
+    Route::get('/experiences', [AdminExperienceController::class, 'index'])->name('experiences.index');
+    Route::post('/experiences', [AdminExperienceController::class, 'store'])->name('experiences.store');
+    Route::put('/experiences/{experience}', [AdminExperienceController::class, 'update'])->name('experiences.update');
+    Route::delete('/experiences/{experience}', [AdminExperienceController::class, 'destroy'])->name('experiences.destroy');
+
+    // Midnight Tech Notes / Articles CMS
+    Route::get('/articles', [AdminArticleController::class, 'index'])->name('articles.index');
+    Route::post('/articles', [AdminArticleController::class, 'store'])->name('articles.store');
+    Route::put('/articles/{article}', [AdminArticleController::class, 'update'])->name('articles.update');
+    Route::delete('/articles/{article}', [AdminArticleController::class, 'destroy'])->name('articles.destroy');
+
+    // Site Settings & Profile CMS
+    Route::get('/settings', [AdminSettingController::class, 'index'])->name('settings.index');
+    Route::put('/settings', [AdminSettingController::class, 'update'])->name('settings.update');
+
+    // Summoning Inquiries Inbox
+    Route::get('/contacts', [AdminContactController::class, 'index'])->name('contacts.index');
+    Route::delete('/contacts/{contact}', [AdminContactController::class, 'destroy'])->name('contacts.destroy');
+});
