@@ -73,15 +73,34 @@ Hệ thống tích hợp trọn vẹn khu vực **Admin CMS Quản Trị Đa Ph�
 
 ---
 
-## 🚀 Hướng Dẫn Cài Đặt & Chạy Local (Quick Start)
+## 🐳 Chạy Nhanh Bằng Docker (Khuyến Nghị / 1 Lệnh Duy Nhất)
 
-### 1. Clone Repository
+Dự án đã được đóng gói sẵn **Multi-stage Docker** tích hợp **PHP 8.2-FPM + Nginx + Node 20 (Vite Build) + SQLite + Supervisord** với cơ chế tự động sinh key, migrate database và tối ưu hóa hiệu năng.
+
 ```bash
-git clone https://github.com/your-username/macatung.dev.git
-cd macatung.dev
+# 1. Khởi động ứng dụng ngay lập tức (Chạy nền)
+docker compose up -d --build
+
+# Hoặc dùng npm script
+npm run docker:up
 ```
 
-### 2. Cài Đặt Dependencies
+- 🌐 **Trang chủ Portfolio**: [`http://localhost:8000/`](http://localhost:8000/)
+- 🛡️ **Khu vực Admin CMS**: [`http://localhost:8000/admin`](http://localhost:8000/admin) *(Mật khẩu mặc định: `macatung@midnight2026`)*
+- 💚 **Kiểm tra trạng thái Container**: `docker compose ps`
+- 📋 **Xem Logs thời gian thực**: `npm run docker:logs` *(hoặc `docker compose logs -f`)*
+- 🛑 **Dừng Container**: `npm run docker:down` *(hoặc `docker compose down`)*
+- ⚡ **Chạy lệnh Artisan bên trong Container**:
+  ```bash
+  npm run docker:artisan -- migrate:status
+  npm run docker:artisan -- test
+  ```
+
+---
+
+## 💻 Hướng Dẫn Cài Đặt & Chạy Local Không Dùng Docker
+
+### 1. Cài Đặt Dependencies
 ```bash
 # Cài đặt PHP Composer dependencies
 composer install
@@ -90,18 +109,18 @@ composer install
 npm install
 ```
 
-### 3. Cấu Hình Môi Trường (.env)
+### 2. Cấu Hình Môi Trường (.env)
 ```bash
 cp .env.example .env
 php artisan key:generate
 ```
 
-### 4. Chạy Migration & Khởi Tạo Dữ Liệu
+### 3. Chạy Migration & Khởi Tạo Dữ Liệu
 ```bash
 php artisan migrate --seed
 ```
 
-### 5. Chạy Ứng Dụng
+### 4. Chạy Ứng Dụng
 ```bash
 # Khởi động Laravel Local Server
 php artisan serve

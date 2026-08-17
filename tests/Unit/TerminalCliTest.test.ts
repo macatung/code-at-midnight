@@ -132,6 +132,27 @@ export class MidnightTerminalEngine {
           outType = 'error';
         }
         break;
+      case 'time':
+      case 'clock':
+        output = '⏰ MACATUNG CHRONOS — DYNAMIC TIME-CYCLE ENGINE\n• Thời Gian Hiện Tại : 00:00:00\n• Phân Kỳ Hoạt Động  : Midnight Void\n• Khung Giờ          : 00:00 — 05:59\n• Trạng Thái Mode    : 🟢 Đồng Bộ Giờ Thực Tế\n• Mức Độ Caffeine    : 100% Robusta Flow';
+        break;
+      case 'cycle':
+      case 'phase':
+        output = '🌌 BẢNG MA TRẬN 4 PHÂN KỲ NHỊP SỐNG DEVELOPER\n 1. 🌙 Midnight Void  [00:00 - 05:59]\n 2. 🌅 Golden Dawn    [06:00 - 11:59]\n 3. ☀️ High-Noon      [12:00 - 17:59]\n 4. 🌆 Twilight Dusk  [18:00 - 23:59]';
+        break;
+      case 'travel':
+      case 'timetravel':
+        if (args[0] && ['midnight', 'dawn', 'noon', 'dusk', 'afternoon', 'twilight'].includes(args[0].toLowerCase())) {
+          output = `✨ [TIME TRAVEL SUCCESS] Warp nhảy đến phân kỳ: ${args[0]}! Toàn bộ ánh sáng đã chuyển sắc.`;
+        } else {
+          output = 'travel: Phân kỳ không hợp lệ. Hãy chọn: "midnight", "dawn", "noon", hoặc "dusk".';
+          outType = 'error';
+        }
+        break;
+      case 'reset-time':
+      case 'realtime':
+        output = '⚡ [TIME SYNC] Đã hủy Time Travel và đồng bộ lại 100% theo đồng hồ thực tế của thiết bị.';
+        break;
       case 'clear':
         this.logs = [];
         return '';
@@ -268,8 +289,8 @@ describe('TerminalCliTest (F10, F11)', () => {
     it('[T1_F11_03] "projects" and "ls" commands list Grimoire projects', () => {
       const term = new MidnightTerminalEngine();
       const res = term.execute('projects');
-      expect(res).toContain('FlashPay');
-      expect(res).toContain('DevGrimoire');
+      expect(res).toContain('OmniAgent CS');
+      expect(res).toContain('FinPulse AI');
     });
 
     /**
@@ -279,8 +300,8 @@ describe('TerminalCliTest (F10, F11)', () => {
     it('[T1_F11_04] "skills" command outputs technical skill runes', () => {
       const term = new MidnightTerminalEngine();
       const res = term.execute('skills');
-      expect(res).toContain('Frontend Sorcery');
-      expect(res).toContain('Vue 3');
+      expect(res).toContain('AI Agents');
+      expect(res).toContain('Laravel');
     });
 
     /**
@@ -350,6 +371,10 @@ describe('TerminalCliTest (F10, F11)', () => {
      * @tier: 1
      * @feature: F11_TERMINAL_CMDS
      */
+    /**
+     * @tier: 1
+     * @feature: F11_TERMINAL_CMDS
+     */
     it('[T1_F11_11] "clear" command wipes the output buffer', () => {
       const term = new MidnightTerminalEngine();
       term.execute('whoami');
@@ -358,6 +383,53 @@ describe('TerminalCliTest (F10, F11)', () => {
 
       term.execute('clear');
       expect(term.logs.length).toBe(0);
+    });
+
+    /**
+     * @tier: 1
+     * @feature: F11_TERMINAL_CMDS
+     */
+    it('[T1_F11_12] "time" / "clock" command returns live time and active phase information', () => {
+      const term = new MidnightTerminalEngine();
+      const res = term.execute('time');
+      expect(res).toContain('MACATUNG CHRONOS');
+      expect(res).toContain('Phân Kỳ Hoạt Động');
+      expect(res).toContain('Caffeine');
+    });
+
+    /**
+     * @tier: 1
+     * @feature: F11_TERMINAL_CMDS
+     */
+    it('[T1_F11_13] "cycle" / "phase" command prints the 4-phase developer diurnal matrix', () => {
+      const term = new MidnightTerminalEngine();
+      const res = term.execute('cycle');
+      expect(res).toContain('Midnight Void');
+      expect(res).toContain('Golden Dawn');
+      expect(res).toContain('High-Noon');
+      expect(res).toContain('Twilight Dusk');
+    });
+
+    /**
+     * @tier: 1
+     * @feature: F11_TERMINAL_CMDS
+     */
+    it('[T1_F11_14] "travel" command shifts phase and reports success', () => {
+      const term = new MidnightTerminalEngine();
+      const res = term.execute('travel dawn');
+      expect(res).toContain('TIME TRAVEL SUCCESS');
+      expect(res).toContain('dawn');
+    });
+
+    /**
+     * @tier: 1
+     * @feature: F11_TERMINAL_CMDS
+     */
+    it('[T1_F11_15] "reset-time" command restores real-time clock synchronization', () => {
+      const term = new MidnightTerminalEngine();
+      const res = term.execute('reset-time');
+      expect(res).toContain('TIME SYNC');
+      expect(res).toContain('Đã hủy Time Travel');
     });
   });
 

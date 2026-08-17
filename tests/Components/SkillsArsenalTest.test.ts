@@ -31,10 +31,10 @@ describe('SkillsArsenalTest (F19)', () => {
     it('[T1_F19_01] Skills section renders all 4 categories with title and badge', () => {
       expect(skillsData.length).toBe(4);
       const badges = skillsData.map((c) => c.badge);
-      expect(badges).toContain('Pixel Perfection');
-      expect(badges).toContain('Sub-Millisecond');
+      expect(badges).toContain('Autonomous Systems');
+      expect(badges).toContain('High-Throughput');
+      expect(badges).toContain('Specialized Infra');
       expect(badges).toContain('99.99% Uptime');
-      expect(badges).toContain('Midnight Flow');
     });
 
     /**
@@ -47,10 +47,10 @@ describe('SkillsArsenalTest (F19)', () => {
 
       expect(allSkills.length).toBe(18);
       const names = allSkills.map((s) => s.name);
-      expect(names).toContain('Vue 3 / React / Next.js');
-      expect(names).toContain('TypeScript');
-      expect(names).toContain('PHP / Laravel / Node.js');
-      expect(names).toContain('Midnight Coffee Brewing');
+      expect(names).toContain('Multi-Agent Orchestration');
+      expect(names).toContain('Tool & Function Calling');
+      expect(names).toContain('PHP 8.3+ & Laravel 11/12');
+      expect(names).toContain('Vue 3 & ReactJS / React Native');
     });
 
     /**
@@ -138,13 +138,13 @@ describe('SkillsArsenalTest (F19)', () => {
      * @tier: 2
      * @feature: F19_SKILLS_ARSENAL
      */
-    it('[T2_F19_03] Filtering skills by tag (e.g. "Core", "Backend", "AI/Backend") returns exact matches', () => {
+    it('[T2_F19_03] Filtering skills by tag (e.g. "Core AI", "Automation", "GenAI") returns exact matches', () => {
       const allSkills: SkillItem[] = [];
       skillsData.forEach((c) => allSkills.push(...c.skills));
 
-      const coreSkills = allSkills.filter((s) => s.tag === 'Core');
+      const coreSkills = allSkills.filter((s) => s.tag === 'Core AI');
       expect(coreSkills.length).toBeGreaterThan(0);
-      coreSkills.forEach((s) => expect(s.tag).toBe('Core'));
+      coreSkills.forEach((s) => expect(s.tag).toBe('Core AI'));
     });
 
     /**

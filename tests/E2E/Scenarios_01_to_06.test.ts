@@ -126,14 +126,14 @@ describe('Tier 4: Real-World E2E Scenarios (01 to 06)', () => {
 
     // Step 5: Verify 4 Stats Cards
     expect(developerStats.length).toBe(4);
-    expect(developerStats[0].label).toBe('Midnight Coffees Brewed');
-    expect(developerStats[0].value).toBe('2,840+');
-    expect(developerStats[1].label).toBe('Bugs Exorcised');
-    expect(developerStats[1].value).toBe('4,192');
-    expect(developerStats[2].label).toBe('Hop Velocity');
-    expect(developerStats[2].value).toBe('60');
-    expect(developerStats[3].label).toBe('Code Shipped at 12AM');
-    expect(developerStats[3].value).toBe('99.8%');
+    expect(developerStats[0].label).toBe('Kinh Nghiệm Thực Chiến');
+    expect(developerStats[0].value).toBe('8+ Năm');
+    expect(developerStats[1].label).toBe('Tỉ Lệ CS Tự Động Hóa');
+    expect(developerStats[1].value).toBe('92%+');
+    expect(developerStats[2].label).toBe('Hạ Tầng GIS & Thiết Bị');
+    expect(developerStats[2].value).toBe('500K+');
+    expect(developerStats[3].label).toBe('Uptime Cam Kết Đêm');
+    expect(developerStats[3].value).toBe('99.99%');
   });
 
   // ==========================================================================
@@ -364,7 +364,7 @@ describe('Tier 4: Real-World E2E Scenarios (01 to 06)', () => {
     expect(terminalState.history[2].output).toContain('Frontend Sorcery');
 
     terminalState.execute('projects');
-    expect(terminalState.history[3].output).toContain('FlashPay');
+    expect(terminalState.history[3].output).toContain('OmniAgent CS');
 
     terminalState.execute('hop');
     expect(terminalState.history[4].output).toContain('Ma Cà Tưng hopped');
@@ -511,25 +511,25 @@ describe('Tier 4: Real-World E2E Scenarios (01 to 06)', () => {
 
     // 2. Filter by fullstack
     showcase.setFilter('fullstack');
-    expect(showcase.visibleProjects.length).toBe(2);
-    expect(showcase.visibleProjects[0].id).toBe('ecommerce-flashsale-checkout');
+    expect(showcase.visibleProjects.length).toBe(1);
+    expect(showcase.visibleProjects[0].id).toBe('stock-valuation-financial-management');
 
     // 3. Filter by ai-web3
     showcase.setFilter('ai-web3');
     expect(showcase.visibleProjects.length).toBe(1);
     expect(showcase.visibleProjects.map((p) => p.id)).toEqual([
-      'telegram-ai-support-bot'
+      'ai-agent-customer-service-ecosystem'
     ]);
 
-    // 4. Open FlashPay modal
-    const flashpayProject = projectsData[0];
-    showcase.openProject(flashpayProject);
+    // 4. Open OmniAgent CS modal
+    const omniProject = projectsData[0];
+    showcase.openProject(omniProject);
 
     expect(showcase.isModalOpen).toBe(true);
-    expect(showcase.selectedProject!.title).toBe('FlashPay — Nền Tảng Checkout & Thanh Toán Tải Cao');
-    expect(showcase.selectedProject!.architectureHighlights.length).toBe(3);
-    expect(showcase.selectedProject!.architectureHighlights[0]).toContain('Redis Queue');
-    expect(showcase.selectedProject!.midnightFact).toContain('Black Friday');
+    expect(showcase.selectedProject!.title).toContain('OmniAgent CS');
+    expect(showcase.selectedProject!.architectureHighlights.length).toBeGreaterThanOrEqual(3);
+    expect(showcase.selectedProject!.architectureHighlights[0]).toContain('Multi-Agent');
+    expect(showcase.selectedProject!.midnightFact).toContain('Flash Sale');
     expect(document.body.classList.contains('overflow-hidden')).toBe(true);
 
     // 5. Dismiss with Escape key

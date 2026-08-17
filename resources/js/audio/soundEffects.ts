@@ -190,6 +190,53 @@ export class SoundEngine implements ISoundEngine {
       // Ignore
     }
   }
+
+  public playCelestialChime(phaseId: string = 'midnight') {
+    const ctx = this.getContext();
+    if (!ctx) return;
+
+    try {
+      const now = ctx.currentTime;
+      
+      // Phase-specific harmonious chord frequencies
+      let chordNotes = [528, 792, 1056, 1584]; // 528Hz Solfeggio / Midnight Void
+      if (phaseId === 'dawn') {
+        chordNotes = [440, 554.37, 659.25, 880]; // A Major Morning warmth
+      } else if (phaseId === 'afternoon') {
+        chordNotes = [523.25, 659.25, 783.99, 1046.50]; // C Major Cyber clarity
+      } else if (phaseId === 'twilight') {
+        chordNotes = [432, 648, 864, 1296]; // 432Hz Mystic Twilight
+      }
+
+      chordNotes.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = idx % 2 === 0 ? 'sine' : 'triangle';
+        osc.frequency.setValueAtTime(freq, now + idx * 0.09);
+
+        // Exponential decay envelope for shimmering chime
+        gain.gain.setValueAtTime(0.1, now + idx * 0.09);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.09 + 0.85);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(now + idx * 0.09);
+        osc.stop(now + idx * 0.09 + 0.9);
+      });
+    } catch {
+      // Ignore
+    }
+  }
 }
 
 export const sound: ISoundEngine = new SoundEngine();
+
+// Convenience functional exports
+export const playClick = () => sound.playClick();
+export const playHop = (intensity?: number) => sound.playHop(intensity);
+export const playTalisman = () => sound.playTalisman();
+export const playTerminalKey = () => sound.playTerminalKey();
+export const playSuccess = () => sound.playSuccess();
+export const playCelestialChime = (phaseId?: string) => sound.playCelestialChime(phaseId);

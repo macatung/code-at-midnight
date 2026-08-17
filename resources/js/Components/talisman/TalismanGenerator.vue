@@ -42,8 +42,8 @@ const triggerKhaiQuang = () => {
 
   try {
     confetti({
-      particleCount: 50,
-      spread: 70,
+      particleCount: 65,
+      spread: 75,
       origin: { y: 0.6 },
       colors: ['#00f5a0', '#ffd166', '#ff0054', '#9d4edd'],
     });
@@ -99,13 +99,13 @@ const copyAscii = async () => {
     <!-- Left: Forge Controls (7 Columns) -->
     <div class="lg:col-span-7 flex flex-col gap-6 text-left">
       <div>
-        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-talisman-gold text-xs font-mono mb-3 whitespace-nowrap select-none">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-talisman-gold text-xs font-mono mb-3 whitespace-nowrap select-none shadow-glow-talisman">
           ⚡ Developer Talisman Forge
         </span>
         <h2 class="text-3xl sm:text-4xl font-display font-extrabold text-white tracking-tight">
-          Lò Luyện Bùa <span class="text-talisman-gold">Lập Trình</span>
+          Lò Luyện Bùa <span class="text-transparent bg-clip-text bg-gradient-to-r from-talisman-gold via-amber-400 to-rose-400">Lập Trình</span>
         </h2>
-        <p class="text-sm sm:text-base text-slate-400 mt-2">
+        <p class="text-sm sm:text-base text-slate-400 mt-2 font-sans">
           Chọn thần chú hộ mệnh, điền tên và tâm nguyện, sau đó thực hiện nghi thức Khai Quang để nhận phúc khí 0-bug cho toàn bộ repository.
         </p>
       </div>
@@ -138,7 +138,7 @@ const copyAscii = async () => {
             v-model="developerName"
             type="text"
             placeholder="e.g. Alchemist Tưng"
-            class="w-full px-3.5 py-2.5 rounded-xl bg-midnight-900 border border-white/10 text-white font-sans text-sm placeholder-slate-600 focus:border-phantom-mint focus:outline-none min-h-[44px]"
+            class="w-full px-3.5 py-2.5 rounded-xl bg-midnight-900 border border-white/10 text-white font-sans text-sm placeholder-slate-600 focus:border-phantom-mint focus:outline-none min-h-[44px] transition-colors"
           />
         </div>
         <div>
@@ -147,7 +147,7 @@ const copyAscii = async () => {
             v-model="customWish"
             type="text"
             :placeholder="selectedPreset.meaning"
-            class="w-full px-3.5 py-2.5 rounded-xl bg-midnight-900 border border-white/10 text-white font-sans text-sm placeholder-slate-600 focus:border-phantom-mint focus:outline-none min-h-[44px]"
+            class="w-full px-3.5 py-2.5 rounded-xl bg-midnight-900 border border-white/10 text-white font-sans text-sm placeholder-slate-600 focus:border-phantom-mint focus:outline-none min-h-[44px] transition-colors"
           />
         </div>
       </div>
@@ -177,7 +177,7 @@ const copyAscii = async () => {
           class="flex-1 px-6 py-3.5 rounded-xl font-display font-bold text-sm transition-all shadow-lg flex items-center justify-center gap-2 min-h-[48px] whitespace-nowrap"
           :class="isBlessingAnimation
             ? 'bg-slate-700 text-slate-400 cursor-not-allowed animate-pulse'
-            : 'bg-gradient-to-r from-talisman-gold to-amber-500 text-midnight-950 hover:brightness-110 active:scale-95 shadow-glow-talisman'"
+            : 'bg-gradient-to-r from-talisman-gold via-amber-400 to-rose-400 text-midnight-950 hover:brightness-110 active:scale-95 shadow-glow-talisman'"
           :disabled="isBlessingAnimation"
           @click="triggerKhaiQuang"
         >
@@ -197,16 +197,16 @@ const copyAscii = async () => {
     <!-- Right: Live Visual Talisman Card (5 Columns) -->
     <div class="lg:col-span-5 flex flex-col items-center">
       <div
-        class="w-full max-w-sm rounded-2xl border-2 p-6 transition-all duration-500 relative flex flex-col items-center text-center select-none bg-gradient-to-b from-midnight-900 via-midnight-950 to-midnight-900"
+        class="w-full max-w-sm rounded-2xl border-2 p-6 transition-all duration-500 relative flex flex-col items-center text-center select-none bg-gradient-to-b from-midnight-900 via-midnight-950 to-midnight-900 shadow-2xl"
         :class="[activePaletteConfig.border, activePaletteConfig.glow, isBlessingAnimation ? 'animate-pulse scale-105' : '']"
       >
         <!-- Top Hanging Ring -->
         <div class="w-8 h-8 rounded-full border-2 border-dashed border-white/30 -mt-10 mb-3 flex items-center justify-center bg-midnight-950">
-          <div class="w-3 h-3 rounded-full bg-talisman-gold" />
+          <div class="w-3 h-3 rounded-full bg-talisman-gold animate-pulse" />
         </div>
 
         <!-- Protocol Rune Tag -->
-        <div class="text-[11px] font-mono tracking-widest uppercase mb-3 px-3 py-1 rounded-full border border-white/10 whitespace-nowrap" :class="activePaletteConfig.badge">
+        <div class="text-[11px] font-mono tracking-widest uppercase mb-3 px-3 py-1 rounded-full border border-white/10 whitespace-nowrap font-bold" :class="activePaletteConfig.badge">
           {{ selectedPreset.runeTop }}
         </div>
 
@@ -216,7 +216,7 @@ const copyAscii = async () => {
         </h3>
 
         <!-- Mystic Seal Code Box -->
-        <div class="w-full p-3 rounded-xl bg-midnight-950/80 border border-white/10 font-mono text-xs text-phantom-mint mb-4 text-left break-words">
+        <div class="w-full p-3 rounded-xl bg-midnight-950/90 border border-white/10 font-mono text-xs text-phantom-mint mb-4 text-left break-words shadow-inner">
           <code>{{ selectedPreset.codeSnippet }}</code>
         </div>
 

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, watch } from 'vue';
+import { Link } from '@inertiajs/vue3';
 import type { Project } from '@/types/portfolio';
-import Icons from '@/Components/ui/Icons.vue';
+import { sound } from '@/audio/soundEffects';
 
 const props = defineProps<{
   isOpen: boolean;
@@ -12,9 +13,37 @@ const emit = defineEmits<{
   (e: 'close'): void;
 }>();
 
+const getRelatedBlog = (title: string): { slug: string; label: string } | null => {
+  const lower = title.toLowerCase();
+  if (lower.includes('agent') || lower.includes('crm')) {
+    return { slug: 'kien-truc-multi-agent-ai-customer-service', label: 'Đọc Bài Phân Tích Kiến Trúc Multi-Agent AI' };
+  }
+  if (lower.includes('financial') || lower.includes('chứng khoán') || lower.includes('cổ phiếu')) {
+    return { slug: 'toi-uu-dinh-gia-co-phieu-artisan-gemini-ai', label: 'Đọc Bài Tối Ưu 50+ Crawlers & Gemini AI' };
+  }
+  if (lower.includes('gis') || lower.includes('cáp quang') || lower.includes('telecom')) {
+    return { slug: 'so-hoa-mang-cap-quang-toan-quoc-qgis-postgis', label: 'Đọc Bài Số Hóa 500k Điểm Nút QGIS & PostGIS' };
+  }
+  if (lower.includes('sdh') || lower.includes('nms') || lower.includes('dwdm')) {
+    return { slug: 'giam-sat-ha-tang-truyen-dan-sdh-dwdm-nms-ml', label: 'Đọc Bài Giám Sát Truyền Dẫn SDH/DWDM & ML' };
+  }
+  return null;
+};
+
 const handleKeyDown = (e: KeyboardEvent) => {
   if (e.key === 'Escape' && props.isOpen) {
     emit('close');
+  }
+};
+
+const handleSummonClick = () => {
+  sound.playTalisman();
+  emit('close');
+  if (typeof document !== 'undefined') {
+    const contactEl = document.getElementById('contact');
+    if (contactEl) {
+      contactEl.scrollIntoView({ behavior: 'smooth' });
+    }
   }
 };
 
@@ -55,7 +84,7 @@ onUnmounted(() => {
   >
     <div
       v-if="isOpen && project"
-      class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto"
+      class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto"
       role="dialog"
       aria-modal="true"
       @click.self="emit('close')"
@@ -63,61 +92,77 @@ onUnmounted(() => {
       <div
         class="relative w-full max-w-3xl rounded-3xl bg-midnight-900 border border-white/15 shadow-2xl overflow-hidden text-left my-8 max-h-[90vh] flex flex-col"
       >
-        <!-- Modal Banner Header -->
-        <div class="h-32 sm:h-40 w-full p-6 flex flex-col justify-between bg-gradient-to-br relative shrink-0" :class="project.coverGradient">
-          <div class="flex items-center justify-between">
-            <span class="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-xs font-mono uppercase tracking-wider text-slate-200 border border-white/10">
+        <!-- Modal Header with Category & Close -->
+        <div class="p-6 sm:p-8 bg-gradient-to-b from-midnight-800 to-midnight-900 border-b border-white/10 relative">
+          <button
+            type="button"
+            class="absolute top-6 right-6 w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-phantom-mint"
+            aria-label="Đóng popup"
+            @click="emit('close')"
+          >
+            ✕
+          </button>
+
+          <div class="flex flex-wrap items-center gap-2 mb-3">
+            <span class="px-3 py-1 rounded-full text-xs font-mono bg-phantom-mint/10 text-phantom-mint border border-phantom-mint/30 uppercase tracking-wider font-bold">
               {{ project.category }}
             </span>
-            <button
-              type="button"
-              class="w-10 h-10 rounded-full bg-black/60 hover:bg-rose-500/80 text-white flex items-center justify-center transition-colors border border-white/20 min-h-[40px] min-w-[40px] focus:outline-none focus:ring-2 focus:ring-phantom-mint"
-              aria-label="Đóng cửa sổ"
-              @click="emit('close')"
-            >
-              ✕
-            </button>
+            <span v-if="project.featured" class="px-3 py-1 rounded-full text-xs font-mono bg-talisman-gold/10 text-talisman-gold border border-talisman-gold/30 flex items-center gap-1 font-bold">
+              <span>★</span>
+              <span>Featured Architecture</span>
+            </span>
+            <span class="px-3 py-1 rounded-full text-xs font-mono bg-rose-500/10 text-rose-300 border border-rose-500/30 flex items-center gap-1 font-bold">
+              <span>🔒</span>
+              <span>Enterprise NDA</span>
+            </span>
           </div>
-          <div>
-            <h2 class="text-xl sm:text-3xl font-display font-extrabold text-white">{{ project.title }}</h2>
-            <p class="text-xs sm:text-sm font-mono text-phantom-mint mt-1">{{ project.tagline }}</p>
-          </div>
+
+          <h3 class="text-2xl sm:text-3xl font-display font-extrabold text-white tracking-tight">
+            {{ project.title }}
+          </h3>
+          <p class="text-sm font-mono text-phantom-mint mt-1.5">{{ project.tagline }}</p>
         </div>
 
-        <!-- Modal Body Scrollable Container -->
-        <div class="p-6 sm:p-8 space-y-6 overflow-y-auto scrollbar-thin flex-1">
-          <!-- Description -->
-          <p class="text-sm sm:text-base text-slate-300 leading-relaxed font-sans">{{ project.description }}</p>
-
-          <!-- Key Metrics Grid -->
+        <!-- Modal Body Content -->
+        <div class="p-6 sm:p-8 overflow-y-auto flex-1 space-y-6">
+          <!-- Overview Description -->
           <div>
-            <h4 class="text-xs font-mono text-slate-400 uppercase tracking-wider mb-2.5">Chỉ Số Hiệu Năng (Key Metrics)</h4>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div v-for="m in project.metrics" :key="m.label" class="p-3 rounded-xl bg-midnight-950 border border-white/5 text-center">
-                <div class="text-xs font-mono text-slate-400 truncate">{{ m.label }}</div>
-                <div class="text-base sm:text-lg font-display font-bold text-phantom-mint mt-1">{{ m.value }}</div>
+            <h4 class="text-xs font-mono text-slate-400 uppercase tracking-wider mb-2">Tổng Quan Giải Pháp</h4>
+            <p class="text-sm sm:text-base text-slate-300 leading-relaxed font-sans">
+              {{ project.longDescription || project.description }}
+            </p>
+          </div>
+
+          <!-- Impact Metrics Grid -->
+          <div v-if="project.metrics && project.metrics.length > 0">
+            <h4 class="text-xs font-mono text-slate-400 uppercase tracking-wider mb-3">Hiệu Năng & Chỉ Số Thực Chiến</h4>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <div
+                v-for="metric in project.metrics"
+                :key="metric.label"
+                class="p-3.5 rounded-2xl bg-midnight-950/90 border border-white/5 flex flex-col justify-between"
+              >
+                <span class="text-xs font-mono text-slate-400">{{ metric.label }}</span>
+                <span class="text-base sm:text-lg font-display font-bold text-phantom-mint mt-1">
+                  {{ metric.value }}
+                </span>
               </div>
             </div>
           </div>
 
-          <!-- Architecture Highlights -->
-          <div>
-            <h4 class="text-xs font-mono text-slate-400 uppercase tracking-wider mb-2.5">Kiến Trúc & Giải Pháp Kỹ Thuật</h4>
-            <ul class="space-y-2 text-xs sm:text-sm text-slate-300">
-              <li v-for="(highlight, i) in project.architectureHighlights" :key="i" class="flex items-start gap-2.5">
-                <span class="text-phantom-mint mt-0.5">⚡</span>
+          <!-- Architecture & Highlights -->
+          <div v-if="project.highlights && project.highlights.length > 0">
+            <h4 class="text-xs font-mono text-slate-400 uppercase tracking-wider mb-3">Kiến Trúc & Điểm Nhấn Kỹ Thuật</h4>
+            <ul class="space-y-2.5">
+              <li
+                v-for="(highlight, i) in project.highlights"
+                :key="i"
+                class="flex items-start gap-3 text-xs sm:text-sm text-slate-300 font-sans"
+              >
+                <span class="text-phantom-mint mt-0.5 shrink-0 text-sm">⚡</span>
                 <span class="leading-relaxed">{{ highlight }}</span>
               </li>
             </ul>
-          </div>
-
-          <!-- Midnight Fact / Lore -->
-          <div class="p-4 rounded-xl bg-amber-950/20 border border-talisman-gold/30 text-xs sm:text-sm text-amber-200/90 flex items-start gap-3">
-            <span class="text-xl shrink-0">🌙</span>
-            <div>
-              <div class="font-mono font-bold text-talisman-gold text-xs uppercase mb-0.5">Midnight Lore</div>
-              <p class="leading-relaxed">{{ project.midnightFact }}</p>
-            </div>
           </div>
 
           <!-- Tech Stack -->
@@ -133,36 +178,48 @@ onUnmounted(() => {
               </span>
             </div>
           </div>
+
+          <!-- Enterprise NDA Notice Card -->
+          <div class="p-4 rounded-2xl bg-midnight-950/90 border border-white/10 flex items-start gap-3.5">
+            <span class="text-xl shrink-0 text-amber-400">🛡️</span>
+            <div class="text-xs font-sans text-slate-300 leading-relaxed">
+              <div class="font-mono font-bold text-amber-300 uppercase tracking-wider mb-1">
+                Bảo Mật & Bản Quyền Doanh Nghiệp (Enterprise NDA)
+              </div>
+              <p>
+                Đây là hệ thống chuyên dụng phục vụ hạ tầng và nghiệp vụ doanh nghiệp. Nhằm tuân thủ thỏa thuận bảo mật dữ liệu khách hàng (NDA), mã nguồn và môi trường live production không được công khai. Quý đối tác vui lòng liên hệ để trao đổi trực tiếp về sơ đồ kiến trúc và giải pháp kỹ thuật tương đương.
+              </p>
+            </div>
+          </div>
         </div>
 
-        <!-- Modal Footer Actions -->
+        <!-- Modal Footer Actions with Cross-link to Blog -->
         <div class="p-4 sm:p-6 bg-midnight-950/90 border-t border-white/10 flex flex-wrap items-center justify-between gap-4 shrink-0">
-          <div class="flex items-center gap-3">
-            <a
-              v-if="project.liveUrl"
-              :href="project.liveUrl"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="px-4 py-2.5 rounded-xl bg-phantom-mint text-midnight-950 font-display font-bold text-xs sm:text-sm hover:brightness-110 transition-all flex items-center gap-2 min-h-[44px]"
+          <div class="flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              class="px-5 py-2.5 rounded-xl bg-phantom-mint text-midnight-950 font-display font-bold text-xs sm:text-sm hover:brightness-110 active:scale-95 transition-all flex items-center gap-2 min-h-[44px] shadow-glow-mint cursor-pointer"
+              @click="handleSummonClick"
             >
-              <span>Xem Trực Tiếp Demo</span>
-              <span>↗</span>
-            </a>
-            <a
-              v-if="project.githubUrl"
-              :href="project.githubUrl"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="px-4 py-2.5 rounded-xl bg-midnight-800 border border-white/10 hover:border-white/30 text-white font-mono text-xs sm:text-sm transition-all flex items-center gap-2 min-h-[44px]"
+              <span>Triệu Hồi Tư Vấn Giải Pháp</span>
+              <span>📜</span>
+            </button>
+
+            <!-- Cross-Link to matching Blog article if available -->
+            <Link
+              v-if="getRelatedBlog(project.title)"
+              :href="`/blog/${getRelatedBlog(project.title)!.slug}`"
+              class="px-4 py-2.5 rounded-xl bg-midnight-900 border border-talisman-gold/40 text-talisman-gold hover:bg-talisman-gold hover:text-midnight-950 font-display font-bold text-xs sm:text-sm transition-all flex items-center gap-1.5 min-h-[44px] shadow-sm"
+              @click="emit('close'); sound.playClick()"
             >
-              <Icons name="Github" :size="16" />
-              <span>Mã Nguồn GitHub</span>
-            </a>
+              <span>📖 Đọc Bài Viết Kiến Trúc</span>
+              <span>→</span>
+            </Link>
           </div>
 
           <button
             type="button"
-            class="px-4 py-2 rounded-xl text-slate-400 hover:text-white font-mono text-xs min-h-[44px] focus:outline-none"
+            class="px-4 py-2 rounded-xl text-slate-400 hover:text-white font-mono text-xs min-h-[44px] focus:outline-none cursor-pointer"
             @click="emit('close')"
           >
             Đóng [ESC]

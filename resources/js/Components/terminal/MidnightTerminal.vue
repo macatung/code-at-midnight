@@ -4,6 +4,17 @@ import { projectsData } from '@/data/projectsData';
 import { skillsData } from '@/data/skillsData';
 import { sound } from '@/audio/soundEffects';
 import { trackEvent } from '@/utils/analytics';
+import { useTimeCycle, TimePhaseId } from '@/composables/useTimeCycle';
+
+const {
+  formattedTime,
+  activePhaseId,
+  activePhase,
+  isTimeTravelActive,
+  TIME_PHASES,
+  setPhaseOverride,
+  resetToRealTime
+} = useTimeCycle();
 
 export interface TerminalLog {
   id: string;
@@ -28,13 +39,15 @@ const logs = ref<TerminalLog[]>([
   {
     id: 'init-1',
     type: 'system',
-    text: '🌙 Midnight Terminal v1.1.0 — Type "help" or click quick spell buttons below.',
+    text: '🌙 Midnight Terminal v1.2.0 (Dynamic Time-Cycle Ready) — Type "help" or click quick spell buttons.',
     timestamp: '00:00:00'
   }
 ]);
 
 const quickSpells = [
   'help',
+  'time',
+  'cycle',
   'whoami',
   'cv',
   'projects',
@@ -42,6 +55,8 @@ const quickSpells = [
   'hop',
   'coffee',
   'talisman',
+  'game',
+  'play',
   'socials',
   'summon',
   'sudo rm -rf bugs',
@@ -64,7 +79,7 @@ const toggleExpand = () => {
 
 const execute = (rawCmd: string): string => {
   const trimmed = rawCmd.trim();
-  const now = '00:00:00';
+  const now = formattedTime.value || '00:00:00';
 
   if (!trimmed) {
     logs.value.push({
@@ -99,12 +114,66 @@ const execute = (rawCmd: string): string => {
 
   switch (command) {
     case 'help':
-      output = `Available spells:\n• whoami / bio   : Giới thiệu bản thân & định vị\n• cv / resume    : Xem tóm tắt hồ sơ năng lực & CV\n• projects / ls  : Danh sách Grimoire dự án thực chiến\n• skills         : Toàn bộ kho vũ khí kỹ thuật (18 runes)\n• socials        : Các kênh liên lạc (Email, Telegram, GitHub)\n• summon / hire  : Mở bàn thờ triệu hồi / gửi yêu cầu dự án\n• hop            : Cho Ma Cà Tưng nhảy 1 cú cực cao\n• coffee         : Nạp 1 ly Robusta 100% không đường\n• talisman       : Nhận đạo bùa code 0 bug đã khai quang\n• sudo rm -rf bugs : Trừ tà diệt sạch bug trên production\n• clear          : Xóa sạch màn hình terminal`;
+      output = `Available spells:\n• time / clock   : Xem thời gian thực & phân kỳ nhịp sống\n• cycle / phase  : Xem bảng ma trận 4 phân kỳ trong ngày\n• travel <phase> : Du hành thời gian (midnight|dawn|noon|dusk)\n• reset-time     : Đồng bộ lại theo giờ thực tế của máy\n• whoami / bio   : Giới thiệu bản thân & định vị kiến trúc\n• cv / resume    : Xem tóm tắt hồ sơ năng lực & CV\n• projects / ls  : Danh sách Grimoire dự án thực chiến\n• skills         : Toàn bộ kho vũ khí kỹ thuật (18 runes)\n• game / play    : Bật Dev Mini-Game Rune Typer luyện phím\n• socials        : Các kênh liên lạc (Email, Telegram, GitHub)\n• summon / hire  : Mở bàn thờ triệu hồi / gửi yêu cầu dự án\n• hop            : Cho Ma Cà Tưng nhảy 1 cú cực cao\n• coffee         : Nạp 1 ly Robusta 100% không đường\n• talisman       : Nhận đạo bùa code 0 bug đã khai quang\n• sudo rm -rf bugs : Trừ tà diệt sạch bug trên production\n• clear          : Xóa sạch màn hình terminal`;
       sound.playClick();
+      break;
+    case 'time':
+    case 'clock':
+      output = `══════════════════════════════════════════════════════════
+ ⏰ MACATUNG CHRONOS — DYNAMIC TIME-CYCLE ENGINE
+══════════════════════════════════════════════════════════
+ • Thời Gian Hiện Tại : ${formattedTime.value} (GMT+7)
+ • Phân Kỳ Hoạt Động  : ${activePhase.value.name} (${activePhase.value.vietnameseName})
+ • Khung Giờ          : ${activePhase.value.timeRange}
+ • Trạng Thái Mode    : ${isTimeTravelActive.value ? '🔮 Time Travel Preview' : '🟢 Đồng Bộ Giờ Thực Tế'}
+ • Mức Độ Caffeine    : ${activePhase.value.caffeineLevel}% Robusta Flow
+ • Thông Điệp Phân Kỳ : "${activePhase.value.tagline}"
+ 💡 Gõ "cycle" để xem toàn bộ 4 phân kỳ hoặc "travel <phase>" để du hành!`;
+      sound.playCelestialChime(activePhase.value.id);
+      break;
+    case 'cycle':
+    case 'phase':
+    case 'phases':
+      output = `══════════════════════════════════════════════════════════════════
+ 🌌 BẢNG MA TRẬN 4 PHÂN KỲ NHỊP SỐNG DEVELOPER (DIURNAL MATRIX)
+══════════════════════════════════════════════════════════════════
+ 1. 🌙 Midnight Void  [00:00 - 05:59] : Đêm sâu, tập trung 100%, 0 bug ${activePhaseId.value === 'midnight' ? '👈 [ACTIVE]' : ''}
+ 2. 🌅 Golden Dawn    [06:00 - 11:59] : Rạng đông hổ phách, nạp cafe sáng ${activePhaseId.value === 'dawn' ? '👈 [ACTIVE]' : ''}
+ 3. ☀️ High-Noon      [12:00 - 17:59] : Chính ngọ Cyber, ship tính năng ${activePhaseId.value === 'afternoon' ? '👈 [ACTIVE]' : ''}
+ 4. 🌆 Twilight Dusk  [18:00 - 23:59] : Hoàng hôn tím, khởi động ca đêm ${activePhaseId.value === 'twilight' ? '👈 [ACTIVE]' : ''}
+──────────────────────────────────────────────────────────────────
+ 🔮 Dùng lệnh "travel midnight", "travel dawn", "travel noon", "travel dusk"
+    hoặc "reset-time" để kiểm tra phản xạ của hệ thống!`;
+      sound.playClick();
+      break;
+    case 'travel':
+    case 'timetravel': {
+      const target = (args[0] || '').toLowerCase();
+      let targetPhase: TimePhaseId | null = null;
+      if (target === 'midnight' || target === 'night' || target === '0' || target === 'dem') targetPhase = 'midnight';
+      else if (target === 'dawn' || target === 'morning' || target === 'sang') targetPhase = 'dawn';
+      else if (target === 'noon' || target === 'afternoon' || target === 'chieu') targetPhase = 'afternoon';
+      else if (target === 'dusk' || target === 'twilight' || target === 'evening' || target === 'toi') targetPhase = 'twilight';
+
+      if (targetPhase) {
+        setPhaseOverride(targetPhase);
+        const phaseInfo = TIME_PHASES[targetPhase];
+        output = `✨ [TIME TRAVEL SUCCESS] Warp nhảy đến phân kỳ: ${phaseInfo.name} (${phaseInfo.vietnameseName})!\nToàn bộ ánh sáng, hạt bùa chú, linh vật và giao diện đã chuyển sắc.`;
+      } else {
+        output = `travel: Phân kỳ không hợp lệ. Hãy chọn: "midnight", "dawn", "noon", hoặc "dusk".`;
+        outType = 'error';
+        sound.playClick();
+      }
+      break;
+    }
+    case 'reset-time':
+    case 'realtime':
+      resetToRealTime();
+      output = `⚡ [TIME SYNC] Đã hủy Time Travel và đồng bộ lại 100% theo đồng hồ thực tế của thiết bị.`;
       break;
     case 'whoami':
     case 'bio':
-      output = '🧙‍♂️ Ma Cà Tưng — Lead Systems Architect & Creative Full-Stack Engineer.\nĐịnh vị: "Code at midnight" — Biến cà phê Robusta nguyên chất thành kiến trúc phân tán siêu tải và giao diện web ma mị.';
+      output = `🧙‍♂️ Ma Cà Tưng — Lead Systems Architect & Creative Full-Stack Engineer.\nĐịnh vị: "Code at midnight" — Chuyển hóa cà phê Robusta thành kiến trúc phân tán siêu tải.\nNhịp sinh học hiện tại: [${activePhase.value.name}] | Caffeine: ${activePhase.value.caffeineLevel}% | Linh vật: ${activePhase.value.mascotState}`;
       sound.playClick();
       break;
     case 'cv':
@@ -155,6 +224,17 @@ const execute = (rawCmd: string): string => {
     case 'talisman':
       output = '📜 [BÙA CODE 0 BUG] try { deploy(); } catch { /* PEACE */ } — Khai Quang thành công!';
       sound.playTalisman();
+      break;
+    case 'game':
+    case 'play':
+      output = '🎮 [RUNE TYPER ARCADE] Launching Rune Typer Dev Game... Cuộn tới khu vực #game để gõ code diệt Bug!';
+      sound.playSuccess();
+      if (typeof document !== 'undefined') {
+        const gameEl = document.getElementById('game');
+        if (gameEl) {
+          gameEl.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
       break;
     case 'slogan':
       output = '✨ "Code at midnight. Deploy with confidence. Rest when the city wakes."';

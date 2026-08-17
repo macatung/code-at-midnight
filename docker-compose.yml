@@ -1,0 +1,37 @@
+services:
+  app:
+    container_name: macatung_app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8000}:80"
+    volumes:
+      - macatung_storage:/var/www/html/storage
+      - macatung_database:/var/www/html/database
+    environment:
+      APP_NAME: "Macatung Portfolio"
+      APP_ENV: ${APP_ENV:-local}
+      APP_DEBUG: ${APP_DEBUG:-true}
+      APP_URL: ${APP_URL:-http://localhost:8000}
+      APP_TIMEZONE: Asia/Ho_Chi_Minh
+      DB_CONNECTION: sqlite
+      DB_DATABASE: database/database.sqlite
+      SESSION_DRIVER: file
+      CACHE_STORE: file
+      QUEUE_CONNECTION: sync
+      AUTO_MIGRATE: "true"
+    networks:
+      - macatung_network
+
+volumes:
+  macatung_storage:
+    name: macatung_storage
+  macatung_database:
+    name: macatung_database
+
+networks:
+  macatung_network:
+    name: macatung_network
+    driver: bridge

@@ -46,10 +46,10 @@ describe('PortfolioDataTest (F03)', () => {
       expect(skillsData.length).toBe(4);
 
       const expectedCategories = [
-        'Frontend Sorcery & UI/UX',
-        'Backend Alchemy & Systems',
-        'Cloud Rituals & DevOps',
-        'Dark Arts, AI & Architecture'
+        'AI Agents & LLM Architecture',
+        'Backend Mastery & Distributed Systems',
+        'Telecom, GIS & Network Systems',
+        'Frontend Sorcery, Cloud & DevOps'
       ];
 
       const titles = skillsData.map((c) => c.title);
@@ -84,7 +84,7 @@ describe('PortfolioDataTest (F03)', () => {
         expect(typeof item.role).toBe('string');
         expect(typeof item.company).toBe('string');
         expect(typeof item.location).toBe('string');
-        expect(['Full-time', 'Contract', 'Open Source', 'Venture']).toContain(item.type);
+        expect(['Full-time', 'Contract', 'Open Source', 'Venture', 'Education & Awards']).toContain(item.type);
         expect(Array.isArray(item.achievements)).toBe(true);
         expect(item.achievements.length).toBeGreaterThan(0);
         expect(Array.isArray(item.technologies)).toBe(true);
@@ -178,10 +178,10 @@ describe('PortfolioDataTest (F03)', () => {
      */
     it('[T2_F03_04] Experience timeline follows reverse chronological order (newest to oldest)', () => {
       const periods = experienceData.map((e) => e.period);
-      expect(periods[0]).toContain('2024');
+      expect(periods[0]).toContain('2025');
       expect(periods[1]).toContain('2022');
-      expect(periods[2]).toContain('2020');
-      expect(periods[3]).toContain('2018');
+      expect(periods[2]).toContain('2017');
+      expect(periods[3]).toContain('2013');
     });
 
     /**

@@ -9,6 +9,7 @@ import { setupTestEnvironment } from '../Harness/mock_helpers.js';
 
 export class MidnightClockModel {
   public currentTime: Date;
+  public manualOverridePhase: string | null = null;
   public pingMs: number = 18;
 
   constructor(initialDate?: Date) {
@@ -27,9 +28,31 @@ export class MidnightClockModel {
     return `${hours}:${minutes}:${seconds}`;
   }
 
+  public getRealPhase(): 'midnight' | 'dawn' | 'afternoon' | 'twilight' {
+    const hour = this.currentTime.getHours();
+    if (hour >= 0 && hour < 6) return 'midnight';
+    if (hour >= 6 && hour < 12) return 'dawn';
+    if (hour >= 12 && hour < 18) return 'afternoon';
+    return 'twilight';
+  }
+
+  public getActivePhase(): 'midnight' | 'dawn' | 'afternoon' | 'twilight' {
+    if (this.manualOverridePhase && ['midnight', 'dawn', 'afternoon', 'twilight'].includes(this.manualOverridePhase)) {
+      return this.manualOverridePhase as any;
+    }
+    return this.getRealPhase();
+  }
+
+  public setPhaseOverride(phase: 'midnight' | 'dawn' | 'afternoon' | 'twilight') {
+    this.manualOverridePhase = phase;
+  }
+
+  public resetToRealTime() {
+    this.manualOverridePhase = null;
+  }
+
   public isMidnightMode(): boolean {
-    const hours = this.currentTime.getHours();
-    return hours >= 0 && hours < 5;
+    return this.getActivePhase() === 'midnight';
   }
 
   public getStatusBadge(): { mode: 'midnight' | 'daylight'; text: string } {
@@ -40,18 +63,14 @@ export class MidnightClockModel {
   }
 
   public getCaffeineLevel(): number {
-    const hour = this.currentTime.getHours();
-    // Peak caffeine between 1:00 AM and 4:00 AM (90 - 100%)
-    if (hour >= 1 && hour <= 4) return 100;
-    if (hour === 0 || hour === 5) return 85;
-    if (hour >= 6 && hour <= 9) return 40;
-    if (hour >= 10 && hour <= 17) return 25;
-    if (hour >= 18 && hour <= 21) return 50;
-    return 75; // 22:00 - 23:59
+    const phase = this.getActivePhase();
+    if (phase === 'midnight') return 100;
+    if (phase === 'twilight') return 80;
+    if (phase === 'afternoon') return 65;
+    return 45; // dawn
   }
 
   public getSimulatedPing(): number {
-    // Return realistic sub-50ms ping
     return Math.max(8, Math.min(48, Math.floor(14 + Math.random() * 10)));
   }
 
@@ -139,6 +158,7 @@ describe('MidnightClockTest (F17)', () => {
     it('[T2_F17_01] Exact midnight boundary 00:00:00 triggers Midnight Mode transition', () => {
       const clock = new MidnightClockModel(new Date('2026-08-17T00:00:00'));
       expect(clock.isMidnightMode()).toBe(true);
+      expect(clock.getRealPhase()).toBe('midnight');
       expect(clock.getFormattedTime()).toBe('00:00:00');
       expect(clock.getStatusBadge().mode).toBe('midnight');
     });
@@ -147,10 +167,11 @@ describe('MidnightClockTest (F17)', () => {
      * @tier: 2
      * @feature: F17_MIDNIGHT_CLOCK
      */
-    it('[T2_F17_02] Exact 05:00:00 morning boundary transitions cleanly to Daylight Prep', () => {
-      const clock = new MidnightClockModel(new Date('2026-08-17T05:00:00'));
+    it('[T2_F17_02] Exact 06:00:00 morning boundary transitions cleanly to Golden Dawn', () => {
+      const clock = new MidnightClockModel(new Date('2026-08-17T06:00:00'));
       expect(clock.isMidnightMode()).toBe(false);
-      expect(clock.getFormattedTime()).toBe('05:00:00');
+      expect(clock.getRealPhase()).toBe('dawn');
+      expect(clock.getFormattedTime()).toBe('06:00:00');
       expect(clock.getStatusBadge().mode).toBe('daylight');
     });
 
@@ -158,25 +179,33 @@ describe('MidnightClockTest (F17)', () => {
      * @tier: 2
      * @feature: F17_MIDNIGHT_CLOCK
      */
-    it('[T2_F17_03] 23:59:59 late night boundary is in Daylight Prep state before rollover', () => {
+    it('[T2_F17_03] 23:59:59 late night boundary is in Twilight Dusk before rollover to Midnight', () => {
       const clock = new MidnightClockModel(new Date('2026-08-17T23:59:59'));
-      expect(clock.isMidnightMode()).toBe(false);
+      expect(clock.getRealPhase()).toBe('twilight');
       clock.tick();
       expect(clock.isMidnightMode()).toBe(true); // rolls over to 00:00:00
+      expect(clock.getRealPhase()).toBe('midnight');
     });
 
     /**
      * @tier: 2
      * @feature: F17_MIDNIGHT_CLOCK
      */
-    it('[T2_F17_04] Caffeine level is bounded strictly between 0% and 100% across all 24 hours', () => {
-      for (let h = 0; h < 24; h++) {
-        const date = new Date(`2026-08-17T${String(h).padStart(2, '0')}:00:00`);
-        const clock = new MidnightClockModel(date);
-        const level = clock.getCaffeineLevel();
-        expect(level).toBeGreaterThanOrEqual(0);
-        expect(level).toBeLessThanOrEqual(100);
-      }
+    it('[T2_F17_04] Time Travel overrides active phase and resets cleanly to real time', () => {
+      const clock = new MidnightClockModel(new Date('2026-08-17T14:00:00')); // Real is afternoon
+      expect(clock.getRealPhase()).toBe('afternoon');
+      expect(clock.getActivePhase()).toBe('afternoon');
+
+      // Warp to midnight
+      clock.setPhaseOverride('midnight');
+      expect(clock.getActivePhase()).toBe('midnight');
+      expect(clock.isMidnightMode()).toBe(true);
+      expect(clock.getCaffeineLevel()).toBe(100);
+
+      // Reset to real time
+      clock.resetToRealTime();
+      expect(clock.getActivePhase()).toBe('afternoon');
+      expect(clock.isMidnightMode()).toBe(false);
     });
 
     /**

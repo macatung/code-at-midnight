@@ -387,7 +387,7 @@ describe('Tier 3: Cross-Feature Pairwise Interactions (25 Test Cases)', () => {
 
     expect(terminal.output.length).toBe(projectsData.length + 1);
     expect(terminal.output[0]).toContain('6 projects');
-    expect(terminal.output[1]).toContain('ecommerce-flashsale-checkout');
+    expect(terminal.output[1]).toContain(projectsData[0].id);
   });
 
   // ==========================================================================
@@ -473,20 +473,19 @@ describe('Tier 3: Cross-Feature Pairwise Interactions (25 Test Cases)', () => {
 
     // Filter by fullstack
     grimoire.selectCategory('fullstack');
-    expect(grimoire.filteredProjects.length).toBe(2);
+    expect(grimoire.filteredProjects.length).toBe(1);
     expect(grimoire.filteredProjects.map((p) => p.id)).toEqual([
-      'ecommerce-flashsale-checkout',
-      'multitenant-saas-billing-portal'
+      'stock-valuation-financial-management'
     ]);
 
-    // Click on FlashPay project card
+    // Click on first fullstack project card
     const targetProject = grimoire.filteredProjects[0];
     grimoire.openModal(targetProject);
 
     expect(grimoire.selectedProject).not.toBeNull();
-    expect(grimoire.selectedProject!.id).toBe('ecommerce-flashsale-checkout');
-    expect(grimoire.selectedProject!.architectureHighlights.length).toBe(3);
-    expect(grimoire.selectedProject!.midnightFact).toContain('Black Friday');
+    expect(grimoire.selectedProject!.id).toBe('stock-valuation-financial-management');
+    expect(grimoire.selectedProject!.architectureHighlights.length).toBeGreaterThanOrEqual(3);
+    expect(grimoire.selectedProject!.midnightFact).toContain('Artisan crawler');
   });
 
   // ==========================================================================

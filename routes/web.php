@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Api\AnalyticsEventController;
 use App\Http\Controllers\Admin\AdminAuthController;
@@ -14,8 +15,19 @@ use App\Http\Controllers\Admin\AdminArticleController;
 use App\Http\Controllers\Admin\AdminSettingController;
 use App\Http\Controllers\Admin\AdminContactController;
 
-// Public Portfolio Routes
+// Public Multi-Page Portfolio Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/projects', [HomeController::class, 'projects'])->name('projects.index');
+Route::get('/about', [HomeController::class, 'about'])->name('about.index');
+Route::get('/skills', [HomeController::class, 'about'])->name('skills.index');
+Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
+Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
+Route::get('/game', [HomeController::class, 'game'])->name('game.index');
+Route::get('/talisman', [HomeController::class, 'talisman'])->name('talisman.index');
+Route::get('/oracle', [HomeController::class, 'oracle'])->name('oracle.index');
+Route::get('/gieo-que', [HomeController::class, 'oracle'])->name('oracle.alias');
+Route::get('/contact', [HomeController::class, 'contact'])->name('contact.index');
+
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 Route::post('/summon', [ContactController::class, 'store'])->name('contact.summon');
 

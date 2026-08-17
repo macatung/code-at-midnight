@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
+import { useTimeCycle } from '@/composables/useTimeCycle';
+
+const { activePhase } = useTimeCycle();
 
 interface Particle {
   id: number;
@@ -107,6 +110,10 @@ const update = () => {
 
 const render = (ctx: CanvasRenderingContext2D) => {
   ctx.clearRect(0, 0, width, height);
+  const palette = activePhase.value.particlePalette;
+  const primaryColor = palette[0] || '#00f5a0';
+  const secondaryColor = palette[1] || '#ffd166';
+  const tertiaryColor = palette[2] || '#00d2ff';
 
   for (let i = 0; i < particles.length; i++) {
     const p = particles[i];
@@ -117,8 +124,8 @@ const render = (ctx: CanvasRenderingContext2D) => {
       ctx.translate(p.x, p.y);
       ctx.rotate(p.rotation);
 
-      // Yellow Talisman Paper Body
-      ctx.fillStyle = '#ffd166';
+      // Phase-specific Talisman Paper Body
+      ctx.fillStyle = secondaryColor;
       ctx.fillRect(-p.size / 2, -p.size, p.size, p.size * 2);
 
       // Paper border
@@ -141,19 +148,19 @@ const render = (ctx: CanvasRenderingContext2D) => {
         ctx.fillText(p.runeText, 0, 2);
       }
     } else if (p.type === 'firefly') {
-      // Glowing Firefly (Neon Mint)
+      // Glowing Firefly (Phase Primary Color)
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-      ctx.fillStyle = '#00f5a0';
-      ctx.shadowColor = '#00f5a0';
+      ctx.fillStyle = primaryColor;
+      ctx.shadowColor = primaryColor;
       ctx.shadowBlur = 8;
       ctx.fill();
     } else {
-      // Golden Ember
+      // Cosmic Ember (Phase Tertiary Color)
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-      ctx.fillStyle = '#ffd166';
-      ctx.shadowColor = '#ffd166';
+      ctx.fillStyle = tertiaryColor;
+      ctx.shadowColor = tertiaryColor;
       ctx.shadowBlur = 6;
       ctx.fill();
     }

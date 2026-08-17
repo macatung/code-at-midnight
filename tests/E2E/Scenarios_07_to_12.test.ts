@@ -53,10 +53,10 @@ describe('Tier 4: Real-World E2E Scenarios (07 to 12)', () => {
     // Step 1: Inspect 4 Stats Cards
     expect(developerStats.length).toBe(4);
     const statLabels = developerStats.map((s) => s.label);
-    expect(statLabels).toContain('Midnight Coffees Brewed');
-    expect(statLabels).toContain('Bugs Exorcised');
-    expect(statLabels).toContain('Hop Velocity');
-    expect(statLabels).toContain('Code Shipped at 12AM');
+    expect(statLabels).toContain('Kinh Nghiệm Thực Chiến');
+    expect(statLabels).toContain('Tỉ Lệ CS Tự Động Hóa');
+    expect(statLabels).toContain('Hạ Tầng GIS & Thiết Bị');
+    expect(statLabels).toContain('Uptime Cam Kết Đêm');
 
     // Step 2: 3-Tab Manifesto Panel state
     const manifesto = {
@@ -127,10 +127,10 @@ describe('Tier 4: Real-World E2E Scenarios (07 to 12)', () => {
     expect(totalSkillsCount).toBe(18);
 
     const categoryTitles = skillsData.map((c) => c.title);
-    expect(categoryTitles).toContain('Frontend Sorcery & UI/UX');
-    expect(categoryTitles).toContain('Backend Alchemy & Systems');
-    expect(categoryTitles).toContain('Cloud Rituals & DevOps');
-    expect(categoryTitles).toContain('Dark Arts, AI & Architecture');
+    expect(categoryTitles).toContain('AI Agents & LLM Architecture');
+    expect(categoryTitles).toContain('Backend Mastery & Distributed Systems');
+    expect(categoryTitles).toContain('Telecom, GIS & Network Systems');
+    expect(categoryTitles).toContain('Frontend Sorcery, Cloud & DevOps');
 
     // Step 2: Verify proficiency ranges (82% to 100%) and rune icons
     skillsData.forEach((cat) => {
@@ -145,22 +145,22 @@ describe('Tier 4: Real-World E2E Scenarios (07 to 12)', () => {
     // Step 3: Inspect Experience Timeline & Midnight Quest Lore
     expect(experienceData.length).toBe(4);
 
-    // Verify chronological order (2024 to 2018)
-    expect(experienceData[0].period).toContain('2024');
-    expect(experienceData[0].role).toContain('Lead');
-    expect(experienceData[0].midnightQuest).toContain('Exorcised a phantom race condition');
+    // Verify chronological order (2025 to 2013)
+    expect(experienceData[0].period).toContain('2025');
+    expect(experienceData[0].role).toContain('AI Agent');
+    expect(experienceData[0].midnightQuest).toContain('Multi-Agent');
 
     expect(experienceData[1].period).toContain('2022');
-    expect(experienceData[1].role).toContain('Senior');
-    expect(experienceData[1].midnightQuest).toContain('analytics dashboard');
+    expect(experienceData[1].role).toContain('Fullstack');
+    expect(experienceData[1].midnightQuest).toContain('GIS');
 
-    expect(experienceData[2].period).toContain('2020');
-    expect(experienceData[2].role).toContain('Creative');
-    expect(experienceData[2].midnightQuest).toContain('8-bit chip tunes');
+    expect(experienceData[2].period).toContain('2017');
+    expect(experienceData[2].role).toContain('Backend');
+    expect(experienceData[2].midnightQuest).toContain('CDN');
 
-    expect(experienceData[3].period).toContain('2018');
-    expect(experienceData[3].role).toContain('Hacker');
-    expect(experienceData[3].midnightQuest).toContain('Ma Cà Tưng');
+    expect(experienceData[3].period).toContain('2013');
+    expect(experienceData[3].role).toContain('Informatics');
+    expect(experienceData[3].midnightQuest).toContain('Midnight');
 
     // Verify achievements bullets and tech tags
     experienceData.forEach((exp) => {

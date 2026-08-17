@@ -31,21 +31,21 @@ describe('ExperienceLoreTest (F20)', () => {
     it('[T1_F20_01] Experience timeline renders all 4 milestones', () => {
       expect(experienceData.length).toBe(4);
       const roles = experienceData.map((e) => e.role);
-      expect(roles).toContain('Lead Full-Stack & Creative Systems Architect');
-      expect(roles).toContain('Senior Full-Stack Engineer');
-      expect(roles).toContain('Creative Frontend & UI/UX Specialist');
-      expect(roles).toContain('Night Crawler & Indie Software Hacker');
+      expect(roles).toContain('Lead AI Agent & Autonomous Systems Architect');
+      expect(roles).toContain('Fullstack Developer & Senior Systems Architect');
+      expect(roles).toContain('Backend Web Developer & Streaming Engineer');
+      expect(roles).toContain('National Informatics Prodigy & Software Engineer');
     });
 
     /**
      * @tier: 1
      * @feature: F20_EXPERIENCE_LORE
      */
-    it('[T1_F20_02] Timeline follows strict chronological order from present back to 2018', () => {
-      expect(experienceData[0].period).toBe('2024 — Present');
-      expect(experienceData[1].period).toBe('2022 — 2024');
-      expect(experienceData[2].period).toBe('2020 — 2022');
-      expect(experienceData[3].period).toBe('2018 — 2020');
+    it('[T1_F20_02] Timeline follows strict chronological order from present back to 2013', () => {
+      expect(experienceData[0].period).toBe('2025 — Hiện Tại');
+      expect(experienceData[1].period).toBe('02/2022 — 06/2025');
+      expect(experienceData[2].period).toBe('06/2017 — 01/2022');
+      expect(experienceData[3].period).toBe('2013 — 2018');
     });
 
     /**
@@ -91,8 +91,8 @@ describe('ExperienceLoreTest (F20)', () => {
      * @tier: 2
      * @feature: F20_EXPERIENCE_LORE
      */
-    it('[T2_F20_01] Experience types map to valid enum tags ("Full-time", "Contract", "Open Source", "Venture")', () => {
-      const allowedTypes = ['Full-time', 'Contract', 'Open Source', 'Venture'];
+    it('[T2_F20_01] Experience types map to valid enum tags ("Full-time", "Contract", "Open Source", "Venture", "Education & Awards")', () => {
+      const allowedTypes = ['Full-time', 'Contract', 'Open Source', 'Venture', 'Education & Awards'];
       experienceData.forEach((item) => {
         expect(allowedTypes).toContain(item.type);
       });
@@ -127,8 +127,8 @@ describe('ExperienceLoreTest (F20)', () => {
      */
     it('[T2_F20_04] Midnight quest narratives are humorous, mystical, and engineering-focused', () => {
       const quests = experienceData.map((e) => e.midnightQuest);
-      expect(quests.some((q) => q.includes('race condition') || q.includes('lunar eclipses'))).toBe(true);
-      expect(quests.some((q) => q.includes('Ma Cà Tưng'))).toBe(true);
+      expect(quests.some((q) => q.includes('Multi-Agent') || q.includes('GIS'))).toBe(true);
+      expect(quests.some((q) => q.includes('Midnight'))).toBe(true);
     });
 
     /**

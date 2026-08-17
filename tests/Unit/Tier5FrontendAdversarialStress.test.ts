@@ -713,7 +713,7 @@ describe('Tier 5 Adversarial Coverage Hardening: Frontend & Interactive Engines'
   // SECTION 6: Midnight Clock & Status Engine (MidnightClock.vue logic)
   // ==========================================================================
   describe('6. Midnight Clock & Status Engine Adversarial Hardening', () => {
-    it('[T5_CLOCK_01] 24-hour mode matrix correctly distinguishes Midnight Mode (00:00 - 04:59) vs Daylight Prep (05:00 - 23:59)', () => {
+    it('[T5_CLOCK_01] 24-hour mode matrix correctly distinguishes Midnight Mode (00:00 - 05:59) vs Daylight Prep (06:00 - 23:59)', () => {
       const clock = new MidnightClockModel();
 
       for (let hour = 0; hour < 24; hour++) {
@@ -723,7 +723,7 @@ describe('Tier 5 Adversarial Coverage Hardening: Frontend & Interactive Engines'
         const isMidnight = clock.isMidnightMode();
         const badge = clock.getStatusBadge();
 
-        if (hour >= 0 && hour < 5) {
+        if (hour >= 0 && hour < 6) {
           expect(isMidnight).toBe(true);
           expect(badge.mode).toBe('midnight');
           expect(badge.text).toContain('Midnight Mode');

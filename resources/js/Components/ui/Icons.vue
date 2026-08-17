@@ -44,9 +44,15 @@ const resolvedIcon = computed(() => {
     Copy: LucideIcons.Copy,
     Mail: LucideIcons.Mail,
     Send: LucideIcons.Send,
+    Sunrise: LucideIcons.Sunrise || LucideIcons.Sun,
+    Sunset: LucideIcons.Sunset || LucideIcons.Moon,
+    Clock: LucideIcons.Clock,
+    RotateCcw: LucideIcons.RotateCcw,
     Menu: LucideIcons.Menu,
     X: LucideIcons.X,
     Heart: LucideIcons.Heart,
+    Gamepad: LucideIcons.Gamepad2 || LucideIcons.Gamepad,
+    Play: LucideIcons.Play,
   };
 
   return fallbackMap[iconName] || LucideIcons.HelpCircle;

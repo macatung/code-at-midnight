@@ -99,6 +99,7 @@ export interface ISoundEngine {
   playClick(): void;
   playTerminalKey(): void;
   playSuccess(): void;
+  playCelestialChime(phaseId?: string): void;
 }
 
 export interface MascotProps {

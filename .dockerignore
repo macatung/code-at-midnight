@@ -1,0 +1,41 @@
+# Version control
+.git
+.gitignore
+.github
+
+# Node & Frontend dependencies
+node_modules
+npm-debug.log
+yarn-error.log
+.vite
+public/hot
+public/build
+
+# PHP & Backend dependencies
+vendor
+.phpunit.result.cache
+.phpunit.cache
+
+# Environment & Local secrets
+.env
+.env.backup
+.env.production
+.env.local
+
+# Storage caches and logs (preserve directory structure)
+storage/logs/*.log
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*
+
+# Database files (SQLite database should be initialized at runtime or mounted)
+*.sqlite-journal
+
+# Temporary files & IDE
+.idea
+.vscode
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+C:\Users\*
