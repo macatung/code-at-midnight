@@ -23,3 +23,11 @@ dist-ssr
 /database/*.sqlite
 /database/*.sqlite-journal
 *.stackdump
+
+# Agent artifacts & test reports
+/.agents/
+/tests/reports/
+ORIGINAL_REQUEST.md
+PROJECT.md
+TEST_INFRA.md
+TEST_READY.md
