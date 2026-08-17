@@ -5,6 +5,10 @@ import Navbar from '@/Components/layout/Navbar.vue';
 import Footer from '@/Components/layout/Footer.vue';
 import TalismanCanvas from '@/Components/mascot/TalismanCanvas.vue';
 import HeroSection from '@/Components/hero/HeroSection.vue';
+import ProjectsSection from '@/Components/projects/ProjectsSection.vue';
+import SkillsSection from '@/Components/skills/SkillsSection.vue';
+import ExperienceSection from '@/Components/experience/ExperienceSection.vue';
+import AboutSection from '@/Components/about/AboutSection.vue';
 import MidnightTerminal from '@/Components/terminal/MidnightTerminal.vue';
 import ContactSection from '@/Components/contact/ContactSection.vue';
 import MiniMascotLogo from '@/Components/mascot/MiniMascotLogo.vue';
@@ -14,6 +18,9 @@ import { useTimeCycle } from '@/composables/useTimeCycle';
 
 defineProps<{
   title?: string;
+  projects?: any[];
+  skills?: any[];
+  experiences?: any[];
   latestArticles?: any[];
   settings?: Record<string, string>;
   stats?: Record<string, any>;
@@ -28,7 +35,7 @@ const handleHop = (count: number) => {
 </script>
 
 <template>
-  <Head :title="title || 'Code at midnight — Midnight Tech & Fun Sanctuary'" />
+  <Head :title="title || 'Code at midnight — The Midnight Architect'" />
 
   <div
     class="min-h-screen bg-midnight-950 text-slate-100 selection:bg-phantom-mint selection:text-midnight-950 flex flex-col justify-between relative overflow-x-hidden w-full bg-grid-pattern transition-colors duration-1000"
@@ -106,50 +113,19 @@ const handleHop = (count: number) => {
       <!-- 1. Hero Section (#hero) -->
       <HeroSection @hop="handleHop" />
 
-      <!-- 2. Điện Thờ Gieo Quẻ Âm Dương Ma Cà Tưng Teaser Card -->
-      <section class="scroll-mt-24 w-full py-10 sm:py-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-left">
-        <div class="glass-panel p-8 sm:p-10 rounded-3xl border border-talisman-gold/40 relative overflow-hidden bg-gradient-to-r from-midnight-900 via-midnight-950 to-midnight-900 shadow-2xl">
-          <div class="absolute -top-20 -right-20 w-80 h-80 bg-talisman-gold/10 rounded-full blur-3xl pointer-events-none" />
+      <!-- 2. Featured Grimoire Projects Showcase (Top 3 on Home) -->
+      <ProjectsSection :projects="projects" :featured-only="true" />
 
-          <div class="flex flex-col lg:flex-row items-center justify-between gap-8 relative z-10">
-            <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
-              <div class="w-24 h-24 rounded-3xl bg-midnight-900 border-2 border-talisman-gold p-3 flex items-center justify-center text-4xl shadow-glow-talisman shrink-0">
-                🔮
-              </div>
+      <!-- 3. Skills & Tech Rune Arsenal (#skills) -->
+      <SkillsSection :skills="skills" />
 
-              <div>
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-talisman-gold/10 border border-talisman-gold/30 text-talisman-gold text-xs font-mono mb-2 shadow-glow-talisman">
-                  ✨ Ma Cà Tưng Oracle
-                </span>
-                <h3 class="text-2xl sm:text-3xl font-display font-extrabold text-white">
-                  Điện Thờ <span class="text-transparent bg-clip-text bg-gradient-to-r from-talisman-gold via-phantom-mint to-phantom-cyan">Gieo Quẻ Âm Dương</span>
-                </h3>
-                <p class="text-xs sm:text-sm text-slate-300 mt-2 max-w-xl font-sans leading-relaxed">
-                  Lắc ống thẻ xăm tre, gieo quẻ đồng xu Âm Dương để chú Ma Cà Tưng bốc quẻ và giải mã vận hạn, cơ hội công danh, tài lộc, tình duyên hôm nay kèm thơ xăm độc bản.
-                </p>
-                <div class="flex flex-wrap items-center justify-center sm:justify-start gap-3 mt-4 text-xs font-mono text-slate-400">
-                  <span>🎋 24 Quẻ Thánh</span>
-                  <span>·</span>
-                  <span>☯️ Đồng Xu Âm Dương</span>
-                  <span>·</span>
-                  <span>📜 Xuất Thẻ Bùa HD</span>
-                </div>
-              </div>
-            </div>
+      <!-- 4. Experience & Chronicles (#experience) -->
+      <ExperienceSection :experiences="experiences" />
 
-            <Link
-              href="/oracle"
-              class="px-8 py-4 rounded-2xl bg-gradient-to-r from-talisman-gold via-amber-400 to-talisman-gold text-midnight-950 font-display font-bold text-sm sm:text-base hover:brightness-110 shadow-glow-talisman transition-all flex items-center gap-2.5 whitespace-nowrap shrink-0 hover:scale-105 active:scale-95"
-              @click="sound.playTalisman()"
-            >
-              <span>Vào Gieo Quẻ Ngay</span>
-              <span>🔮</span>
-            </Link>
-          </div>
-        </div>
-      </section>
+      <!-- 5. Developer Manifesto & Stats (#about) -->
+      <AboutSection :stats="stats" />
 
-      <!-- 3. Midnight Tech Chronicle / Featured Articles Section -->
+      <!-- 6. Midnight Tech Chronicle / Featured Articles Section -->
       <section v-if="latestArticles && latestArticles.length > 0" class="scroll-mt-24 w-full py-16 sm:py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-left">
         <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
           <div class="flex flex-col items-start">
@@ -157,10 +133,10 @@ const handleHop = (count: number) => {
               📜 Midnight Tech Chronicle
             </span>
             <h2 class="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold text-white tracking-tight">
-              Góc Chia Sẻ <span class="text-transparent bg-clip-text bg-gradient-to-r from-phantom-mint via-phantom-cyan to-talisman-gold">Kiến Thức Kỹ Thuật</span>
+              Ghi Chép <span class="text-transparent bg-clip-text bg-gradient-to-r from-phantom-mint via-phantom-cyan to-talisman-gold">Kiến Trúc & Blog</span>
             </h2>
             <p class="text-sm sm:text-base text-slate-400 mt-2 max-w-2xl font-sans">
-              Các bài viết phân tích chuyên sâu về hệ sinh thái Multi-Agent AI, tối ưu hóa Crawlers dữ liệu lớn, bản đồ viễn thông QGIS/PostGIS và hệ thống giám sát phân tán.
+              Các bài phân tích chuyên sâu về hệ sinh thái Multi-Agent AI tự trị, giải thuật định tuyến GIS và kỹ thuật chịu tải cao.
             </p>
           </div>
 
@@ -169,7 +145,7 @@ const handleHop = (count: number) => {
             class="px-5 py-3 rounded-2xl bg-white/5 hover:bg-phantom-mint text-slate-200 hover:text-midnight-950 font-display font-bold text-xs sm:text-sm transition-all flex items-center gap-2 border border-white/10 hover:border-phantom-mint shadow-sm hover:shadow-glow-mint whitespace-nowrap"
             @click="sound.playClick()"
           >
-            <span>Khám Phá Toàn Bộ Bài Viết</span>
+            <span>Đọc Toàn Bộ Blog</span>
             <span>→</span>
           </Link>
         </div>
@@ -184,7 +160,7 @@ const handleHop = (count: number) => {
               <div class="flex items-center justify-between text-xs font-mono text-slate-400 mb-4 pb-3 border-b border-white/5">
                 <span class="text-phantom-mint font-bold">⏱ {{ article.reading_time_min }} phút đọc</span>
                 <div class="flex flex-wrap gap-1.5">
-                  <span v-for="tag in (article.tags || []).slice(0, 3)" :key="tag" class="px-2 py-0.5 rounded-lg bg-white/5 text-[10px] text-slate-300">
+                  <span v-for="tag in (article.tags || []).slice(0, 2)" :key="tag" class="px-2 py-0.5 rounded bg-white/5 text-[10px] text-slate-300">
                     #{{ tag }}
                   </span>
                 </div>
@@ -197,17 +173,17 @@ const handleHop = (count: number) => {
 
             <Link
               :href="`/blog/${article.slug}`"
-              class="text-xs font-mono text-phantom-mint flex items-center gap-1.5 group-hover:translate-x-1.5 transition-transform font-bold pt-4 border-t border-white/5"
+              class="text-xs font-mono text-phantom-mint flex items-center gap-1.5 group-hover:translate-x-1 transition-transform font-bold pt-4 border-t border-white/5"
               @click="sound.playClick()"
             >
-              <span>Đọc tiếp bài viết này</span>
+              <span>Xem chi tiết bài viết</span>
               <span>→</span>
             </Link>
           </article>
         </div>
       </section>
 
-      <!-- 4. Arcade Game Chamber Teaser Box -->
+      <!-- 7. Arcade Game Chamber Teaser Box -->
       <section class="scroll-mt-24 w-full py-12 sm:py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-left">
         <div class="glass-panel p-8 sm:p-10 rounded-3xl border border-talisman-gold/40 relative overflow-hidden bg-gradient-to-r from-midnight-900 via-midnight-950 to-midnight-900 shadow-2xl">
           <div class="absolute -top-20 -right-20 w-80 h-80 bg-talisman-gold/10 rounded-full blur-3xl pointer-events-none" />
@@ -253,7 +229,7 @@ const handleHop = (count: number) => {
         </div>
       </section>
 
-      <!-- 5. Developer Talisman Forge Teaser Box -->
+      <!-- 8. Developer Talisman Forge Teaser Box -->
       <section class="scroll-mt-24 w-full py-12 sm:py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-left">
         <div class="glass-panel p-8 sm:p-10 rounded-3xl border border-phantom-mint/30 relative overflow-hidden bg-gradient-to-r from-midnight-900 via-midnight-950 to-midnight-900 shadow-2xl">
           <div class="flex flex-col lg:flex-row items-center justify-between gap-8 relative z-10">
@@ -267,7 +243,7 @@ const handleHop = (count: number) => {
                   Lò Rèn Bùa Hộ Mệnh Lập Trình Viên
                 </h3>
                 <p class="text-xs sm:text-sm text-slate-300 mt-2 max-w-xl font-sans leading-relaxed">
-                  Tạo các đạo bùa hộ mệnh dev (Bùa Trừ Bug, Bùa Tăng Lương, Bùa Xuyên Đêm 00:00 AM) và tải file ảnh HD canvas để dán laptop hoặc chia sẻ với đồng nghiệp.
+                  Tạo các đạo bùa hộ mệnh dev (Bùa Trừ Bug, Bùa Tăng Lương, Bùa Xuyên Đêm 00:00 AM) và tải file ảnh HD canvas để dán laptop hoặc chia sẻ.
                 </p>
               </div>
             </div>
@@ -284,7 +260,7 @@ const handleHop = (count: number) => {
         </div>
       </section>
 
-      <!-- 6. Midnight Terminal REPL CLI (#terminal) -->
+      <!-- 9. Midnight Terminal REPL CLI (#terminal) -->
       <section id="terminal" class="scroll-mt-24 w-full py-16 sm:py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-left">
         <div class="flex flex-col items-start mb-8">
           <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-phantom-mint/10 border border-phantom-mint/30 text-phantom-mint text-xs font-mono mb-3 shadow-glow-mint">
@@ -300,7 +276,7 @@ const handleHop = (count: number) => {
         <MidnightTerminal />
       </section>
 
-      <!-- 7. Discussion & Feedback Altar Form (#contact) -->
+      <!-- 10. Summoning Altar Contact Form (#contact) -->
       <ContactSection />
     </main>
 

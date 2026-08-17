@@ -20,10 +20,11 @@ interface NavItem {
 
 const navLinks: NavItem[] = [
   { label: 'Trang Chủ', href: '/', iconName: 'Home' },
-  { label: 'Gieo Quẻ 🔮', href: '/oracle', badge: 'HOT', iconName: 'Sparkles' },
-  { label: 'Góc Kiến Thức', href: '/blog', iconName: 'BookOpen' },
-  { label: 'Dev Game 🎮', href: '/game', iconName: 'Gamepad' },
-  { label: 'Lò Rèn Bùa', href: '/talisman', iconName: 'FileText' },
+  { label: 'Dự Án', href: '/projects', iconName: 'Layers' },
+  { label: 'Kỹ Năng & Hồ Sơ', href: '/about', iconName: 'Zap' },
+  { label: 'Blog', href: '/blog', badge: 'MỚI', iconName: 'BookOpen' },
+  { label: 'Game 🎮', href: '/game', badge: 'HOT', iconName: 'Gamepad' },
+  { label: 'Bùa Dev', href: '/talisman', iconName: 'Sparkles' },
 ];
 
 const isScrolled = ref(false);
@@ -115,15 +116,15 @@ onUnmounted(() => {
         </div>
       </Link>
 
-      <!-- Desktop Nav Items (Knowledge, Oracle & Fun Navigation Links) -->
-      <nav class="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-2xl glass-panel border border-white/5" aria-label="Main Navigation">
+      <!-- Desktop Nav Items (100% Consistent Page Navigation Links) -->
+      <nav class="hidden lg:flex items-center gap-1 xl:gap-1.5 px-3 py-1.5 rounded-2xl glass-panel border border-white/5" aria-label="Main Navigation">
         <Link
           v-for="item in navLinks"
           :key="item.href"
           :href="item.href"
           class="px-3.5 py-1.5 rounded-xl text-xs xl:text-sm font-sans font-medium transition-all relative flex items-center gap-1.5 whitespace-nowrap focus:outline-none"
           :class="isLinkActive(item.href)
-            ? 'text-talisman-gold bg-talisman-gold/10 font-bold border border-talisman-gold/30 shadow-glow-talisman'
+            ? 'text-phantom-mint bg-phantom-mint/10 font-bold border border-phantom-mint/20 shadow-glow-mint'
             : 'text-slate-300 hover:text-white hover:bg-white/5'"
           @click="sound.playClick()"
         >
@@ -136,16 +137,6 @@ onUnmounted(() => {
             {{ item.badge }}
           </span>
         </Link>
-
-        <!-- Direct Terminal Link -->
-        <a
-          href="/#terminal"
-          class="px-3 py-1.5 rounded-xl text-xs xl:text-sm font-mono text-slate-400 hover:text-phantom-cyan hover:bg-white/5 transition-all flex items-center gap-1.5"
-          @click="sound.playClick()"
-        >
-          <Icons name="Terminal" :size="14" />
-          <span>CLI</span>
-        </a>
       </nav>
 
       <!-- Right Action Controls (Time Clock, Sound Toggle, CTA Button & Mobile Toggle) -->
@@ -156,7 +147,7 @@ onUnmounted(() => {
         <!-- Web Audio Procedural Sound Toggle Button -->
         <SoundToggle />
 
-        <!-- Desktop Direct CTA Page Link (Contact & Discussion Altar) -->
+        <!-- Desktop Direct CTA Page Link (Contact Summoning Altar) -->
         <Link
           href="/contact"
           class="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-display font-bold text-midnight-950 transition-all hover:brightness-110 active:scale-95 shadow-md flex-shrink-0"
@@ -166,8 +157,8 @@ onUnmounted(() => {
           }"
           @click="sound.playTalisman()"
         >
-          <span>Góp Ý & Đàm Đạo</span>
-          <span>💬</span>
+          <span>Triệu Hồi</span>
+          <span>📜</span>
         </Link>
 
         <!-- Mobile Hamburger Toggle Button -->
@@ -204,7 +195,7 @@ onUnmounted(() => {
             :href="item.href"
             class="flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-medium transition-all"
             :class="isLinkActive(item.href)
-              ? 'text-talisman-gold bg-talisman-gold/10 font-bold border border-talisman-gold/20'
+              ? 'text-phantom-mint bg-phantom-mint/10 font-bold border border-phantom-mint/20'
               : 'text-slate-300 hover:text-white hover:bg-white/5'"
             @click="handleNavClick"
           >
@@ -220,20 +211,6 @@ onUnmounted(() => {
               {{ item.badge }}
             </span>
           </Link>
-
-          <a
-            href="/#terminal"
-            class="flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all"
-            @click="handleNavClick"
-          >
-            <div class="flex items-center gap-3">
-              <Icons name="Terminal" :size="18" class="text-slate-400" />
-              <span>Midnight Terminal CLI</span>
-            </div>
-            <span class="text-[10px] px-2 py-0.5 rounded-full font-mono font-bold bg-phantom-cyan/20 text-phantom-cyan">
-              SHELL
-            </span>
-          </a>
         </div>
 
         <div class="pt-4 border-t border-white/10 flex flex-col gap-3">
@@ -246,8 +223,8 @@ onUnmounted(() => {
             }"
             @click="handleNavClick(); sound.playTalisman()"
           >
-            <span>Góp Ý & Đàm Đạo Chủ Đề</span>
-            <span>💬</span>
+            <span>Triệu Hồi Lập Trình Viên</span>
+            <span>📜</span>
           </Link>
         </div>
       </div>

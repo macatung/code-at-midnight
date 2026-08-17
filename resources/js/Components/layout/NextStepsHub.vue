@@ -10,12 +10,20 @@ const props = defineProps<Props>();
 
 const allPortals = [
   {
-    path: '/',
-    title: 'Trang Chủ Midnight Hub',
-    desc: 'Tổng quan không gian công nghệ, bài viết nổi bật & terminal CLI.',
-    icon: '🌙',
-    badge: 'SANCTUARY',
+    path: '/projects',
+    title: 'Kho Grimoire Dự Án',
+    desc: '6+ Dự án thực chiến chịu tải cao, AI Agent & viễn thông GIS.',
+    icon: '💼',
+    badge: 'ENTERPRISE',
     color: 'border-phantom-mint/30 hover:border-phantom-mint text-phantom-mint',
+  },
+  {
+    path: '/about',
+    title: 'Kỹ Năng & Hồ Sơ',
+    desc: 'Kho vũ khí kỹ năng, dòng thời gian kinh nghiệm & tuyên ngôn kiến trúc.',
+    icon: '⚡',
+    badge: 'ARSENAL',
+    color: 'border-phantom-cyan/30 hover:border-phantom-cyan text-phantom-cyan',
   },
   {
     path: '/blog',
@@ -26,20 +34,12 @@ const allPortals = [
     color: 'border-talisman-gold/30 hover:border-talisman-gold text-talisman-gold',
   },
   {
-    path: '/oracle',
-    title: 'Điện Thờ Gieo Quẻ',
-    desc: 'Lắc ống thẻ xăm tre, gieo quẻ âm dương giải mã vận hạn & thơ xăm.',
-    icon: '🔮',
-    badge: 'DIVINATION',
-    color: 'border-talisman-gold/30 hover:border-talisman-gold text-talisman-gold',
-  },
-  {
     path: '/game',
     title: 'Phòng Máy Rune Typer',
     desc: 'Sàn đấu gõ phím trừ tà, âm thanh phím cơ thock & săn Boss Bug.',
     icon: '🎮',
     badge: 'ARCADE',
-    color: 'border-phantom-cyan/30 hover:border-phantom-cyan text-phantom-cyan',
+    color: 'border-amber-400/30 hover:border-amber-400 text-amber-400',
   },
   {
     path: '/talisman',
@@ -47,14 +47,14 @@ const allPortals = [
     desc: 'Tùy biến bùa hộ mệnh nhà phát triển và xuất file ảnh sắc nét.',
     icon: '✨',
     badge: 'DEV FORGE',
-    color: 'border-amber-400/30 hover:border-amber-400 text-amber-400',
+    color: 'border-emerald-400/30 hover:border-emerald-400 text-emerald-400',
   },
   {
     path: '/contact',
-    title: 'Góc Đàm Đạo & Góp Ý',
-    desc: 'Thảo luận đề tài kiến trúc, gửi góp ý bài viết cùng tác giả.',
-    icon: '💬',
-    badge: 'DISCUSSION',
+    title: 'Điện Thờ Triệu Hồi',
+    desc: 'Gửi yêu cầu tư vấn giải pháp kỹ thuật, kết nối cùng kiến trúc sư.',
+    icon: '📜',
+    badge: 'CONSULTING',
     color: 'border-purple-400/30 hover:border-purple-400 text-purple-400',
   },
 ];
@@ -80,7 +80,7 @@ const portals = allPortals.filter(p => !props.currentPath.startsWith(p.path)).sl
         class="text-xs font-mono text-phantom-mint hover:underline flex items-center gap-1"
         @click="sound.playTalisman()"
       >
-        <span>Hoặc gửi góp ý chủ đề mới ngay</span>
+        <span>Hoặc triệu hồi tư vấn giải pháp ngay</span>
         <span>→</span>
       </Link>
     </div>

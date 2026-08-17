@@ -65,7 +65,7 @@ const handleCtaClick = (soundType: 'click' | 'talisman', eventName?: string) => 
           </div>
 
           <span class="text-slate-100 font-bold uppercase tracking-wider">
-            MIDNIGHT TECH & FUN SANCTUARY
+            SẴN SÀNG NHẬN QUEST 00:00 AM
           </span>
           <span
             class="px-1.5 py-0.2 rounded text-[10px] font-bold uppercase"
@@ -89,73 +89,73 @@ const handleCtaClick = (soundType: 'click' | 'talisman', eventName?: string) => 
           Code at <span class="text-transparent bg-clip-text bg-gradient-to-r from-phantom-mint via-phantom-cyan to-talisman-gold">midnight.</span>
         </h1>
 
-        <!-- High-Impact Community Subtitle -->
+        <!-- Authoritative Persona Subtitle -->
         <p class="text-base sm:text-lg text-slate-300 max-w-2xl font-sans font-normal leading-relaxed mb-8">
-          Không gian mở chia sẻ kiến thức kỹ thuật chuyên sâu, những bài học giải pháp kiến trúc thực chiến và các tiện ích giải trí dành riêng cho anh em lập trình viên lúc nửa đêm 🌙.
+          Senior Backend / Fullstack Developer & AI Agent Architect với 8+ năm thực chiến. Chuyên sâu kiến trúc Multi-Agent AI tự trị thay thế Customer Service 24/7, hạ tầng viễn thông GIS/NMS và hệ thống web phân tán tải cao.
         </p>
 
-        <!-- CTA Action Array (Pure Knowledge & Fun Links) -->
+        <!-- CTA Action Array (100% Consistent Page Navigation Links) -->
         <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3.5 mb-10 w-full">
           <Link
-            href="/blog"
+            href="/projects"
             class="px-6 py-3.5 rounded-2xl bg-phantom-mint text-midnight-950 font-display font-bold text-sm sm:text-base hover:brightness-110 shadow-glow-mint transition-all flex items-center gap-2 min-h-[48px] whitespace-nowrap active:scale-95 cursor-pointer"
-            @click="handleCtaClick('click', 'blog')"
+            @click="handleCtaClick('click', 'projects')"
           >
-            <span>Đọc Blog Kiến Thức</span>
-            <span>📖</span>
+            <span>Khám Phá Dự Án</span>
+            <span>✨</span>
+          </Link>
+          <Link
+            href="/contact"
+            class="px-5 py-3.5 rounded-2xl bg-midnight-900 border border-talisman-gold/40 text-talisman-gold hover:bg-talisman-gold/10 font-display font-bold text-xs sm:text-sm transition-all flex items-center gap-2 min-h-[48px] whitespace-nowrap active:scale-95 shadow-glow-talisman cursor-pointer"
+            @click="handleCtaClick('talisman', 'summon')"
+          >
+            <span>Triệu Hồi Ngay</span>
+            <span>📜</span>
           </Link>
           <Link
             href="/game"
-            class="px-5 py-3.5 rounded-2xl bg-amber-500/15 border border-talisman-gold/50 text-talisman-gold hover:bg-talisman-gold/25 font-display font-bold text-xs sm:text-sm transition-all flex items-center gap-2 min-h-[48px] whitespace-nowrap active:scale-95 shadow-glow-talisman cursor-pointer"
+            class="px-4 py-3.5 rounded-2xl bg-amber-500/10 border border-talisman-gold/40 text-talisman-gold hover:bg-talisman-gold/20 font-display font-bold text-xs sm:text-sm transition-all flex items-center gap-2 min-h-[48px] whitespace-nowrap shadow-glow-talisman cursor-pointer"
             @click="handleCtaClick('click', 'game')"
           >
             <span>🎮</span>
             <span>Chơi Dev Game</span>
           </Link>
           <Link
-            href="/talisman"
-            class="px-4 py-3.5 rounded-2xl bg-midnight-900 border border-white/15 hover:border-phantom-mint/40 text-slate-200 hover:text-white font-mono text-xs sm:text-sm transition-all flex items-center gap-2 min-h-[48px] whitespace-nowrap cursor-pointer"
-            @click="handleCtaClick('talisman', 'talisman')"
+            href="/about"
+            class="px-4 py-3.5 rounded-2xl bg-midnight-900/80 border border-white/10 hover:border-phantom-mint/40 text-slate-300 hover:text-white font-mono text-xs sm:text-sm transition-all flex items-center gap-2 min-h-[48px] whitespace-nowrap cursor-pointer"
+            @click="handleCtaClick('click', 'about')"
           >
-            <span>📜</span>
-            <span>Tạo Bùa Dev</span>
+            <Icons name="Zap" :size="16" class="text-phantom-mint" />
+            <span>Kỹ Năng & Hồ Sơ</span>
           </Link>
-          <a
-            href="#terminal"
-            class="px-4 py-3.5 rounded-2xl bg-midnight-900/80 border border-white/10 hover:border-phantom-cyan/40 text-slate-300 hover:text-phantom-cyan font-mono text-xs sm:text-sm transition-all flex items-center gap-2 min-h-[48px] whitespace-nowrap cursor-pointer"
-            @click="handleCtaClick('click', 'terminal')"
-          >
-            <Icons name="Terminal" :size="16" />
-            <span>Terminal CLI</span>
-          </a>
           <Link
             href="/contact"
             class="px-4 py-3.5 rounded-2xl bg-white/5 border border-white/10 hover:border-talisman-gold/40 text-slate-300 hover:text-talisman-gold font-mono text-xs sm:text-sm transition-all flex items-center gap-2 min-h-[48px] whitespace-nowrap cursor-pointer"
-            title="Gửi góp ý và chủ đề bài viết mới"
-            @click="handleCtaClick('click', 'feedback')"
+            title="Xem & Tải Hồ Sơ Năng Lực"
+            @click="handleCtaClick('click', 'cv_download')"
           >
-            <Icons name="MessageSquare" :size="16" />
-            <span>Góp Ý & Đàm Đạo</span>
+            <Icons name="FileText" :size="16" />
+            <span>Tải CV</span>
           </Link>
         </div>
 
-        <!-- Fun Badges with Subtle Glow -->
+        <!-- Trust Badges with Subtle Glow -->
         <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-4 text-xs font-mono text-slate-300">
           <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-midnight-900/60 border border-white/5 whitespace-nowrap">
+            <Icons name="Zap" :size="14" class="text-phantom-mint" />
+            <span>&gt; 8 Năm Thực Chiến</span>
+          </div>
+          <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-midnight-900/60 border border-white/5 whitespace-nowrap">
+            <Icons name="Activity" :size="14" class="text-phantom-mint" />
+            <span>&lt; 18ms Latency</span>
+          </div>
+          <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-midnight-900/60 border border-white/5 whitespace-nowrap">
             <Icons name="Coffee" :size="14" class="text-amber-400" />
-            <span>100% Robusta Energy</span>
-          </div>
-          <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-midnight-900/60 border border-white/5 whitespace-nowrap">
-            <Icons name="Moon" :size="14" class="text-phantom-mint" />
-            <span>Code Lúc 00:00 AM</span>
-          </div>
-          <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-midnight-900/60 border border-white/5 whitespace-nowrap">
-            <Icons name="BookOpen" :size="14" class="text-phantom-cyan" />
-            <span>Kiến Thức Thực Chiến</span>
+            <span>100% Robusta Flow</span>
           </div>
           <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-midnight-900/60 border border-white/5 whitespace-nowrap">
             <Icons name="Bug" :size="14" class="text-rose-400" />
-            <span>Trảm Bug Xuyên Đêm</span>
+            <span>0 Bug In Production</span>
           </div>
         </div>
 

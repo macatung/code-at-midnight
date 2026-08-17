@@ -24,8 +24,6 @@ Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 Route::get('/game', [HomeController::class, 'game'])->name('game.index');
 Route::get('/talisman', [HomeController::class, 'talisman'])->name('talisman.index');
-Route::get('/oracle', [HomeController::class, 'oracle'])->name('oracle.index');
-Route::get('/gieo-que', [HomeController::class, 'oracle'])->name('oracle.alias');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact.index');
 
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');

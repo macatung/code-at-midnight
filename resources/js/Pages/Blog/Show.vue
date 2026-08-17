@@ -39,6 +39,43 @@ const handleScroll = () => {
   }
 };
 
+// 2-Way Cross-Link: Matching project case study lookup
+const getRelatedProjectInfo = (slug: string) => {
+  if (slug.includes('multi-agent') || slug.includes('customer-service')) {
+    return {
+      title: 'Autonomous AI Customer Service Multi-Agent Hub',
+      desc: 'Hệ sinh thái Multi-Agent tự trị xử lý 100% khiếu nại khách hàng với độ trễ < 800ms.',
+      icon: '🤖',
+      badge: 'AI AGENTS',
+    };
+  }
+  if (slug.includes('dinh-gia') || slug.includes('crawlers')) {
+    return {
+      title: 'Financial Valuation Engine & 50+ Real-Time Crawlers',
+      desc: 'Kiến trúc định giá cổ phiếu 7 năm tự động cào 2.4M records/ngày với Redis Queue.',
+      icon: '📈',
+      badge: 'HIGH-LOAD',
+    };
+  }
+  if (slug.includes('cap-quang') || slug.includes('qgis')) {
+    return {
+      title: 'Hệ Thống Số Hóa Mạng Cáp Quang Quốc Gia (QGIS/GIS)',
+      desc: 'Quản lý 500,000+ điểm nút không gian trên PostGIS với thuật toán định tuyến OTDR.',
+      icon: '🗺️',
+      badge: 'GIS / SPATIAL',
+    };
+  }
+  if (slug.includes('sdh') || slug.includes('nms')) {
+    return {
+      title: 'NMS Matrix: Giám Sát Hạ Tầng Truyền Dẫn SDH/DWDM',
+      desc: 'Thu thập 100,000 telemetry/s và mô hình ML dự báo sự cố sụt áp trước 30 phút.',
+      icon: '⚡',
+      badge: 'MISSION CRITICAL',
+    };
+  }
+  return null;
+};
+
 // Render basic markdown formatting safely
 const formattedContent = computed(() => {
   if (!props.article.content) return '';
@@ -149,25 +186,57 @@ onUnmounted(() => {
       <!-- Article Rendered Content -->
       <div class="article-body prose prose-invert max-w-none mb-16 text-slate-200" v-html="formattedContent" />
 
-      <!-- Discussion & Community Box -->
-      <div class="p-6 sm:p-8 rounded-3xl glass-panel border border-phantom-mint/30 bg-gradient-to-r from-phantom-mint/5 via-midnight-900/80 to-phantom-cyan/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-16 shadow-glow-mint">
+      <!-- Case Study Cross-Link Box (2-Way Bridge back to Projects) -->
+      <div
+        v-if="getRelatedProjectInfo(article.slug)"
+        class="p-6 sm:p-8 rounded-3xl glass-panel border border-talisman-gold/30 bg-gradient-to-r from-talisman-gold/5 via-midnight-900/80 to-phantom-mint/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-16 shadow-glow-talisman"
+      >
+        <div class="flex items-center gap-4">
+          <span class="text-3xl sm:text-4xl">{{ getRelatedProjectInfo(article.slug)!.icon }}</span>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-talisman-gold/20 text-talisman-gold border border-talisman-gold/30">
+                {{ getRelatedProjectInfo(article.slug)!.badge }}
+              </span>
+              <span class="text-xs font-mono text-slate-400">Case Study Thực Chiến Liên Quan</span>
+            </div>
+            <h4 class="font-display font-bold text-white text-base sm:text-lg mt-1">
+              {{ getRelatedProjectInfo(article.slug)!.title }}
+            </h4>
+            <p class="text-xs text-slate-300 mt-1 font-sans">
+              {{ getRelatedProjectInfo(article.slug)!.desc }}
+            </p>
+          </div>
+        </div>
+
+        <Link
+          href="/projects"
+          class="px-5 py-3 rounded-2xl bg-talisman-gold text-midnight-950 font-display font-bold text-xs sm:text-sm hover:brightness-110 shadow-glow-talisman transition-all whitespace-nowrap shrink-0 flex items-center gap-1.5"
+          @click="sound.playClick()"
+        >
+          <span>Xem Chi Tiết Dự Án</span>
+          <span>→</span>
+        </Link>
+      </div>
+
+      <!-- Author Anonymous Persona Box -->
+      <div class="p-6 sm:p-8 rounded-3xl glass-panel border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-16">
         <div class="flex items-center gap-4">
           <div class="w-14 h-14 rounded-2xl bg-midnight-900 border border-phantom-mint/40 flex items-center justify-center text-2xl shadow-glow-mint">
-            💬
+            🧙‍♂️
           </div>
           <div>
-            <div class="font-display font-bold text-white text-base sm:text-lg">Thảo Luận & Đàm Đạo Kiến Trúc</div>
-            <div class="text-xs font-mono text-phantom-mint">Bạn có ý tưởng hoặc muốn chia sẻ giải pháp tối ưu hơn?</div>
-            <div class="text-xs text-slate-400 mt-1">Gửi lời nhắn thảo luận trực tiếp cùng tác giả tại góc đàm đạo.</div>
+            <div class="font-display font-bold text-white text-base sm:text-lg">The Midnight Architect</div>
+            <div class="text-xs font-mono text-phantom-mint">Senior Backend / Fullstack & AI Agent Architect</div>
+            <div class="text-xs text-slate-400 mt-1">Ghi chép chuyên môn được thực thi trong những phiên code 00:00 — 05:00 AM.</div>
           </div>
         </div>
         <Link
           href="/contact"
-          class="px-5 py-3 rounded-2xl bg-phantom-mint text-midnight-950 font-display font-bold text-xs sm:text-sm hover:brightness-110 shadow-glow-mint transition-all whitespace-nowrap shrink-0 flex items-center gap-1.5"
+          class="px-4 py-2.5 rounded-xl bg-phantom-mint text-midnight-950 font-display font-bold text-xs hover:brightness-110 shadow-glow-mint transition-all whitespace-nowrap shrink-0"
           @click="sound.playTalisman()"
         >
-          <span>Gửi Lời Nhắn Thảo Luận</span>
-          <span>→</span>
+          Trao Đổi Kiến Trúc 📜
         </Link>
       </div>
 
