@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             ProjectSeeder::class,
             ContentAndAnalyticsSeeder::class,
             TheravadaContentSeeder::class,
+            TaskSeeder::class,
         ]);
     }
 }

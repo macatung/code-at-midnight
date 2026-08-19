@@ -31,6 +31,9 @@ storage/framework/views/*
 # Database files
 *.sqlite-journal
 
+# Desktop Electron App
+desktop
+
 # Temporary files & IDE
 .idea
 .vscode

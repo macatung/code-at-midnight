@@ -7,6 +7,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Theravada\TheravadaController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\Api\ApiTaskController;
+use App\Http\Controllers\Api\ApiProjectController;
 use App\Http\Controllers\Api\AnalyticsEventController;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminDashboardController;
