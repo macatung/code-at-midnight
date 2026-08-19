@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useZenTimeCycle } from '@/composables/useZenTimeCycle';
+import { useZenAtmosphere } from '@/composables/useZenAtmosphere';
 
 const canvasRef = ref<HTMLCanvasElement | null>(null);
 const { activeZenPhase } = useZenTimeCycle();
+const { isLeavesEnabled } = useZenAtmosphere();
 
 interface Petal {
   x: number;
@@ -53,18 +55,18 @@ const initCanvas = () => {
   handleResize();
   window.addEventListener('resize', handleResize, { passive: true });
 
-  // Spawn Petals & Bodhi leaves
-  const petalCount = window.innerWidth < 768 ? 20 : 35;
+  // Spawn Petals & Bodhi leaves (Drastically reduced count & ultra-soft opacity to prevent distraction)
+  const petalCount = window.innerWidth < 768 ? 4 : 8;
   petals = Array.from({ length: petalCount }, () => ({
     x: Math.random() * window.innerWidth,
     y: Math.random() * window.innerHeight,
-    size: 10 + Math.random() * 14,
-    speedY: 0.4 + Math.random() * 0.8,
-    speedX: -0.3 + Math.random() * 0.6,
+    size: 8 + Math.random() * 8, // Smaller subtle size
+    speedY: 0.15 + Math.random() * 0.25, // Gentle meditative drift
+    speedX: -0.15 + Math.random() * 0.3,
     rotation: Math.random() * Math.PI * 2,
-    rotationSpeed: (Math.random() - 0.5) * 0.02,
-    opacity: 0.25 + Math.random() * 0.45,
-    type: Math.random() > 0.45 ? 'lotus' : Math.random() > 0.3 ? 'bodhi' : 'dust',
+    rotationSpeed: (Math.random() - 0.5) * 0.008,
+    opacity: 0.08 + Math.random() * 0.14, // Very soft opacity
+    type: Math.random() > 0.5 ? 'lotus' : Math.random() > 0.3 ? 'bodhi' : 'dust',
     hue: 35 + Math.random() * 15 // Amber/Gold tones
   }));
 
@@ -80,9 +82,9 @@ const initCanvas = () => {
     ctx.translate(centerX, centerY);
     ctx.rotate(wheelAngle);
 
-    ctx.strokeStyle = `rgba(245, 158, 11, ${alpha * 0.25})`;
-    ctx.fillStyle = `rgba(245, 158, 11, ${alpha * 0.08})`;
-    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = `rgba(245, 158, 11, ${alpha * 0.12})`;
+    ctx.fillStyle = `rgba(245, 158, 11, ${alpha * 0.04})`;
+    ctx.lineWidth = 1.2;
 
     // Outer Hub & Rim
     ctx.beginPath();
@@ -225,36 +227,38 @@ const initCanvas = () => {
       ctx.restore();
     }
 
-    // 3. Update & Draw Petals / Bodhi Leaves
-    for (const p of petals) {
-      p.y += p.speedY;
-      p.x += p.speedX + Math.sin(p.y * 0.01) * 0.4;
-      p.rotation += p.rotationSpeed;
+    // 3. Update & Draw Petals / Bodhi Leaves (Only if leaves atmosphere is enabled)
+    if (isLeavesEnabled.value) {
+      for (const p of petals) {
+        p.y += p.speedY;
+        p.x += p.speedX + Math.sin(p.y * 0.01) * 0.4;
+        p.rotation += p.rotationSpeed;
 
-      // Mouse repulsion / breeze effect
-      const dx = p.x - mouseX;
-      const dy = p.y - mouseY;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 120) {
-        const force = (120 - dist) / 120;
-        p.x += (dx / dist) * force * 2;
-        p.y += (dy / dist) * force * 2;
-      }
+        // Mouse repulsion / breeze effect
+        const dx = p.x - mouseX;
+        const dy = p.y - mouseY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 100) {
+          const force = (100 - dist) / 100;
+          p.x += (dx / dist) * force * 1.5;
+          p.y += (dy / dist) * force * 1.5;
+        }
 
-      // Wrap around edges
-      if (p.y > height + 20) {
-        p.y = -20;
-        p.x = Math.random() * width;
-      }
-      if (p.x < -20) p.x = width + 20;
-      if (p.x > width + 20) p.x = -20;
+        // Wrap around edges
+        if (p.y > height + 20) {
+          p.y = -20;
+          p.x = Math.random() * width;
+        }
+        if (p.x < -20) p.x = width + 20;
+        if (p.x > width + 20) p.x = -20;
 
-      if (p.type === 'lotus') {
-        drawLotusPetal(p.x, p.y, p.size, p.rotation, p.opacity);
-      } else if (p.type === 'bodhi') {
-        drawBodhiLeaf(p.x, p.y, p.size, p.rotation, p.opacity);
-      } else {
-        drawGoldenDust(p.x, p.y, p.size, p.opacity);
+        if (p.type === 'lotus') {
+          drawLotusPetal(p.x, p.y, p.size, p.rotation, p.opacity);
+        } else if (p.type === 'bodhi') {
+          drawBodhiLeaf(p.x, p.y, p.size, p.rotation, p.opacity);
+        } else {
+          drawGoldenDust(p.x, p.y, p.size, p.opacity);
+        }
       }
     }
 

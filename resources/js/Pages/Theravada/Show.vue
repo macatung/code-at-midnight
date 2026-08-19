@@ -4,6 +4,7 @@ import { Link } from '@inertiajs/vue3';
 import TheravadaLayout from '@/Layouts/TheravadaLayout.vue';
 import { mindfulBell } from '@/audio/mindfulBellAudio';
 import { PALI_GLOSSARY, PaliGlossaryEntry } from '@/data/paliGlossary';
+import { useZenAtmosphere } from '@/composables/useZenAtmosphere';
 import mermaid from 'mermaid';
 
 const props = defineProps<{
@@ -32,6 +33,7 @@ const isRinging = ref(false);
 const isCandlelightOn = ref(false);
 const isFocusModeOn = ref(false);
 const isPaperMode = ref(true); // Default to clean white/parchment paper background for optimal readability
+const { isLeavesEnabled, toggleLeaves } = useZenAtmosphere();
 
 // Interactive Pāḷi Tooltip State
 interface ActiveTooltipState {
@@ -498,7 +500,7 @@ const suttaJsonLd = computed(() => ({
         <div class="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-stone-900 text-xs font-serif text-stone-400">
           <span class="italic">Tác giả / Nguồn: <strong class="text-stone-200 not-italic">{{ article.author || 'Pāḷi Tipiṭaka' }}</strong></span>
 
-          <!-- Reader Controls: Paper Mode, Candlelight, Focus Mode, Font size & Bell -->
+          <!-- Reader Controls: Paper Mode, Leaves Toggle, Candlelight, Focus Mode, Font size & Bell -->
           <div class="flex flex-wrap items-center gap-2">
             <!-- Paper / Night Mode Toggle -->
             <button
@@ -512,6 +514,21 @@ const suttaJsonLd = computed(() => ({
               :title="isPaperMode ? 'Chuyển sang nền đêm tĩnh mịch' : 'Chuyển sang nền giấy trắng sáng'"
             >
               <span>{{ isPaperMode ? '📜 Nền Giấy' : '🌙 Nền Đêm' }}</span>
+            </button>
+
+            <!-- Falling Leaves Toggle -->
+            <button
+              @click="toggleLeaves"
+              :class="[
+                'flex items-center gap-1.5 px-3 py-1.5 rounded-xl border transition-all cursor-pointer font-bold text-xs shadow-sm',
+                isLeavesEnabled
+                  ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+                  : 'bg-stone-900 text-stone-400 border-stone-800 hover:border-stone-700'
+              ]"
+              :title="isLeavesEnabled ? 'Tắt hiệu ứng lá rơi tĩnh tâm' : 'Bật hiệu ứng lá rơi nhẹ nhàng'"
+            >
+              <span>🍃</span>
+              <span>{{ isLeavesEnabled ? 'Lá Rơi: Bật' : 'Lá Rơi: Tắt' }}</span>
             </button>
 
             <!-- Candlelight Glow Toggle -->
@@ -595,7 +612,7 @@ const suttaJsonLd = computed(() => ({
         <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-600 via-amber-400 to-yellow-400" />
 
         <!-- Notification Banner about Pāḷi Term Highlights -->
-        <div class="mb-6 pb-4 border-b border-amber-500/20 flex items-center justify-between gap-2 text-xs font-serif text-amber-700 dark:text-amber-300/80 bg-amber-500/10 px-4 py-2.5 rounded-2xl">
+        <div class="mb-6 pb-4 border-b border-amber-500/20 flex items-center justify-between gap-2 text-xs font-serif text-amber-800 dark:text-amber-300/80 bg-amber-500/10 px-4 py-2.5 rounded-2xl">
           <span class="flex items-center gap-1.5">
             <span>💡</span>
             <span><strong>Chánh Niệm Tra Cứu:</strong> Rê chuột hoặc nhấp vào các thuật ngữ có gạch chân nét đứt để xem giải nghĩa Pāḷi chi tiết.</span>
@@ -680,7 +697,7 @@ const suttaJsonLd = computed(() => ({
       </section>
     </div>
 
-    <!-- Floating Interactive Pāḷi Term Tooltip Popover -->
+    <!-- Floating Interactive Pāḷi Term Tooltip Popover (Solid Ultra-High Contrast Card) -->
     <Teleport to="body">
       <Transition
         enter-active-class="transition ease-out duration-200"
@@ -692,7 +709,7 @@ const suttaJsonLd = computed(() => ({
       >
         <div
           v-if="activeTooltip"
-          class="zen-pali-popover fixed z-[9999] w-[90vw] max-w-sm sm:max-w-md p-5 rounded-2xl bg-stone-900/98 text-stone-100 border border-amber-500/40 shadow-[0_20px_60px_rgba(0,0,0,0.85)] backdrop-blur-xl transition-all select-text"
+          class="zen-pali-popover fixed z-[99999] w-[92vw] max-w-sm sm:max-w-md p-5 rounded-2xl bg-stone-950 text-stone-100 border-2 border-amber-500/90 shadow-[0_25px_80px_rgba(0,0,0,0.98)] backdrop-blur-2xl transition-all select-text ring-1 ring-amber-400/30"
           :style="{
             top: `${activeTooltip.y}px`,
             left: `${activeTooltip.x}px`,
@@ -703,37 +720,37 @@ const suttaJsonLd = computed(() => ({
         >
           <!-- Pointer Arrow -->
           <div
-            class="absolute w-3.5 h-3.5 bg-stone-900 border-amber-500/40 transform rotate-45"
-            :class="activeTooltip.placement === 'top' ? 'bottom-[-7px] border-b border-r' : 'top-[-7px] border-t border-l'"
+            class="absolute w-3.5 h-3.5 bg-stone-950 border-amber-500 transform rotate-45"
+            :class="activeTooltip.placement === 'top' ? 'bottom-[-8px] border-b-2 border-r-2' : 'top-[-8px] border-t-2 border-l-2'"
             style="left: calc(50% - 7px);"
           />
 
           <!-- Header -->
-          <div class="flex items-start justify-between gap-3 pb-3 mb-3 border-b border-amber-500/20">
-            <div class="space-y-0.5 text-left">
-              <div class="flex items-center gap-2">
-                <span class="text-lg font-serif font-bold text-amber-300">{{ activeTooltip.pali }}</span>
-                <span class="px-2 py-0.5 rounded-full text-[11px] font-serif font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+          <div class="flex items-start justify-between gap-3 pb-3 mb-3 border-b border-amber-500/30">
+            <div class="space-y-1 text-left">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="pali-title text-xl font-serif font-bold text-amber-300">{{ activeTooltip.pali }}</span>
+                <span class="pali-badge px-2.5 py-0.5 rounded-full text-xs font-serif font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
                   ☸️ {{ activeTooltip.category }}
                 </span>
               </div>
-              <div v-if="activeTooltip.vietnamese !== activeTooltip.pali" class="text-xs font-serif text-amber-200/80 font-medium">
-                {{ activeTooltip.vietnamese }}
+              <div v-if="activeTooltip.vietnamese !== activeTooltip.pali" class="pali-vn text-sm font-serif font-semibold text-amber-200">
+                Dịch nghĩa: <strong class="text-amber-100 font-bold not-italic">{{ activeTooltip.vietnamese }}</strong>
               </div>
             </div>
 
             <!-- Controls: Sound Bell & Close -->
-            <div class="flex items-center gap-1 shrink-0">
+            <div class="flex items-center gap-1.5 shrink-0">
               <button
                 @click="mindfulBell.ringBell(528, 2.0)"
-                class="p-1.5 rounded-lg hover:bg-stone-800 text-amber-300 text-xs transition-colors cursor-pointer"
+                class="p-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-amber-300 border border-stone-700 hover:border-amber-400 text-xs transition-all cursor-pointer shadow-sm"
                 title="Thỉnh chuông quán chiếu"
               >
                 🔔
               </button>
               <button
                 @click="closeTooltip"
-                class="p-1.5 rounded-lg hover:bg-stone-800 text-stone-400 hover:text-stone-200 text-xs transition-colors cursor-pointer"
+                class="p-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-stone-300 hover:text-white border border-stone-700 hover:border-stone-500 text-xs transition-all cursor-pointer shadow-sm"
                 title="Đóng"
               >
                 ✕
@@ -741,20 +758,20 @@ const suttaJsonLd = computed(() => ({
             </div>
           </div>
 
-          <!-- Definition Content -->
-          <div class="text-xs sm:text-sm font-serif text-stone-200 leading-relaxed text-left">
+          <!-- Definition Content (Solid High Contrast Dark Box with Pure White Text) -->
+          <div class="pali-meaning p-3.5 rounded-xl bg-stone-900/95 border border-stone-800/90 text-sm font-serif text-stone-100 leading-relaxed text-left font-normal select-text shadow-inner">
             {{ activeTooltip.meaning }}
           </div>
 
           <!-- Footer Action: Dictionary Link -->
-          <div class="mt-4 pt-2.5 border-t border-stone-800/80 flex items-center justify-between text-[11px] font-serif text-stone-400">
-            <span class="flex items-center gap-1 text-amber-400/80">
+          <div class="mt-3.5 pt-2.5 border-t border-stone-800/90 flex items-center justify-between text-xs font-serif text-stone-400">
+            <span class="flex items-center gap-1.5 text-amber-400 font-medium">
               <span>📖</span>
               <span>Chánh Pháp Tipiṭaka</span>
             </span>
             <Link
               :href="`/theravada/tu-dien-pali?q=${encodeURIComponent(activeTooltip.term)}`"
-              class="text-amber-300 hover:text-amber-200 font-bold underline decoration-dotted hover:decoration-solid transition-colors"
+              class="text-amber-300 hover:text-amber-200 font-bold underline decoration-amber-400/60 hover:decoration-solid transition-colors"
             >
               Xem trong từ điển Pāḷi →
             </Link>
@@ -837,5 +854,34 @@ const suttaJsonLd = computed(() => ({
   color: #fef3c7;
   border-bottom-style: solid;
   border-bottom-color: #fbbf24;
+}
+
+/* High Contrast Popover Enforcements */
+:global(.zen-pali-popover) {
+  background-color: #0c0a09 !important;
+  color: #f5f5f4 !important;
+  box-shadow: 0 25px 80px -10px rgba(0, 0, 0, 0.98), 0 0 0 2px rgba(245, 158, 11, 0.8) !important;
+  opacity: 1 !important;
+  z-index: 99999 !important;
+}
+
+:global(.zen-pali-popover .pali-title) {
+  color: #fcd34d !important;
+}
+
+:global(.zen-pali-popover .pali-vn) {
+  color: #fde68a !important;
+}
+
+:global(.zen-pali-popover .pali-meaning) {
+  background-color: #1c1917 !important;
+  color: #ffffff !important;
+  border-color: #292524 !important;
+}
+
+:global(.zen-pali-popover .pali-badge) {
+  background-color: rgba(245, 158, 11, 0.2) !important;
+  color: #fcd34d !important;
+  border-color: rgba(245, 158, 11, 0.5) !important;
 }
 </style>
