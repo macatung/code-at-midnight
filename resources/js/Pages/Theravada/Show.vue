@@ -3,6 +3,7 @@ import { ref, onMounted, onUnmounted, computed, nextTick, watch } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import TheravadaLayout from '@/Layouts/TheravadaLayout.vue';
 import { mindfulBell } from '@/audio/mindfulBellAudio';
+import { PALI_GLOSSARY, PaliGlossaryEntry } from '@/data/paliGlossary';
 import mermaid from 'mermaid';
 
 const props = defineProps<{
@@ -32,6 +33,22 @@ const isCandlelightOn = ref(false);
 const isFocusModeOn = ref(false);
 const isPaperMode = ref(true); // Default to clean white/parchment paper background for optimal readability
 
+// Interactive Pāḷi Tooltip State
+interface ActiveTooltipState {
+  targetEl: HTMLElement | null;
+  term: string;
+  pali: string;
+  vietnamese: string;
+  category: string;
+  meaning: string;
+  x: number;
+  y: number;
+  placement: 'top' | 'bottom';
+}
+
+const activeTooltip = ref<ActiveTooltipState | null>(null);
+let tooltipHideTimeout: any = null;
+
 const togglePaperMode = () => {
   isPaperMode.value = !isPaperMode.value;
   mindfulBell.ringBell(528, 1.0);
@@ -52,6 +69,96 @@ const handleScroll = () => {
   const total = document.documentElement.scrollHeight - window.innerHeight;
   if (total > 0) {
     readingProgress.value = Math.min(100, Math.max(0, (window.scrollY / total) * 100));
+  }
+};
+
+const showTooltip = (el: HTMLElement) => {
+  if (tooltipHideTimeout) {
+    clearTimeout(tooltipHideTimeout);
+    tooltipHideTimeout = null;
+  }
+
+  const term = decodeURIComponent(el.getAttribute('data-term') || '');
+  const pali = decodeURIComponent(el.getAttribute('data-pali') || term);
+  const vietnamese = decodeURIComponent(el.getAttribute('data-vietnamese') || term);
+  const category = decodeURIComponent(el.getAttribute('data-category') || 'Pháp Học Pāḷi');
+  const meaning = decodeURIComponent(el.getAttribute('data-meaning') || '');
+
+  if (!meaning) return;
+
+  const rect = el.getBoundingClientRect();
+  const popoverWidth = Math.min(380, window.innerWidth - 32);
+  let left = rect.left + rect.width / 2 - popoverWidth / 2;
+
+  // Clamp within viewport
+  if (left < 16) left = 16;
+  if (left + popoverWidth > window.innerWidth - 16) {
+    left = window.innerWidth - popoverWidth - 16;
+  }
+
+  let top = rect.top - 12;
+  let placement: 'top' | 'bottom' = 'top';
+
+  // If not enough room on top (e.g. within 200px from top of viewport), place below
+  if (rect.top < 220) {
+    top = rect.bottom + 12;
+    placement = 'bottom';
+  }
+
+  activeTooltip.value = {
+    targetEl: el,
+    term,
+    pali,
+    vietnamese,
+    category,
+    meaning,
+    x: left,
+    y: top,
+    placement,
+  };
+};
+
+const hideTooltipWithDelay = () => {
+  tooltipHideTimeout = setTimeout(() => {
+    activeTooltip.value = null;
+  }, 280);
+};
+
+const keepTooltipOpen = () => {
+  if (tooltipHideTimeout) {
+    clearTimeout(tooltipHideTimeout);
+    tooltipHideTimeout = null;
+  }
+};
+
+const closeTooltip = () => {
+  activeTooltip.value = null;
+};
+
+// Event delegation handler for article text
+const handleArticleInteraction = (e: MouseEvent) => {
+  const target = (e.target as HTMLElement)?.closest('.zen-pali-term') as HTMLElement | null;
+  if (e.type === 'mouseover' || e.type === 'click') {
+    if (target) {
+      showTooltip(target);
+    }
+  } else if (e.type === 'mouseout') {
+    if (target) {
+      hideTooltipWithDelay();
+    }
+  }
+};
+
+const handleKeydown = (e: KeyboardEvent) => {
+  if (e.key === 'Escape') {
+    closeTooltip();
+  }
+};
+
+const handleWindowClick = (e: MouseEvent) => {
+  const target = e.target as HTMLElement;
+  if (!target.closest('.zen-pali-term') && !target.closest('.zen-pali-popover')) {
+    closeTooltip();
   }
 };
 
@@ -95,6 +202,8 @@ const renderMermaidDiagrams = async () => {
 
 onMounted(() => {
   window.addEventListener('scroll', handleScroll, { passive: true });
+  window.addEventListener('keydown', handleKeydown);
+  window.addEventListener('click', handleWindowClick);
   renderMermaidDiagrams();
 });
 
@@ -107,6 +216,8 @@ watch(
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll);
+  window.removeEventListener('keydown', handleKeydown);
+  window.removeEventListener('click', handleWindowClick);
 });
 
 const ringBell = () => {
@@ -117,7 +228,78 @@ const ringBell = () => {
   }, 3000);
 };
 
-// Rich Markdown to Zen HTML Parser with Sutta-first readability
+const escapeRegExp = (str: string) => {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+};
+
+// Automatic Pāḷi Term Highlighter & Explanations Injector
+const annotatePaliTermsInHtml = (html: string) => {
+  if (!html) return '';
+
+  const customTerms: PaliGlossaryEntry[] = (props.article.pali_terms || []).map(item => ({
+    term: item.term,
+    pali: item.term,
+    vietnamese: item.term,
+    category: 'Thuật Ngữ Bài Kinh',
+    definition: item.meaning,
+    aliases: []
+  }));
+
+  const allTerms = [...customTerms, ...PALI_GLOSSARY];
+
+  const termMap = new Map<string, PaliGlossaryEntry>();
+  const searchPhrases: string[] = [];
+
+  allTerms.forEach(entry => {
+    const keys = [entry.term, entry.pali, entry.vietnamese, ...(entry.aliases || [])];
+    keys.forEach(k => {
+      if (k && k.trim().length >= 3) {
+        const lower = k.trim().toLowerCase();
+        if (!termMap.has(lower)) {
+          termMap.set(lower, entry);
+          searchPhrases.push(k.trim());
+        }
+      }
+    });
+  });
+
+  searchPhrases.sort((a, b) => b.length - a.length);
+  if (searchPhrases.length === 0) return html;
+
+  const pattern = new RegExp(`(?<![\\p{L}\\p{N}])(${searchPhrases.map(w => escapeRegExp(w)).join('|')})(?![\\p{L}\\p{N}])`, 'gui');
+  const segments = html.split(/(<[^>]+>)/g);
+  const termSeenCount = new Map<string, number>();
+
+  const transformed = segments.map(segment => {
+    if (segment.startsWith('<') && segment.endsWith('>')) {
+      return segment;
+    }
+
+    return segment.replace(pattern, (matched) => {
+      const entry = termMap.get(matched.toLowerCase());
+      if (!entry) return matched;
+
+      // Limit highlighting the same term up to 4 times per article to maintain clean reading flow
+      const count = termSeenCount.get(entry.term) || 0;
+      if (count >= 4) {
+        return matched;
+      }
+      termSeenCount.set(entry.term, count + 1);
+
+      const safeTerm = encodeURIComponent(entry.term);
+      const safePali = encodeURIComponent(entry.pali || entry.term);
+      const safeVietnamese = encodeURIComponent(entry.vietnamese || matched);
+      const safeCategory = encodeURIComponent(entry.category || 'Pháp Học Pāḷi');
+      const safeMeaning = encodeURIComponent(entry.definition);
+
+      return `<span class="zen-pali-term" data-term="${safeTerm}" data-pali="${safePali}" data-vietnamese="${safeVietnamese}" data-category="${safeCategory}" data-meaning="${safeMeaning}" tabindex="0" role="button" aria-haspopup="dialog" title="Nhấp hoặc rê chuột để xem giải nghĩa: ${entry.vietnamese || entry.pali}">${matched}<span class="zen-term-icon" aria-hidden="true">💡</span></span>`;
+    });
+  });
+
+  return transformed.join('');
+};
+
+// Rich Markdown to Zen HTML Parser with Sutta-first readability & Pāḷi Annotation
 const renderedMarkdown = computed(() => {
   if (!props.article.content) return '';
   let md = props.article.content;
@@ -133,6 +315,8 @@ const renderedMarkdown = computed(() => {
       </div>
     </div>`;
   });
+
+  let parsedHtml = '';
 
   if (isPaperMode.value) {
     // 2. Blockquotes (Paper Mode)
@@ -162,7 +346,7 @@ const renderedMarkdown = computed(() => {
 
     // 7. Paragraphs
     const paragraphs = md.split(/\n\n+/);
-    return paragraphs.map(p => {
+    parsedHtml = paragraphs.map(p => {
       p = p.trim();
       if (p.startsWith('<div') || p.startsWith('<blockquote') || p.startsWith('<h') || p.startsWith('<li')) {
         return p;
@@ -197,7 +381,7 @@ const renderedMarkdown = computed(() => {
 
     // 7. Paragraphs
     const paragraphs = md.split(/\n\n+/);
-    return paragraphs.map(p => {
+    parsedHtml = paragraphs.map(p => {
       p = p.trim();
       if (p.startsWith('<div') || p.startsWith('<blockquote') || p.startsWith('<h') || p.startsWith('<li')) {
         return p;
@@ -205,6 +389,9 @@ const renderedMarkdown = computed(() => {
       return `<p class="my-4 text-stone-200 font-serif leading-relaxed text-justify">${p.replace(/\n/g, '<br/>')}</p>`;
     }).join('\n');
   }
+
+  // 8. Inject Pāḷi Term Explanations Tooltips
+  return annotatePaliTermsInHtml(parsedHtml);
 });
 
 const suttaJsonLd = computed(() => ({
@@ -390,7 +577,7 @@ const suttaJsonLd = computed(() => ({
         </div>
       </header>
 
-      <!-- Main Text Body (Rendered HTML Markdown inside High-Contrast Container) -->
+      <!-- Main Text Body (Rendered HTML Markdown inside High-Contrast Container with Pāḷi Hover Explanations) -->
       <article
         :class="[
           'zen-article-content font-serif leading-loose rounded-3xl p-6 sm:p-10 lg:p-12 mb-12 relative overflow-hidden transition-all duration-500 shadow-2xl',
@@ -400,9 +587,21 @@ const suttaJsonLd = computed(() => ({
           { 'focus-mode-active': isFocusModeOn }
         ]"
         :style="{ fontSize: `${fontSize}px` }"
+        @mouseover="handleArticleInteraction"
+        @mouseout="handleArticleInteraction"
+        @click="handleArticleInteraction"
       >
         <!-- Top Golden Accent Bar -->
         <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-600 via-amber-400 to-yellow-400" />
+
+        <!-- Notification Banner about Pāḷi Term Highlights -->
+        <div class="mb-6 pb-4 border-b border-amber-500/20 flex items-center justify-between gap-2 text-xs font-serif text-amber-700 dark:text-amber-300/80 bg-amber-500/10 px-4 py-2.5 rounded-2xl">
+          <span class="flex items-center gap-1.5">
+            <span>💡</span>
+            <span><strong>Chánh Niệm Tra Cứu:</strong> Rê chuột hoặc nhấp vào các thuật ngữ có gạch chân nét đứt để xem giải nghĩa Pāḷi chi tiết.</span>
+          </span>
+          <span class="text-[11px] font-mono opacity-70 hidden sm:inline">Pāḷi Canon Tooltips</span>
+        </div>
 
         <div class="space-y-4 font-serif text-left" v-html="renderedMarkdown" />
       </article>
@@ -480,6 +679,89 @@ const suttaJsonLd = computed(() => ({
         </div>
       </section>
     </div>
+
+    <!-- Floating Interactive Pāḷi Term Tooltip Popover -->
+    <Teleport to="body">
+      <Transition
+        enter-active-class="transition ease-out duration-200"
+        enter-from-class="opacity-0 translate-y-2 scale-95"
+        enter-to-class="opacity-100 translate-y-0 scale-100"
+        leave-active-class="transition ease-in duration-150"
+        leave-from-class="opacity-100 translate-y-0 scale-100"
+        leave-to-class="opacity-0 translate-y-2 scale-95"
+      >
+        <div
+          v-if="activeTooltip"
+          class="zen-pali-popover fixed z-[9999] w-[90vw] max-w-sm sm:max-w-md p-5 rounded-2xl bg-stone-900/98 text-stone-100 border border-amber-500/40 shadow-[0_20px_60px_rgba(0,0,0,0.85)] backdrop-blur-xl transition-all select-text"
+          :style="{
+            top: `${activeTooltip.y}px`,
+            left: `${activeTooltip.x}px`,
+            transform: activeTooltip.placement === 'top' ? 'translateY(-100%)' : 'none'
+          }"
+          @mouseenter="keepTooltipOpen"
+          @mouseleave="hideTooltipWithDelay"
+        >
+          <!-- Pointer Arrow -->
+          <div
+            class="absolute w-3.5 h-3.5 bg-stone-900 border-amber-500/40 transform rotate-45"
+            :class="activeTooltip.placement === 'top' ? 'bottom-[-7px] border-b border-r' : 'top-[-7px] border-t border-l'"
+            style="left: calc(50% - 7px);"
+          />
+
+          <!-- Header -->
+          <div class="flex items-start justify-between gap-3 pb-3 mb-3 border-b border-amber-500/20">
+            <div class="space-y-0.5 text-left">
+              <div class="flex items-center gap-2">
+                <span class="text-lg font-serif font-bold text-amber-300">{{ activeTooltip.pali }}</span>
+                <span class="px-2 py-0.5 rounded-full text-[11px] font-serif font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                  ☸️ {{ activeTooltip.category }}
+                </span>
+              </div>
+              <div v-if="activeTooltip.vietnamese !== activeTooltip.pali" class="text-xs font-serif text-amber-200/80 font-medium">
+                {{ activeTooltip.vietnamese }}
+              </div>
+            </div>
+
+            <!-- Controls: Sound Bell & Close -->
+            <div class="flex items-center gap-1 shrink-0">
+              <button
+                @click="mindfulBell.ringBell(528, 2.0)"
+                class="p-1.5 rounded-lg hover:bg-stone-800 text-amber-300 text-xs transition-colors cursor-pointer"
+                title="Thỉnh chuông quán chiếu"
+              >
+                🔔
+              </button>
+              <button
+                @click="closeTooltip"
+                class="p-1.5 rounded-lg hover:bg-stone-800 text-stone-400 hover:text-stone-200 text-xs transition-colors cursor-pointer"
+                title="Đóng"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+
+          <!-- Definition Content -->
+          <div class="text-xs sm:text-sm font-serif text-stone-200 leading-relaxed text-left">
+            {{ activeTooltip.meaning }}
+          </div>
+
+          <!-- Footer Action: Dictionary Link -->
+          <div class="mt-4 pt-2.5 border-t border-stone-800/80 flex items-center justify-between text-[11px] font-serif text-stone-400">
+            <span class="flex items-center gap-1 text-amber-400/80">
+              <span>📖</span>
+              <span>Chánh Pháp Tipiṭaka</span>
+            </span>
+            <Link
+              :href="`/theravada/tu-dien-pali?q=${encodeURIComponent(activeTooltip.term)}`"
+              class="text-amber-300 hover:text-amber-200 font-bold underline decoration-dotted hover:decoration-solid transition-colors"
+            >
+              Xem trong từ điển Pāḷi →
+            </Link>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </TheravadaLayout>
 </template>
 
@@ -503,5 +785,57 @@ const suttaJsonLd = computed(() => ({
   transform: translateX(4px);
   background: rgba(245, 158, 11, 0.04);
   border-radius: 8px;
+}
+
+/* Pāḷi Term Highlight & Tooltip Trigger */
+:deep(.zen-pali-term) {
+  cursor: help;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: baseline;
+  border-bottom: 2px dotted #d97706;
+  color: #92400e;
+  padding: 0 2px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+:deep(.zen-pali-term:hover),
+:deep(.zen-pali-term:focus) {
+  background-color: rgba(251, 191, 36, 0.25);
+  color: #78350f;
+  border-bottom-style: solid;
+  border-bottom-color: #b45309;
+  outline: none;
+}
+
+:deep(.zen-term-icon) {
+  font-size: 10px;
+  margin-left: 2px;
+  opacity: 0.65;
+  transition: opacity 0.2s;
+  user-select: none;
+}
+
+:deep(.zen-pali-term:hover .zen-term-icon) {
+  opacity: 1;
+  transform: scale(1.15);
+}
+
+/* Night Mode Colors */
+:global(.dark) :deep(.zen-pali-term),
+.zen-article-content:not(.bg-stone-50\/95) :deep(.zen-pali-term) {
+  border-bottom: 2px dotted #f59e0b;
+  color: #fde68a;
+}
+
+:global(.dark) :deep(.zen-pali-term:hover),
+:global(.dark) :deep(.zen-pali-term:focus),
+.zen-article-content:not(.bg-stone-50\/95) :deep(.zen-pali-term:hover) {
+  background-color: rgba(120, 53, 15, 0.45);
+  color: #fef3c7;
+  border-bottom-style: solid;
+  border-bottom-color: #fbbf24;
 }
 </style>
