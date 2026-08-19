@@ -111,7 +111,7 @@ function tryParseSubtasks(notes: string): SubtaskItem[] {
   return [];
 }
 
-// Light / Dark Theme State (Default: Light Mode)
+// Light / Dark Theme State (Default: Light Mode with High Contrast)
 const isDarkMode = ref(false);
 
 const toggleTheme = () => {
@@ -127,9 +127,6 @@ const activeProjectMenuId = ref<number | null>(null);
 
 // Top View Mode: Board (Kanban) | Backlog (Sprint Planning) | Roadmap (Gantt)
 const currentView = ref<'board' | 'backlog' | 'roadmap'>('board');
-
-// Board Swimlane Mode: 'none' | 'epic' | 'category'
-const swimlaneMode = ref<'none' | 'epic' | 'category'>('none');
 
 // Collapsed Sprints in Backlog View
 const collapsedSprints = ref<Record<number, boolean>>({});
@@ -380,39 +377,134 @@ const getSprintStats = (sprintId: number) => {
   };
 };
 
-// Badges & Visual Styles
+// High-Contrast Adaptive Badges for Light & Dark Modes
 const getIssueTypeBadge = (type: string) => {
   switch (type) {
     case 'epic':
-      return { label: 'EPIC', icon: '⚡', class: 'bg-purple-50 text-purple-700 border-purple-200 font-bold' };
+      return {
+        label: 'EPIC',
+        icon: '⚡',
+        class: isDarkMode.value
+          ? 'bg-purple-950/70 text-purple-300 border-purple-700/60 font-bold'
+          : 'bg-purple-50 text-purple-800 border-purple-200 font-bold'
+      };
     case 'story':
-      return { label: 'STORY', icon: '📖', class: 'bg-emerald-50 text-emerald-700 border-emerald-200 font-semibold' };
+      return {
+        label: 'STORY',
+        icon: '📖',
+        class: isDarkMode.value
+          ? 'bg-emerald-950/70 text-emerald-300 border-emerald-700/60 font-semibold'
+          : 'bg-emerald-50 text-emerald-800 border-emerald-200 font-semibold'
+      };
     case 'bug':
-      return { label: 'BUG', icon: '🐞', class: 'bg-rose-50 text-rose-700 border-rose-200 font-semibold' };
+      return {
+        label: 'BUG',
+        icon: '🐞',
+        class: isDarkMode.value
+          ? 'bg-rose-950/70 text-rose-300 border-rose-700/60 font-semibold'
+          : 'bg-rose-50 text-rose-800 border-rose-200 font-semibold'
+      };
     case 'task':
     default:
-      return { label: 'TASK', icon: '☑️', class: 'bg-blue-50 text-blue-700 border-blue-200 font-semibold' };
+      return {
+        label: 'TASK',
+        icon: '☑️',
+        class: isDarkMode.value
+          ? 'bg-blue-950/70 text-blue-300 border-blue-700/60 font-semibold'
+          : 'bg-blue-50 text-blue-800 border-blue-200 font-semibold'
+      };
   }
 };
 
 const getPriorityBadge = (priority: string) => {
   switch (priority) {
-    case 'urgent': return { label: 'Khẩn cấp', icon: '🔴', class: 'bg-red-50 text-red-700 border-red-200' };
-    case 'high': return { label: 'Ưu tiên', icon: '🟠', class: 'bg-amber-50 text-amber-800 border-amber-200' };
-    case 'medium': return { label: 'Bình thường', icon: '🟡', class: 'bg-slate-100 text-slate-700 border-slate-200' };
-    case 'low': return { label: 'Thấp', icon: '⚪', class: 'bg-slate-50 text-slate-500 border-slate-200' };
-    default: return { label: priority, icon: '⚪', class: 'bg-slate-100 text-slate-600 border-slate-200' };
+    case 'urgent':
+      return {
+        label: 'Khẩn cấp',
+        icon: '🔴',
+        class: isDarkMode.value
+          ? 'bg-red-950/70 text-red-300 border-red-700/60 font-bold'
+          : 'bg-red-50 text-red-800 border-red-200 font-bold'
+      };
+    case 'high':
+      return {
+        label: 'Ưu tiên',
+        icon: '🟠',
+        class: isDarkMode.value
+          ? 'bg-amber-950/70 text-amber-300 border-amber-700/60 font-semibold'
+          : 'bg-amber-50 text-amber-900 border-amber-200 font-semibold'
+      };
+    case 'medium':
+      return {
+        label: 'Bình thường',
+        icon: '🟡',
+        class: isDarkMode.value
+          ? 'bg-slate-800 text-slate-200 border-slate-700 font-medium'
+          : 'bg-slate-100 text-slate-800 border-slate-300 font-medium'
+      };
+    case 'low':
+      return {
+        label: 'Thấp',
+        icon: '⚪',
+        class: isDarkMode.value
+          ? 'bg-slate-900 text-slate-400 border-slate-800 font-medium'
+          : 'bg-slate-50 text-slate-600 border-slate-200 font-medium'
+      };
+    default:
+      return {
+        label: priority,
+        icon: '⚪',
+        class: isDarkMode.value
+          ? 'bg-slate-800 text-slate-300 border-slate-700'
+          : 'bg-slate-100 text-slate-700 border-slate-200'
+      };
   }
 };
 
 const getCategoryBadge = (category: string) => {
   switch (category) {
-    case 'ai_agent': return { label: 'AI Agent', class: 'text-purple-700 bg-purple-50 border-purple-200' };
-    case 'backend': return { label: 'Backend', class: 'text-blue-700 bg-blue-50 border-blue-200' };
-    case 'frontend': return { label: 'Frontend', class: 'text-cyan-700 bg-cyan-50 border-cyan-200' };
-    case 'infra': return { label: 'Infra', class: 'text-amber-800 bg-amber-50 border-amber-200' };
-    case 'mindful': return { label: 'Chánh Niệm', class: 'text-emerald-700 bg-emerald-50 border-emerald-200' };
-    default: return { label: category, class: 'text-slate-700 bg-slate-100 border-slate-200' };
+    case 'ai_agent':
+      return {
+        label: 'AI Agent',
+        class: isDarkMode.value
+          ? 'bg-purple-950/60 text-purple-300 border-purple-800/60'
+          : 'bg-purple-50 text-purple-800 border-purple-200 font-medium'
+      };
+    case 'backend':
+      return {
+        label: 'Backend',
+        class: isDarkMode.value
+          ? 'bg-blue-950/60 text-blue-300 border-blue-800/60'
+          : 'bg-blue-50 text-blue-800 border-blue-200 font-medium'
+      };
+    case 'frontend':
+      return {
+        label: 'Frontend',
+        class: isDarkMode.value
+          ? 'bg-cyan-950/60 text-cyan-300 border-cyan-800/60'
+          : 'bg-cyan-50 text-cyan-800 border-cyan-200 font-medium'
+      };
+    case 'infra':
+      return {
+        label: 'Infra',
+        class: isDarkMode.value
+          ? 'bg-amber-950/60 text-amber-300 border-amber-800/60'
+          : 'bg-amber-50 text-amber-900 border-amber-200 font-medium'
+      };
+    case 'mindful':
+      return {
+        label: 'Chánh Niệm',
+        class: isDarkMode.value
+          ? 'bg-emerald-950/60 text-emerald-300 border-emerald-800/60'
+          : 'bg-emerald-50 text-emerald-800 border-emerald-200 font-medium'
+      };
+    default:
+      return {
+        label: category,
+        class: isDarkMode.value
+          ? 'bg-slate-800 text-slate-300 border-slate-700'
+          : 'bg-slate-100 text-slate-700 border-slate-200 font-medium'
+      };
   }
 };
 
@@ -422,40 +514,39 @@ const getProjectTaskCount = (projectId: string | number) => {
   return taskList.value.filter(t => t.project_id === Number(projectId)).length;
 };
 
-// Lightweight Markdown Formatter
+// Lightweight High-Contrast Markdown Formatter
 const formatMarkdown = (content: string | null): string => {
   if (!content) return '';
 
   let html = content
-    // Escape standard HTML tags
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;');
 
   // Format Code Blocks ```lang ... ```
   html = html.replace(/```([a-zA-Z0-9_-]*)\n([\s\S]*?)```/g, (match, lang, code) => {
-    return `<div class="my-3 rounded-xl overflow-hidden border border-slate-700 bg-slate-900 text-slate-100 shadow-md">
-      <div class="px-3.5 py-1.5 bg-slate-800 text-[11px] font-mono text-slate-400 border-b border-slate-700 flex items-center justify-between">
+    return `<div class="my-3 rounded-xl overflow-hidden border border-slate-700 bg-slate-950 text-slate-100 shadow-md">
+      <div class="px-3.5 py-1.5 bg-slate-900 text-[11px] font-mono text-slate-400 border-b border-slate-800 flex items-center justify-between font-bold">
         <span>${lang ? lang.toUpperCase() : 'CODE'}</span>
       </div>
-      <pre class="p-3.5 text-xs font-mono text-emerald-400 overflow-x-auto leading-relaxed"><code>${code.trim()}</code></pre>
+      <pre class="p-3.5 text-xs font-mono text-emerald-400 overflow-x-auto leading-relaxed font-semibold"><code>${code.trim()}</code></pre>
     </div>`;
   });
 
   // Format Headings
   html = html
-    .replace(/^#### (.*$)/gim, '<h4 class="text-xs font-bold font-display uppercase tracking-wider text-slate-800 dark:text-slate-200 mt-3 mb-1.5">$1</h4>')
-    .replace(/^### (.*$)/gim, '<h3 class="text-sm font-bold text-slate-900 dark:text-white mt-3.5 mb-1.5 border-b border-slate-200 dark:border-slate-800 pb-1">$1</h3>')
-    .replace(/^## (.*$)/gim, '<h2 class="text-base font-bold text-slate-900 dark:text-white mt-4 mb-2">$1</h2>')
-    .replace(/^# (.*$)/gim, '<h1 class="text-lg font-bold text-slate-900 dark:text-white mt-4 mb-2">$1</h1>');
+    .replace(/^#### (.*$)/gim, '<h4 class="text-xs font-bold font-display uppercase tracking-wider text-slate-900 dark:text-slate-100 mt-3 mb-1.5">$1</h4>')
+    .replace(/^### (.*$)/gim, '<h3 class="text-sm font-bold text-slate-950 dark:text-white mt-3.5 mb-1.5 border-b border-slate-200 dark:border-slate-800 pb-1">$1</h3>')
+    .replace(/^## (.*$)/gim, '<h2 class="text-base font-bold text-slate-950 dark:text-white mt-4 mb-2">$1</h2>')
+    .replace(/^# (.*$)/gim, '<h1 class="text-lg font-bold text-slate-950 dark:text-white mt-4 mb-2">$1</h1>');
 
   // Format Bold & Italic
   html = html
-    .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-900 dark:text-white">$1</strong>')
-    .replace(/\*(.*?)\*/g, '<em class="italic text-slate-600 dark:text-slate-300">$1</em>');
+    .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-950 dark:text-white">$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em class="italic text-slate-700 dark:text-slate-300">$1</em>');
 
   // Format Bullet Points
-  html = html.replace(/^\s*-\s+(.*$)/gim, '<li class="ml-4 list-disc text-slate-700 dark:text-slate-300 my-0.5">$1</li>');
+  html = html.replace(/^\s*-\s+(.*$)/gim, '<li class="ml-4 list-disc text-slate-800 dark:text-slate-200 my-0.5 font-medium">$1</li>');
 
   // Format Paragraphs
   html = html.replace(/\n\n/g, '<div class="h-2"></div>');
@@ -991,16 +1082,16 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <Head title="Tasks Hub | Linear & Jira Modern Workspace" />
+  <Head title="Tasks Hub | High Contrast Linear & Jira Workspace" />
 
   <div
     :class="[
       'min-h-screen font-sans flex flex-col transition-colors duration-150 selection:bg-blue-100 selection:text-blue-900',
-      isDarkMode ? 'bg-[#080d1a] text-slate-100' : 'bg-[#f8fafc] text-slate-800'
+      isDarkMode ? 'dark bg-[#080d1a] text-slate-100' : 'bg-[#f8fafc] text-slate-900'
     ]"
   >
     <!-- ========================================================================= -->
-    <!-- 1. TOP NAVBAR (CLEAN & MODERN)                                            -->
+    <!-- 1. TOP NAVBAR (HIGH CONTRAST & CLEAR ICONS)                               -->
     <!-- ========================================================================= -->
     <header
       :class="[
@@ -1014,8 +1105,8 @@ onUnmounted(() => {
           <button
             @click="isSidebarOpen = !isSidebarOpen"
             :class="[
-              'p-1.5 rounded-lg border transition-colors cursor-pointer text-xs',
-              isDarkMode ? 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white' : 'bg-slate-50 border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              'p-1.5 rounded-lg border transition-colors cursor-pointer text-xs font-bold',
+              isDarkMode ? 'bg-slate-900 border-slate-800 text-slate-300 hover:text-white' : 'bg-slate-50 border-slate-200 text-slate-700 hover:text-slate-900 hover:bg-slate-100'
             ]"
             title="Đóng / Mở danh mục dự án"
           >
@@ -1026,10 +1117,10 @@ onUnmounted(() => {
           <a href="/" class="flex items-center gap-2.5 group">
             <MiniMascotLogo size="sm" :enable-sound="true" />
             <div class="flex items-center gap-2">
-              <span :class="['font-display font-bold text-base tracking-tight', isDarkMode ? 'text-white' : 'text-slate-900']">
+              <span :class="['font-display font-bold text-base tracking-tight', isDarkMode ? 'text-white' : 'text-slate-950']">
                 Tasks Hub
               </span>
-              <span class="px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200 font-mono text-[10px] font-bold">
+              <span class="px-2 py-0.5 rounded-md bg-blue-50 text-blue-800 dark:bg-blue-950/70 dark:text-blue-300 border border-blue-200 dark:border-blue-800 font-mono text-[10px] font-bold">
                 JIRA LITE
               </span>
             </div>
@@ -1039,7 +1130,7 @@ onUnmounted(() => {
         <!-- Center Tabs: Board | Backlog | Roadmap -->
         <div
           :class="[
-            'hidden md:flex items-center p-1 rounded-xl border font-medium text-xs gap-1',
+            'hidden md:flex items-center p-1 rounded-xl border font-semibold text-xs gap-1',
             isDarkMode ? 'bg-slate-900/90 border-slate-800' : 'bg-slate-100 border-slate-200/80'
           ]"
         >
@@ -1048,8 +1139,8 @@ onUnmounted(() => {
             :class="[
               'px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5',
               currentView === 'board'
-                ? (isDarkMode ? 'bg-blue-600 text-white font-semibold shadow-xs' : 'bg-white text-blue-700 font-semibold shadow-xs border border-slate-200/60')
-                : (isDarkMode ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900')
+                ? (isDarkMode ? 'bg-blue-600 text-white font-bold shadow-xs' : 'bg-white text-blue-800 font-bold shadow-xs border border-slate-200/80')
+                : (isDarkMode ? 'text-slate-400 hover:text-white' : 'text-slate-700 hover:text-slate-950')
             ]"
           >
             <span>📋</span>
@@ -1061,8 +1152,8 @@ onUnmounted(() => {
             :class="[
               'px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5',
               currentView === 'backlog'
-                ? (isDarkMode ? 'bg-blue-600 text-white font-semibold shadow-xs' : 'bg-white text-blue-700 font-semibold shadow-xs border border-slate-200/60')
-                : (isDarkMode ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900')
+                ? (isDarkMode ? 'bg-blue-600 text-white font-bold shadow-xs' : 'bg-white text-blue-800 font-bold shadow-xs border border-slate-200/80')
+                : (isDarkMode ? 'text-slate-400 hover:text-white' : 'text-slate-700 hover:text-slate-950')
             ]"
           >
             <span>📦</span>
@@ -1074,8 +1165,8 @@ onUnmounted(() => {
             :class="[
               'px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5',
               currentView === 'roadmap'
-                ? (isDarkMode ? 'bg-blue-600 text-white font-semibold shadow-xs' : 'bg-white text-blue-700 font-semibold shadow-xs border border-slate-200/60')
-                : (isDarkMode ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900')
+                ? (isDarkMode ? 'bg-blue-600 text-white font-bold shadow-xs' : 'bg-white text-blue-800 font-bold shadow-xs border border-slate-200/80')
+                : (isDarkMode ? 'text-slate-400 hover:text-white' : 'text-slate-700 hover:text-slate-950')
             ]"
           >
             <span>🗺️</span>
@@ -1085,22 +1176,25 @@ onUnmounted(() => {
 
         <!-- Right Controls -->
         <div class="flex items-center gap-2">
-          <!-- Light / Dark Toggle -->
+          <!-- Light / Dark Toggle Button with Distinct Visual Badge -->
           <button
             @click="toggleTheme"
             :class="[
-              'p-2 rounded-xl border text-xs font-semibold transition-colors cursor-pointer',
-              isDarkMode ? 'bg-slate-900 border-slate-800 text-amber-300 hover:bg-slate-800' : 'bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200'
+              'px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-xs',
+              isDarkMode
+                ? 'bg-slate-900 border-slate-700 text-amber-300 hover:bg-slate-800'
+                : 'bg-white border-slate-300 text-slate-800 hover:bg-slate-50'
             ]"
-            :title="isDarkMode ? 'Chuyển sang Giao diện Sáng' : 'Chuyển sang Giao diện Tối'"
+            :title="isDarkMode ? 'Chuyển sang Giao diện Sáng (High Contrast Light Mode)' : 'Chuyển sang Giao diện Tối (High Contrast Dark Mode)'"
           >
-            <span>{{ isDarkMode ? '☀️ Sáng' : '🌙 Tối' }}</span>
+            <span>{{ isDarkMode ? '☀️' : '🌙' }}</span>
+            <span class="hidden sm:inline">{{ isDarkMode ? 'Sáng' : 'Tối' }}</span>
           </button>
 
           <!-- Create Issue Button -->
           <button
             @click="openCreateTaskModal"
-            class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
+            class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
           >
             <span>+</span>
             <span>Tạo Task</span>
@@ -1111,7 +1205,7 @@ onUnmounted(() => {
             @click="lockWorkspace"
             :class="[
               'p-2 rounded-xl border text-xs transition-colors cursor-pointer',
-              isDarkMode ? 'bg-slate-900 border-slate-800 text-slate-400 hover:text-red-400' : 'bg-slate-50 border-slate-200 text-slate-500 hover:text-red-600 hover:bg-red-50'
+              isDarkMode ? 'bg-slate-900 border-slate-800 text-slate-400 hover:text-red-400' : 'bg-slate-50 border-slate-200 text-slate-600 hover:text-red-600 hover:bg-red-50'
             ]"
             title="Khóa không gian làm việc (PIN: 301095)"
           >
@@ -1125,7 +1219,7 @@ onUnmounted(() => {
     <!-- 2. MAIN LAYOUT (SIDEBAR + MAIN CANVAS)                                    -->
     <!-- ========================================================================= -->
     <div class="flex-1 flex overflow-hidden">
-      <!-- SIDEBAR: DỰ ÁN 2-LINE LAYOUT -->
+      <!-- SIDEBAR: DỰ ÁN 2-LINE HIGH CONTRAST LAYOUT -->
       <aside
         v-if="isSidebarOpen"
         :class="[
@@ -1141,18 +1235,18 @@ onUnmounted(() => {
               :class="[
                 'w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs transition-all cursor-pointer border text-left',
                 selectedProjectId === 'all'
-                  ? (isDarkMode ? 'bg-slate-900 text-white border-blue-500/40 font-semibold' : 'bg-blue-50/80 text-blue-900 border-blue-200 font-semibold shadow-xs')
-                  : (isDarkMode ? 'text-slate-400 border-transparent hover:text-white hover:bg-slate-900/60' : 'text-slate-700 border-transparent hover:bg-slate-50 hover:text-slate-900')
+                  ? (isDarkMode ? 'bg-slate-900 text-white border-blue-500/60 font-bold' : 'bg-blue-50/90 text-blue-950 border-blue-300 font-bold shadow-xs')
+                  : (isDarkMode ? 'text-slate-300 border-transparent hover:text-white hover:bg-slate-900/60' : 'text-slate-800 border-transparent hover:bg-slate-50 hover:text-slate-950')
               ]"
             >
               <div class="flex items-center gap-2.5 min-w-0">
                 <span class="text-base">📁</span>
                 <div>
-                  <div class="font-bold text-xs text-slate-900 dark:text-white">Tất Cả Dự Án</div>
-                  <div class="text-[11px] text-slate-500">Toàn bộ công việc & nhiệm vụ</div>
+                  <div :class="['font-bold text-xs', isDarkMode ? 'text-white' : 'text-slate-950']">Tất Cả Dự Án</div>
+                  <div :class="['text-[11px]', isDarkMode ? 'text-slate-400' : 'text-slate-600']">Toàn bộ công việc & nhiệm vụ</div>
                 </div>
               </div>
-              <span :class="['font-mono text-xs font-bold px-2 py-0.5 rounded-full', isDarkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-600 border border-slate-200']">
+              <span :class="['font-mono text-xs font-bold px-2 py-0.5 rounded-full', isDarkMode ? 'bg-slate-800 text-slate-300 border border-slate-700' : 'bg-slate-100 text-slate-800 border border-slate-300']">
                 {{ getProjectTaskCount('all') }}
               </span>
             </button>
@@ -1162,18 +1256,18 @@ onUnmounted(() => {
               :class="[
                 'w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs transition-all cursor-pointer border text-left',
                 selectedProjectId === 'unassigned'
-                  ? (isDarkMode ? 'bg-slate-900 text-white border-blue-500/40 font-semibold' : 'bg-blue-50/80 text-blue-900 border-blue-200 font-semibold shadow-xs')
-                  : (isDarkMode ? 'text-slate-400 border-transparent hover:text-white hover:bg-slate-900/60' : 'text-slate-700 border-transparent hover:bg-slate-50 hover:text-slate-900')
+                  ? (isDarkMode ? 'bg-slate-900 text-white border-blue-500/60 font-bold' : 'bg-blue-50/90 text-blue-950 border-blue-300 font-bold shadow-xs')
+                  : (isDarkMode ? 'text-slate-300 border-transparent hover:text-white hover:bg-slate-900/60' : 'text-slate-800 border-transparent hover:bg-slate-50 hover:text-slate-950')
               ]"
             >
               <div class="flex items-center gap-2.5 min-w-0">
                 <span class="text-base">📦</span>
                 <div>
-                  <div class="font-bold text-xs text-slate-900 dark:text-white">Chung (Chưa gán)</div>
-                  <div class="text-[11px] text-slate-500">Task lẻ chưa gán vào dự án</div>
+                  <div :class="['font-bold text-xs', isDarkMode ? 'text-white' : 'text-slate-950']">Chung (Chưa gán)</div>
+                  <div :class="['text-[11px]', isDarkMode ? 'text-slate-400' : 'text-slate-600']">Task lẻ chưa gán vào dự án</div>
                 </div>
               </div>
-              <span :class="['font-mono text-xs font-bold px-2 py-0.5 rounded-full', isDarkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-600 border border-slate-200']">
+              <span :class="['font-mono text-xs font-bold px-2 py-0.5 rounded-full', isDarkMode ? 'bg-slate-800 text-slate-300 border border-slate-700' : 'bg-slate-100 text-slate-800 border border-slate-300']">
                 {{ getProjectTaskCount('unassigned') }}
               </span>
             </button>
@@ -1181,14 +1275,14 @@ onUnmounted(() => {
 
           <!-- GROUP 1: WORK PROJECTS (2-LINE ITEM) -->
           <div class="space-y-2">
-            <div class="flex items-center justify-between px-2 text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400">
-              <span class="flex items-center gap-1.5 text-blue-600">
+            <div class="flex items-center justify-between px-2 text-[11px] font-mono font-bold uppercase tracking-wider">
+              <span class="flex items-center gap-1.5 text-blue-700 dark:text-blue-400 font-bold">
                 <span>💼</span>
                 <span>DỰ ÁN CÔNG VIỆC</span>
               </span>
               <button
                 @click="openCreateProjectModal('work')"
-                class="hover:text-blue-600 p-0.5 rounded cursor-pointer text-xs"
+                class="hover:text-blue-600 p-0.5 rounded cursor-pointer text-xs font-bold"
                 title="Tạo dự án mới"
               >
                 +
@@ -1209,27 +1303,27 @@ onUnmounted(() => {
                   :class="[
                     'w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs transition-all cursor-pointer border text-left',
                     selectedProjectId === proj.id
-                      ? (isDarkMode ? 'bg-slate-900 text-white border-blue-500/40 font-semibold' : 'bg-blue-50/90 text-blue-950 border-blue-300 shadow-xs')
-                      : (isDarkMode ? 'text-slate-400 border-transparent hover:text-slate-200 hover:bg-slate-900/50' : 'text-slate-700 border-transparent hover:bg-slate-50 hover:text-slate-900')
+                      ? (isDarkMode ? 'bg-slate-900 text-white border-blue-500 font-bold' : 'bg-blue-50/90 text-blue-950 border-blue-300 font-bold shadow-xs')
+                      : (isDarkMode ? 'text-slate-300 border-transparent hover:text-white hover:bg-slate-900/50' : 'text-slate-800 border-transparent hover:bg-slate-50 hover:text-slate-950')
                   ]"
                 >
                   <!-- Left side: 2 Lines (Title + Description) -->
                   <div class="min-w-0 pr-2 flex-1">
                     <div class="flex items-center gap-2 mb-0.5">
                       <span class="w-2.5 h-2.5 rounded-full shrink-0" :style="{ backgroundColor: proj.color || '#2563eb' }"></span>
-                      <span class="font-bold text-xs text-slate-900 dark:text-white truncate">{{ proj.title }}</span>
-                      <span v-if="proj.key" :class="['px-1.5 py-0.2 rounded text-[9px] font-mono font-bold shrink-0', isDarkMode ? 'bg-slate-800 text-slate-400' : 'bg-blue-50 text-blue-700 border border-blue-200']">
+                      <span :class="['font-bold text-xs truncate', isDarkMode ? 'text-white' : 'text-slate-950']">{{ proj.title }}</span>
+                      <span v-if="proj.key" :class="['px-1.5 py-0.2 rounded text-[9px] font-mono font-bold shrink-0', isDarkMode ? 'bg-blue-950/80 text-blue-300 border border-blue-800' : 'bg-blue-50 text-blue-800 border border-blue-200']">
                         {{ proj.key }}
                       </span>
                     </div>
 
-                    <div class="text-[11px] text-slate-500 truncate pl-4.5">
+                    <div :class="['text-[11px] truncate pl-4.5 font-medium', isDarkMode ? 'text-slate-400' : 'text-slate-600']">
                       {{ proj.description || 'Dự án trọng điểm' }}
                     </div>
                   </div>
 
                   <!-- Right side: Count Badge -->
-                  <span :class="['font-mono text-xs font-bold px-2 py-0.5 rounded-full shrink-0', isDarkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-600 border border-slate-200']">
+                  <span :class="['font-mono text-xs font-bold px-2 py-0.5 rounded-full shrink-0', isDarkMode ? 'bg-slate-800 text-slate-300 border border-slate-700' : 'bg-slate-100 text-slate-800 border border-slate-300']">
                     {{ getProjectTaskCount(proj.id) }}
                   </span>
                 </button>
@@ -1244,8 +1338,8 @@ onUnmounted(() => {
                   <button
                     @click.stop="activeProjectMenuId = activeProjectMenuId === proj.id ? null : proj.id"
                     :class="[
-                      'p-1 rounded-md text-xs cursor-pointer border',
-                      isDarkMode ? 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700' : 'bg-white text-slate-600 border-slate-200 shadow-xs hover:bg-slate-50'
+                      'p-1 rounded-md text-xs cursor-pointer border font-bold',
+                      isDarkMode ? 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700' : 'bg-white text-slate-700 border-slate-300 shadow-xs hover:bg-slate-100'
                     ]"
                   >
                     •••
@@ -1255,20 +1349,20 @@ onUnmounted(() => {
                     v-if="activeProjectMenuId === proj.id"
                     :class="[
                       'absolute right-0 top-full mt-1.5 w-36 rounded-xl border shadow-xl p-1.5 z-50 text-xs font-medium',
-                      isDarkMode ? 'bg-[#0f172a] border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-700'
+                      isDarkMode ? 'bg-[#0f172a] border-slate-700 text-slate-200' : 'bg-white border-slate-300 text-slate-800'
                     ]"
                     @click.stop
                   >
                     <button
                       @click.stop="openEditProjectModal(proj)"
-                      class="w-full px-2.5 py-1.5 rounded-lg text-left hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2 cursor-pointer"
+                      class="w-full px-2.5 py-1.5 rounded-lg text-left hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2 cursor-pointer font-medium"
                     >
                       <span>✏️</span>
                       <span>Chỉnh Sửa</span>
                     </button>
                     <button
                       @click.stop="handleDeleteProject(proj)"
-                      class="w-full px-2.5 py-1.5 rounded-lg text-left text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 flex items-center gap-2 cursor-pointer"
+                      class="w-full px-2.5 py-1.5 rounded-lg text-left text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 flex items-center gap-2 cursor-pointer font-medium"
                     >
                       <span>🗑️</span>
                       <span>Xóa Dự Án</span>
@@ -1281,14 +1375,14 @@ onUnmounted(() => {
 
           <!-- GROUP 2: PERSONAL PROJECTS (2-LINE ITEM) -->
           <div class="space-y-2">
-            <div class="flex items-center justify-between px-2 text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400">
-              <span class="flex items-center gap-1.5 text-amber-600">
+            <div class="flex items-center justify-between px-2 text-[11px] font-mono font-bold uppercase tracking-wider">
+              <span class="flex items-center gap-1.5 text-amber-700 dark:text-amber-400 font-bold">
                 <span>👤</span>
                 <span>CÁ NHÂN</span>
               </span>
               <button
                 @click="openCreateProjectModal('personal')"
-                class="hover:text-amber-600 p-0.5 rounded cursor-pointer text-xs"
+                class="hover:text-amber-600 p-0.5 rounded cursor-pointer text-xs font-bold"
               >
                 +
               </button>
@@ -1308,21 +1402,21 @@ onUnmounted(() => {
                   :class="[
                     'w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs transition-all cursor-pointer border text-left',
                     selectedProjectId === proj.id
-                      ? (isDarkMode ? 'bg-slate-900 text-white border-amber-500/40 font-semibold' : 'bg-amber-50/90 text-amber-950 border-amber-300 shadow-xs')
-                      : (isDarkMode ? 'text-slate-400 border-transparent hover:text-slate-200 hover:bg-slate-900/50' : 'text-slate-700 border-transparent hover:bg-slate-50 hover:text-slate-900')
+                      ? (isDarkMode ? 'bg-slate-900 text-white border-amber-500 font-bold' : 'bg-amber-50/90 text-amber-950 border-amber-300 font-bold shadow-xs')
+                      : (isDarkMode ? 'text-slate-300 border-transparent hover:text-white hover:bg-slate-900/50' : 'text-slate-800 border-transparent hover:bg-slate-50 hover:text-slate-950')
                   ]"
                 >
                   <div class="min-w-0 pr-2 flex-1">
                     <div class="flex items-center gap-2 mb-0.5">
                       <span class="w-2.5 h-2.5 rounded-full shrink-0" :style="{ backgroundColor: proj.color || '#f59e0b' }"></span>
-                      <span class="font-bold text-xs text-slate-900 dark:text-white truncate">{{ proj.title }}</span>
+                      <span :class="['font-bold text-xs truncate', isDarkMode ? 'text-white' : 'text-slate-950']">{{ proj.title }}</span>
                     </div>
-                    <div class="text-[11px] text-slate-500 truncate pl-4.5">
+                    <div :class="['text-[11px] truncate pl-4.5 font-medium', isDarkMode ? 'text-slate-400' : 'text-slate-600']">
                       {{ proj.description || 'Kế hoạch cá nhân' }}
                     </div>
                   </div>
 
-                  <span :class="['font-mono text-xs font-bold px-2 py-0.5 rounded-full shrink-0', isDarkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-600 border border-slate-200']">
+                  <span :class="['font-mono text-xs font-bold px-2 py-0.5 rounded-full shrink-0', isDarkMode ? 'bg-slate-800 text-slate-300 border border-slate-700' : 'bg-slate-100 text-slate-800 border border-slate-300']">
                     {{ getProjectTaskCount(proj.id) }}
                   </span>
                 </button>
@@ -1336,8 +1430,8 @@ onUnmounted(() => {
                   <button
                     @click.stop="activeProjectMenuId = activeProjectMenuId === proj.id ? null : proj.id"
                     :class="[
-                      'p-1 rounded-md text-xs cursor-pointer border',
-                      isDarkMode ? 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700' : 'bg-white text-slate-600 border-slate-200 shadow-xs hover:bg-slate-50'
+                      'p-1 rounded-md text-xs cursor-pointer border font-bold',
+                      isDarkMode ? 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700' : 'bg-white text-slate-700 border-slate-300 shadow-xs hover:bg-slate-100'
                     ]"
                   >
                     •••
@@ -1347,20 +1441,20 @@ onUnmounted(() => {
                     v-if="activeProjectMenuId === proj.id"
                     :class="[
                       'absolute right-0 top-full mt-1.5 w-36 rounded-xl border shadow-xl p-1.5 z-50 text-xs font-medium',
-                      isDarkMode ? 'bg-[#0f172a] border-slate-700 text-slate-200' : 'bg-white border-slate-200 text-slate-700'
+                      isDarkMode ? 'bg-[#0f172a] border-slate-700 text-slate-200' : 'bg-white border-slate-300 text-slate-800'
                     ]"
                     @click.stop
                   >
                     <button
                       @click.stop="openEditProjectModal(proj)"
-                      class="w-full px-2.5 py-1.5 rounded-lg text-left hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2 cursor-pointer"
+                      class="w-full px-2.5 py-1.5 rounded-lg text-left hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2 cursor-pointer font-medium"
                     >
                       <span>✏️</span>
                       <span>Chỉnh Sửa</span>
                     </button>
                     <button
                       @click.stop="handleDeleteProject(proj)"
-                      class="w-full px-2.5 py-1.5 rounded-lg text-left text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 flex items-center gap-2 cursor-pointer"
+                      class="w-full px-2.5 py-1.5 rounded-lg text-left text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 flex items-center gap-2 cursor-pointer font-medium"
                     >
                       <span>🗑️</span>
                       <span>Xóa Dự Án</span>
@@ -1377,8 +1471,8 @@ onUnmounted(() => {
           <button
             @click="openCreateProjectModal('work')"
             :class="[
-              'w-full py-2.5 px-3 rounded-xl border font-semibold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer',
-              isDarkMode ? 'bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-200' : 'bg-white hover:bg-slate-100 border-slate-200 text-slate-800 shadow-xs'
+              'w-full py-2.5 px-3 rounded-xl border font-bold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer',
+              isDarkMode ? 'bg-slate-900 hover:bg-slate-800 border-slate-700 text-slate-100' : 'bg-white hover:bg-slate-100 border-slate-300 text-slate-900 shadow-xs'
             ]"
           >
             <span>+</span>
@@ -1390,36 +1484,36 @@ onUnmounted(() => {
       <!-- MAIN WORKSPACE -->
       <main :class="['flex-1 flex flex-col overflow-hidden', isDarkMode ? 'bg-[#070b14]' : 'bg-[#f8fafc]']">
         <!-- Filter & Header Bar -->
-        <div :class="['p-4 sm:p-5 border-b space-y-3.5 shrink-0 shadow-xs', isDarkMode ? 'bg-slate-950/60 border-slate-800' : 'bg-white border-slate-200']">
+        <div :class="['p-4 sm:p-5 border-b space-y-3.5 shrink-0 shadow-xs', isDarkMode ? 'bg-slate-950/80 border-slate-800' : 'bg-white border-slate-200']">
           <div class="flex flex-wrap items-center justify-between gap-3">
             <div>
               <div class="flex items-center gap-2.5">
                 <span class="text-xl">📁</span>
-                <h1 :class="['text-lg sm:text-xl font-bold font-display', isDarkMode ? 'text-white' : 'text-slate-900']">
+                <h1 :class="['text-lg sm:text-xl font-bold font-display', isDarkMode ? 'text-white' : 'text-slate-950']">
                   {{ activeProjectObject ? activeProjectObject.title : (selectedProjectId === 'unassigned' ? 'Nhiệm Vụ Chưa Phân Dự Án' : 'Tất Cả Nhiệm Vụ & Dự Án') }}
                 </h1>
-                <span v-if="activeProjectObject?.key" class="px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 font-mono text-xs font-bold border border-blue-200">
+                <span v-if="activeProjectObject?.key" class="px-2 py-0.5 rounded-md bg-blue-50 text-blue-800 dark:bg-blue-950/80 dark:text-blue-300 font-mono text-xs font-bold border border-blue-200 dark:border-blue-800">
                   {{ activeProjectObject.key }}
                 </span>
               </div>
-              <p v-if="activeProjectObject?.description" class="text-xs text-slate-500 mt-1 line-clamp-1">
+              <p v-if="activeProjectObject?.description" :class="['text-xs mt-1 line-clamp-1 font-medium', isDarkMode ? 'text-slate-400' : 'text-slate-600']">
                 {{ activeProjectObject.description }}
               </p>
             </div>
 
             <!-- Quick Stats Pills -->
             <div class="flex items-center gap-2.5 font-mono text-xs">
-              <span :class="['px-3 py-1.5 rounded-xl border font-medium', isDarkMode ? 'bg-slate-900 border-slate-800 text-slate-400' : 'bg-slate-50 border-slate-200 text-slate-700 shadow-xs']">
-                <strong class="text-blue-600 font-bold text-sm">{{ filteredBoardTasks.length }}</strong> Tasks
+              <span :class="['px-3 py-1.5 rounded-xl border font-bold', isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-200' : 'bg-slate-50 border-slate-300 text-slate-900 shadow-xs']">
+                <strong class="text-blue-600 dark:text-blue-400 text-sm font-bold">{{ filteredBoardTasks.length }}</strong> Tasks
               </span>
-              <span :class="['px-3 py-1.5 rounded-xl border font-medium', isDarkMode ? 'bg-slate-900 border-slate-800 text-slate-400' : 'bg-slate-50 border-slate-200 text-slate-700 shadow-xs']">
-                <strong class="text-purple-600 font-bold text-sm">{{ stats.total_story_points }}</strong> Story Pts
+              <span :class="['px-3 py-1.5 rounded-xl border font-bold', isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-200' : 'bg-slate-50 border-slate-300 text-slate-900 shadow-xs']">
+                <strong class="text-purple-600 dark:text-purple-400 text-sm font-bold">{{ stats.total_story_points }}</strong> Story Pts
               </span>
             </div>
           </div>
 
           <!-- Quick Filters Line -->
-          <div class="flex flex-wrap items-center justify-between gap-2.5 pt-2 border-t border-slate-100 dark:border-slate-800/80 text-xs">
+          <div :class="['flex flex-wrap items-center justify-between gap-2.5 pt-2.5 border-t text-xs', isDarkMode ? 'border-slate-800' : 'border-slate-200']">
             <div class="flex flex-wrap items-center gap-2">
               <!-- Search -->
               <div class="relative min-w-[220px]">
@@ -1429,19 +1523,19 @@ onUnmounted(() => {
                   type="text"
                   placeholder="Tìm kiếm task... (Phím '/')"
                   :class="[
-                    'w-full border rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-blue-500 shadow-xs',
-                    isDarkMode ? 'bg-slate-900 border-slate-800 text-slate-200' : 'bg-white border-slate-200 text-slate-800'
+                    'w-full border rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-blue-500 shadow-xs font-medium',
+                    isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-100 placeholder-slate-500' : 'bg-white border-slate-300 text-slate-900 placeholder-slate-500'
                   ]"
                 />
-                <span v-if="searchQuery" @click="searchQuery = ''" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer">✕</span>
+                <span v-if="searchQuery" @click="searchQuery = ''" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer font-bold">✕</span>
               </div>
 
               <!-- Issue Type Filter -->
               <select
                 v-model="filterIssueType"
                 :class="[
-                  'border text-xs rounded-xl px-3 py-1.5 focus:outline-none cursor-pointer shadow-xs',
-                  isDarkMode ? 'bg-slate-900 border-slate-800 text-slate-300' : 'bg-white border-slate-200 text-slate-700'
+                  'border text-xs rounded-xl px-2.5 py-1.5 focus:outline-none cursor-pointer shadow-xs font-semibold',
+                  isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-100' : 'bg-white border-slate-300 text-slate-900'
                 ]"
               >
                 <option value="all">Tất cả loại issue</option>
@@ -1455,8 +1549,8 @@ onUnmounted(() => {
               <select
                 v-model="filterPriority"
                 :class="[
-                  'border text-xs rounded-xl px-3 py-1.5 focus:outline-none cursor-pointer shadow-xs',
-                  isDarkMode ? 'bg-slate-900 border-slate-800 text-slate-300' : 'bg-white border-slate-200 text-slate-700'
+                  'border text-xs rounded-xl px-2.5 py-1.5 focus:outline-none cursor-pointer shadow-xs font-semibold',
+                  isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-100' : 'bg-white border-slate-300 text-slate-900'
                 ]"
               >
                 <option value="all">Tất cả độ ưu tiên</option>
@@ -1476,8 +1570,8 @@ onUnmounted(() => {
                 placeholder="+ Thêm nhanh task mới... (Enter)"
                 @keydown.enter="handleQuickCreate(null)"
                 :class="[
-                  'min-w-[240px] sm:min-w-[280px] border rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-blue-500 shadow-xs',
-                  isDarkMode ? 'bg-slate-900 border-slate-800 text-slate-200' : 'bg-white border-slate-200 text-slate-800'
+                  'min-w-[240px] sm:min-w-[280px] border rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-blue-500 shadow-xs font-medium',
+                  isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-100 placeholder-slate-500' : 'bg-white border-slate-300 text-slate-900 placeholder-slate-500'
                 ]"
               />
             </div>
@@ -1493,29 +1587,29 @@ onUnmounted(() => {
             v-if="activeSprint"
             :class="[
               'mb-5 p-4 rounded-2xl border flex flex-wrap items-center justify-between gap-3 shadow-xs',
-              isDarkMode ? 'bg-slate-900/60 border-blue-500/30' : 'bg-white border-blue-200 ring-2 ring-blue-50/50'
+              isDarkMode ? 'bg-slate-900/80 border-blue-500/50' : 'bg-white border-blue-300 ring-2 ring-blue-50/50'
             ]"
           >
             <div class="flex items-center gap-3">
               <span class="w-3 h-3 rounded-full bg-blue-600 animate-pulse"></span>
               <div>
                 <div class="flex items-center gap-2">
-                  <span :class="['font-bold text-sm sm:text-base', isDarkMode ? 'text-white' : 'text-slate-900']">{{ activeSprint.name }}</span>
-                  <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-100 text-emerald-800 font-bold border border-emerald-200">ACTIVE</span>
+                  <span :class="['font-bold text-sm sm:text-base', isDarkMode ? 'text-white' : 'text-slate-950']">{{ activeSprint.name }}</span>
+                  <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-100 text-emerald-900 font-bold border border-emerald-300">ACTIVE</span>
                 </div>
-                <p v-if="activeSprint.goal" class="text-xs text-slate-500 mt-0.5">{{ activeSprint.goal }}</p>
+                <p v-if="activeSprint.goal" :class="['text-xs mt-0.5 font-medium', isDarkMode ? 'text-slate-400' : 'text-slate-600']">{{ activeSprint.goal }}</p>
               </div>
             </div>
 
             <div class="flex items-center gap-3">
-              <span class="text-xs text-slate-500 font-mono">
-                Hạn chót: <strong class="text-slate-800 dark:text-slate-200">{{ activeSprint.end_date || 'Chưa đặt' }}</strong>
+              <span :class="['text-xs font-mono font-medium', isDarkMode ? 'text-slate-400' : 'text-slate-600']">
+                Hạn chót: <strong class="text-slate-950 dark:text-white font-bold">{{ activeSprint.end_date || 'Chưa đặt' }}</strong>
               </span>
               <button
                 @click="openCompleteSprintModal(activeSprint)"
                 :class="[
-                  'px-3.5 py-1.5 rounded-xl text-xs font-semibold border cursor-pointer transition-colors shadow-xs',
-                  isDarkMode ? 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700' : 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
+                  'px-3.5 py-1.5 rounded-xl text-xs font-bold border cursor-pointer transition-colors shadow-xs',
+                  isDarkMode ? 'bg-emerald-950/80 text-emerald-300 border-emerald-700 hover:bg-emerald-900' : 'bg-emerald-50 text-emerald-900 border-emerald-300 hover:bg-emerald-100'
                 ]"
               >
                 Hoàn Thành Sprint 🏁
@@ -1523,20 +1617,20 @@ onUnmounted(() => {
             </div>
           </div>
 
-          <!-- 4 CLEAN KANBAN COLUMNS -->
+          <!-- 4 HIGH-CONTRAST KANBAN COLUMNS -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 h-full items-start">
             <!-- 1. TO DO -->
             <div
-              :class="['flex flex-col border rounded-2xl p-3.5 min-h-[480px] transition-colors', isDarkMode ? 'bg-slate-950/70 border-slate-800' : 'bg-[#edf2f7] border-slate-200']"
+              :class="['flex flex-col border rounded-2xl p-3.5 min-h-[480px] transition-colors', isDarkMode ? 'bg-slate-950/90 border-slate-800' : 'bg-[#edf2f7] border-slate-200']"
               @dragover="onDragOverColumn($event, 'todo')"
               @drop="onDropColumn('todo')"
             >
-              <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-200 dark:border-slate-800 px-1">
-                <span class="flex items-center gap-2 font-mono text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
-                  <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+              <div :class="['flex items-center justify-between pb-3 mb-3 border-b px-1', isDarkMode ? 'border-slate-800' : 'border-slate-300']">
+                <span class="flex items-center gap-2 font-mono text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wide">
+                  <span class="w-2.5 h-2.5 rounded-full bg-slate-500"></span>
                   <span>CẦN LÀM (TO DO)</span>
                 </span>
-                <span :class="['font-mono text-xs px-2.5 py-0.5 rounded-lg font-bold border', isDarkMode ? 'bg-slate-900 text-slate-400 border-slate-800' : 'bg-white text-slate-700 border-slate-200 shadow-xs']">
+                <span :class="['font-mono text-xs px-2.5 py-0.5 rounded-lg font-bold border', isDarkMode ? 'bg-slate-900 text-slate-200 border-slate-700' : 'bg-white text-slate-900 border-slate-300 shadow-xs']">
                   {{ todoTasks.length }}
                 </span>
               </div>
@@ -1550,24 +1644,24 @@ onUnmounted(() => {
                   @click="openTaskDrawer(task)"
                   :class="[
                     'p-3.5 rounded-xl border transition-all cursor-pointer space-y-2.5 group shadow-xs',
-                    isDarkMode ? 'bg-[#0f1422] border-slate-800 hover:border-blue-500/60' : 'bg-white border-slate-200/90 hover:border-blue-500 hover:shadow-md'
+                    isDarkMode ? 'bg-[#0f1523] border-slate-800 hover:border-blue-500/70' : 'bg-white border-slate-200/90 hover:border-blue-500 hover:shadow-md'
                   ]"
                 >
                   <div class="flex items-center justify-between text-xs">
                     <div class="flex items-center gap-1.5">
                       <span>{{ getIssueTypeBadge(task.issue_type).icon }}</span>
-                      <span class="font-mono text-xs font-bold text-blue-700 bg-blue-50 px-1.5 py-0.2 rounded border border-blue-200">{{ task.issue_key }}</span>
+                      <span :class="['font-mono text-xs font-bold px-1.5 py-0.2 rounded border', isDarkMode ? 'bg-blue-950/80 text-blue-300 border-blue-800' : 'bg-blue-50 text-blue-800 border-blue-200']">{{ task.issue_key }}</span>
                     </div>
-                    <span v-if="task.story_points" class="px-2 py-0.5 rounded bg-indigo-50 border border-indigo-200 text-xs font-mono text-indigo-700 font-bold">
+                    <span v-if="task.story_points" :class="['px-2 py-0.5 rounded text-xs font-mono font-bold border', isDarkMode ? 'bg-indigo-950/80 text-indigo-300 border-indigo-800' : 'bg-indigo-50 text-indigo-800 border-indigo-200']">
                       {{ task.story_points }} pts
                     </span>
                   </div>
 
-                  <h4 :class="['text-sm font-semibold line-clamp-2 leading-relaxed', isDarkMode ? 'text-slate-100 group-hover:text-blue-300' : 'text-slate-900 group-hover:text-blue-700']">
+                  <h4 :class="['text-sm font-semibold line-clamp-2 leading-relaxed', isDarkMode ? 'text-slate-100 group-hover:text-blue-300' : 'text-slate-950 group-hover:text-blue-700']">
                     {{ task.title }}
                   </h4>
 
-                  <div class="flex items-center justify-between pt-1.5 border-t border-slate-100 dark:border-slate-800/60 text-[11px]">
+                  <div :class="['flex items-center justify-between pt-1.5 border-t text-[11px]', isDarkMode ? 'border-slate-800/80' : 'border-slate-100']">
                     <span :class="['px-2 py-0.5 rounded border', getCategoryBadge(task.category).class]">
                       {{ getCategoryBadge(task.category).label }}
                     </span>
@@ -1577,7 +1671,7 @@ onUnmounted(() => {
                   </div>
                 </div>
 
-                <div v-if="todoTasks.length === 0" class="h-28 border-2 border-dashed border-slate-300 dark:border-slate-800 rounded-xl flex items-center justify-center text-xs text-slate-400">
+                <div v-if="todoTasks.length === 0" class="h-28 border-2 border-dashed border-slate-300 dark:border-slate-800 rounded-xl flex items-center justify-center text-xs text-slate-500 font-medium">
                   Kéo thả task vào đây
                 </div>
               </div>
@@ -1585,16 +1679,16 @@ onUnmounted(() => {
 
             <!-- 2. IN PROGRESS -->
             <div
-              :class="['flex flex-col border rounded-2xl p-3.5 min-h-[480px] transition-colors', isDarkMode ? 'bg-slate-950/70 border-slate-800' : 'bg-[#edf2f7] border-slate-200']"
+              :class="['flex flex-col border rounded-2xl p-3.5 min-h-[480px] transition-colors', isDarkMode ? 'bg-slate-950/90 border-slate-800' : 'bg-[#edf2f7] border-slate-200']"
               @dragover="onDragOverColumn($event, 'in_progress')"
               @drop="onDropColumn('in_progress')"
             >
-              <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-200 dark:border-slate-800 px-1">
-                <span class="flex items-center gap-2 font-mono text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wide">
+              <div :class="['flex items-center justify-between pb-3 mb-3 border-b px-1', isDarkMode ? 'border-slate-800' : 'border-slate-300']">
+                <span class="flex items-center gap-2 font-mono text-xs font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wide">
                   <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
                   <span>ĐANG LÀM</span>
                 </span>
-                <span :class="['font-mono text-xs px-2.5 py-0.5 rounded-lg font-bold border', isDarkMode ? 'bg-slate-900 text-amber-400 border-slate-800' : 'bg-white text-amber-800 border-slate-200 shadow-xs']">
+                <span :class="['font-mono text-xs px-2.5 py-0.5 rounded-lg font-bold border', isDarkMode ? 'bg-slate-900 text-amber-300 border-slate-700' : 'bg-white text-amber-900 border-slate-300 shadow-xs']">
                   {{ inProgressTasks.length }}
                 </span>
               </div>
@@ -1608,24 +1702,24 @@ onUnmounted(() => {
                   @click="openTaskDrawer(task)"
                   :class="[
                     'p-3.5 rounded-xl border transition-all cursor-pointer space-y-2.5 group shadow-xs',
-                    isDarkMode ? 'bg-[#0f1422] border-amber-500/30 hover:border-amber-500/60' : 'bg-white border-amber-200 hover:border-amber-500 hover:shadow-md'
+                    isDarkMode ? 'bg-[#0f1523] border-amber-500/40 hover:border-amber-500' : 'bg-white border-amber-200 hover:border-amber-500 hover:shadow-md'
                   ]"
                 >
                   <div class="flex items-center justify-between text-xs">
                     <div class="flex items-center gap-1.5">
                       <span>{{ getIssueTypeBadge(task.issue_type).icon }}</span>
-                      <span class="font-mono text-xs font-bold text-amber-800 bg-amber-50 px-1.5 py-0.2 rounded border border-amber-200">{{ task.issue_key }}</span>
+                      <span :class="['font-mono text-xs font-bold px-1.5 py-0.2 rounded border', isDarkMode ? 'bg-amber-950/80 text-amber-300 border-amber-800' : 'bg-amber-50 text-amber-900 border-amber-200']">{{ task.issue_key }}</span>
                     </div>
-                    <span v-if="task.story_points" class="px-2 py-0.5 rounded bg-indigo-50 border border-indigo-200 text-xs font-mono text-indigo-700 font-bold">
+                    <span v-if="task.story_points" :class="['px-2 py-0.5 rounded text-xs font-mono font-bold border', isDarkMode ? 'bg-indigo-950/80 text-indigo-300 border-indigo-800' : 'bg-indigo-50 text-indigo-800 border-indigo-200']">
                       {{ task.story_points }} pts
                     </span>
                   </div>
 
-                  <h4 :class="['text-sm font-semibold line-clamp-2 leading-relaxed', isDarkMode ? 'text-slate-100 group-hover:text-amber-300' : 'text-slate-900 group-hover:text-amber-800']">
+                  <h4 :class="['text-sm font-semibold line-clamp-2 leading-relaxed', isDarkMode ? 'text-slate-100 group-hover:text-amber-300' : 'text-slate-950 group-hover:text-amber-800']">
                     {{ task.title }}
                   </h4>
 
-                  <div class="flex items-center justify-between pt-1.5 border-t border-slate-100 dark:border-slate-800/60 text-[11px]">
+                  <div :class="['flex items-center justify-between pt-1.5 border-t text-[11px]', isDarkMode ? 'border-slate-800/80' : 'border-slate-100']">
                     <span :class="['px-2 py-0.5 rounded border', getCategoryBadge(task.category).class]">
                       {{ getCategoryBadge(task.category).label }}
                     </span>
@@ -1635,7 +1729,7 @@ onUnmounted(() => {
                   </div>
                 </div>
 
-                <div v-if="inProgressTasks.length === 0" class="h-28 border-2 border-dashed border-slate-300 dark:border-slate-800 rounded-xl flex items-center justify-center text-xs text-slate-400">
+                <div v-if="inProgressTasks.length === 0" class="h-28 border-2 border-dashed border-slate-300 dark:border-slate-800 rounded-xl flex items-center justify-center text-xs text-slate-500 font-medium">
                   Kéo thả task vào đây
                 </div>
               </div>
@@ -1643,16 +1737,16 @@ onUnmounted(() => {
 
             <!-- 3. REVIEW -->
             <div
-              :class="['flex flex-col border rounded-2xl p-3.5 min-h-[480px] transition-colors', isDarkMode ? 'bg-slate-950/70 border-slate-800' : 'bg-[#edf2f7] border-slate-200']"
+              :class="['flex flex-col border rounded-2xl p-3.5 min-h-[480px] transition-colors', isDarkMode ? 'bg-slate-950/90 border-slate-800' : 'bg-[#edf2f7] border-slate-200']"
               @dragover="onDragOverColumn($event, 'review')"
               @drop="onDropColumn('review')"
             >
-              <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-200 dark:border-slate-800 px-1">
-                <span class="flex items-center gap-2 font-mono text-xs font-bold text-purple-700 dark:text-purple-400 uppercase tracking-wide">
+              <div :class="['flex items-center justify-between pb-3 mb-3 border-b px-1', isDarkMode ? 'border-slate-800' : 'border-slate-300']">
+                <span class="flex items-center gap-2 font-mono text-xs font-bold text-purple-800 dark:text-purple-300 uppercase tracking-wide">
                   <span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span>
                   <span>KIỂM THỬ (REVIEW)</span>
                 </span>
-                <span :class="['font-mono text-xs px-2.5 py-0.5 rounded-lg font-bold border', isDarkMode ? 'bg-slate-900 text-purple-400 border-slate-800' : 'bg-white text-purple-800 border-slate-200 shadow-xs']">
+                <span :class="['font-mono text-xs px-2.5 py-0.5 rounded-lg font-bold border', isDarkMode ? 'bg-slate-900 text-purple-300 border-slate-700' : 'bg-white text-purple-900 border-slate-300 shadow-xs']">
                   {{ reviewTasks.length }}
                 </span>
               </div>
@@ -1666,24 +1760,24 @@ onUnmounted(() => {
                   @click="openTaskDrawer(task)"
                   :class="[
                     'p-3.5 rounded-xl border transition-all cursor-pointer space-y-2.5 group shadow-xs',
-                    isDarkMode ? 'bg-[#0f1422] border-purple-500/30 hover:border-purple-500/60' : 'bg-white border-purple-200 hover:border-purple-500 hover:shadow-md'
+                    isDarkMode ? 'bg-[#0f1523] border-purple-500/40 hover:border-purple-500' : 'bg-white border-purple-200 hover:border-purple-500 hover:shadow-md'
                   ]"
                 >
                   <div class="flex items-center justify-between text-xs">
                     <div class="flex items-center gap-1.5">
                       <span>{{ getIssueTypeBadge(task.issue_type).icon }}</span>
-                      <span class="font-mono text-xs font-bold text-purple-800 bg-purple-50 px-1.5 py-0.2 rounded border border-purple-200">{{ task.issue_key }}</span>
+                      <span :class="['font-mono text-xs font-bold px-1.5 py-0.2 rounded border', isDarkMode ? 'bg-purple-950/80 text-purple-300 border-purple-800' : 'bg-purple-50 text-purple-800 border-purple-200']">{{ task.issue_key }}</span>
                     </div>
-                    <span v-if="task.story_points" class="px-2 py-0.5 rounded bg-indigo-50 border border-indigo-200 text-xs font-mono text-indigo-700 font-bold">
+                    <span v-if="task.story_points" :class="['px-2 py-0.5 rounded text-xs font-mono font-bold border', isDarkMode ? 'bg-indigo-950/80 text-indigo-300 border-indigo-800' : 'bg-indigo-50 text-indigo-800 border-indigo-200']">
                       {{ task.story_points }} pts
                     </span>
                   </div>
 
-                  <h4 :class="['text-sm font-semibold line-clamp-2 leading-relaxed', isDarkMode ? 'text-slate-100 group-hover:text-purple-300' : 'text-slate-900 group-hover:text-purple-800']">
+                  <h4 :class="['text-sm font-semibold line-clamp-2 leading-relaxed', isDarkMode ? 'text-slate-100 group-hover:text-purple-300' : 'text-slate-950 group-hover:text-purple-800']">
                     {{ task.title }}
                   </h4>
 
-                  <div class="flex items-center justify-between pt-1.5 border-t border-slate-100 dark:border-slate-800/60 text-[11px]">
+                  <div :class="['flex items-center justify-between pt-1.5 border-t text-[11px]', isDarkMode ? 'border-slate-800/80' : 'border-slate-100']">
                     <span :class="['px-2 py-0.5 rounded border', getCategoryBadge(task.category).class]">
                       {{ getCategoryBadge(task.category).label }}
                     </span>
@@ -1693,7 +1787,7 @@ onUnmounted(() => {
                   </div>
                 </div>
 
-                <div v-if="reviewTasks.length === 0" class="h-28 border-2 border-dashed border-slate-300 dark:border-slate-800 rounded-xl flex items-center justify-center text-xs text-slate-400">
+                <div v-if="reviewTasks.length === 0" class="h-28 border-2 border-dashed border-slate-300 dark:border-slate-800 rounded-xl flex items-center justify-center text-xs text-slate-500 font-medium">
                   Kéo thả task vào đây
                 </div>
               </div>
@@ -1701,16 +1795,16 @@ onUnmounted(() => {
 
             <!-- 4. DONE -->
             <div
-              :class="['flex flex-col border rounded-2xl p-3.5 min-h-[480px] transition-colors', isDarkMode ? 'bg-slate-950/70 border-slate-800' : 'bg-[#edf2f7] border-slate-200']"
+              :class="['flex flex-col border rounded-2xl p-3.5 min-h-[480px] transition-colors', isDarkMode ? 'bg-slate-950/90 border-slate-800' : 'bg-[#edf2f7] border-slate-200']"
               @dragover="onDragOverColumn($event, 'done')"
               @drop="onDropColumn('done')"
             >
-              <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-200 dark:border-slate-800 px-1">
-                <span class="flex items-center gap-2 font-mono text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wide">
+              <div :class="['flex items-center justify-between pb-3 mb-3 border-b px-1', isDarkMode ? 'border-slate-800' : 'border-slate-300']">
+                <span class="flex items-center gap-2 font-mono text-xs font-bold text-emerald-800 dark:text-emerald-300 uppercase tracking-wide">
                   <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
                   <span>ĐÃ HOÀN TẤT</span>
                 </span>
-                <span :class="['font-mono text-xs px-2.5 py-0.5 rounded-lg font-bold border', isDarkMode ? 'bg-slate-900 text-emerald-400 border-slate-800' : 'bg-white text-emerald-800 border-slate-200 shadow-xs']">
+                <span :class="['font-mono text-xs px-2.5 py-0.5 rounded-lg font-bold border', isDarkMode ? 'bg-slate-900 text-emerald-300 border-slate-700' : 'bg-white text-emerald-900 border-slate-300 shadow-xs']">
                   {{ doneTasks.length }}
                 </span>
               </div>
@@ -1724,32 +1818,32 @@ onUnmounted(() => {
                   @click="openTaskDrawer(task)"
                   :class="[
                     'p-3.5 rounded-xl border transition-all cursor-pointer space-y-2.5 group shadow-xs opacity-90 hover:opacity-100',
-                    isDarkMode ? 'bg-[#0f1422] border-emerald-500/20 hover:border-emerald-500/50' : 'bg-white border-emerald-200 hover:border-emerald-500 hover:shadow-md'
+                    isDarkMode ? 'bg-[#0f1523] border-emerald-500/30 hover:border-emerald-500' : 'bg-white border-emerald-200 hover:border-emerald-500 hover:shadow-md'
                   ]"
                 >
                   <div class="flex items-center justify-between text-xs">
                     <div class="flex items-center gap-1.5">
                       <span>{{ getIssueTypeBadge(task.issue_type).icon }}</span>
-                      <span class="font-mono text-xs font-bold text-emerald-800 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200">{{ task.issue_key }}</span>
+                      <span :class="['font-mono text-xs font-bold px-1.5 py-0.2 rounded border', isDarkMode ? 'bg-emerald-950/80 text-emerald-300 border-emerald-800' : 'bg-emerald-50 text-emerald-800 border-emerald-200']">{{ task.issue_key }}</span>
                     </div>
-                    <span v-if="task.story_points" class="px-2 py-0.5 rounded bg-emerald-50 border border-emerald-200 text-xs font-mono text-emerald-700 font-bold">
+                    <span v-if="task.story_points" :class="['px-2 py-0.5 rounded text-xs font-mono font-bold border', isDarkMode ? 'bg-emerald-950/80 text-emerald-300 border-emerald-800' : 'bg-emerald-50 text-emerald-800 border-emerald-200']">
                       {{ task.story_points }} pts
                     </span>
                   </div>
 
-                  <h4 :class="['text-sm font-medium line-clamp-2 line-through opacity-70', isDarkMode ? 'text-slate-200' : 'text-slate-600']">
+                  <h4 :class="['text-sm font-medium line-clamp-2 line-through', isDarkMode ? 'text-slate-400' : 'text-slate-600']">
                     {{ task.title }}
                   </h4>
 
-                  <div class="flex items-center justify-between pt-1.5 border-t border-slate-100 dark:border-slate-800/60 text-[11px]">
+                  <div :class="['flex items-center justify-between pt-1.5 border-t text-[11px]', isDarkMode ? 'border-slate-800/80' : 'border-slate-100']">
                     <span :class="['px-2 py-0.5 rounded border', getCategoryBadge(task.category).class]">
                       {{ getCategoryBadge(task.category).label }}
                     </span>
-                    <span class="text-emerald-700 font-mono font-bold">Hoàn tất ✓</span>
+                    <span class="text-emerald-700 dark:text-emerald-400 font-mono font-bold">Hoàn tất ✓</span>
                   </div>
                 </div>
 
-                <div v-if="doneTasks.length === 0" class="h-28 border-2 border-dashed border-slate-300 dark:border-slate-800 rounded-xl flex items-center justify-center text-xs text-slate-400">
+                <div v-if="doneTasks.length === 0" class="h-28 border-2 border-dashed border-slate-300 dark:border-slate-800 rounded-xl flex items-center justify-center text-xs text-slate-500 font-medium">
                   Kéo thả task vào đây
                 </div>
               </div>
@@ -1761,19 +1855,19 @@ onUnmounted(() => {
         <!-- VIEW 2: BACKLOG SPRINT PLANNING (COLLAPSIBLE + MULTI-BAR PROGRESS)   -->
         <!-- ===================================================================== -->
         <div v-else-if="currentView === 'backlog'" class="flex-1 p-4 sm:p-6 overflow-y-auto space-y-6">
-          <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-200 dark:border-slate-800">
+          <div :class="['flex flex-wrap items-center justify-between gap-3 pb-3 border-b', isDarkMode ? 'border-slate-800' : 'border-slate-200']">
             <div>
-              <h2 :class="['text-base sm:text-lg font-bold font-display', isDarkMode ? 'text-white' : 'text-slate-900']">
+              <h2 :class="['text-base sm:text-lg font-bold font-display', isDarkMode ? 'text-white' : 'text-slate-950']">
                 📦 Lập Kế Hoạch Sprint & Backlog
               </h2>
-              <p class="text-xs text-slate-500 mt-0.5">
+              <p :class="['text-xs mt-0.5 font-medium', isDarkMode ? 'text-slate-400' : 'text-slate-600']">
                 Kéo thả các task vào từng Sprint để chuẩn bị giai đoạn phát triển.
               </p>
             </div>
 
             <button
               @click="openCreateSprintModal"
-              class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
+              class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
             >
               <span>+</span>
               <span>Tạo Sprint Mới</span>
@@ -1788,19 +1882,19 @@ onUnmounted(() => {
               :class="[
                 'rounded-2xl border transition-all shadow-xs overflow-hidden',
                 sprint.status === 'active'
-                  ? (isDarkMode ? 'bg-[#0a0f1d] border-blue-500/40' : 'bg-white border-blue-300 ring-2 ring-blue-50')
+                  ? (isDarkMode ? 'bg-[#0a0f1d] border-blue-500/50' : 'bg-white border-blue-300 ring-2 ring-blue-50')
                   : (isDarkMode ? 'bg-slate-950/80 border-slate-800' : 'bg-white border-slate-200')
               ]"
               @dragover="onDragOverSprint($event, sprint.id)"
               @drop="onDropSprint(sprint.id)"
             >
               <!-- Sprint Header Row -->
-              <div :class="['p-4 flex flex-wrap items-center justify-between gap-3 border-b', isDarkMode ? 'bg-slate-900/60 border-slate-800' : 'bg-slate-50/80 border-slate-200']">
+              <div :class="['p-4 flex flex-wrap items-center justify-between gap-3 border-b', isDarkMode ? 'bg-slate-900/80 border-slate-800' : 'bg-slate-50/90 border-slate-200']">
                 <div class="flex items-center gap-3 min-w-0">
                   <!-- Collapse/Expand Toggle -->
                   <button
                     @click="toggleSprintCollapse(sprint.id)"
-                    class="p-1 rounded text-slate-500 hover:text-slate-800 cursor-pointer text-xs"
+                    :class="['p-1 rounded cursor-pointer text-xs font-bold', isDarkMode ? 'text-slate-300 hover:text-white' : 'text-slate-700 hover:text-slate-950']"
                     title="Thu gọn / Mở rộng"
                   >
                     {{ collapsedSprints[sprint.id] ? '▶' : '▼' }}
@@ -1809,15 +1903,15 @@ onUnmounted(() => {
                   <span
                     :class="[
                       'px-2.5 py-0.5 rounded-md font-mono text-[10px] font-bold border',
-                      sprint.status === 'active' ? 'bg-blue-50 text-blue-700 border-blue-200' : (sprint.status === 'completed' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-600 border-slate-200')
+                      sprint.status === 'active' ? 'bg-blue-50 text-blue-800 dark:bg-blue-950 dark:text-blue-300 border-blue-300 dark:border-blue-700' : (sprint.status === 'completed' ? 'bg-emerald-50 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700' : 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300 border-slate-300 dark:border-slate-700')
                     ]"
                   >
                     {{ sprint.status.toUpperCase() }}
                   </span>
 
-                  <h3 :class="['text-sm sm:text-base font-bold truncate', isDarkMode ? 'text-white' : 'text-slate-900']">{{ sprint.name }}</h3>
+                  <h3 :class="['text-sm sm:text-base font-bold truncate', isDarkMode ? 'text-white' : 'text-slate-950']">{{ sprint.name }}</h3>
 
-                  <span class="text-xs text-slate-500 font-mono shrink-0">
+                  <span :class="['text-xs font-mono font-medium shrink-0', isDarkMode ? 'text-slate-400' : 'text-slate-600']">
                     ({{ getSprintStats(sprint.id).totalTasks }} tasks • {{ getSprintStats(sprint.id).donePts }}/{{ getSprintStats(sprint.id).totalPts }} pts)
                   </span>
                 </div>
@@ -1826,14 +1920,11 @@ onUnmounted(() => {
                   <!-- Multi-Segment Progress Bar -->
                   <div class="hidden sm:flex items-center gap-2 min-w-[140px]">
                     <div class="h-2.5 flex-1 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden flex">
-                      <!-- Done segment (green) -->
                       <div class="bg-emerald-500 h-full" :style="{ width: `${getSprintStats(sprint.id).donePercent}%` }"></div>
-                      <!-- In progress segment (amber) -->
                       <div class="bg-amber-500 h-full" :style="{ width: `${getSprintStats(sprint.id).inProgressPercent}%` }"></div>
-                      <!-- Todo segment (slate) -->
                       <div class="bg-slate-300 dark:bg-slate-700 h-full" :style="{ width: `${getSprintStats(sprint.id).todoPercent}%` }"></div>
                     </div>
-                    <span class="font-mono text-[11px] font-bold text-slate-600 dark:text-slate-400">{{ getSprintStats(sprint.id).donePercent }}%</span>
+                    <span :class="['font-mono text-[11px] font-bold', isDarkMode ? 'text-slate-300' : 'text-slate-800']">{{ getSprintStats(sprint.id).donePercent }}%</span>
                   </div>
 
                   <!-- Sprint Action Buttons -->
@@ -1841,7 +1932,7 @@ onUnmounted(() => {
                     <button
                       v-if="sprint.status === 'future'"
                       @click="openStartSprintModal(sprint)"
-                      class="px-3 py-1 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs transition-colors cursor-pointer"
+                      class="px-3 py-1 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition-colors cursor-pointer"
                     >
                       Bắt Đầu Sprint ▶
                     </button>
@@ -1849,14 +1940,14 @@ onUnmounted(() => {
                     <button
                       v-if="sprint.status === 'active'"
                       @click="openCompleteSprintModal(sprint)"
-                      class="px-3 py-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs transition-colors cursor-pointer"
+                      class="px-3 py-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition-colors cursor-pointer"
                     >
                       Hoàn Thành Sprint ✓
                     </button>
 
                     <button
                       @click="handleDeleteSprint(sprint)"
-                      class="p-1 text-slate-400 hover:text-red-600 cursor-pointer text-xs"
+                      class="p-1 text-slate-400 hover:text-red-600 cursor-pointer text-xs font-bold"
                       title="Xóa Sprint"
                     >
                       🗑️
@@ -1875,26 +1966,26 @@ onUnmounted(() => {
                   @click="openTaskDrawer(task)"
                   :class="[
                     'flex items-center justify-between p-3 rounded-xl border transition-all cursor-pointer shadow-xs',
-                    isDarkMode ? 'bg-[#0f1422] border-slate-800 hover:border-blue-500/40' : 'bg-white border-slate-200/90 hover:border-blue-400 hover:shadow-sm'
+                    isDarkMode ? 'bg-[#0f1523] border-slate-800 hover:border-blue-500/50' : 'bg-white border-slate-200/90 hover:border-blue-500 hover:shadow-sm'
                   ]"
                 >
                   <div class="flex items-center gap-3 min-w-0">
                     <span class="text-sm">{{ getIssueTypeBadge(task.issue_type).icon }}</span>
-                    <span class="font-mono text-xs font-bold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200 shrink-0">{{ task.issue_key }}</span>
-                    <span :class="['text-sm truncate font-medium', isDarkMode ? 'text-slate-200' : 'text-slate-900']">{{ task.title }}</span>
+                    <span :class="['font-mono text-xs font-bold px-1.5 py-0.5 rounded border shrink-0', isDarkMode ? 'bg-blue-950/80 text-blue-300 border-blue-800' : 'bg-blue-50 text-blue-800 border-blue-200']">{{ task.issue_key }}</span>
+                    <span :class="['text-sm truncate font-semibold', isDarkMode ? 'text-slate-100' : 'text-slate-950']">{{ task.title }}</span>
                   </div>
 
                   <div class="flex items-center gap-2.5 shrink-0">
                     <span :class="['px-2 py-0.5 rounded text-[11px] font-mono border', getPriorityBadge(task.priority).class]">
                       {{ task.priority }}
                     </span>
-                    <span v-if="task.story_points" class="px-2 py-0.5 rounded bg-indigo-50 border border-indigo-200 text-xs font-mono text-indigo-700 font-bold">
+                    <span v-if="task.story_points" :class="['px-2 py-0.5 rounded text-xs font-mono font-bold border', isDarkMode ? 'bg-indigo-950/80 text-indigo-300 border-indigo-800' : 'bg-indigo-50 text-indigo-800 border-indigo-200']">
                       {{ task.story_points }} pts
                     </span>
                   </div>
                 </div>
 
-                <div v-if="getSprintTasks(sprint.id).length === 0" class="py-6 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-xl text-center text-xs text-slate-400">
+                <div v-if="getSprintTasks(sprint.id).length === 0" class="py-6 border-2 border-dashed border-slate-300 dark:border-slate-800 rounded-xl text-center text-xs text-slate-500 font-medium">
                   Sprint này chưa có task. Kéo thả từ Backlog vào đây.
                 </div>
               </div>
@@ -1906,11 +1997,11 @@ onUnmounted(() => {
               @dragover="onDragOverSprint($event, 'backlog')"
               @drop="onDropSprint(null)"
             >
-              <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+              <div :class="['flex items-center justify-between pb-3 border-b', isDarkMode ? 'border-slate-800' : 'border-slate-200']">
                 <div class="flex items-center gap-2">
                   <span class="text-lg">📦</span>
-                  <h3 :class="['text-sm sm:text-base font-bold', isDarkMode ? 'text-white' : 'text-slate-900']">Backlog (Chưa Gán Sprint)</h3>
-                  <span class="text-xs text-slate-500 font-mono">({{ backlogTasks.length }} tasks)</span>
+                  <h3 :class="['text-sm sm:text-base font-bold', isDarkMode ? 'text-white' : 'text-slate-950']">Backlog (Chưa Gán Sprint)</h3>
+                  <span :class="['text-xs font-mono font-bold', isDarkMode ? 'text-slate-400' : 'text-slate-600']">({{ backlogTasks.length }} tasks)</span>
                 </div>
               </div>
 
@@ -1923,26 +2014,26 @@ onUnmounted(() => {
                   @click="openTaskDrawer(task)"
                   :class="[
                     'flex items-center justify-between p-3 rounded-xl border transition-all cursor-pointer shadow-xs',
-                    isDarkMode ? 'bg-[#0e1320] border-slate-800 hover:border-blue-500/40' : 'bg-white border-slate-200/90 hover:border-blue-400 hover:shadow-sm'
+                    isDarkMode ? 'bg-[#0e1422] border-slate-800 hover:border-blue-500/50' : 'bg-white border-slate-200/90 hover:border-blue-500 hover:shadow-sm'
                   ]"
                 >
                   <div class="flex items-center gap-3 min-w-0">
                     <span class="text-sm">{{ getIssueTypeBadge(task.issue_type).icon }}</span>
-                    <span class="font-mono text-xs font-bold text-slate-500 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200 shrink-0">{{ task.issue_key }}</span>
-                    <span :class="['text-sm truncate font-medium', isDarkMode ? 'text-slate-200' : 'text-slate-900']">{{ task.title }}</span>
+                    <span :class="['font-mono text-xs font-bold px-1.5 py-0.5 rounded border shrink-0', isDarkMode ? 'bg-slate-900 text-slate-300 border-slate-700' : 'bg-slate-100 text-slate-700 border-slate-300']">{{ task.issue_key }}</span>
+                    <span :class="['text-sm truncate font-semibold', isDarkMode ? 'text-slate-100' : 'text-slate-950']">{{ task.title }}</span>
                   </div>
 
                   <div class="flex items-center gap-2.5 shrink-0">
                     <span :class="['px-2 py-0.5 rounded text-[11px] font-mono border', getPriorityBadge(task.priority).class]">
                       {{ task.priority }}
                     </span>
-                    <span v-if="task.story_points" class="px-2 py-0.5 rounded bg-indigo-50 border border-indigo-200 text-xs font-mono text-indigo-700 font-bold">
+                    <span v-if="task.story_points" :class="['px-2 py-0.5 rounded text-xs font-mono font-bold border', isDarkMode ? 'bg-indigo-950/80 text-indigo-300 border-indigo-800' : 'bg-indigo-50 text-indigo-800 border-indigo-200']">
                       {{ task.story_points }} pts
                     </span>
                   </div>
                 </div>
 
-                <div v-if="backlogTasks.length === 0" class="py-6 text-center text-xs text-slate-400 italic">
+                <div v-if="backlogTasks.length === 0" class="py-6 text-center text-xs text-slate-500 italic font-medium">
                   Backlog đang trống!
                 </div>
               </div>
@@ -1954,11 +2045,11 @@ onUnmounted(() => {
         <!-- VIEW 3: ROADMAP & TIMELINE                                            -->
         <!-- ===================================================================== -->
         <div v-else-if="currentView === 'roadmap'" class="flex-1 p-4 sm:p-6 overflow-y-auto space-y-6">
-          <div class="pb-3 border-b border-slate-200 dark:border-slate-800">
-            <h2 :class="['text-base sm:text-lg font-bold font-display', isDarkMode ? 'text-white' : 'text-slate-900']">
+          <div :class="['pb-3 border-b', isDarkMode ? 'border-slate-800' : 'border-slate-200']">
+            <h2 :class="['text-base sm:text-lg font-bold font-display', isDarkMode ? 'text-white' : 'text-slate-950']">
               🗺️ Roadmap & Tiến Độ Các Mục Tiêu Lớn (Epics)
             </h2>
-            <p class="text-xs text-slate-500 mt-0.5">
+            <p :class="['text-xs mt-0.5 font-medium', isDarkMode ? 'text-slate-400' : 'text-slate-600']">
               Theo dõi tiến độ tổng thể của các Epic và Milestone theo dòng thời gian.
             </p>
           </div>
@@ -1972,31 +2063,31 @@ onUnmounted(() => {
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2.5">
                   <span class="text-lg">⚡</span>
-                  <span class="font-mono text-xs font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded border border-purple-200">{{ epic.issue_key }}</span>
-                  <h3 :class="['text-sm sm:text-base font-bold', isDarkMode ? 'text-white' : 'text-slate-900']">{{ epic.title }}</h3>
+                  <span :class="['font-mono text-xs font-bold px-2 py-0.5 rounded border', isDarkMode ? 'bg-purple-950/80 text-purple-300 border-purple-800' : 'bg-purple-50 text-purple-800 border-purple-200']">{{ epic.issue_key }}</span>
+                  <h3 :class="['text-sm sm:text-base font-bold', isDarkMode ? 'text-white' : 'text-slate-950']">{{ epic.title }}</h3>
                 </div>
 
-                <span class="font-mono text-xs text-slate-500">
+                <span :class="['font-mono text-xs font-bold', isDarkMode ? 'text-slate-400' : 'text-slate-600']">
                   {{ epic.start_date || 'Bắt đầu' }} ➔ {{ epic.due_date || 'Hạn chót' }}
                 </span>
               </div>
 
               <!-- Progress Bar -->
               <div class="space-y-1.5">
-                <div :class="['h-3 w-full rounded-full overflow-hidden p-0.5', isDarkMode ? 'bg-slate-900 border border-slate-800' : 'bg-slate-100 border border-slate-200']">
+                <div :class="['h-3 w-full rounded-full overflow-hidden p-0.5', isDarkMode ? 'bg-slate-900 border border-slate-800' : 'bg-slate-100 border border-slate-300']">
                   <div
                     class="h-full bg-gradient-to-r from-purple-600 to-blue-600 rounded-full transition-all duration-500"
                     :style="{ width: `${epic.status === 'done' ? 100 : (epic.status === 'in_progress' ? 50 : 20)}%` }"
                   ></div>
                 </div>
-                <div class="flex justify-between text-xs font-mono text-slate-500">
-                  <span>Trạng thái: <strong class="uppercase text-slate-800 dark:text-slate-200">{{ epic.status }}</strong></span>
-                  <span>{{ epic.story_points || 0 }} Story Points</span>
+                <div :class="['flex justify-between text-xs font-mono font-medium', isDarkMode ? 'text-slate-400' : 'text-slate-600']">
+                  <span>Trạng thái: <strong :class="['uppercase font-bold', isDarkMode ? 'text-white' : 'text-slate-950']">{{ epic.status }}</strong></span>
+                  <span class="font-bold">{{ epic.story_points || 0 }} Story Points</span>
                 </div>
               </div>
             </div>
 
-            <div v-if="epicList.length === 0" class="py-8 text-center text-xs text-slate-400 italic">
+            <div v-if="epicList.length === 0" class="py-8 text-center text-xs text-slate-500 italic font-medium">
               Chưa có Epic nào. Hãy tạo Issue loại Epic để hiển thị trên Roadmap.
             </div>
           </div>
@@ -2005,39 +2096,39 @@ onUnmounted(() => {
     </div>
 
     <!-- ========================================================================= -->
-    <!-- 3. TASK DETAIL DRAWER (RENDER MARKDOWN & CODE BLOCKS)                     -->
+    <!-- 3. TASK DETAIL DRAWER (HIGH CONTRAST MARKDOWN & CODE BLOCKS)              -->
     <!-- ========================================================================= -->
     <div
       v-if="selectedTask"
-      class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex justify-end"
+      class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex justify-end"
       @click.self="closeTaskDrawer"
     >
       <div
         :class="[
           'w-full max-w-2xl border-l h-full flex flex-col shadow-2xl animate-slideInRight',
-          isDarkMode ? 'bg-[#090d18] border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'
+          isDarkMode ? 'bg-[#090d18] border-slate-800 text-slate-100' : 'bg-white border-slate-300 text-slate-900'
         ]"
       >
         <!-- Drawer Header -->
         <div :class="['px-6 py-4 border-b flex items-center justify-between', isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200']">
           <div class="flex items-center gap-2.5">
             <span class="text-base">{{ getIssueTypeBadge(selectedTask.issue_type).icon }}</span>
-            <span class="font-mono text-sm font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">{{ selectedTask.issue_key }}</span>
+            <span :class="['font-mono text-sm font-bold px-2 py-0.5 rounded border', isDarkMode ? 'bg-blue-950/80 text-blue-300 border-blue-800' : 'bg-blue-50 text-blue-800 border-blue-200']">{{ selectedTask.issue_key }}</span>
             <span class="text-xs text-slate-400">/</span>
-            <span class="text-xs text-slate-600 dark:text-slate-400 truncate max-w-[200px] font-medium">{{ selectedTask.project?.title || 'Chung' }}</span>
+            <span :class="['text-xs truncate max-w-[200px] font-bold', isDarkMode ? 'text-slate-300' : 'text-slate-800']">{{ selectedTask.project?.title || 'Chung' }}</span>
           </div>
 
           <div class="flex items-center gap-2">
             <button
               @click="deleteTask(selectedTask)"
-              class="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 text-xs cursor-pointer"
+              class="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 text-xs cursor-pointer font-bold"
               title="Xóa Issue"
             >
               🗑️
             </button>
             <button
               @click="closeTaskDrawer"
-              :class="['p-1.5 rounded-lg text-xs cursor-pointer', isDarkMode ? 'bg-slate-900 hover:bg-slate-800 text-slate-400' : 'bg-slate-200 hover:bg-slate-300 text-slate-700']"
+              :class="['p-1.5 rounded-lg text-xs cursor-pointer font-bold', isDarkMode ? 'bg-slate-900 hover:bg-slate-800 text-slate-300' : 'bg-slate-200 hover:bg-slate-300 text-slate-800']"
             >
               ✕
             </button>
@@ -2054,7 +2145,7 @@ onUnmounted(() => {
                 @blur="saveTaskDrawerChanges"
                 :class="[
                   'w-full font-bold text-base sm:text-lg bg-transparent border-b border-transparent focus:border-blue-500 focus:outline-none py-1',
-                  isDarkMode ? 'text-white' : 'text-slate-900'
+                  isDarkMode ? 'text-white' : 'text-slate-950'
                 ]"
               />
             </div>
@@ -2062,10 +2153,10 @@ onUnmounted(() => {
             <!-- Description Markdown & Code Render -->
             <div class="space-y-2">
               <div class="flex items-center justify-between">
-                <span class="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider">Mô Tả Chi Tiết</span>
+                <span :class="['text-xs font-mono font-bold uppercase tracking-wider', isDarkMode ? 'text-slate-400' : 'text-slate-700']">Mô Tả Chi Tiết</span>
                 <button
                   @click="isEditingDescription = !isEditingDescription"
-                  class="text-xs text-blue-600 hover:underline cursor-pointer font-semibold"
+                  class="text-xs text-blue-700 dark:text-blue-400 hover:underline cursor-pointer font-bold"
                 >
                   {{ isEditingDescription ? 'Xem Trước Format' : 'Chỉnh Sửa Markdown' }}
                 </button>
@@ -2077,15 +2168,15 @@ onUnmounted(() => {
                   v-model="descriptionEditContent"
                   rows="8"
                   :class="[
-                    'w-full p-3.5 rounded-xl border text-xs font-mono focus:outline-none focus:border-blue-500 shadow-xs',
-                    isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-200' : 'bg-slate-50 border-slate-300 text-slate-900'
+                    'w-full p-3.5 rounded-xl border text-xs font-mono focus:outline-none focus:border-blue-500 shadow-xs font-medium',
+                    isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-100' : 'bg-slate-50 border-slate-300 text-slate-950'
                   ]"
                   placeholder="Nhập mô tả task bằng markdown..."
                 ></textarea>
                 <div class="flex justify-end mt-2">
                   <button
                     @click="isEditingDescription = false; saveTaskDrawerChanges();"
-                    class="px-4 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold cursor-pointer shadow-xs"
+                    class="px-4 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold cursor-pointer shadow-xs"
                   >
                     Lưu Mô Tả
                   </button>
@@ -2097,11 +2188,11 @@ onUnmounted(() => {
                 v-else
                 :class="[
                   'p-4 rounded-2xl border text-xs leading-relaxed min-h-[90px]',
-                  isDarkMode ? 'bg-slate-950 border-slate-800 text-slate-300' : 'bg-slate-50/70 border-slate-200 text-slate-800'
+                  isDarkMode ? 'bg-slate-950/80 border-slate-800 text-slate-200' : 'bg-slate-50/90 border-slate-200 text-slate-900'
                 ]"
               >
                 <div v-if="selectedTask.description" v-html="formatMarkdown(selectedTask.description)"></div>
-                <div v-else class="text-slate-400 italic">
+                <div v-else class="text-slate-500 italic font-medium">
                   Chưa có mô tả chi tiết cho issue này. Bấm "Chỉnh Sửa Markdown" để thêm nội dung.
                 </div>
               </div>
@@ -2110,8 +2201,8 @@ onUnmounted(() => {
             <!-- Subtasks Checklist -->
             <div class="space-y-3">
               <div class="flex items-center justify-between">
-                <span class="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider">Nhiệm Vụ Con (Subtasks)</span>
-                <span class="font-mono text-xs text-slate-500 font-bold">
+                <span :class="['text-xs font-mono font-bold uppercase tracking-wider', isDarkMode ? 'text-slate-400' : 'text-slate-700']">Nhiệm Vụ Con (Subtasks)</span>
+                <span :class="['font-mono text-xs font-bold', isDarkMode ? 'text-slate-300' : 'text-slate-800']">
                   {{ (selectedTask.subtasks || []).filter(s => s.done).length }}/{{ (selectedTask.subtasks || []).length }}
                 </span>
               </div>
@@ -2122,13 +2213,16 @@ onUnmounted(() => {
                   @keydown.enter="addSubtask"
                   placeholder="+ Thêm subtask mới... (Enter)"
                   :class="[
-                    'flex-1 px-3.5 py-2 rounded-xl border text-xs focus:outline-none focus:border-blue-500 shadow-xs',
-                    isDarkMode ? 'bg-slate-900 border-slate-800 text-slate-200' : 'bg-white border-slate-200 text-slate-800'
+                    'flex-1 px-3.5 py-2 rounded-xl border text-xs focus:outline-none focus:border-blue-500 shadow-xs font-medium',
+                    isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-100 placeholder-slate-500' : 'bg-white border-slate-300 text-slate-900 placeholder-slate-500'
                   ]"
                 />
                 <button
                   @click="addSubtask"
-                  class="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold text-xs cursor-pointer shadow-xs"
+                  :class="[
+                    'px-4 py-2 rounded-xl font-bold text-xs cursor-pointer shadow-xs',
+                    isDarkMode ? 'bg-slate-800 hover:bg-slate-700 text-slate-100' : 'bg-slate-200 hover:bg-slate-300 text-slate-900'
+                  ]"
                 >
                   Thêm
                 </button>
@@ -2150,12 +2244,12 @@ onUnmounted(() => {
                       @change="toggleSubtask(st)"
                       class="rounded text-blue-600 focus:ring-0 cursor-pointer"
                     />
-                    <span :class="['truncate font-medium', st.done ? 'line-through text-slate-400' : 'text-slate-800 dark:text-slate-200']">
+                    <span :class="['truncate font-semibold', st.done ? 'line-through text-slate-400 dark:text-slate-500' : (isDarkMode ? 'text-slate-100' : 'text-slate-950')]">
                       {{ st.text }}
                     </span>
                   </label>
 
-                  <button @click="deleteSubtask(st.id)" class="text-slate-400 hover:text-red-600 p-1 text-xs cursor-pointer">
+                  <button @click="deleteSubtask(st.id)" class="text-slate-400 hover:text-red-600 p-1 text-xs cursor-pointer font-bold">
                     ✕
                   </button>
                 </div>
@@ -2167,13 +2261,13 @@ onUnmounted(() => {
           <div :class="['space-y-4 text-xs border-t md:border-t-0 md:border-l md:pl-5', isDarkMode ? 'border-slate-800' : 'border-slate-200']">
             <!-- Status -->
             <div class="space-y-1">
-              <label class="font-mono text-[10px] text-slate-400 font-bold uppercase">Trạng Thái</label>
+              <label :class="['font-mono text-[10px] font-bold uppercase', isDarkMode ? 'text-slate-400' : 'text-slate-700']">Trạng Thái</label>
               <select
                 v-model="selectedTask.status"
                 @change="saveTaskDrawerChanges"
                 :class="[
-                  'w-full border rounded-xl p-2.5 text-xs focus:outline-none focus:border-blue-500 shadow-xs font-semibold',
-                  isDarkMode ? 'bg-slate-900 border-slate-800 text-slate-200' : 'bg-white border-slate-200 text-slate-800'
+                  'w-full border rounded-xl p-2.5 text-xs focus:outline-none focus:border-blue-500 shadow-xs font-bold',
+                  isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-100' : 'bg-white border-slate-300 text-slate-950'
                 ]"
               >
                 <option value="todo">Cần Làm (To Do)</option>
@@ -2185,13 +2279,13 @@ onUnmounted(() => {
 
             <!-- Issue Type -->
             <div class="space-y-1">
-              <label class="font-mono text-[10px] text-slate-400 font-bold uppercase">Loại Issue</label>
+              <label :class="['font-mono text-[10px] font-bold uppercase', isDarkMode ? 'text-slate-400' : 'text-slate-700']">Loại Issue</label>
               <select
                 v-model="selectedTask.issue_type"
                 @change="saveTaskDrawerChanges"
                 :class="[
-                  'w-full border rounded-xl p-2.5 text-xs focus:outline-none focus:border-blue-500 shadow-xs',
-                  isDarkMode ? 'bg-slate-900 border-slate-800 text-slate-200' : 'bg-white border-slate-200 text-slate-800'
+                  'w-full border rounded-xl p-2.5 text-xs focus:outline-none focus:border-blue-500 shadow-xs font-bold',
+                  isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-100' : 'bg-white border-slate-300 text-slate-950'
                 ]"
               >
                 <option value="task">☑️ Task (Công việc)</option>
@@ -2203,7 +2297,7 @@ onUnmounted(() => {
 
             <!-- Story Points (7 Fibonacci Buttons Grid) -->
             <div class="space-y-1.5">
-              <label class="font-mono text-[10px] text-slate-400 font-bold uppercase">Story Points (Fibonacci)</label>
+              <label :class="['font-mono text-[10px] font-bold uppercase', isDarkMode ? 'text-slate-400' : 'text-slate-700']">Story Points (Fibonacci)</label>
               <div class="grid grid-cols-4 gap-1.5">
                 <button
                   v-for="pts in [1, 2, 3, 5, 8, 13, 21]"
@@ -2212,8 +2306,8 @@ onUnmounted(() => {
                   :class="[
                     'py-1.5 rounded-lg font-mono font-bold text-xs border transition-all cursor-pointer',
                     selectedTask.story_points === pts
-                      ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
-                      : (isDarkMode ? 'bg-slate-900 text-slate-400 border-slate-800' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100')
+                      ? 'bg-blue-600 text-white border-blue-600 shadow-xs font-bold'
+                      : (isDarkMode ? 'bg-slate-900 text-slate-200 border-slate-700 hover:bg-slate-800' : 'bg-slate-100 text-slate-800 border-slate-300 hover:bg-slate-200')
                   ]"
                 >
                   {{ pts }}
@@ -2223,13 +2317,13 @@ onUnmounted(() => {
 
             <!-- Sprint Link -->
             <div class="space-y-1">
-              <label class="font-mono text-[10px] text-slate-400 font-bold uppercase">Sprint</label>
+              <label :class="['font-mono text-[10px] font-bold uppercase', isDarkMode ? 'text-slate-400' : 'text-slate-700']">Sprint</label>
               <select
                 v-model="selectedTask.sprint_id"
                 @change="saveTaskDrawerChanges"
                 :class="[
-                  'w-full border rounded-xl p-2.5 text-xs focus:outline-none focus:border-blue-500 shadow-xs',
-                  isDarkMode ? 'bg-slate-900 border-slate-800 text-slate-200' : 'bg-white border-slate-200 text-slate-800'
+                  'w-full border rounded-xl p-2.5 text-xs focus:outline-none focus:border-blue-500 shadow-xs font-semibold',
+                  isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-100' : 'bg-white border-slate-300 text-slate-950'
                 ]"
               >
                 <option :value="null">📦 Backlog (Chưa gán)</option>
@@ -2241,13 +2335,13 @@ onUnmounted(() => {
 
             <!-- Epic Link -->
             <div class="space-y-1">
-              <label class="font-mono text-[10px] text-slate-400 font-bold uppercase">Gán Epic</label>
+              <label :class="['font-mono text-[10px] font-bold uppercase', isDarkMode ? 'text-slate-400' : 'text-slate-700']">Gán Epic</label>
               <select
                 v-model="selectedTask.epic_id"
                 @change="saveTaskDrawerChanges"
                 :class="[
-                  'w-full border rounded-xl p-2.5 text-xs focus:outline-none focus:border-blue-500 shadow-xs',
-                  isDarkMode ? 'bg-slate-900 border-slate-800 text-slate-200' : 'bg-white border-slate-200 text-slate-800'
+                  'w-full border rounded-xl p-2.5 text-xs focus:outline-none focus:border-blue-500 shadow-xs font-semibold',
+                  isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-100' : 'bg-white border-slate-300 text-slate-950'
                 ]"
               >
                 <option :value="null">Không thuộc Epic</option>
@@ -2259,13 +2353,13 @@ onUnmounted(() => {
 
             <!-- Priority -->
             <div class="space-y-1">
-              <label class="font-mono text-[10px] text-slate-400 font-bold uppercase">Độ Ưu Tiên</label>
+              <label :class="['font-mono text-[10px] font-bold uppercase', isDarkMode ? 'text-slate-400' : 'text-slate-700']">Độ Ưu Tiên</label>
               <select
                 v-model="selectedTask.priority"
                 @change="saveTaskDrawerChanges"
                 :class="[
-                  'w-full border rounded-xl p-2.5 text-xs focus:outline-none focus:border-blue-500 shadow-xs',
-                  isDarkMode ? 'bg-slate-900 border-slate-800 text-slate-200' : 'bg-white border-slate-200 text-slate-800'
+                  'w-full border rounded-xl p-2.5 text-xs focus:outline-none focus:border-blue-500 shadow-xs font-bold',
+                  isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-100' : 'bg-white border-slate-300 text-slate-950'
                 ]"
               >
                 <option value="urgent">🔴 Khẩn cấp</option>
@@ -2277,14 +2371,14 @@ onUnmounted(() => {
 
             <!-- Due Date -->
             <div class="space-y-1">
-              <label class="font-mono text-[10px] text-slate-400 font-bold uppercase">Hạn Chót (Due Date)</label>
+              <label :class="['font-mono text-[10px] font-bold uppercase', isDarkMode ? 'text-slate-400' : 'text-slate-700']">Hạn Chót (Due Date)</label>
               <input
                 v-model="selectedTask.due_date"
                 type="date"
                 @change="saveTaskDrawerChanges"
                 :class="[
-                  'w-full border rounded-xl p-2.5 text-xs focus:outline-none focus:border-blue-500 shadow-xs',
-                  isDarkMode ? 'bg-slate-900 border-slate-800 text-slate-200' : 'bg-white border-slate-200 text-slate-800'
+                  'w-full border rounded-xl p-2.5 text-xs focus:outline-none focus:border-blue-500 shadow-xs font-semibold',
+                  isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-100' : 'bg-white border-slate-300 text-slate-950'
                 ]"
               />
             </div>
@@ -2297,89 +2391,89 @@ onUnmounted(() => {
     <!-- 4. MODALS (CREATE SPRINT, START SPRINT, COMPLETE SPRINT, CREATE TASK)      -->
     <!-- ========================================================================= -->
     <!-- Modal: Create Sprint -->
-    <div v-if="showSprintModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
-      <div :class="['w-full max-w-md border rounded-3xl p-6 shadow-2xl space-y-4', isDarkMode ? 'bg-[#0a0f1d] border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900']">
-        <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+    <div v-if="showSprintModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+      <div :class="['w-full max-w-md border rounded-3xl p-6 shadow-2xl space-y-4', isDarkMode ? 'bg-[#0a0f1d] border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-950']">
+        <div :class="['flex items-center justify-between pb-3 border-b', isDarkMode ? 'border-slate-800' : 'border-slate-200']">
           <h3 class="font-bold text-sm">⚡ Tạo Sprint Scrum Mới</h3>
-          <button @click="showSprintModal = false" class="text-slate-400 hover:text-slate-600">✕</button>
+          <button @click="showSprintModal = false" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
         </div>
 
         <div class="space-y-3 text-xs">
           <div>
-            <label class="font-mono text-[10px] text-slate-400 font-bold uppercase block mb-1">Tên Sprint</label>
+            <label :class="['font-mono text-[10px] font-bold uppercase block mb-1', isDarkMode ? 'text-slate-400' : 'text-slate-700']">Tên Sprint</label>
             <input
               v-model="sprintForm.name"
               placeholder="VD: Sprint 1 — Triển Khai Tính Năng"
-              :class="['w-full p-2.5 rounded-xl border focus:outline-none focus:border-blue-500', isDarkMode ? 'bg-slate-900 border-slate-800 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-800']"
+              :class="['w-full p-2.5 rounded-xl border focus:outline-none focus:border-blue-500 font-medium', isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-100' : 'bg-slate-50 border-slate-300 text-slate-950']"
             />
           </div>
 
           <div>
-            <label class="font-mono text-[10px] text-slate-400 font-bold uppercase block mb-1">Mục Tiêu (Goal)</label>
+            <label :class="['font-mono text-[10px] font-bold uppercase block mb-1', isDarkMode ? 'text-slate-400' : 'text-slate-700']">Mục Tiêu (Goal)</label>
             <textarea
               v-model="sprintForm.goal"
               rows="3"
               placeholder="Mục tiêu sprint..."
-              :class="['w-full p-2.5 rounded-xl border focus:outline-none focus:border-blue-500', isDarkMode ? 'bg-slate-900 border-slate-800 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-800']"
+              :class="['w-full p-2.5 rounded-xl border focus:outline-none focus:border-blue-500 font-medium', isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-100' : 'bg-slate-50 border-slate-300 text-slate-950']"
             ></textarea>
           </div>
         </div>
 
-        <div class="flex justify-end gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
-          <button @click="showSprintModal = false" class="px-4 py-2 rounded-xl text-xs font-semibold cursor-pointer">Hủy</button>
+        <div :class="['flex justify-end gap-2 pt-2 border-t', isDarkMode ? 'border-slate-800' : 'border-slate-200']">
+          <button @click="showSprintModal = false" class="px-4 py-2 rounded-xl text-xs font-bold cursor-pointer">Hủy</button>
           <button @click="handleSaveSprint" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold cursor-pointer">Tạo Sprint</button>
         </div>
       </div>
     </div>
 
     <!-- Modal: Start Sprint -->
-    <div v-if="showStartSprintModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
-      <div :class="['w-full max-w-md border rounded-3xl p-6 shadow-2xl space-y-4', isDarkMode ? 'bg-[#0a0f1d] border-blue-500/30 text-white' : 'bg-white border-blue-200 text-slate-900']">
+    <div v-if="showStartSprintModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+      <div :class="['w-full max-w-md border rounded-3xl p-6 shadow-2xl space-y-4', isDarkMode ? 'bg-[#0a0f1d] border-blue-500/50 text-white' : 'bg-white border-blue-300 text-slate-950']">
         <h3 class="font-bold text-sm">🚀 Bắt Đầu Sprint: {{ targetSprintForAction?.name }}</h3>
-        <p class="text-xs text-slate-500">Sprint sẽ được chuyển sang trạng thái <strong>ACTIVE</strong>.</p>
-        <div class="flex justify-end gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
-          <button @click="showStartSprintModal = false" class="px-4 py-2 rounded-xl text-xs font-semibold cursor-pointer">Hủy</button>
+        <p :class="['text-xs font-medium', isDarkMode ? 'text-slate-300' : 'text-slate-600']">Sprint sẽ được chuyển sang trạng thái <strong>ACTIVE</strong>.</p>
+        <div :class="['flex justify-end gap-2 pt-2 border-t', isDarkMode ? 'border-slate-800' : 'border-slate-200']">
+          <button @click="showStartSprintModal = false" class="px-4 py-2 rounded-xl text-xs font-bold cursor-pointer">Hủy</button>
           <button @click="confirmStartSprint" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold cursor-pointer">Bắt Đầu ▶</button>
         </div>
       </div>
     </div>
 
     <!-- Modal: Complete Sprint -->
-    <div v-if="showCompleteSprintModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
-      <div :class="['w-full max-w-md border rounded-3xl p-6 shadow-2xl space-y-4', isDarkMode ? 'bg-[#0a0f1d] border-emerald-500/30 text-white' : 'bg-white border-emerald-200 text-slate-900']">
+    <div v-if="showCompleteSprintModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+      <div :class="['w-full max-w-md border rounded-3xl p-6 shadow-2xl space-y-4', isDarkMode ? 'bg-[#0a0f1d] border-emerald-500/50 text-white' : 'bg-white border-emerald-300 text-slate-950']">
         <h3 class="font-bold text-sm">🏁 Hoàn Thành Sprint: {{ targetSprintForAction?.name }}</h3>
-        <p class="text-xs text-slate-500">Các task chưa xong sẽ được tự động chuyển về <strong>Backlog</strong> an toàn.</p>
-        <div class="flex justify-end gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
-          <button @click="showCompleteSprintModal = false" class="px-4 py-2 rounded-xl text-xs font-semibold cursor-pointer">Hủy</button>
+        <p :class="['text-xs font-medium', isDarkMode ? 'text-slate-300' : 'text-slate-600']">Các task chưa xong sẽ được tự động chuyển về <strong>Backlog</strong> an toàn.</p>
+        <div :class="['flex justify-end gap-2 pt-2 border-t', isDarkMode ? 'border-slate-800' : 'border-slate-200']">
+          <button @click="showCompleteSprintModal = false" class="px-4 py-2 rounded-xl text-xs font-bold cursor-pointer">Hủy</button>
           <button @click="confirmCompleteSprint" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold cursor-pointer">Hoàn Thành ✓</button>
         </div>
       </div>
     </div>
 
     <!-- Modal: Create Task -->
-    <div v-if="showCreateModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
-      <div :class="['w-full max-w-lg border rounded-3xl p-6 shadow-2xl space-y-4', isDarkMode ? 'bg-[#0a0f1d] border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900']">
-        <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+    <div v-if="showCreateModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+      <div :class="['w-full max-w-lg border rounded-3xl p-6 shadow-2xl space-y-4', isDarkMode ? 'bg-[#0a0f1d] border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-950']">
+        <div :class="['flex items-center justify-between pb-3 border-b', isDarkMode ? 'border-slate-800' : 'border-slate-200']">
           <h3 class="font-bold text-sm">✨ Tạo Task Mới</h3>
-          <button @click="showCreateModal = false" class="text-slate-400 hover:text-slate-600">✕</button>
+          <button @click="showCreateModal = false" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
         </div>
 
         <div class="space-y-3 text-xs">
           <div>
-            <label class="font-mono text-[10px] text-slate-400 font-bold uppercase block mb-1">Tiêu Đề Task *</label>
+            <label :class="['font-mono text-[10px] font-bold uppercase block mb-1', isDarkMode ? 'text-slate-400' : 'text-slate-700']">Tiêu Đề Task *</label>
             <input
               v-model="newTaskForm.title"
-              placeholder="VD: Cập nhật giao diện Linear / Jira Modern"
-              :class="['w-full p-2.5 rounded-xl border focus:outline-none focus:border-blue-500', isDarkMode ? 'bg-slate-900 border-slate-800 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-800']"
+              placeholder="VD: Cập nhật giao diện High Contrast"
+              :class="['w-full p-2.5 rounded-xl border focus:outline-none focus:border-blue-500 font-medium', isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-100' : 'bg-slate-50 border-slate-300 text-slate-950']"
             />
           </div>
 
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="font-mono text-[10px] text-slate-400 font-bold uppercase block mb-1">Loại Issue</label>
+              <label :class="['font-mono text-[10px] font-bold uppercase block mb-1', isDarkMode ? 'text-slate-400' : 'text-slate-700']">Loại Issue</label>
               <select
                 v-model="newTaskForm.issue_type"
-                :class="['w-full p-2.5 rounded-xl border focus:outline-none', isDarkMode ? 'bg-slate-900 border-slate-800 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-800']"
+                :class="['w-full p-2.5 rounded-xl border focus:outline-none font-bold', isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-100' : 'bg-slate-50 border-slate-300 text-slate-950']"
               >
                 <option value="task">☑️ Task</option>
                 <option value="story">📖 Story</option>
@@ -2389,10 +2483,10 @@ onUnmounted(() => {
             </div>
 
             <div>
-              <label class="font-mono text-[10px] text-slate-400 font-bold uppercase block mb-1">Story Points</label>
+              <label :class="['font-mono text-[10px] font-bold uppercase block mb-1', isDarkMode ? 'text-slate-400' : 'text-slate-700']">Story Points</label>
               <select
                 v-model="newTaskForm.story_points"
-                :class="['w-full p-2.5 rounded-xl border focus:outline-none', isDarkMode ? 'bg-slate-900 border-slate-800 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-800']"
+                :class="['w-full p-2.5 rounded-xl border focus:outline-none font-bold', isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-100' : 'bg-slate-50 border-slate-300 text-slate-950']"
               >
                 <option :value="1">1 pt</option>
                 <option :value="2">2 pts</option>
@@ -2405,57 +2499,57 @@ onUnmounted(() => {
           </div>
 
           <div>
-            <label class="font-mono text-[10px] text-slate-400 font-bold uppercase block mb-1">Mô Tả</label>
+            <label :class="['font-mono text-[10px] font-bold uppercase block mb-1', isDarkMode ? 'text-slate-400' : 'text-slate-700']">Mô Tả</label>
             <textarea
               v-model="newTaskForm.description"
               rows="3"
               placeholder="Chi tiết công việc..."
-              :class="['w-full p-2.5 rounded-xl border focus:outline-none', isDarkMode ? 'bg-slate-900 border-slate-800 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-800']"
+              :class="['w-full p-2.5 rounded-xl border focus:outline-none font-medium', isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-100' : 'bg-slate-50 border-slate-300 text-slate-950']"
             ></textarea>
           </div>
         </div>
 
-        <div class="flex justify-end gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
-          <button @click="showCreateModal = false" class="px-4 py-2 rounded-xl text-xs font-semibold cursor-pointer">Hủy</button>
+        <div :class="['flex justify-end gap-2 pt-2 border-t', isDarkMode ? 'border-slate-800' : 'border-slate-200']">
+          <button @click="showCreateModal = false" class="px-4 py-2 rounded-xl text-xs font-bold cursor-pointer">Hủy</button>
           <button @click="handleCreateTask" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold cursor-pointer">Tạo Task</button>
         </div>
       </div>
     </div>
 
     <!-- Modal: Create / Edit Project -->
-    <div v-if="showProjectModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
-      <div :class="['w-full max-w-md border rounded-3xl p-6 shadow-2xl space-y-4', isDarkMode ? 'bg-[#0a0f1d] border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900']">
-        <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+    <div v-if="showProjectModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+      <div :class="['w-full max-w-md border rounded-3xl p-6 shadow-2xl space-y-4', isDarkMode ? 'bg-[#0a0f1d] border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-950']">
+        <div :class="['flex items-center justify-between pb-3 border-b', isDarkMode ? 'border-slate-800' : 'border-slate-200']">
           <h3 class="font-bold text-sm">
             {{ projectModalMode === 'create' ? 'Tạo Dự Án Mới' : 'Chỉnh Sửa Dự Án' }}
           </h3>
-          <button @click="showProjectModal = false" class="text-slate-400 hover:text-slate-600">✕</button>
+          <button @click="showProjectModal = false" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
         </div>
 
         <div class="space-y-3 text-xs">
           <div>
-            <label class="font-mono text-[10px] text-slate-400 font-bold uppercase block mb-1">Tên Dự Án *</label>
+            <label :class="['font-mono text-[10px] font-bold uppercase block mb-1', isDarkMode ? 'text-slate-400' : 'text-slate-700']">Tên Dự Án *</label>
             <input
               v-model="projectForm.title"
               placeholder="VD: Mobile App 2026"
-              :class="['w-full p-2.5 rounded-xl border focus:outline-none focus:border-blue-500', isDarkMode ? 'bg-slate-900 border-slate-800 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-800']"
+              :class="['w-full p-2.5 rounded-xl border focus:outline-none focus:border-blue-500 font-medium', isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-100' : 'bg-slate-50 border-slate-300 text-slate-950']"
             />
           </div>
 
           <div>
-            <label class="font-mono text-[10px] text-slate-400 font-bold uppercase block mb-1">Mã Key Dự Án (2-5 ký tự)</label>
+            <label :class="['font-mono text-[10px] font-bold uppercase block mb-1', isDarkMode ? 'text-slate-400' : 'text-slate-700']">Mã Key Dự Án (2-5 ký tự)</label>
             <input
               v-model="projectForm.key"
               placeholder="VD: APP"
-              :class="['w-full p-2.5 rounded-xl border font-mono uppercase focus:outline-none focus:border-blue-500', isDarkMode ? 'bg-slate-900 border-slate-800 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-800']"
+              :class="['w-full p-2.5 rounded-xl border font-mono uppercase focus:outline-none focus:border-blue-500 font-bold', isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-100' : 'bg-slate-50 border-slate-300 text-slate-950']"
             />
           </div>
 
           <div>
-            <label class="font-mono text-[10px] text-slate-400 font-bold uppercase block mb-1">Phân Loại</label>
+            <label :class="['font-mono text-[10px] font-bold uppercase block mb-1', isDarkMode ? 'text-slate-400' : 'text-slate-700']">Phân Loại</label>
             <select
               v-model="projectForm.type"
-              :class="['w-full p-2.5 rounded-xl border focus:outline-none', isDarkMode ? 'bg-slate-900 border-slate-800 text-slate-200' : 'bg-slate-50 border-slate-200 text-slate-800']"
+              :class="['w-full p-2.5 rounded-xl border focus:outline-none font-bold', isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-100' : 'bg-slate-50 border-slate-300 text-slate-950']"
             >
               <option value="work">💼 Công Việc (Work)</option>
               <option value="personal">👤 Cá Nhân (Personal)</option>
@@ -2463,8 +2557,8 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <div class="flex justify-end gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
-          <button @click="showProjectModal = false" class="px-4 py-2 rounded-xl text-xs font-semibold cursor-pointer">Hủy</button>
+        <div :class="['flex justify-end gap-2 pt-2 border-t', isDarkMode ? 'border-slate-800' : 'border-slate-200']">
+          <button @click="showProjectModal = false" class="px-4 py-2 rounded-xl text-xs font-bold cursor-pointer">Hủy</button>
           <button @click="handleSaveProject" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold cursor-pointer">Lưu Dự Án</button>
         </div>
       </div>
@@ -2490,19 +2584,19 @@ onUnmounted(() => {
       <div
         :class="[
           'relative w-full max-w-md border rounded-3xl p-6 sm:p-8 shadow-2xl text-center z-10 transition-all duration-300',
-          isPinShaking ? 'animate-bounce !border-red-500' : (isDarkMode ? 'bg-[#0a0f1d] border-slate-800' : 'bg-white border-slate-200 text-slate-800')
+          isPinShaking ? 'animate-bounce !border-red-500' : (isDarkMode ? 'bg-[#0a0f1d] border-slate-700' : 'bg-white border-slate-300 text-slate-950')
         ]"
       >
         <div class="flex flex-col items-center mb-6">
-          <div class="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center shadow-xs mb-3">
+          <div class="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 flex items-center justify-center shadow-xs mb-3">
             <span class="text-2xl">🔒</span>
           </div>
 
-          <h2 :class="['text-lg sm:text-xl font-bold font-display', isDarkMode ? 'text-white' : 'text-slate-900']">
+          <h2 :class="['text-lg sm:text-xl font-bold font-display', isDarkMode ? 'text-white' : 'text-slate-950']">
             BẢO MẬT TASKS WORKSPACE
           </h2>
-          <p class="text-xs text-slate-500 mt-1">
-            Nhập mã PIN <strong class="text-blue-600 font-mono">6 chữ số</strong> để mở khóa không gian làm việc.
+          <p :class="['text-xs mt-1 font-medium', isDarkMode ? 'text-slate-400' : 'text-slate-600']">
+            Nhập mã PIN <strong class="text-blue-600 dark:text-blue-400 font-mono font-bold">6 chữ số</strong> để mở khóa không gian làm việc.
           </p>
         </div>
 
@@ -2514,19 +2608,19 @@ onUnmounted(() => {
             :class="[
               'w-11 h-13 sm:w-12 sm:h-14 rounded-2xl border-2 flex items-center justify-center font-mono font-bold text-xl transition-all duration-150',
               pinInput.length >= i
-                ? 'border-blue-600 bg-blue-50 text-blue-700 scale-105 shadow-xs'
+                ? 'border-blue-600 bg-blue-50 text-blue-800 dark:bg-blue-950 dark:text-blue-300 scale-105 shadow-xs'
                 : pinInput.length === i - 1
-                ? 'border-blue-400 bg-slate-50 text-slate-400 ring-2 ring-blue-100'
-                : (isDarkMode ? 'border-slate-800 bg-slate-950 text-slate-600' : 'border-slate-200 bg-slate-50 text-slate-300')
+                ? 'border-blue-500 bg-slate-50 dark:bg-slate-900 text-slate-400 ring-2 ring-blue-200 dark:ring-blue-900'
+                : (isDarkMode ? 'border-slate-800 bg-slate-950 text-slate-600' : 'border-slate-300 bg-slate-50 text-slate-400')
             ]"
           >
-            <span v-if="pinInput.length >= i" class="text-xl text-blue-600">●</span>
-            <span v-else class="text-slate-300 dark:text-slate-700 text-xs">―</span>
+            <span v-if="pinInput.length >= i" class="text-xl text-blue-600 dark:text-blue-400">●</span>
+            <span v-else class="text-slate-400 dark:text-slate-700 text-xs">―</span>
           </div>
         </div>
 
         <!-- Error Message -->
-        <div v-if="pinError" class="mb-4 text-xs text-red-600 bg-red-50 border border-red-200 py-2 px-3 rounded-xl">
+        <div v-if="pinError" class="mb-4 text-xs text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-950/80 border border-red-200 dark:border-red-800 py-2 px-3 rounded-xl font-bold">
           ⚠️ {{ pinError }}
         </div>
 
@@ -2538,7 +2632,7 @@ onUnmounted(() => {
             @click="handleNumpadPress(num)"
             :class="[
               'h-12 rounded-2xl border font-mono font-bold text-lg transition-all active:scale-95 cursor-pointer shadow-xs',
-              isDarkMode ? 'bg-slate-900 border-slate-800 text-slate-200 hover:bg-slate-800' : 'bg-slate-50 border-slate-200 text-slate-800 hover:bg-slate-100'
+              isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-100 hover:bg-slate-800' : 'bg-slate-50 border-slate-300 text-slate-900 hover:bg-slate-100'
             ]"
           >
             {{ num }}
@@ -2548,7 +2642,7 @@ onUnmounted(() => {
             @click="handleNumpadClear"
             :class="[
               'h-12 rounded-2xl border font-mono font-bold text-xs transition-all active:scale-95 cursor-pointer',
-              isDarkMode ? 'bg-slate-950 border-slate-800 text-slate-400' : 'bg-slate-100 border-slate-200 text-slate-600 hover:bg-slate-200'
+              isDarkMode ? 'bg-slate-950 border-slate-800 text-slate-300' : 'bg-slate-100 border-slate-300 text-slate-800 hover:bg-slate-200'
             ]"
           >
             XÓA
@@ -2558,7 +2652,7 @@ onUnmounted(() => {
             @click="handleNumpadPress('0')"
             :class="[
               'h-12 rounded-2xl border font-mono font-bold text-lg transition-all active:scale-95 cursor-pointer shadow-xs',
-              isDarkMode ? 'bg-slate-900 border-slate-800 text-slate-200 hover:bg-slate-800' : 'bg-slate-50 border-slate-200 text-slate-800 hover:bg-slate-100'
+              isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-100 hover:bg-slate-800' : 'bg-slate-50 border-slate-300 text-slate-900 hover:bg-slate-100'
             ]"
           >
             0
@@ -2568,15 +2662,15 @@ onUnmounted(() => {
             @click="handleNumpadBackspace"
             :class="[
               'h-12 rounded-2xl border font-mono font-bold text-lg transition-all active:scale-95 cursor-pointer',
-              isDarkMode ? 'bg-slate-950 border-slate-800 text-slate-400 hover:text-red-400' : 'bg-slate-100 border-slate-200 text-slate-600 hover:text-red-600 hover:bg-red-50'
+              isDarkMode ? 'bg-slate-950 border-slate-800 text-slate-300 hover:text-red-400' : 'bg-slate-100 border-slate-300 text-slate-800 hover:text-red-600 hover:bg-red-50'
             ]"
           >
             ⌫
           </button>
         </div>
 
-        <div class="flex items-center justify-between pt-4 border-t border-slate-200 dark:border-slate-800 text-xs">
-          <a href="/" class="text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center gap-1">
+        <div :class="['flex items-center justify-between pt-4 border-t text-xs', isDarkMode ? 'border-slate-800' : 'border-slate-200']">
+          <a href="/" :class="['font-bold flex items-center gap-1', isDarkMode ? 'text-slate-400 hover:text-white' : 'text-slate-700 hover:text-slate-950']">
             ← Về Trang Chủ
           </a>
 
@@ -2587,7 +2681,7 @@ onUnmounted(() => {
               'px-5 py-2 rounded-xl font-bold font-mono text-xs transition-all flex items-center gap-1.5 shadow-xs',
               pinInput.length === 6
                 ? 'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer'
-                : 'bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed opacity-60'
+                : (isDarkMode ? 'bg-slate-800 text-slate-600 cursor-not-allowed opacity-60' : 'bg-slate-200 text-slate-400 cursor-not-allowed opacity-60')
             ]"
           >
             <span>MỞ KHÓA</span>

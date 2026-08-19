@@ -1,4 +1,4 @@
-﻿export interface PaliGlossaryEntry {
+export interface PaliGlossaryEntry {
   term: string;
   pali: string;
   vietnamese: string;
@@ -478,6 +478,110 @@ export const PALI_GLOSSARY: PaliGlossaryEntry[] = [
     category: 'Tu Tập',
     definition: 'Sự hướng tâm đúng đắn, quán sát sâu sắc đến tận cội nguồn bản chất của vạn pháp theo quy luật duyên khởi.',
     aliases: ['Như Lý Tác Ý', 'Tác ý đúng đắn']
+  },
+
+  // 8. Tứ Vô Lượng Tâm & Bát Phong
+  {
+    term: 'Brahmavihāra',
+    pali: 'Brahmavihāra',
+    vietnamese: 'Tứ Vô Lượng Tâm / Phạm Trú',
+    category: 'Tứ Vô Lượng Tâm',
+    definition: 'Bốn trạng thái tâm cao thượng vô lượng giải thoát: Từ (Mettā), Bi (Karuṇā), Hỷ (Muditā), và Xả (Upekkhā).',
+    aliases: ['Tứ Vô Lượng Tâm', 'Phạm Trú', 'Bốn Tâm Vô Lượng']
+  },
+  {
+    term: 'Lokadhamma',
+    pali: 'Lokadhamma',
+    vietnamese: 'Bát Phong / Tám Ngọn Gió Đời',
+    category: 'Pháp Thế Gian',
+    definition: 'Tám pháp thế gian biến động không ngừng: Được - Mất, Danh thơm - Tiếng xấu, Ca ngợi - Chê bai, Lạc thú - Đau khổ.',
+    aliases: ['Bát Phong', 'Tám ngọn gió đời', 'Pháp thế gian']
+  },
+
+  // 9. Thiền Quán Hơi Thở & Tỉnh Giác
+  {
+    term: 'Ānāpānasati',
+    pali: 'Ānāpānasati',
+    vietnamese: 'Quán Niệm Hơi Thở',
+    category: 'Thiền Định & Thiền Tuệ',
+    definition: 'Phương pháp thiền định và tuệ quán cốt lõi qua 16 bước theo dõi hơi thở vào - ra từ thô đến tế, đưa tới an tịnh và giải thoát.',
+    aliases: ['Quán Niệm Hơi Thở', 'Niệm hơi thở', 'Anapanasati']
+  },
+  {
+    term: 'Nīvaraṇa',
+    pali: 'Pañca Nīvaraṇa',
+    vietnamese: 'Năm Triền Cái',
+    category: 'Chướng Ngại Thiền',
+    definition: 'Năm chướng ngại ngăn che tâm định và tuệ giác: Tham dục (Kāmacchanda), Sân hận (Byāpāda), Hôn trầm thụy miên (Thīna-middha), Trạo cử hối quá (Uddhacca-kukkucca), Hoài nghi (Vicikicchā).',
+    aliases: ['Năm Triền Cái', 'Triền cái', 'Nivarana']
+  },
+  {
+    term: 'Sampajañña',
+    pali: 'Sampajañña',
+    vietnamese: 'Tỉnh Giác',
+    category: 'Thiền Tuệ',
+    definition: 'Sự hiểu biết rõ ràng, sáng suốt về bản chất và mục đích của mọi hành động thân - khẩu - ý trong từng giây phút hiện tại.',
+    aliases: ['Tỉnh Giác', 'Chánh tri', 'Sampajanna']
+  },
+
+  // 10. Tiến Trình Tâm Thức & Thanh Tịnh Đạo
+  {
+    term: 'Citta-vīthi',
+    pali: 'Citta-vīthi',
+    vietnamese: 'Tiến Trình Tâm Thức / Lộ Trình Tâm',
+    category: 'Vi Diệu Pháp',
+    definition: 'Chuỗi diễn tiến của 17 sát-na tâm liên tục khi giác quan tiếp nhận đối tượng trần cảnh trong Vi Diệu Pháp (Abhidhamma).',
+    aliases: ['Tiến trình tâm', 'Lộ trình tâm', 'Citta vithi']
+  },
+  {
+    term: 'Visuddhi',
+    pali: 'Satta Visuddhi',
+    vietnamese: 'Thất Thanh Tịnh',
+    category: 'Thanh Tịnh Đạo',
+    definition: 'Bảy giai đoạn thanh lọc giới hạnh và tuệ giác theo bộ luận Visuddhimagga (Thanh Tịnh Đạo) để đạt đến Niết-bàn rốt ráo.',
+    aliases: ['Thất Thanh Tịnh', 'Bảy giai đoạn thanh tịnh', 'Visuddhi']
+  },
+  {
+    term: 'Vipassanā-ñāṇa',
+    pali: 'Solasa Vipassanā-ñāṇa',
+    vietnamese: 'Mười Sáu Tầng Tuệ Minh Sát',
+    category: 'Thiền Tuệ',
+    definition: 'Tiến trình 16 nấc thang tuệ giác trực nhận Tam Tướng trên danh sắc đưa hành giả từ phàm phu chứng đắc Thánh Đạo Thánh Quả.',
+    aliases: ['16 Tuệ Minh Sát', 'Tuệ Minh Sát', 'Vipassana nana']
+  },
+  {
+    term: 'Nimitta',
+    pali: 'Nimitta',
+    vietnamese: 'Thiền Tướng / Ấn Chứng Thiền',
+    category: 'Thiền Định',
+    definition: 'Dấu hiệu quang tướng hoặc cảm giác tâm linh xuất hiện khi tâm đạt đến mức độ định sâu sắc trong thiền định Samatha.',
+    aliases: ['Thiền Tướng', 'Ấn chứng quang tướng', 'Quang tướng']
+  },
+
+  // 11. Các Bản Kinh Điển Trọng Yếu
+  {
+    term: 'Mahāmaṅgala',
+    pali: 'Mahāmaṅgala Sutta',
+    vietnamese: 'Kinh Điềm Lành Hạnh Phúc',
+    category: 'Kinh Tạng',
+    definition: 'Bản kinh trong Tiểu Bộ Kinh chỉ dạy 38 pháp điềm lành tạo nên hạnh phúc chân thật và tối thượng từ thế gian đến xuất thế gian.',
+    aliases: ['Kinh Điềm Lành', 'Kinh Hạnh Phúc', 'Mahamangala Sutta']
+  },
+  {
+    term: 'Bhaddekaratta',
+    pali: 'Bhaddekaratta Sutta',
+    vietnamese: 'Kinh Người Biết Sống Một Mình',
+    category: 'Kinh Tạng',
+    definition: 'Bài kinh trong Trung Bộ dạy cách an trú tâm trong hiện tại, không tiếc nuối quá khứ và không mơ tưởng tương lai.',
+    aliases: ['Kinh Người Biết Sống Một Mình', 'Bhaddekaratta']
+  },
+  {
+    term: 'Alagaddūpama',
+    pali: 'Alagaddūpama Sutta',
+    vietnamese: 'Kinh Ví Dụ Con Rắn & Chiếc Bè',
+    category: 'Kinh Tạng',
+    definition: 'Bài kinh trong Trung Bộ ví dụ về nguy hại của việc chấp thủ giáo pháp như bắt rắn đằng đuôi, và giáo pháp chỉ như chiếc bè qua sông.',
+    aliases: ['Kinh Ví Dụ Con Rắn', 'Kinh Chiếc Bè', 'Alagaddupama']
   }
 ];
 

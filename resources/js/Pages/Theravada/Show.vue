@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed, nextTick, watch } from 'vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, router } from '@inertiajs/vue3';
 import TheravadaLayout from '@/Layouts/TheravadaLayout.vue';
 import { mindfulBell } from '@/audio/mindfulBellAudio';
 import { PALI_GLOSSARY, PaliGlossaryEntry } from '@/data/paliGlossary';
@@ -196,8 +196,21 @@ const closeTooltip = () => {
   activeTooltip.value = null;
 };
 
-// Event delegation handler for article text
+// Event delegation handler for article text (links and tooltips)
 const handleArticleInteraction = (e: MouseEvent) => {
+  const link = (e.target as HTMLElement)?.closest('a.zen-internal-link') as HTMLAnchorElement | null;
+  if (e.type === 'click' && link) {
+    const href = link.getAttribute('href');
+    if (href && (href.startsWith('/') || href.startsWith('#'))) {
+      if (href.startsWith('/')) {
+        e.preventDefault();
+        mindfulBell.ringBell(528, 0.8);
+        router.visit(href);
+        return;
+      }
+    }
+  }
+
   const target = (e.target as HTMLElement)?.closest('.zen-pali-term') as HTMLElement | null;
   if (e.type === 'mouseover' || e.type === 'click') {
     if (target) {
@@ -362,7 +375,7 @@ const annotatePaliTermsInHtml = (html: string) => {
   let lastIndex = 0;
   let result = '';
   let insideExcludedTag = 0;
-  const excludedTags = new Set(['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'code', 'pre', 'svg', 'button', 'a', 'strong']);
+  const excludedTags = new Set(['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'code', 'pre', 'svg', 'button', 'a', 'strong', 'th', 'td']);
 
   let match: RegExpExecArray | null;
   while ((match = tagRegex.exec(html)) !== null) {
@@ -408,6 +421,48 @@ const cleanHeadingText = (text: string) => {
   return text.replace(/^[\p{Emoji}\p{Symbol}\p{Punctuation}\s—–]+/u, '').trim();
 };
 
+// Markdown Table Parser
+const parseMarkdownTables = (content: string, isPaper: boolean): string => {
+  const tableRegex = /((?:\|[^\n]+\|\r?\n)(?:\|[-:\|\s]+\|\r?\n)(?:\|[^\n]+\|\r?\n?)+)/g;
+  return content.replace(tableRegex, (match) => {
+    const lines = match.trim().split(/\r?\n/).filter(l => l.trim().startsWith('|'));
+    if (lines.length < 2) return match;
+    const headerCells = lines[0].split('|').slice(1, -1).map(c => c.trim());
+    const bodyRows = lines.slice(2);
+
+    const thClass = isPaper
+      ? 'px-4 py-3 bg-amber-100/90 text-amber-950 font-serif font-bold text-sm sm:text-base text-left border-b border-amber-300'
+      : 'px-4 py-3 bg-amber-950/50 text-amber-200 font-serif font-bold text-sm sm:text-base text-left border-b border-amber-500/30';
+
+    const tableClass = isPaper
+      ? 'w-full text-left font-serif text-sm sm:text-base border-collapse my-6 bg-white/70 rounded-xl overflow-hidden shadow-sm border border-amber-200'
+      : 'w-full text-left font-serif text-sm sm:text-base border-collapse my-6 bg-stone-900/70 rounded-xl overflow-hidden shadow-sm border border-stone-800';
+
+    const tdClass = isPaper
+      ? 'px-4 py-3 border-b border-amber-100/80 text-stone-900'
+      : 'px-4 py-3 border-b border-stone-800/80 text-stone-200';
+
+    let html = `<div class="overflow-x-auto my-6"><table class="${tableClass}"><thead><tr>`;
+    headerCells.forEach(h => {
+      html += `<th class="${thClass}">${h}</th>`;
+    });
+    html += `</tr></thead><tbody>`;
+    bodyRows.forEach((row, idx) => {
+      const cells = row.split('|').slice(1, -1).map(c => c.trim());
+      const rowBg = isPaper
+        ? (idx % 2 === 1 ? 'bg-amber-50/50' : 'bg-transparent')
+        : (idx % 2 === 1 ? 'bg-stone-900/40' : 'bg-transparent');
+      html += `<tr class="${rowBg}">`;
+      cells.forEach(c => {
+        html += `<td class="${tdClass}">${c}</td>`;
+      });
+      html += `</tr>`;
+    });
+    html += `</tbody></table></div>`;
+    return html;
+  });
+};
+
 // Rich Markdown to Zen HTML Parser with Sutta-first readability & Pāḷi Annotation
 const renderedMarkdown = computed(() => {
   if (!props.article.content) return '';
@@ -425,68 +480,77 @@ const renderedMarkdown = computed(() => {
     </div>`;
   });
 
+  // 2. Markdown Tables
+  md = parseMarkdownTables(md, isPaperMode.value);
+
   let parsedHtml = '';
 
   if (isPaperMode.value) {
-    // 2. Blockquotes (Paper Mode - Clean & High Contrast)
+    // 3. Blockquotes (Paper Mode - Clean & High Contrast)
     md = md.replace(/^>\s?(.*)$/gim, (match, p1) => {
       return `<blockquote class="my-5 pl-4 py-3 border-l-3 border-amber-700 bg-amber-50/80 rounded-r-xl text-[#1c1917] font-serif italic text-base sm:text-lg leading-relaxed">
         <div class="not-italic font-serif text-[#1c1917]">${p1.trim()}</div>
       </blockquote>`;
     });
 
-    // 3. Headings (Pure Elegant Typography without emoji clutter)
+    // 4. Headings (Pure Elegant Typography without emoji clutter)
     md = md.replace(/^### (.*$)/gim, (m, p1) => `<h3 class="text-lg sm:text-xl font-bold text-amber-950 mt-7 mb-2.5 font-serif leading-snug">${cleanHeadingText(p1)}</h3>`);
     md = md.replace(/^## (.*$)/gim, (m, p1) => `<h2 class="text-xl sm:text-2xl font-bold text-amber-950 mt-9 mb-3.5 pb-2 border-b border-amber-300/80 font-serif leading-snug">${cleanHeadingText(p1)}</h2>`);
 
-    // 4. Horizontal Rules (Minimalist hairline)
+    // 5. Horizontal Rules (Minimalist hairline)
     md = md.replace(/^---$/gim, '<div class="my-8 flex items-center justify-center gap-3 text-amber-700/40 select-none"><span class="h-px w-20 bg-amber-300"></span><span class="text-xs">✦</span><span class="h-px w-20 bg-amber-300"></span></div>');
 
-    // 5. Bold & Italic
+    // 6. Bold & Italic
     md = md.replace(/\*\*(.*?)\*\*/gim, '<strong class="font-bold text-amber-950">$1</strong>');
     md = md.replace(/\*(.*?)\*/gim, '<em class="italic text-stone-800 font-serif">$1</em>');
 
-    // 6. Ordered & Unordered Lists
+    // 7. Markdown Links (Internal & External)
+    md = md.replace(/\[(.*?)\]\((.*?)\)/gim, '<a href="$2" class="zen-internal-link text-amber-800 hover:text-amber-950 font-semibold underline decoration-amber-400 decoration-1 hover:decoration-2 transition-all inline-flex items-center gap-0.5">$1</a>');
+
+    // 8. Ordered & Unordered Lists
     md = md.replace(/^\d+\.\s(.*)$/gim, '<li class="ml-4 pl-2 list-decimal text-[#1c1917] my-1 leading-relaxed text-base sm:text-lg font-serif">$1</li>');
     md = md.replace(/^-\s(.*)$/gim, '<li class="ml-4 pl-2 list-disc text-[#1c1917] my-1 leading-relaxed text-base sm:text-lg font-serif">$1</li>');
 
-    // 7. Paragraphs
+    // 9. Paragraphs
     const paragraphs = md.split(/\n\n+/);
     parsedHtml = paragraphs.map(p => {
       p = p.trim();
-      if (p.startsWith('<div') || p.startsWith('<blockquote') || p.startsWith('<h') || p.startsWith('<li')) {
+      if (p.startsWith('<div') || p.startsWith('<blockquote') || p.startsWith('<h') || p.startsWith('<li') || p.startsWith('<table')) {
         return p;
       }
       return `<p class="my-4 text-[#1c1917] font-serif leading-[1.95] text-base sm:text-lg text-justify font-normal">${p.replace(/\n/g, '<br/>')}</p>`;
     }).join('\n');
   } else {
-    // 2. Blockquotes (Night Mode)
+    // 3. Blockquotes (Night Mode)
     md = md.replace(/^>\s?(.*)$/gim, (match, p1) => {
       return `<blockquote class="my-5 pl-4 py-3 border-l-3 border-amber-500 bg-amber-950/25 rounded-r-xl text-stone-100 font-serif italic text-base sm:text-lg leading-relaxed">
         <div class="not-italic text-stone-100">${p1.trim()}</div>
       </blockquote>`;
     });
 
-    // 3. Headings
+    // 4. Headings
     md = md.replace(/^### (.*$)/gim, (m, p1) => `<h3 class="text-lg sm:text-xl font-bold text-amber-200 mt-7 mb-2.5 font-serif leading-snug">${cleanHeadingText(p1)}</h3>`);
     md = md.replace(/^## (.*$)/gim, (m, p1) => `<h2 class="text-xl sm:text-2xl font-bold text-amber-300 mt-9 mb-3.5 pb-2 border-b border-amber-500/30 font-serif leading-snug">${cleanHeadingText(p1)}</h2>`);
 
-    // 4. Horizontal Rules
+    // 5. Horizontal Rules
     md = md.replace(/^---$/gim, '<div class="my-8 flex items-center justify-center gap-3 text-amber-500/40 select-none"><span class="h-px w-20 bg-amber-500/30"></span><span class="text-xs">✦</span><span class="h-px w-20 bg-amber-500/30"></span></div>');
 
-    // 5. Bold & Italic
+    // 6. Bold & Italic
     md = md.replace(/\*\*(.*?)\*\*/gim, '<strong class="font-bold text-amber-300">$1</strong>');
     md = md.replace(/\*(.*?)\*/gim, '<em class="italic text-stone-200 font-serif">$1</em>');
 
-    // 6. Ordered & Unordered Lists
+    // 7. Markdown Links (Internal & External)
+    md = md.replace(/\[(.*?)\]\((.*?)\)/gim, '<a href="$2" class="zen-internal-link text-amber-400 hover:text-amber-200 font-semibold underline decoration-amber-500/60 decoration-1 hover:decoration-2 transition-all inline-flex items-center gap-0.5">$1</a>');
+
+    // 8. Ordered & Unordered Lists
     md = md.replace(/^\d+\.\s(.*)$/gim, '<li class="ml-4 pl-2 list-decimal text-stone-100 my-1 leading-relaxed text-base sm:text-lg font-serif">$1</li>');
     md = md.replace(/^-\s(.*)$/gim, '<li class="ml-4 pl-2 list-disc text-stone-100 my-1 leading-relaxed text-base sm:text-lg font-serif">$1</li>');
 
-    // 7. Paragraphs
+    // 9. Paragraphs
     const paragraphs = md.split(/\n\n+/);
     parsedHtml = paragraphs.map(p => {
       p = p.trim();
-      if (p.startsWith('<div') || p.startsWith('<blockquote') || p.startsWith('<h') || p.startsWith('<li')) {
+      if (p.startsWith('<div') || p.startsWith('<blockquote') || p.startsWith('<h') || p.startsWith('<li') || p.startsWith('<table')) {
         return p;
       }
       return `<p class="my-4 text-stone-100 font-serif leading-[1.95] text-base sm:text-lg text-justify font-normal">${p.replace(/\n/g, '<br/>')}</p>`;
