@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import SeoHead from '@/Components/common/SeoHead.vue';
 import ZenMascotLogo from '@/Components/theravada/ZenMascotLogo.vue';
+import ZenBackgroundCanvas from '@/Components/theravada/ZenBackgroundCanvas.vue';
 import PaliGlossaryModal from '@/Components/theravada/PaliGlossaryModal.vue';
 import { useZenTimeCycle } from '@/composables/useZenTimeCycle';
 
@@ -46,6 +47,9 @@ const { activeZenPhase } = useZenTimeCycle();
         :style="{ backgroundColor: activeZenPhase.accentHex }"
       />
     </div>
+
+    <!-- Multi-Layer Zen Background Canvas (Dhamma Wheel, Petals, Bodhi Leaves & Incense Smoke) -->
+    <ZenBackgroundCanvas />
 
     <!-- 1. Zen Top Navigation Header (Pure Minimalist Navigation) -->
     <header class="sticky top-0 z-40 w-full border-b border-amber-500/20 bg-stone-950/95 backdrop-blur-xl shadow-xl py-3.5 sm:py-4">

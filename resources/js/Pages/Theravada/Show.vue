@@ -28,6 +28,18 @@ const props = defineProps<{
 const fontSize = ref<number>(18);
 const readingProgress = ref(0);
 const isRinging = ref(false);
+const isCandlelightOn = ref(false);
+const isFocusModeOn = ref(false);
+
+const toggleCandlelight = () => {
+  isCandlelightOn.value = !isCandlelightOn.value;
+  mindfulBell.ringBell(650, 1.2);
+};
+
+const toggleFocusMode = () => {
+  isFocusModeOn.value = !isFocusModeOn.value;
+  mindfulBell.ringBell(528, 1.2);
+};
 
 const handleScroll = () => {
   if (typeof window === 'undefined') return;
@@ -113,60 +125,43 @@ const renderedMarkdown = computed(() => {
         <span class="text-[11px] text-stone-400 font-mono">Mermaid Zen Flow</span>
       </div>
       <div class="mermaid-render-target w-full flex justify-center py-2 text-stone-100">
-        <div class="animate-pulse text-xs text-amber-400 font-serif">Đang kiến tạo sơ đồ Chánh Pháp...</div>
       </div>
     </div>`;
   });
 
-  // 2. Code / Sutta Text Blocks
-  md = md.replace(/```([a-zA-Z0-9_-]*)\n([\s\S]*?)```/gim, (match, lang, code) => {
-    return `<div class="my-6 rounded-2xl bg-stone-900/90 border border-amber-500/30 overflow-hidden shadow-xl">
-      <div class="px-4 py-2 bg-stone-950 border-b border-amber-500/20 flex items-center justify-between text-xs font-mono text-amber-400">
-        <span class="font-bold uppercase flex items-center gap-1.5"><span>📜</span><span>${lang || 'SUTTA TEXT'}</span></span>
-        <span class="text-[10px] text-stone-400">Pāḷi Canon</span>
+  // 2. Blockquotes (Lời Phật Dạy trong Tam Tạng)
+  md = md.replace(/^>\s?(.*)$/gim, (match, p1) => {
+    return `<blockquote class="my-6 pl-5 py-3.5 border-l-4 border-amber-500 bg-amber-950/20 rounded-r-2xl text-amber-200/95 font-serif italic text-base sm:text-lg leading-relaxed shadow-sm">
+      <div class="flex items-start gap-2">
+        <span class="text-amber-400 text-xl select-none">“</span>
+        <div class="flex-1">${p1.trim()}</div>
       </div>
-      <pre class="p-4 sm:p-5 overflow-x-auto text-xs sm:text-sm font-mono text-amber-200/90 leading-relaxed"><code>${code.trim()}</code></pre>
-    </div>`;
+    </blockquote>`;
   });
 
-  // 3. Horizontal Rules
-  md = md.replace(/^---$/gim, `<div class="my-10 flex items-center justify-center gap-3 text-amber-500/50 text-base"><span>🌸</span><span class="h-px w-24 sm:w-36 bg-amber-500/30"></span><span>☸️</span><span class="h-px w-24 sm:w-36 bg-amber-500/30"></span><span>🌸</span></div>`);
+  // 3. Headings
+  md = md.replace(/^### (.*$)/gim, '<h3 class="text-lg sm:text-xl font-bold text-amber-200 mt-8 mb-3 font-serif flex items-center gap-2"><span class="text-amber-500 text-sm">✦</span>$1</h3>');
+  md = md.replace(/^## (.*$)/gim, '<h2 class="text-xl sm:text-2xl font-bold text-amber-300 mt-10 mb-4 pb-2 border-b border-amber-500/20 font-serif flex items-center gap-2.5"><span>☸️</span>$1</h2>');
 
-  // 4. Headings
-  md = md.replace(/^### (.*$)/gim, '<h3 class="text-lg sm:text-xl font-serif font-bold text-amber-200 mt-8 mb-3 flex items-center gap-2"><span class="text-amber-400 text-sm">✦</span><span>$1</span></h3>');
-  md = md.replace(/^## (.*$)/gim, '<h2 class="text-xl sm:text-2xl lg:text-3xl font-serif font-bold text-amber-100 mt-10 mb-4 pb-2.5 border-b border-amber-500/20 flex items-center gap-2.5"><span class="text-amber-400 text-lg">☸️</span><span>$1</span></h2>');
-  md = md.replace(/^# (.*$)/gim, '<h1 class="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-amber-100 mt-12 mb-6">$1</h1>');
+  // 4. Horizontal Rules
+  md = md.replace(/^---$/gim, '<div class="my-10 flex items-center justify-center gap-3 text-amber-500/40 select-none"><span class="h-px w-24 bg-amber-500/30"></span><span>☸️ 🌸 ☸️</span><span class="h-px w-24 bg-amber-500/30"></span></div>');
 
-  // 5. Unified Multi-Line Blockquotes (Lời Kinh & Khai Thị — Ghép các dòng liên tiếp thành 1 khung duy nhất)
-  md = md.replace(/(?:^>[ \t]?(.*)(?:\r?\n|$))+/gm, (block) => {
-    const innerLines = block
-      .split(/\r?\n/)
-      .map(line => line.replace(/^>[ \t]?/, '').trim())
-      .filter(line => line.length > 0)
-      .join('<br />');
-    
-    return `<blockquote class="my-6 p-5 sm:p-7 rounded-3xl bg-gradient-to-r from-amber-950/25 via-stone-900/60 to-stone-950/80 border-l-4 border-amber-500 text-stone-100 font-serif text-base sm:text-lg leading-relaxed shadow-lg backdrop-blur-sm">${innerLines}</blockquote>`;
-  });
-
-  // 6. Bold & Italic (High contrast & warm amber)
+  // 5. Bold & Italic
   md = md.replace(/\*\*(.*?)\*\*/gim, '<strong class="font-bold text-amber-200">$1</strong>');
-  md = md.replace(/\*(.*?)\*/gim, '<em class="italic text-amber-300/90 font-serif">$1</em>');
+  md = md.replace(/\*(.*?)\*/gim, '<em class="italic text-stone-300 font-serif">$1</em>');
 
-  // 7. Numbered Lists
-  md = md.replace(/^(\d+)\. (.*$)/gim, '<div class="flex items-start gap-3 my-2.5 text-stone-200"><span class="flex h-5 w-5 items-center justify-center rounded-full bg-amber-500/20 text-amber-300 text-xs font-mono font-bold shrink-0 mt-0.5">$1</span><span>$2</span></div>');
+  // 6. Ordered & Unordered Lists
+  md = md.replace(/^\d+\.\s(.*)$/gim, '<li class="ml-4 pl-2 list-decimal text-stone-200 my-1 leading-relaxed">$1</li>');
+  md = md.replace(/^-\s(.*)$/gim, '<li class="ml-4 pl-2 list-disc text-stone-200 my-1 leading-relaxed">$1</li>');
 
-  // 8. Bullet Lists
-  md = md.replace(/^\- (.*$)/gim, '<div class="flex items-start gap-2.5 my-2.5 text-stone-200"><span class="text-amber-400 text-sm shrink-0 mt-0.5">🌸</span><span>$1</span></div>');
-
-  // 9. Clean Paragraph Separation
+  // 7. Paragraphs
   const paragraphs = md.split(/\n\n+/);
   return paragraphs.map(p => {
     p = p.trim();
-    if (!p) return '';
-    if (p.startsWith('<h') || p.startsWith('<blockquote') || p.startsWith('<div') || p.startsWith('<pre')) {
+    if (p.startsWith('<div') || p.startsWith('<blockquote') || p.startsWith('<h') || p.startsWith('<li')) {
       return p;
     }
-    return `<p class="mb-5 leading-loose text-stone-200 text-justify sm:text-left">${p}</p>`;
+    return `<p class="my-4 text-stone-200 font-serif leading-relaxed text-justify">${p.replace(/\n/g, '<br/>')}</p>`;
   }).join('\n');
 });
 
@@ -174,19 +169,19 @@ const suttaJsonLd = computed(() => ({
   '@context': 'https://schema.org',
   '@type': 'ScholarlyArticle',
   'headline': props.article.title,
-  'alternateName': props.article.pali_title,
+  'alternativeHeadline': props.article.pali_title,
   'description': props.article.excerpt,
-  'url': `https://theravada.macatung.dev/kinh/${props.article.slug}`,
-  'datePublished': props.article.published_at,
-  'inLanguage': ['vi', 'pi'],
-  'about': {
-    '@type': 'Thing',
-    'name': props.article.pali_title || props.article.title,
-    'description': props.article.excerpt
-  },
   'author': {
-    '@type': 'Organization',
-    'name': 'Ma Tọa Thiền • Theravāda'
+    '@type': 'Person',
+    'name': props.article.author || 'Đại Tạng Kinh Pāḷi Tipiṭaka'
+  },
+  'datePublished': props.article.published_at,
+  'articleSection': props.article.category,
+  'inLanguage': ['vi', 'pi'],
+  'keywords': props.article.tags ? props.article.tags.join(', ') : 'Theravada, Pāḷi, Sutta, Kinh điển nguyên thủy',
+  'mainEntityOfPage': {
+    '@type': 'WebPage',
+    '@id': `https://theravada.macatung.dev/kinh/${props.article.slug}`
   },
   'publisher': {
     '@type': 'Organization',
@@ -211,13 +206,34 @@ const suttaJsonLd = computed(() => ({
     }"
     :json-ld="suttaJsonLd"
   >
-    <!-- Top Reading Progress Indicator -->
-    <div
-      class="fixed top-0 left-0 h-1 bg-amber-500 z-50 transition-all duration-100 ease-out"
-      :style="{ width: `${readingProgress}%` }"
-    />
+    <!-- Top Reading Progress Indicator with Sliding Golden Lotus -->
+    <div class="fixed top-0 left-0 w-full h-1.5 bg-stone-900/60 z-50 overflow-visible pointer-events-none">
+      <div
+        class="h-full bg-gradient-to-r from-amber-600 via-amber-400 to-yellow-300 relative transition-all duration-150 ease-out shadow-[0_0_12px_rgba(251,191,36,0.8)]"
+        :style="{ width: `${readingProgress}%` }"
+      >
+        <!-- Sliding Golden Lotus Icon -->
+        <span
+          v-if="readingProgress > 1"
+          class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 text-sm select-none filter drop-shadow-[0_0_8px_rgba(251,191,36,0.9)] animate-pulse"
+        >
+          🪷
+        </span>
+      </div>
+    </div>
 
-    <div class="max-w-4xl mx-auto py-6 sm:py-10">
+    <!-- Ambient Candlelight / Oil Lamp Breathing Aura for Deep Night Reading -->
+    <div
+      v-if="isCandlelightOn"
+      class="fixed inset-0 pointer-events-none z-0 flex items-center justify-center transition-opacity duration-1000"
+    >
+      <div
+        class="w-[850px] h-[850px] rounded-full bg-gradient-to-r from-amber-600/20 via-yellow-500/15 to-orange-600/20 blur-[150px] animate-pulse"
+        style="animation-duration: 4s;"
+      />
+    </div>
+
+    <div class="max-w-4xl mx-auto py-6 sm:py-10 relative z-10">
       <!-- Breadcrumb Navigation -->
       <nav class="flex items-center gap-2 text-xs font-serif text-stone-400 mb-6" aria-label="Breadcrumb">
         <Link href="/theravada" class="hover:text-amber-300">Theravāda</Link>
@@ -253,8 +269,39 @@ const suttaJsonLd = computed(() => ({
         <div class="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-stone-900 text-xs font-serif text-stone-400">
           <span class="italic">Tác giả / Nguồn: <strong class="text-stone-200 not-italic">{{ article.author || 'Pāḷi Tipiṭaka' }}</strong></span>
 
-          <!-- Reader Controls (Font size & Bell) -->
-          <div class="flex items-center gap-2">
+          <!-- Reader Controls: Candlelight, Focus Mode, Font size & Bell -->
+          <div class="flex flex-wrap items-center gap-2">
+            <!-- Candlelight Glow Toggle -->
+            <button
+              @click="toggleCandlelight"
+              :class="[
+                'flex items-center gap-1.5 px-3 py-1.5 rounded-xl border transition-all cursor-pointer font-bold text-xs',
+                isCandlelightOn
+                  ? 'bg-amber-500 text-stone-950 border-amber-400 shadow-[0_0_15px_rgba(251,191,36,0.6)]'
+                  : 'bg-stone-900 text-stone-300 border-stone-800 hover:border-amber-500/40'
+              ]"
+              title="Chế độ đèn dầu thiền quán"
+            >
+              <span>🕯️</span>
+              <span>Đèn Dầu</span>
+            </button>
+
+            <!-- Focus Paragraph Mode Toggle -->
+            <button
+              @click="toggleFocusMode"
+              :class="[
+                'flex items-center gap-1.5 px-3 py-1.5 rounded-xl border transition-all cursor-pointer font-bold text-xs',
+                isFocusModeOn
+                  ? 'bg-amber-500 text-stone-950 border-amber-400 shadow-[0_0_15px_rgba(251,191,36,0.6)]'
+                  : 'bg-stone-900 text-stone-300 border-stone-800 hover:border-amber-500/40'
+              ]"
+              title="Chế độ đọc chánh niệm (làm sáng đoạn văn đang đọc)"
+            >
+              <span>🧘</span>
+              <span>Đọc Chánh Niệm</span>
+            </button>
+
+            <!-- Bell Trigger -->
             <button
               @click="ringBell"
               class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/15 text-amber-300 hover:bg-amber-500/25 border border-amber-500/30 transition-all cursor-pointer font-bold"
@@ -262,7 +309,7 @@ const suttaJsonLd = computed(() => ({
               title="Thỉnh chuông chánh niệm"
             >
               <span>🔔</span>
-              <span>Thỉnh Chuông</span>
+              <span>Chuông</span>
             </button>
 
             <!-- Adjust Font Size -->
@@ -291,6 +338,7 @@ const suttaJsonLd = computed(() => ({
       <article
         class="zen-article-content font-serif text-stone-200 leading-loose"
         :style="{ fontSize: `${fontSize}px` }"
+        :class="{ 'focus-mode-active': isFocusModeOn }"
       >
         <div class="space-y-4 font-serif" v-html="renderedMarkdown" />
       </article>
@@ -370,3 +418,26 @@ const suttaJsonLd = computed(() => ({
     </div>
   </TheravadaLayout>
 </template>
+
+<style scoped>
+/* Chế độ đọc Chánh Niệm (Focus Mode) */
+.focus-mode-active :deep(p),
+.focus-mode-active :deep(blockquote),
+.focus-mode-active :deep(li),
+.focus-mode-active :deep(.zen-mermaid-container) {
+  transition: opacity 0.35s ease, filter 0.35s ease, transform 0.35s ease;
+  opacity: 0.35;
+  filter: blur(0.2px);
+}
+
+.focus-mode-active :deep(p:hover),
+.focus-mode-active :deep(blockquote:hover),
+.focus-mode-active :deep(li:hover),
+.focus-mode-active :deep(.zen-mermaid-container:hover) {
+  opacity: 1;
+  filter: none;
+  transform: translateX(4px);
+  background: rgba(245, 158, 11, 0.04);
+  border-radius: 8px;
+}
+</style>

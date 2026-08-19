@@ -55,14 +55,17 @@ const categoryJsonLd = computed(() => ({
         <article
           v-for="item in articles"
           :key="item.id"
-          class="flex flex-col justify-between rounded-3xl bg-stone-900/70 border border-stone-800 hover:border-amber-500/40 p-6 transition-all duration-300 hover:-translate-y-1 hover:bg-stone-900"
+          class="group relative overflow-hidden flex flex-col justify-between rounded-3xl bg-stone-900/70 border border-stone-800 hover:border-amber-500/50 p-6 sm:p-7 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_-12px_rgba(245,158,11,0.25)] hover:bg-stone-900/90 text-left backdrop-blur-md"
         >
+          <!-- Shimmering Golden Rim Highlight -->
+          <div class="absolute inset-0 bg-gradient-to-r from-transparent via-amber-400/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 pointer-events-none" />
+
           <div>
             <div class="flex items-center justify-between text-[11px] font-mono text-stone-400 mb-3">
               <span>⏱️ {{ item.reading_time_min }} phút đọc</span>
             </div>
 
-            <h3 class="text-lg font-serif font-bold text-stone-100 hover:text-amber-300 transition-colors leading-snug mb-2">
+            <h3 class="text-lg font-serif font-bold text-stone-100 group-hover:text-amber-300 transition-colors leading-snug mb-2">
               <Link :href="`/theravada/kinh/${item.slug}`">
                 {{ item.title }}
               </Link>
@@ -83,7 +86,7 @@ const categoryJsonLd = computed(() => ({
             </span>
             <Link
               :href="`/theravada/kinh/${item.slug}`"
-              class="font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1"
+              class="font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1 group-hover:translate-x-1 transition-transform"
             >
               <span>Đọc kinh</span>
               <span>➔</span>

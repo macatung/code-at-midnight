@@ -222,11 +222,14 @@ const theravadaHomeJsonLd = {
           v-for="cat in categories"
           :key="cat.slug"
           :href="`/theravada/danh-muc/${cat.slug}`"
-          class="group flex flex-col justify-between p-6 rounded-3xl bg-stone-900/80 border border-stone-800 hover:border-amber-500/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl text-left"
+          class="group relative overflow-hidden flex flex-col justify-between p-6 sm:p-7 rounded-3xl bg-stone-900/80 border border-stone-800 hover:border-amber-500/60 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_15px_35px_-10px_rgba(245,158,11,0.25)] text-left backdrop-blur-md"
         >
+          <!-- Shimmering Golden Rim Highlight -->
+          <div class="absolute inset-0 bg-gradient-to-r from-transparent via-amber-400/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 pointer-events-none" />
+
           <div>
             <div class="flex items-center justify-between mb-4">
-              <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/10 border border-amber-500/20 text-2xl text-amber-400 group-hover:scale-110 transition-transform">
+              <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/10 border border-amber-500/20 text-2xl text-amber-400 group-hover:scale-110 transition-transform shadow-inner">
                 {{ cat.slug === 'phap-hoc' ? '📖' : cat.slug === 'phap-hanh' ? '🧘' : '📜' }}
               </span>
               <span class="text-xs font-serif text-amber-400/90 font-bold bg-stone-950 px-2.5 py-1 rounded-full border border-stone-800">
@@ -248,7 +251,7 @@ const theravadaHomeJsonLd = {
 
           <div class="mt-6 pt-4 border-t border-stone-800/80 flex items-center justify-between text-xs font-serif font-bold text-amber-400">
             <span>Khám phá chuyên mục</span>
-            <span class="group-hover:translate-x-1 transition-transform">➔</span>
+            <span class="group-hover:translate-x-1.5 transition-transform">➔</span>
           </div>
         </Link>
       </div>
@@ -271,8 +274,11 @@ const theravadaHomeJsonLd = {
         <article
           v-for="item in articles"
           :key="item.id"
-          class="flex flex-col justify-between rounded-3xl bg-stone-900/60 border border-stone-800 hover:border-amber-500/40 p-6 transition-all duration-300 hover:-translate-y-1 hover:bg-stone-900 text-left"
+          class="group relative overflow-hidden flex flex-col justify-between rounded-3xl bg-stone-900/70 border border-stone-800 hover:border-amber-500/50 p-6 sm:p-7 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_-12px_rgba(245,158,11,0.25)] hover:bg-stone-900/90 text-left backdrop-blur-md"
         >
+          <!-- Shimmering Golden Rim Highlight -->
+          <div class="absolute inset-0 bg-gradient-to-r from-transparent via-amber-400/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 pointer-events-none" />
+
           <div>
             <div class="flex items-center justify-between gap-2 text-xs font-serif text-stone-400 mb-3">
               <span class="px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 font-serif font-medium">
@@ -281,7 +287,7 @@ const theravadaHomeJsonLd = {
               <span>⏱️ {{ item.reading_time_min }} phút đọc</span>
             </div>
 
-            <h3 class="text-base sm:text-lg font-serif font-bold text-stone-100 hover:text-amber-300 transition-colors leading-snug line-clamp-2 mb-2">
+            <h3 class="text-base sm:text-lg font-serif font-bold text-stone-100 group-hover:text-amber-300 transition-colors leading-snug line-clamp-2 mb-2">
               <Link :href="`/theravada/kinh/${item.slug}`">
                 {{ item.title }}
               </Link>
@@ -302,7 +308,7 @@ const theravadaHomeJsonLd = {
             </span>
             <Link
               :href="`/theravada/kinh/${item.slug}`"
-              class="font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1"
+              class="font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1 group-hover:translate-x-1 transition-transform"
             >
               <span>Đọc bài</span>
               <span>➔</span>
