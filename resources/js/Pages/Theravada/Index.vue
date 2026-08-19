@@ -32,10 +32,37 @@ const playChantBell = () => {
     isChanting.value = false;
   }, 4000);
 };
+
+const theravadaHomeJsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': 'https://theravada.macatung.dev/#website',
+      'url': 'https://theravada.macatung.dev',
+      'name': 'Ma Tọa Thiền — Tam Tạng Kinh Điển Theravāda & Pháp Hành Vipassanā',
+      'description': 'Bảo tồn và hoằng dương Chánh Pháp nguyên thủy: Tứ Thánh Đế, Bát Chánh Đạo, Kinh Tụng Pāḷi, Thiền Tứ Niệm Xứ Vipassanā.',
+      'inLanguage': ['vi', 'pi']
+    },
+    {
+      '@type': 'DefinedTermSet',
+      '@id': 'https://theravada.macatung.dev/#tipitaka',
+      'name': 'Pāḷi Tipiṭaka — Tam Tạng Thánh Điển Phật Giáo',
+      'description': 'Kinh Tạng (Sutta Piṭaka), Luật Tạng (Vinaya Piṭaka), Vi Diệu Pháp Tạng (Abhidhamma Piṭaka)',
+      'inLanguage': 'pi'
+    }
+  ]
+};
 </script>
 
 <template>
-  <TheravadaLayout :title="title">
+  <TheravadaLayout
+    :title="title || 'Chánh Niệm Từng Giây • Tam Tạng Kinh Điển Theravāda'"
+    description="Hệ thống tu học và bảo tồn kinh điển Phật giáo nguyên thủy Theravāda: Tứ Thánh Đế, Bát Chánh Đạo, Thiền Minh Sát Vipassanā, Thẻ ảnh Pháp Cú và Từ điển Pāḷi thuần khiết."
+    keywords="Ma Tọa Thiền, Theravada, Phật giáo nguyên thủy, Tam Tạng Pāḷi, Kinh Pháp Cú, Dhammapada, Thiền Vipassana, Tứ Niệm Xứ, Bát Chánh Đạo, Chánh Niệm"
+    canonical="https://theravada.macatung.dev"
+    :json-ld="theravadaHomeJsonLd"
+  >
     <!-- 1. Hero Section: Saffron Zen Wisdom & Meditating Mascot -->
     <section class="pt-2 sm:pt-4 pb-10 sm:pb-16 max-w-5xl mx-auto flex flex-col items-center text-center">
       

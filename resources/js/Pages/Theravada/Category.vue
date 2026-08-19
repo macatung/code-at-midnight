@@ -1,17 +1,33 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import TheravadaLayout from '@/Layouts/TheravadaLayout.vue';
 
-defineProps<{
+const props = defineProps<{
   categorySlug: string;
   categoryName: string;
   articles: any[];
   title?: string;
 }>();
+
+const categoryJsonLd = computed(() => ({
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  'name': `${props.categoryName} — Phật Giáo Nguyên Thủy Theravāda`,
+  'description': `Tuyển tập các bài giảng, kinh điển Pāḷi và hướng dẫn thực hành thuộc chuyên mục ${props.categoryName}.`,
+  'url': `https://theravada.macatung.dev/danh-muc/${props.categorySlug}`,
+  'inLanguage': ['vi', 'pi']
+}));
 </script>
 
 <template>
-  <TheravadaLayout :title="title">
+  <TheravadaLayout
+    :title="`${categoryName} — Giáo Lý & Kinh Điển Pāḷi`"
+    :description="`Khám phá tuyển tập kinh điển và hướng dẫn tu học nguyên thủy thuộc chuyên mục ${categoryName}: Tứ Thánh Đế, Bát Chánh Đạo, Vipassanā.`"
+    :keywords="`${categoryName}, Theravada, Pāḷi, Giáo lý Phật giáo nguyên thủy`"
+    :canonical="`https://theravada.macatung.dev/danh-muc/${categorySlug}`"
+    :json-ld="categoryJsonLd"
+  >
     <div class="max-w-6xl mx-auto py-6 sm:py-10">
       <!-- Breadcrumb -->
       <nav class="flex items-center gap-2 text-xs font-serif text-stone-400 mb-6" aria-label="Breadcrumb">

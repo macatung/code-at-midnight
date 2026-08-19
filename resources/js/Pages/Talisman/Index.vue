@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import SeoHead from '@/Components/common/SeoHead.vue';
 import Navbar from '@/Components/layout/Navbar.vue';
 import Footer from '@/Components/layout/Footer.vue';
 import TalismanCanvas from '@/Components/mascot/TalismanCanvas.vue';
@@ -9,10 +9,31 @@ import NextStepsHub from '@/Components/layout/NextStepsHub.vue';
 defineProps<{
   settings?: Record<string, string>;
 }>();
+
+const talismanJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  'name': 'Lò Rèn Bùa Hộ Mệnh Dev (Talisman Forge)',
+  'description': 'Ứng dụng tạo và tùy biến bùa hộ mệnh phong cách Đạo gia kết hợp thuật toán công nghệ bảo trợ deploy không lỗi.',
+  'applicationCategory': 'UtilitiesApplication',
+  'operatingSystem': 'Any',
+  'url': 'https://macatung.dev/talisman',
+  'author': {
+    '@type': 'Person',
+    'name': 'Ma Cà Tưng',
+    'url': 'https://macatung.dev'
+  }
+};
 </script>
 
 <template>
-  <Head title="Lò Rèn Bùa Dev (Talisman Forge) — The Midnight Architect" />
+  <SeoHead
+    title="Lò Rèn Bùa Dev (Talisman Forge) — The Midnight Architect"
+    description="Tùy biến và thỉnh các đạo bùa trừ Bug, bảo trợ deploy lúc 00:00 AM và xuất file ảnh chất lượng cao để dán laptop hoặc chia sẻ lên mạng xã hội."
+    keywords="Bùa Lập Trình, Dev Talisman, Bùa Trừ Bug, No Bug Charm, Creative Tool, Canvas Exporter"
+    canonical="https://macatung.dev/talisman"
+    :json-ld="talismanJsonLd"
+  />
 
   <div class="min-h-screen bg-midnight-950 text-slate-100 selection:bg-phantom-mint selection:text-midnight-950 flex flex-col justify-between relative overflow-x-hidden w-full bg-grid-pattern">
     <TalismanCanvas />

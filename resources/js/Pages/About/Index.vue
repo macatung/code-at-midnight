@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import SeoHead from '@/Components/common/SeoHead.vue';
 import Navbar from '@/Components/layout/Navbar.vue';
 import Footer from '@/Components/layout/Footer.vue';
 import TalismanCanvas from '@/Components/mascot/TalismanCanvas.vue';
@@ -15,10 +15,30 @@ defineProps<{
   stats?: Record<string, any>;
   settings?: Record<string, string>;
 }>();
+
+const aboutJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  'name': 'Hồ Sơ Năng Lực & Kỹ Năng Kỹ Thuật (Ma Cà Tưng)',
+  'description': 'Hồ sơ chuyên môn, kinh nghiệm thực chiến và bộ kỹ năng công nghệ Full-Stack & Creative Engineering của Ma Cà Tưng.',
+  'url': 'https://macatung.dev/about',
+  'mainEntity': {
+    '@type': 'Person',
+    'name': 'Ma Cà Tưng',
+    'jobTitle': 'Senior Full-Stack Engineer',
+    'url': 'https://macatung.dev'
+  }
+};
 </script>
 
 <template>
-  <Head title="Kỹ Năng & Hồ Sơ Chuyên Môn — The Midnight Architect" />
+  <SeoHead
+    title="Kỹ Năng & Hồ Sơ Chuyên Môn — The Midnight Architect"
+    description="Tìm hiểu hành trình phát triển phần mềm, bộ kỹ năng kỹ thuật, kinh nghiệm thực chiến và tuyên ngôn kiến trúc của Ma Cà Tưng."
+    keywords="Kỹ năng Lập trình, Hồ sơ Lập trình viên, Full-Stack Developer Profile, Laravel, Vue.js, System Architecture"
+    canonical="https://macatung.dev/about"
+    :json-ld="aboutJsonLd"
+  />
 
   <div class="min-h-screen bg-midnight-950 text-slate-100 selection:bg-phantom-mint selection:text-midnight-950 flex flex-col justify-between relative overflow-x-hidden w-full bg-grid-pattern">
     <TalismanCanvas />

@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { Head, Link, router } from '@inertiajs/vue3';
+import SeoHead from '@/Components/common/SeoHead.vue';
 import Navbar from '@/Components/layout/Navbar.vue';
 import Footer from '@/Components/layout/Footer.vue';
 import TalismanCanvas from '@/Components/mascot/TalismanCanvas.vue';
@@ -47,10 +46,29 @@ const handleSearch = () => {
     q: searchQuery.value || undefined,
   }, { preserveState: true, replace: true });
 };
+
+const blogIndexJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Blog',
+  'name': 'Midnight Tech Chronicle — Blog Kiến Trúc & Kỹ Thuật Đêm',
+  'description': 'Các bài viết chuyên sâu về kiến trúc phần mềm, Laravel, Vue.js, Cloud Run, DevSecOps và trải nghiệm lập trình đêm của Ma Cà Tưng.',
+  'url': 'https://macatung.dev/blog',
+  'publisher': {
+    '@type': 'Person',
+    'name': 'Ma Cà Tưng',
+    'url': 'https://macatung.dev'
+  }
+};
 </script>
 
 <template>
-  <Head title="Midnight Tech Chronicle — Blog Kiến Trúc & Kỹ Thuật" />
+  <SeoHead
+    title="Midnight Tech Chronicle — Ghi Chép Kiến Trúc & Kỹ Thuật Đêm"
+    description="Kho bài viết chuyên sâu về kỹ thuật phần mềm, Laravel, Vue.js, Cloud Architecture, tối ưu hiệu năng và những trải nghiệm lập trình kỳ thú đêm khuya."
+    keywords="Blog Lập Trình, Laravel Architecture, Vue 3, Inertia.js, Full-Stack Tips, Cloud Run Deployment, Kỹ Thuật Phần Mềm"
+    canonical="https://macatung.dev/blog"
+    :json-ld="blogIndexJsonLd"
+  />
 
   <div class="min-h-screen bg-midnight-950 text-slate-100 selection:bg-phantom-mint selection:text-midnight-950 flex flex-col justify-between relative overflow-x-hidden w-full bg-grid-pattern">
     <TalismanCanvas />

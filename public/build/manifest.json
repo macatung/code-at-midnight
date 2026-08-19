@@ -1,11 +1,11 @@
 {
-  "_AdminLayout-Cyx3szFE.js": {
-    "file": "assets/AdminLayout-Cyx3szFE.js",
+  "_AdminLayout-B36xm0SP.js": {
+    "file": "assets/AdminLayout-B36xm0SP.js",
     "name": "AdminLayout",
     "imports": [
       "resources/js/app.ts",
-      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BaMVH7dO.js",
-      "__plugin-vue_export-helper-CLhT7OCr.js"
+      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BXqYEa-R.js",
+      "__plugin-vue_export-helper-CSmm65sx.js"
     ],
     "css": [
       "assets/AdminLayout-D7VQp5H7.css"
@@ -15,69 +15,76 @@
     "file": "assets/AdminLayout-D7VQp5H7.css",
     "src": "_AdminLayout-D7VQp5H7.css"
   },
-  "_ContactSection.vue_vue_type_script_setup_true_lang-BeWVu9BU.js": {
-    "file": "assets/ContactSection.vue_vue_type_script_setup_true_lang-BeWVu9BU.js",
+  "_ContactSection.vue_vue_type_script_setup_true_lang-B0Oe4PBr.js": {
+    "file": "assets/ContactSection.vue_vue_type_script_setup_true_lang-B0Oe4PBr.js",
     "name": "ContactSection.vue_vue_type_script_setup_true_lang",
     "imports": [
       "resources/js/app.ts",
-      "_TalismanCanvas.vue_vue_type_script_setup_true_lang-3-D41wnU.js",
-      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BaMVH7dO.js",
-      "__plugin-vue_export-helper-CLhT7OCr.js"
+      "_TalismanCanvas.vue_vue_type_script_setup_true_lang-DvJTSWps.js",
+      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BXqYEa-R.js",
+      "__plugin-vue_export-helper-CSmm65sx.js"
     ]
   },
-  "_MacatungMascot.vue_vue_type_script_setup_true_lang-BfojUnmV.js": {
-    "file": "assets/MacatungMascot.vue_vue_type_script_setup_true_lang-BfojUnmV.js",
+  "_MacatungMascot.vue_vue_type_script_setup_true_lang-Bfcpn8ah.js": {
+    "file": "assets/MacatungMascot.vue_vue_type_script_setup_true_lang-Bfcpn8ah.js",
     "name": "MacatungMascot.vue_vue_type_script_setup_true_lang",
     "imports": [
       "resources/js/app.ts",
-      "_TalismanCanvas.vue_vue_type_script_setup_true_lang-3-D41wnU.js",
-      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BaMVH7dO.js",
+      "_TalismanCanvas.vue_vue_type_script_setup_true_lang-DvJTSWps.js",
+      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BXqYEa-R.js",
       "_analytics-BTwv1W4P.js"
     ]
   },
-  "_MidnightTerminal.vue_vue_type_script_setup_true_lang-BB5NR0TN.js": {
-    "file": "assets/MidnightTerminal.vue_vue_type_script_setup_true_lang-BB5NR0TN.js",
+  "_MidnightTerminal.vue_vue_type_script_setup_true_lang-ChZDCfNd.js": {
+    "file": "assets/MidnightTerminal.vue_vue_type_script_setup_true_lang-ChZDCfNd.js",
     "name": "MidnightTerminal.vue_vue_type_script_setup_true_lang",
     "imports": [
       "resources/js/app.ts",
-      "__plugin-vue_export-helper-CLhT7OCr.js",
-      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BaMVH7dO.js",
+      "__plugin-vue_export-helper-CSmm65sx.js",
+      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BXqYEa-R.js",
       "_projectsData-Cwjoa7Ox.js",
       "_analytics-BTwv1W4P.js"
     ]
   },
-  "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BaMVH7dO.js": {
-    "file": "assets/MiniMascotLogo.vue_vue_type_script_setup_true_lang-BaMVH7dO.js",
+  "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BXqYEa-R.js": {
+    "file": "assets/MiniMascotLogo.vue_vue_type_script_setup_true_lang-BXqYEa-R.js",
     "name": "MiniMascotLogo.vue_vue_type_script_setup_true_lang",
     "imports": [
       "resources/js/app.ts"
     ]
   },
-  "_NextStepsHub.vue_vue_type_script_setup_true_lang-BSDaHtFX.js": {
-    "file": "assets/NextStepsHub.vue_vue_type_script_setup_true_lang-BSDaHtFX.js",
+  "_NextStepsHub.vue_vue_type_script_setup_true_lang-Be1dsEjt.js": {
+    "file": "assets/NextStepsHub.vue_vue_type_script_setup_true_lang-Be1dsEjt.js",
     "name": "NextStepsHub.vue_vue_type_script_setup_true_lang",
     "imports": [
       "resources/js/app.ts",
-      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BaMVH7dO.js"
+      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BXqYEa-R.js"
     ]
   },
-  "_ProjectsSection.vue_vue_type_script_setup_true_lang-D6w5Dc4S.js": {
-    "file": "assets/ProjectsSection.vue_vue_type_script_setup_true_lang-D6w5Dc4S.js",
+  "_ProjectsSection.vue_vue_type_script_setup_true_lang-BaFBk2fS.js": {
+    "file": "assets/ProjectsSection.vue_vue_type_script_setup_true_lang-BaFBk2fS.js",
     "name": "ProjectsSection.vue_vue_type_script_setup_true_lang",
     "imports": [
       "resources/js/app.ts",
       "_projectsData-Cwjoa7Ox.js",
-      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BaMVH7dO.js",
-      "__plugin-vue_export-helper-CLhT7OCr.js"
+      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BXqYEa-R.js",
+      "__plugin-vue_export-helper-CSmm65sx.js"
     ]
   },
-  "_Show-D2qnT4d8.js": {
-    "file": "assets/Show-D2qnT4d8.js",
+  "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js": {
+    "file": "assets/SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js",
+    "name": "SeoHead.vue_vue_type_script_setup_true_lang",
+    "imports": [
+      "resources/js/app.ts"
+    ]
+  },
+  "_Show-BOQ1p7Rm.js": {
+    "file": "assets/Show-BOQ1p7Rm.js",
     "name": "Show",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js"
     ],
     "dynamicImports": [
       "node_modules/katex/dist/katex.mjs",
@@ -85,8 +92,8 @@
       "node_modules/mermaid/dist/chunks/mermaid.core/swimlanes-SLNWSIFB.mjs",
       "node_modules/mermaid/dist/chunks/mermaid.core/cose-bilkent-JH36ORCC.mjs",
       "node_modules/mermaid/dist/chunks/mermaid.core/c4Diagram-5PPSVZJV.mjs",
-      "_flowDiagram-UKHOOZJN-CEHyoxUD.js",
-      "_flowDiagram-UKHOOZJN-CEHyoxUD.js",
+      "_flowDiagram-UKHOOZJN-1M2DJlaV.js",
+      "_flowDiagram-UKHOOZJN-1M2DJlaV.js",
       "node_modules/mermaid/dist/chunks/mermaid.core/swimlanesDiagram-ULZ7WXOC.mjs",
       "node_modules/mermaid/dist/chunks/mermaid.core/erDiagram-JOGREHBK.mjs",
       "node_modules/mermaid/dist/chunks/mermaid.core/gitGraphDiagram-DS77QQ5N.mjs",
@@ -102,7 +109,7 @@
       "node_modules/mermaid/dist/chunks/mermaid.core/stateDiagram-OKZ733FA.mjs",
       "node_modules/mermaid/dist/chunks/mermaid.core/stateDiagram-v2-UEYNNEHI.mjs",
       "node_modules/mermaid/dist/chunks/mermaid.core/journeyDiagram-NVQOT4AX.mjs",
-      "_flowDiagram-UKHOOZJN-CEHyoxUD.js",
+      "_flowDiagram-UKHOOZJN-1M2DJlaV.js",
       "node_modules/mermaid/dist/chunks/mermaid.core/timeline-definition-Z64GVDOM.mjs",
       "node_modules/mermaid/dist/chunks/mermaid.core/mindmap-definition-FAOFIHXS.mjs",
       "node_modules/mermaid/dist/chunks/mermaid.core/kanban-definition-27J2QSJJ.mjs",
@@ -128,35 +135,36 @@
     "file": "assets/TalismanCanvas-Cj0sd6Q_.css",
     "src": "_TalismanCanvas-Cj0sd6Q_.css"
   },
-  "_TalismanCanvas.vue_vue_type_script_setup_true_lang-3-D41wnU.js": {
-    "file": "assets/TalismanCanvas.vue_vue_type_script_setup_true_lang-3-D41wnU.js",
+  "_TalismanCanvas.vue_vue_type_script_setup_true_lang-DvJTSWps.js": {
+    "file": "assets/TalismanCanvas.vue_vue_type_script_setup_true_lang-DvJTSWps.js",
     "name": "TalismanCanvas.vue_vue_type_script_setup_true_lang",
     "imports": [
       "resources/js/app.ts",
-      "__plugin-vue_export-helper-CLhT7OCr.js",
-      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BaMVH7dO.js"
+      "__plugin-vue_export-helper-CSmm65sx.js",
+      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BXqYEa-R.js"
     ],
     "css": [
       "assets/TalismanCanvas-Cj0sd6Q_.css"
     ]
   },
-  "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js": {
-    "file": "assets/TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js",
+  "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js": {
+    "file": "assets/TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
     "name": "TheravadaLayout.vue_vue_type_script_setup_true_lang",
     "imports": [
-      "resources/js/app.ts"
+      "resources/js/app.ts",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
-  "_VipassanaTimer.vue_vue_type_script_setup_true_lang-TXwQZB9c.js": {
-    "file": "assets/VipassanaTimer.vue_vue_type_script_setup_true_lang-TXwQZB9c.js",
+  "_VipassanaTimer.vue_vue_type_script_setup_true_lang-DzqQGlBo.js": {
+    "file": "assets/VipassanaTimer.vue_vue_type_script_setup_true_lang-DzqQGlBo.js",
     "name": "VipassanaTimer.vue_vue_type_script_setup_true_lang",
     "imports": [
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js",
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
       "resources/js/app.ts"
     ]
   },
-  "__plugin-vue_export-helper-CLhT7OCr.js": {
-    "file": "assets/_plugin-vue_export-helper-CLhT7OCr.js",
+  "__plugin-vue_export-helper-CSmm65sx.js": {
+    "file": "assets/_plugin-vue_export-helper-CSmm65sx.js",
     "name": "_plugin-vue_export-helper",
     "imports": [
       "resources/js/app.ts"
@@ -166,102 +174,102 @@
     "file": "assets/analytics-BTwv1W4P.js",
     "name": "analytics"
   },
-  "_arc-8w4odvgT.js": {
-    "file": "assets/arc-8w4odvgT.js",
+  "_arc-BGuWivxN.js": {
+    "file": "assets/arc-BGuWivxN.js",
     "name": "arc",
     "imports": [
-      "_Show-D2qnT4d8.js"
+      "_Show-BOQ1p7Rm.js"
     ]
   },
-  "_channel-2JPgT6eT.js": {
-    "file": "assets/channel-2JPgT6eT.js",
+  "_channel-Cnmd96ni.js": {
+    "file": "assets/channel-Cnmd96ni.js",
     "name": "channel",
     "imports": [
-      "_Show-D2qnT4d8.js"
+      "_Show-BOQ1p7Rm.js"
     ]
   },
-  "_chunk-2GRJ4B5K-CgW8bMJR.js": {
-    "file": "assets/chunk-2GRJ4B5K-CgW8bMJR.js",
+  "_chunk-2GRJ4B5K-noGfdA8n.js": {
+    "file": "assets/chunk-2GRJ4B5K-noGfdA8n.js",
     "name": "chunk-2GRJ4B5K",
     "imports": [
-      "_Show-D2qnT4d8.js"
+      "_Show-BOQ1p7Rm.js"
     ]
   },
-  "_chunk-2Q5K7J3B-CZ4rxGs7.js": {
-    "file": "assets/chunk-2Q5K7J3B-CZ4rxGs7.js",
+  "_chunk-2Q5K7J3B-CM7Opyto.js": {
+    "file": "assets/chunk-2Q5K7J3B-CM7Opyto.js",
     "name": "chunk-2Q5K7J3B",
     "imports": [
-      "_Show-D2qnT4d8.js"
+      "_Show-BOQ1p7Rm.js"
     ]
   },
-  "_chunk-5RXB4S5H-q_KLlq9X.js": {
-    "file": "assets/chunk-5RXB4S5H-q_KLlq9X.js",
+  "_chunk-5RXB4S5H-Ct__qNJF.js": {
+    "file": "assets/chunk-5RXB4S5H-Ct__qNJF.js",
     "name": "chunk-5RXB4S5H",
     "imports": [
-      "_chunk-XXDRQBXY-BMLdcpuZ.js",
-      "_chunk-KBJHAD2P-CtI--crj.js",
-      "_Show-D2qnT4d8.js",
-      "_chunk-2GRJ4B5K-CgW8bMJR.js"
+      "_chunk-XXDRQBXY-DyqKC-U-.js",
+      "_chunk-KBJHAD2P-BPvP-qw6.js",
+      "_Show-BOQ1p7Rm.js",
+      "_chunk-2GRJ4B5K-noGfdA8n.js"
     ]
   },
-  "_chunk-5VM5RSS4-Dg1PDbtZ.js": {
-    "file": "assets/chunk-5VM5RSS4-Dg1PDbtZ.js",
+  "_chunk-5VM5RSS4-svPbQgQz.js": {
+    "file": "assets/chunk-5VM5RSS4-svPbQgQz.js",
     "name": "chunk-5VM5RSS4",
     "imports": [
-      "_Show-D2qnT4d8.js"
+      "_Show-BOQ1p7Rm.js"
     ]
   },
-  "_chunk-6Q2QTUOP-BFNTRqr1.js": {
-    "file": "assets/chunk-6Q2QTUOP-BFNTRqr1.js",
+  "_chunk-6Q2QTUOP-E3yXp43Z.js": {
+    "file": "assets/chunk-6Q2QTUOP-E3yXp43Z.js",
     "name": "chunk-6Q2QTUOP",
     "imports": [
-      "_Show-D2qnT4d8.js"
+      "_Show-BOQ1p7Rm.js"
     ]
   },
-  "_chunk-GF5L2VYU-7R-esE0R.js": {
-    "file": "assets/chunk-GF5L2VYU-7R-esE0R.js",
+  "_chunk-GF5L2VYU-CtfCsjJj.js": {
+    "file": "assets/chunk-GF5L2VYU-CtfCsjJj.js",
     "name": "chunk-GF5L2VYU",
     "imports": [
-      "_chunk-5VM5RSS4-Dg1PDbtZ.js",
-      "_chunk-XXDRQBXY-BMLdcpuZ.js",
-      "_chunk-KBJHAD2P-CtI--crj.js",
-      "_Show-D2qnT4d8.js",
-      "_chunk-2GRJ4B5K-CgW8bMJR.js"
+      "_chunk-5VM5RSS4-svPbQgQz.js",
+      "_chunk-XXDRQBXY-DyqKC-U-.js",
+      "_chunk-KBJHAD2P-BPvP-qw6.js",
+      "_Show-BOQ1p7Rm.js",
+      "_chunk-2GRJ4B5K-noGfdA8n.js"
     ]
   },
-  "_chunk-JWPE2WC7--zSA5hne.js": {
-    "file": "assets/chunk-JWPE2WC7--zSA5hne.js",
+  "_chunk-JWPE2WC7-BrGMgQMm.js": {
+    "file": "assets/chunk-JWPE2WC7-BrGMgQMm.js",
     "name": "chunk-JWPE2WC7",
     "imports": [
-      "_Show-D2qnT4d8.js"
+      "_Show-BOQ1p7Rm.js"
     ]
   },
-  "_chunk-KBJHAD2P-CtI--crj.js": {
-    "file": "assets/chunk-KBJHAD2P-CtI--crj.js",
+  "_chunk-KBJHAD2P-BPvP-qw6.js": {
+    "file": "assets/chunk-KBJHAD2P-BPvP-qw6.js",
     "name": "chunk-KBJHAD2P",
     "imports": [
-      "_Show-D2qnT4d8.js"
+      "_Show-BOQ1p7Rm.js"
     ]
   },
-  "_chunk-RYQCIY6F-i5PmCWTS.js": {
-    "file": "assets/chunk-RYQCIY6F-i5PmCWTS.js",
+  "_chunk-RYQCIY6F-BRUmAwyq.js": {
+    "file": "assets/chunk-RYQCIY6F-BRUmAwyq.js",
     "name": "chunk-RYQCIY6F",
     "imports": [
-      "_Show-D2qnT4d8.js",
-      "_graph-DwS5x_Og.js",
+      "_Show-BOQ1p7Rm.js",
+      "_graph-D7-pggau.js",
       "resources/js/app.ts",
-      "_map-CMOY1dgP.js"
+      "_map-DhSSXKip.js"
     ]
   },
-  "_chunk-XXDRQBXY-BMLdcpuZ.js": {
-    "file": "assets/chunk-XXDRQBXY-BMLdcpuZ.js",
+  "_chunk-XXDRQBXY-DyqKC-U-.js": {
+    "file": "assets/chunk-XXDRQBXY-DyqKC-U-.js",
     "name": "chunk-XXDRQBXY",
     "imports": [
-      "_Show-D2qnT4d8.js"
+      "_Show-BOQ1p7Rm.js"
     ]
   },
-  "_cynefin-VYW2F7L2-BQJmmju6.js": {
-    "file": "assets/cynefin-VYW2F7L2-BQJmmju6.js",
+  "_cynefin-VYW2F7L2-B80k0uJM.js": {
+    "file": "assets/cynefin-VYW2F7L2-B80k0uJM.js",
     "name": "cynefin-VYW2F7L2",
     "imports": [
       "resources/js/app.ts"
@@ -275,21 +283,21 @@
     "file": "assets/defaultLocale-DX6XiGOO.js",
     "name": "defaultLocale"
   },
-  "_flowDiagram-UKHOOZJN-CEHyoxUD.js": {
-    "file": "assets/flowDiagram-UKHOOZJN-CEHyoxUD.js",
+  "_flowDiagram-UKHOOZJN-1M2DJlaV.js": {
+    "file": "assets/flowDiagram-UKHOOZJN-1M2DJlaV.js",
     "name": "flowDiagram-UKHOOZJN",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-5VM5RSS4-Dg1PDbtZ.js",
-      "_chunk-XXDRQBXY-BMLdcpuZ.js",
-      "_chunk-KBJHAD2P-CtI--crj.js",
-      "_Show-D2qnT4d8.js",
-      "_chunk-2GRJ4B5K-CgW8bMJR.js",
-      "_channel-2JPgT6eT.js"
+      "_chunk-5VM5RSS4-svPbQgQz.js",
+      "_chunk-XXDRQBXY-DyqKC-U-.js",
+      "_chunk-KBJHAD2P-BPvP-qw6.js",
+      "_Show-BOQ1p7Rm.js",
+      "_chunk-2GRJ4B5K-noGfdA8n.js",
+      "_channel-Cnmd96ni.js"
     ]
   },
-  "_graph-DwS5x_Og.js": {
-    "file": "assets/graph-DwS5x_Og.js",
+  "_graph-D7-pggau.js": {
+    "file": "assets/graph-D7-pggau.js",
     "name": "graph",
     "imports": [
       "resources/js/app.ts"
@@ -299,30 +307,30 @@
     "file": "assets/init-Gi6I4Gst.js",
     "name": "init"
   },
-  "_layout-Br5JNRhI.js": {
-    "file": "assets/layout-Br5JNRhI.js",
+  "_layout-oszq8HfQ.js": {
+    "file": "assets/layout-oszq8HfQ.js",
     "name": "layout",
     "imports": [
-      "_graph-DwS5x_Og.js",
+      "_graph-D7-pggau.js",
       "resources/js/app.ts",
-      "_map-CMOY1dgP.js"
+      "_map-DhSSXKip.js"
     ]
   },
-  "_linear-C1rQscky.js": {
-    "file": "assets/linear-C1rQscky.js",
+  "_linear-Bq-mYw3C.js": {
+    "file": "assets/linear-Bq-mYw3C.js",
     "name": "linear",
     "imports": [
-      "_Show-D2qnT4d8.js",
+      "_Show-BOQ1p7Rm.js",
       "_init-Gi6I4Gst.js",
       "_defaultLocale-DX6XiGOO.js"
     ]
   },
-  "_map-CMOY1dgP.js": {
-    "file": "assets/map-CMOY1dgP.js",
+  "_map-DhSSXKip.js": {
+    "file": "assets/map-DhSSXKip.js",
     "name": "map",
     "imports": [
       "resources/js/app.ts",
-      "_graph-DwS5x_Og.js"
+      "_graph-D7-pggau.js"
     ]
   },
   "_ordinal-Cboi1Yqb.js": {
@@ -343,542 +351,581 @@
     "isDynamicEntry": true
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/abnfDiagram-N423BO3Z.mjs": {
-    "file": "assets/abnfDiagram-N423BO3Z-CpGiVn6U.js",
+    "file": "assets/abnfDiagram-N423BO3Z-Q_4JYe_P.js",
     "name": "abnfDiagram-N423BO3Z",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/abnfDiagram-N423BO3Z.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-6Q2QTUOP-BFNTRqr1.js",
-      "_chunk-JWPE2WC7--zSA5hne.js",
-      "_Show-D2qnT4d8.js",
-      "_cynefin-VYW2F7L2-BQJmmju6.js",
+      "_chunk-6Q2QTUOP-E3yXp43Z.js",
+      "_chunk-JWPE2WC7-BrGMgQMm.js",
+      "_Show-BOQ1p7Rm.js",
+      "_cynefin-VYW2F7L2-B80k0uJM.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/architectureDiagram-T3A2C74G.mjs": {
-    "file": "assets/architectureDiagram-T3A2C74G-DPgdibyQ.js",
+    "file": "assets/architectureDiagram-T3A2C74G-BJZNaPIK.js",
     "name": "architectureDiagram-T3A2C74G",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/architectureDiagram-T3A2C74G.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-JWPE2WC7--zSA5hne.js",
-      "_Show-D2qnT4d8.js",
-      "_cynefin-VYW2F7L2-BQJmmju6.js",
+      "_chunk-JWPE2WC7-BrGMgQMm.js",
+      "_Show-BOQ1p7Rm.js",
+      "_cynefin-VYW2F7L2-B80k0uJM.js",
       "_cytoscape.esm-BjAbmLdb.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/blockDiagram-VBNYF7ZC.mjs": {
-    "file": "assets/blockDiagram-VBNYF7ZC-DqhHEa2e.js",
+    "file": "assets/blockDiagram-VBNYF7ZC-Rm5vSDSE.js",
     "name": "blockDiagram-VBNYF7ZC",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/blockDiagram-VBNYF7ZC.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-5VM5RSS4-Dg1PDbtZ.js",
-      "_Show-D2qnT4d8.js",
-      "_graph-DwS5x_Og.js",
-      "_channel-2JPgT6eT.js",
+      "_chunk-5VM5RSS4-svPbQgQz.js",
+      "_Show-BOQ1p7Rm.js",
+      "_graph-D7-pggau.js",
+      "_channel-Cnmd96ni.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/c4Diagram-5PPSVZJV.mjs": {
-    "file": "assets/c4Diagram-5PPSVZJV-Sy5qr7A7.js",
+    "file": "assets/c4Diagram-5PPSVZJV-CA7Fhahq.js",
     "name": "c4Diagram-5PPSVZJV",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/c4Diagram-5PPSVZJV.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-2GRJ4B5K-CgW8bMJR.js",
-      "_Show-D2qnT4d8.js",
+      "_chunk-2GRJ4B5K-noGfdA8n.js",
+      "_Show-BOQ1p7Rm.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/classDiagram-JCYQIIEL.mjs": {
-    "file": "assets/classDiagram-JCYQIIEL-DhZEbLOf.js",
+    "file": "assets/classDiagram-JCYQIIEL-DagSySkl.js",
     "name": "classDiagram-JCYQIIEL",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/classDiagram-JCYQIIEL.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-GF5L2VYU-7R-esE0R.js",
-      "_Show-D2qnT4d8.js",
-      "_chunk-5VM5RSS4-Dg1PDbtZ.js",
-      "_chunk-XXDRQBXY-BMLdcpuZ.js",
-      "_chunk-KBJHAD2P-CtI--crj.js",
-      "_chunk-2GRJ4B5K-CgW8bMJR.js",
+      "_chunk-GF5L2VYU-CtfCsjJj.js",
+      "_Show-BOQ1p7Rm.js",
+      "_chunk-5VM5RSS4-svPbQgQz.js",
+      "_chunk-XXDRQBXY-DyqKC-U-.js",
+      "_chunk-KBJHAD2P-BPvP-qw6.js",
+      "_chunk-2GRJ4B5K-noGfdA8n.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/classDiagram-v2-OCEON4UE.mjs": {
-    "file": "assets/classDiagram-v2-OCEON4UE-DhZEbLOf.js",
+    "file": "assets/classDiagram-v2-OCEON4UE-DagSySkl.js",
     "name": "classDiagram-v2-OCEON4UE",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/classDiagram-v2-OCEON4UE.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-GF5L2VYU-7R-esE0R.js",
-      "_Show-D2qnT4d8.js",
-      "_chunk-5VM5RSS4-Dg1PDbtZ.js",
-      "_chunk-XXDRQBXY-BMLdcpuZ.js",
-      "_chunk-KBJHAD2P-CtI--crj.js",
-      "_chunk-2GRJ4B5K-CgW8bMJR.js",
+      "_chunk-GF5L2VYU-CtfCsjJj.js",
+      "_Show-BOQ1p7Rm.js",
+      "_chunk-5VM5RSS4-svPbQgQz.js",
+      "_chunk-XXDRQBXY-DyqKC-U-.js",
+      "_chunk-KBJHAD2P-BPvP-qw6.js",
+      "_chunk-2GRJ4B5K-noGfdA8n.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/cose-bilkent-JH36ORCC.mjs": {
-    "file": "assets/cose-bilkent-JH36ORCC-DNApTOAv.js",
+    "file": "assets/cose-bilkent-JH36ORCC-DCpLgW80.js",
     "name": "cose-bilkent-JH36ORCC",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/cose-bilkent-JH36ORCC.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_Show-D2qnT4d8.js",
+      "_Show-BOQ1p7Rm.js",
       "_cytoscape.esm-BjAbmLdb.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/cynefinDiagram-MW4NZA55.mjs": {
-    "file": "assets/cynefinDiagram-MW4NZA55-C46sED2U.js",
+    "file": "assets/cynefinDiagram-MW4NZA55-a87faArG.js",
     "name": "cynefinDiagram-MW4NZA55",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/cynefinDiagram-MW4NZA55.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-JWPE2WC7--zSA5hne.js",
-      "_Show-D2qnT4d8.js",
-      "_cynefin-VYW2F7L2-BQJmmju6.js",
+      "_chunk-JWPE2WC7-BrGMgQMm.js",
+      "_Show-BOQ1p7Rm.js",
+      "_cynefin-VYW2F7L2-B80k0uJM.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/dagre-VZM6K2ZE.mjs": {
-    "file": "assets/dagre-VZM6K2ZE-CnPZy--s.js",
+    "file": "assets/dagre-VZM6K2ZE-0ZuMqRa_.js",
     "name": "dagre-VZM6K2ZE",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/dagre-VZM6K2ZE.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-RYQCIY6F-i5PmCWTS.js",
-      "_Show-D2qnT4d8.js",
-      "_graph-DwS5x_Og.js",
-      "_layout-Br5JNRhI.js",
+      "_chunk-RYQCIY6F-BRUmAwyq.js",
+      "_Show-BOQ1p7Rm.js",
+      "_graph-D7-pggau.js",
+      "_layout-oszq8HfQ.js",
       "resources/js/app.ts",
-      "_map-CMOY1dgP.js",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_map-DhSSXKip.js",
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/diagram-7IWD3JNH.mjs": {
-    "file": "assets/diagram-7IWD3JNH-CKdl6S5a.js",
+    "file": "assets/diagram-7IWD3JNH-BYCkb9GJ.js",
     "name": "diagram-7IWD3JNH",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/diagram-7IWD3JNH.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-2Q5K7J3B-CZ4rxGs7.js",
-      "_chunk-JWPE2WC7--zSA5hne.js",
-      "_Show-D2qnT4d8.js",
-      "_cynefin-VYW2F7L2-BQJmmju6.js",
+      "_chunk-2Q5K7J3B-CM7Opyto.js",
+      "_chunk-JWPE2WC7-BrGMgQMm.js",
+      "_Show-BOQ1p7Rm.js",
+      "_cynefin-VYW2F7L2-B80k0uJM.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/diagram-B4RE2ZJO.mjs": {
-    "file": "assets/diagram-B4RE2ZJO-C95cuqWQ.js",
+    "file": "assets/diagram-B4RE2ZJO-BqSBDe0c.js",
     "name": "diagram-B4RE2ZJO",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/diagram-B4RE2ZJO.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-JWPE2WC7--zSA5hne.js",
-      "_Show-D2qnT4d8.js",
-      "_cynefin-VYW2F7L2-BQJmmju6.js",
+      "_chunk-JWPE2WC7-BrGMgQMm.js",
+      "_Show-BOQ1p7Rm.js",
+      "_cynefin-VYW2F7L2-B80k0uJM.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/diagram-LBJQPF4R.mjs": {
-    "file": "assets/diagram-LBJQPF4R-Bk6WHDoB.js",
+    "file": "assets/diagram-LBJQPF4R-CkbRzIsu.js",
     "name": "diagram-LBJQPF4R",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/diagram-LBJQPF4R.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-JWPE2WC7--zSA5hne.js",
-      "_Show-D2qnT4d8.js",
-      "_cynefin-VYW2F7L2-BQJmmju6.js",
+      "_chunk-JWPE2WC7-BrGMgQMm.js",
+      "_Show-BOQ1p7Rm.js",
+      "_cynefin-VYW2F7L2-B80k0uJM.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/diagram-Q27KOJAE.mjs": {
-    "file": "assets/diagram-Q27KOJAE-D2zNsNjA.js",
+    "file": "assets/diagram-Q27KOJAE-Dj6ZVHE5.js",
     "name": "diagram-Q27KOJAE",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/diagram-Q27KOJAE.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-JWPE2WC7--zSA5hne.js",
-      "_Show-D2qnT4d8.js",
-      "_chunk-KBJHAD2P-CtI--crj.js",
-      "_cynefin-VYW2F7L2-BQJmmju6.js",
+      "_chunk-JWPE2WC7-BrGMgQMm.js",
+      "_Show-BOQ1p7Rm.js",
+      "_chunk-KBJHAD2P-BPvP-qw6.js",
+      "_cynefin-VYW2F7L2-B80k0uJM.js",
       "_defaultLocale-DX6XiGOO.js",
       "_ordinal-Cboi1Yqb.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js",
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js",
       "_init-Gi6I4Gst.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/diagram-UB23O5K3.mjs": {
-    "file": "assets/diagram-UB23O5K3-DbnvupED.js",
+    "file": "assets/diagram-UB23O5K3-7te4sVEL.js",
     "name": "diagram-UB23O5K3",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/diagram-UB23O5K3.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-JWPE2WC7--zSA5hne.js",
-      "_Show-D2qnT4d8.js",
-      "_cynefin-VYW2F7L2-BQJmmju6.js",
+      "_chunk-JWPE2WC7-BrGMgQMm.js",
+      "_Show-BOQ1p7Rm.js",
+      "_cynefin-VYW2F7L2-B80k0uJM.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/ebnfDiagram-BXEA7PRR.mjs": {
-    "file": "assets/ebnfDiagram-BXEA7PRR-CMwGbE9L.js",
+    "file": "assets/ebnfDiagram-BXEA7PRR-BWWvFOhB.js",
     "name": "ebnfDiagram-BXEA7PRR",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/ebnfDiagram-BXEA7PRR.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-6Q2QTUOP-BFNTRqr1.js",
-      "_chunk-JWPE2WC7--zSA5hne.js",
-      "_Show-D2qnT4d8.js",
-      "_cynefin-VYW2F7L2-BQJmmju6.js",
+      "_chunk-6Q2QTUOP-E3yXp43Z.js",
+      "_chunk-JWPE2WC7-BrGMgQMm.js",
+      "_Show-BOQ1p7Rm.js",
+      "_cynefin-VYW2F7L2-B80k0uJM.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/erDiagram-JOGREHBK.mjs": {
-    "file": "assets/erDiagram-JOGREHBK-BBlkaPnN.js",
+    "file": "assets/erDiagram-JOGREHBK-CqN5VlD2.js",
     "name": "erDiagram-JOGREHBK",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/erDiagram-JOGREHBK.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-XXDRQBXY-BMLdcpuZ.js",
-      "_chunk-KBJHAD2P-CtI--crj.js",
-      "_Show-D2qnT4d8.js",
-      "_channel-2JPgT6eT.js",
+      "_chunk-XXDRQBXY-DyqKC-U-.js",
+      "_chunk-KBJHAD2P-BPvP-qw6.js",
+      "_Show-BOQ1p7Rm.js",
+      "_channel-Cnmd96ni.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/ganttDiagram-PKOTCBZU.mjs": {
-    "file": "assets/ganttDiagram-PKOTCBZU-D0KZ0NA8.js",
+    "file": "assets/ganttDiagram-PKOTCBZU-BwKvJ1kU.js",
     "name": "ganttDiagram-PKOTCBZU",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/ganttDiagram-PKOTCBZU.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_Show-D2qnT4d8.js",
+      "_Show-BOQ1p7Rm.js",
       "resources/js/app.ts",
-      "_linear-C1rQscky.js",
+      "_linear-Bq-mYw3C.js",
       "_init-Gi6I4Gst.js",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js",
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js",
       "_defaultLocale-DX6XiGOO.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/gitGraphDiagram-DS77QQ5N.mjs": {
-    "file": "assets/gitGraphDiagram-DS77QQ5N-C7g60S_A.js",
+    "file": "assets/gitGraphDiagram-DS77QQ5N-CYtEu2_e.js",
     "name": "gitGraphDiagram-DS77QQ5N",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/gitGraphDiagram-DS77QQ5N.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-2Q5K7J3B-CZ4rxGs7.js",
-      "_chunk-JWPE2WC7--zSA5hne.js",
-      "_Show-D2qnT4d8.js",
-      "_cynefin-VYW2F7L2-BQJmmju6.js",
+      "_chunk-2Q5K7J3B-CM7Opyto.js",
+      "_chunk-JWPE2WC7-BrGMgQMm.js",
+      "_Show-BOQ1p7Rm.js",
+      "_cynefin-VYW2F7L2-B80k0uJM.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/infoDiagram-6WML65LV.mjs": {
-    "file": "assets/infoDiagram-6WML65LV-c2WceWEA.js",
+    "file": "assets/infoDiagram-6WML65LV-BmAOB4Tt.js",
     "name": "infoDiagram-6WML65LV",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/infoDiagram-6WML65LV.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_Show-D2qnT4d8.js",
-      "_cynefin-VYW2F7L2-BQJmmju6.js",
+      "_Show-BOQ1p7Rm.js",
+      "_cynefin-VYW2F7L2-B80k0uJM.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/ishikawaDiagram-WSZJBQD7.mjs": {
-    "file": "assets/ishikawaDiagram-WSZJBQD7-C4STXEFL.js",
+    "file": "assets/ishikawaDiagram-WSZJBQD7-4lhsUNA5.js",
     "name": "ishikawaDiagram-WSZJBQD7",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/ishikawaDiagram-WSZJBQD7.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_Show-D2qnT4d8.js",
+      "_Show-BOQ1p7Rm.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/journeyDiagram-NVQOT4AX.mjs": {
-    "file": "assets/journeyDiagram-NVQOT4AX-Cdcs0_so.js",
+    "file": "assets/journeyDiagram-NVQOT4AX-MNjJyUQO.js",
     "name": "journeyDiagram-NVQOT4AX",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/journeyDiagram-NVQOT4AX.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-5VM5RSS4-Dg1PDbtZ.js",
-      "_chunk-2GRJ4B5K-CgW8bMJR.js",
-      "_Show-D2qnT4d8.js",
-      "_arc-8w4odvgT.js",
+      "_chunk-5VM5RSS4-svPbQgQz.js",
+      "_chunk-2GRJ4B5K-noGfdA8n.js",
+      "_Show-BOQ1p7Rm.js",
+      "_arc-BGuWivxN.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/kanban-definition-27J2QSJJ.mjs": {
-    "file": "assets/kanban-definition-27J2QSJJ-C5oLPnqh.js",
+    "file": "assets/kanban-definition-27J2QSJJ-BnDj6ll2.js",
     "name": "kanban-definition-27J2QSJJ",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/kanban-definition-27J2QSJJ.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_Show-D2qnT4d8.js",
-      "_chunk-5VM5RSS4-Dg1PDbtZ.js",
+      "_Show-BOQ1p7Rm.js",
+      "_chunk-5VM5RSS4-svPbQgQz.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/mindmap-definition-FAOFIHXS.mjs": {
-    "file": "assets/mindmap-definition-FAOFIHXS-Iki7NWwY.js",
+    "file": "assets/mindmap-definition-FAOFIHXS-_BJPPzSu.js",
     "name": "mindmap-definition-FAOFIHXS",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/mindmap-definition-FAOFIHXS.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-XXDRQBXY-BMLdcpuZ.js",
-      "_chunk-KBJHAD2P-CtI--crj.js",
-      "_Show-D2qnT4d8.js",
+      "_chunk-XXDRQBXY-DyqKC-U-.js",
+      "_chunk-KBJHAD2P-BPvP-qw6.js",
+      "_Show-BOQ1p7Rm.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/pegDiagram-VL7TDLO6.mjs": {
-    "file": "assets/pegDiagram-VL7TDLO6-vmVElktl.js",
+    "file": "assets/pegDiagram-VL7TDLO6-JkaFy20c.js",
     "name": "pegDiagram-VL7TDLO6",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/pegDiagram-VL7TDLO6.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-6Q2QTUOP-BFNTRqr1.js",
-      "_chunk-JWPE2WC7--zSA5hne.js",
-      "_Show-D2qnT4d8.js",
-      "_cynefin-VYW2F7L2-BQJmmju6.js",
+      "_chunk-6Q2QTUOP-E3yXp43Z.js",
+      "_chunk-JWPE2WC7-BrGMgQMm.js",
+      "_Show-BOQ1p7Rm.js",
+      "_cynefin-VYW2F7L2-B80k0uJM.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/pieDiagram-7S7Q4E2Y.mjs": {
-    "file": "assets/pieDiagram-7S7Q4E2Y-DclCv3wv.js",
+    "file": "assets/pieDiagram-7S7Q4E2Y-XZEZ-v18.js",
     "name": "pieDiagram-7S7Q4E2Y",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/pieDiagram-7S7Q4E2Y.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-JWPE2WC7--zSA5hne.js",
-      "_Show-D2qnT4d8.js",
-      "_cynefin-VYW2F7L2-BQJmmju6.js",
-      "_arc-8w4odvgT.js",
+      "_chunk-JWPE2WC7-BrGMgQMm.js",
+      "_Show-BOQ1p7Rm.js",
+      "_cynefin-VYW2F7L2-B80k0uJM.js",
+      "_arc-BGuWivxN.js",
       "_ordinal-Cboi1Yqb.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js",
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js",
       "_init-Gi6I4Gst.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/quadrantDiagram-CIZ2JOQS.mjs": {
-    "file": "assets/quadrantDiagram-CIZ2JOQS-BlHFOKdG.js",
+    "file": "assets/quadrantDiagram-CIZ2JOQS-BnDSD_Zj.js",
     "name": "quadrantDiagram-CIZ2JOQS",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/quadrantDiagram-CIZ2JOQS.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_Show-D2qnT4d8.js",
-      "_linear-C1rQscky.js",
+      "_Show-BOQ1p7Rm.js",
+      "_linear-Bq-mYw3C.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js",
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js",
       "_init-Gi6I4Gst.js",
       "_defaultLocale-DX6XiGOO.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/railroadDiagram-AXF67PYL.mjs": {
-    "file": "assets/railroadDiagram-AXF67PYL-CQs4cQQD.js",
+    "file": "assets/railroadDiagram-AXF67PYL-CG7ub1R2.js",
     "name": "railroadDiagram-AXF67PYL",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/railroadDiagram-AXF67PYL.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-6Q2QTUOP-BFNTRqr1.js",
-      "_chunk-JWPE2WC7--zSA5hne.js",
-      "_Show-D2qnT4d8.js",
-      "_cynefin-VYW2F7L2-BQJmmju6.js",
+      "_chunk-6Q2QTUOP-E3yXp43Z.js",
+      "_chunk-JWPE2WC7-BrGMgQMm.js",
+      "_Show-BOQ1p7Rm.js",
+      "_cynefin-VYW2F7L2-B80k0uJM.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/requirementDiagram-LRYGKXZP.mjs": {
-    "file": "assets/requirementDiagram-LRYGKXZP-BEAPNdOY.js",
+    "file": "assets/requirementDiagram-LRYGKXZP-BSFnrnhP.js",
     "name": "requirementDiagram-LRYGKXZP",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/requirementDiagram-LRYGKXZP.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-XXDRQBXY-BMLdcpuZ.js",
-      "_chunk-KBJHAD2P-CtI--crj.js",
-      "_Show-D2qnT4d8.js",
+      "_chunk-XXDRQBXY-DyqKC-U-.js",
+      "_chunk-KBJHAD2P-BPvP-qw6.js",
+      "_Show-BOQ1p7Rm.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/sankeyDiagram-W5VNT64P.mjs": {
-    "file": "assets/sankeyDiagram-W5VNT64P-SKNWWu-k.js",
+    "file": "assets/sankeyDiagram-W5VNT64P-5X_selXQ.js",
     "name": "sankeyDiagram-W5VNT64P",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/sankeyDiagram-W5VNT64P.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_Show-D2qnT4d8.js",
+      "_Show-BOQ1p7Rm.js",
       "_ordinal-Cboi1Yqb.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js",
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js",
       "_init-Gi6I4Gst.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/sequenceDiagram-SI44F4Z6.mjs": {
-    "file": "assets/sequenceDiagram-SI44F4Z6-0qiu87_0.js",
+    "file": "assets/sequenceDiagram-SI44F4Z6-DI48clPR.js",
     "name": "sequenceDiagram-SI44F4Z6",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/sequenceDiagram-SI44F4Z6.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-2Q5K7J3B-CZ4rxGs7.js",
-      "_Show-D2qnT4d8.js",
-      "_chunk-2GRJ4B5K-CgW8bMJR.js",
+      "_chunk-2Q5K7J3B-CM7Opyto.js",
+      "_Show-BOQ1p7Rm.js",
+      "_chunk-2GRJ4B5K-noGfdA8n.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/sizeCapture-X5ZJPWSS.mjs": {
-    "file": "assets/sizeCapture-X5ZJPWSS-C1S_J7b_.js",
+    "file": "assets/sizeCapture-X5ZJPWSS-CRy_Fc7q.js",
     "name": "sizeCapture-X5ZJPWSS",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/sizeCapture-X5ZJPWSS.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_Show-D2qnT4d8.js",
+      "_Show-BOQ1p7Rm.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/stateDiagram-OKZ733FA.mjs": {
-    "file": "assets/stateDiagram-OKZ733FA-C3tSHGgF.js",
+    "file": "assets/stateDiagram-OKZ733FA-C0CQv_Hy.js",
     "name": "stateDiagram-OKZ733FA",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/stateDiagram-OKZ733FA.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-5RXB4S5H-q_KLlq9X.js",
-      "_Show-D2qnT4d8.js",
-      "_graph-DwS5x_Og.js",
-      "_layout-Br5JNRhI.js",
-      "_chunk-XXDRQBXY-BMLdcpuZ.js",
-      "_chunk-KBJHAD2P-CtI--crj.js",
-      "_chunk-2GRJ4B5K-CgW8bMJR.js",
+      "_chunk-5RXB4S5H-Ct__qNJF.js",
+      "_Show-BOQ1p7Rm.js",
+      "_graph-D7-pggau.js",
+      "_layout-oszq8HfQ.js",
+      "_chunk-XXDRQBXY-DyqKC-U-.js",
+      "_chunk-KBJHAD2P-BPvP-qw6.js",
+      "_chunk-2GRJ4B5K-noGfdA8n.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js",
-      "_map-CMOY1dgP.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js",
+      "_map-DhSSXKip.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/stateDiagram-v2-UEYNNEHI.mjs": {
-    "file": "assets/stateDiagram-v2-UEYNNEHI-CoyPRQyt.js",
+    "file": "assets/stateDiagram-v2-UEYNNEHI-TBfr1wcX.js",
     "name": "stateDiagram-v2-UEYNNEHI",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/stateDiagram-v2-UEYNNEHI.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-5RXB4S5H-q_KLlq9X.js",
-      "_Show-D2qnT4d8.js",
-      "_chunk-XXDRQBXY-BMLdcpuZ.js",
-      "_chunk-KBJHAD2P-CtI--crj.js",
-      "_chunk-2GRJ4B5K-CgW8bMJR.js",
+      "_chunk-5RXB4S5H-Ct__qNJF.js",
+      "_Show-BOQ1p7Rm.js",
+      "_chunk-XXDRQBXY-DyqKC-U-.js",
+      "_chunk-KBJHAD2P-BPvP-qw6.js",
+      "_chunk-2GRJ4B5K-noGfdA8n.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/swimlanes-SLNWSIFB.mjs": {
-    "file": "assets/swimlanes-SLNWSIFB-DRW3moXq.js",
+    "file": "assets/swimlanes-SLNWSIFB-CEHg_LQr.js",
     "name": "swimlanes-SLNWSIFB",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/swimlanes-SLNWSIFB.mjs",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.ts",
-      "_chunk-RYQCIY6F-i5PmCWTS.js",
-      "_Show-D2qnT4d8.js",
-      "_graph-DwS5x_Og.js",
-      "_map-CMOY1dgP.js",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_chunk-RYQCIY6F-BRUmAwyq.js",
+      "_Show-BOQ1p7Rm.js",
+      "_graph-D7-pggau.js",
+      "_map-DhSSXKip.js",
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ],
     "dynamicImports": [
       "node_modules/mermaid/dist/chunks/mermaid.core/sizeCapture-X5ZJPWSS.mjs"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/swimlanesDiagram-ULZ7WXOC.mjs": {
-    "file": "assets/swimlanesDiagram-ULZ7WXOC-Ctx2Gqqy.js",
+    "file": "assets/swimlanesDiagram-ULZ7WXOC-aNl6n3oS.js",
     "name": "swimlanesDiagram-ULZ7WXOC",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/swimlanesDiagram-ULZ7WXOC.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_flowDiagram-UKHOOZJN-CEHyoxUD.js",
-      "_Show-D2qnT4d8.js",
-      "_chunk-5VM5RSS4-Dg1PDbtZ.js",
-      "_chunk-XXDRQBXY-BMLdcpuZ.js",
-      "_chunk-KBJHAD2P-CtI--crj.js",
-      "_chunk-2GRJ4B5K-CgW8bMJR.js",
-      "_channel-2JPgT6eT.js",
+      "_flowDiagram-UKHOOZJN-1M2DJlaV.js",
+      "_Show-BOQ1p7Rm.js",
+      "_chunk-5VM5RSS4-svPbQgQz.js",
+      "_chunk-XXDRQBXY-DyqKC-U-.js",
+      "_chunk-KBJHAD2P-BPvP-qw6.js",
+      "_chunk-2GRJ4B5K-noGfdA8n.js",
+      "_channel-Cnmd96ni.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/timeline-definition-Z64GVDOM.mjs": {
-    "file": "assets/timeline-definition-Z64GVDOM-D5IAKq_e.js",
+    "file": "assets/timeline-definition-Z64GVDOM-DJQ16Xbb.js",
     "name": "timeline-definition-Z64GVDOM",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/timeline-definition-Z64GVDOM.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_Show-D2qnT4d8.js",
-      "_arc-8w4odvgT.js",
+      "_Show-BOQ1p7Rm.js",
+      "_arc-BGuWivxN.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/vennDiagram-T6HMQDX7.mjs": {
-    "file": "assets/vennDiagram-T6HMQDX7-BFS__-bg.js",
+    "file": "assets/vennDiagram-T6HMQDX7-DVoQHTZM.js",
     "name": "vennDiagram-T6HMQDX7",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/vennDiagram-T6HMQDX7.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_Show-D2qnT4d8.js",
+      "_Show-BOQ1p7Rm.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/wardleyDiagram-T6FBY63Y.mjs": {
-    "file": "assets/wardleyDiagram-T6FBY63Y-CE6GHXHA.js",
+    "file": "assets/wardleyDiagram-T6FBY63Y-CR2x1UxH.js",
     "name": "wardleyDiagram-T6FBY63Y",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/wardleyDiagram-T6FBY63Y.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_chunk-JWPE2WC7--zSA5hne.js",
-      "_Show-D2qnT4d8.js",
-      "_cynefin-VYW2F7L2-BQJmmju6.js",
+      "_chunk-JWPE2WC7-BrGMgQMm.js",
+      "_Show-BOQ1p7Rm.js",
+      "_cynefin-VYW2F7L2-B80k0uJM.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "node_modules/mermaid/dist/chunks/mermaid.core/xychartDiagram-ELKLHX3M.mjs": {
-    "file": "assets/xychartDiagram-ELKLHX3M-3iPixQaC.js",
+    "file": "assets/xychartDiagram-ELKLHX3M-CH-U0bqC.js",
     "name": "xychartDiagram-ELKLHX3M",
     "src": "node_modules/mermaid/dist/chunks/mermaid.core/xychartDiagram-ELKLHX3M.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_Show-D2qnT4d8.js",
+      "_Show-BOQ1p7Rm.js",
       "_init-Gi6I4Gst.js",
       "_ordinal-Cboi1Yqb.js",
-      "_linear-C1rQscky.js",
+      "_linear-Bq-mYw3C.js",
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js",
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js",
       "_defaultLocale-DX6XiGOO.js"
     ]
   },
@@ -888,275 +935,287 @@
     "isEntry": true
   },
   "resources/js/Pages/About/Index.vue": {
-    "file": "assets/Index-BHyBhZ-d.js",
+    "file": "assets/Index-D2VsrhNS.js",
     "name": "Index",
     "src": "resources/js/Pages/About/Index.vue",
     "isDynamicEntry": true,
     "imports": [
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js",
+      "_TalismanCanvas.vue_vue_type_script_setup_true_lang-DvJTSWps.js",
+      "_MidnightTerminal.vue_vue_type_script_setup_true_lang-ChZDCfNd.js",
+      "_NextStepsHub.vue_vue_type_script_setup_true_lang-Be1dsEjt.js",
       "resources/js/app.ts",
-      "_TalismanCanvas.vue_vue_type_script_setup_true_lang-3-D41wnU.js",
-      "_MidnightTerminal.vue_vue_type_script_setup_true_lang-BB5NR0TN.js",
-      "_NextStepsHub.vue_vue_type_script_setup_true_lang-BSDaHtFX.js",
-      "__plugin-vue_export-helper-CLhT7OCr.js",
-      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BaMVH7dO.js",
+      "__plugin-vue_export-helper-CSmm65sx.js",
+      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BXqYEa-R.js",
       "_projectsData-Cwjoa7Ox.js",
       "_analytics-BTwv1W4P.js"
     ]
   },
   "resources/js/Pages/Admin/Analytics/Index.vue": {
-    "file": "assets/Index-C2res0RY.js",
+    "file": "assets/Index-bHKOFwjf.js",
     "name": "Index",
     "src": "resources/js/Pages/Admin/Analytics/Index.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.ts",
-      "_AdminLayout-Cyx3szFE.js",
-      "__plugin-vue_export-helper-CLhT7OCr.js",
-      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BaMVH7dO.js"
+      "_AdminLayout-B36xm0SP.js",
+      "__plugin-vue_export-helper-CSmm65sx.js",
+      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BXqYEa-R.js"
     ]
   },
   "resources/js/Pages/Admin/Articles/Index.vue": {
-    "file": "assets/Index-Dt5VEWRz.js",
+    "file": "assets/Index-C5XD6Fob.js",
     "name": "Index",
     "src": "resources/js/Pages/Admin/Articles/Index.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.ts",
-      "_AdminLayout-Cyx3szFE.js",
-      "__plugin-vue_export-helper-CLhT7OCr.js",
-      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BaMVH7dO.js"
+      "_AdminLayout-B36xm0SP.js",
+      "__plugin-vue_export-helper-CSmm65sx.js",
+      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BXqYEa-R.js"
     ]
   },
   "resources/js/Pages/Admin/Auth/Login.vue": {
-    "file": "assets/Login-B8gPvrtX.js",
+    "file": "assets/Login-DFUfPS1X.js",
     "name": "Login",
     "src": "resources/js/Pages/Admin/Auth/Login.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.ts",
-      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BaMVH7dO.js"
+      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BXqYEa-R.js"
     ]
   },
   "resources/js/Pages/Admin/Contacts/Index.vue": {
-    "file": "assets/Index-CRT4yO_j.js",
+    "file": "assets/Index-B1Ykd_Ye.js",
     "name": "Index",
     "src": "resources/js/Pages/Admin/Contacts/Index.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.ts",
-      "_AdminLayout-Cyx3szFE.js",
-      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BaMVH7dO.js",
-      "__plugin-vue_export-helper-CLhT7OCr.js"
+      "_AdminLayout-B36xm0SP.js",
+      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BXqYEa-R.js",
+      "__plugin-vue_export-helper-CSmm65sx.js"
     ]
   },
   "resources/js/Pages/Admin/Dashboard.vue": {
-    "file": "assets/Dashboard-BETGCrBQ.js",
+    "file": "assets/Dashboard-D6EB4zlg.js",
     "name": "Dashboard",
     "src": "resources/js/Pages/Admin/Dashboard.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.ts",
-      "_AdminLayout-Cyx3szFE.js",
-      "__plugin-vue_export-helper-CLhT7OCr.js",
-      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BaMVH7dO.js"
+      "_AdminLayout-B36xm0SP.js",
+      "__plugin-vue_export-helper-CSmm65sx.js",
+      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BXqYEa-R.js"
     ]
   },
   "resources/js/Pages/Admin/Experiences/Index.vue": {
-    "file": "assets/Index-Ok3aGwlz.js",
+    "file": "assets/Index-DTj4rlzI.js",
     "name": "Index",
     "src": "resources/js/Pages/Admin/Experiences/Index.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.ts",
-      "_AdminLayout-Cyx3szFE.js",
-      "__plugin-vue_export-helper-CLhT7OCr.js",
-      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BaMVH7dO.js"
+      "_AdminLayout-B36xm0SP.js",
+      "__plugin-vue_export-helper-CSmm65sx.js",
+      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BXqYEa-R.js"
     ]
   },
   "resources/js/Pages/Admin/Projects/Index.vue": {
-    "file": "assets/Index-im2krTsK.js",
+    "file": "assets/Index-BqUKv1ci.js",
     "name": "Index",
     "src": "resources/js/Pages/Admin/Projects/Index.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.ts",
-      "_AdminLayout-Cyx3szFE.js",
-      "__plugin-vue_export-helper-CLhT7OCr.js",
-      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BaMVH7dO.js"
+      "_AdminLayout-B36xm0SP.js",
+      "__plugin-vue_export-helper-CSmm65sx.js",
+      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BXqYEa-R.js"
     ]
   },
   "resources/js/Pages/Admin/Settings/Index.vue": {
-    "file": "assets/Index-BKTXNepa.js",
+    "file": "assets/Index-BBQEPWsi.js",
     "name": "Index",
     "src": "resources/js/Pages/Admin/Settings/Index.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.ts",
-      "_AdminLayout-Cyx3szFE.js",
-      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BaMVH7dO.js",
-      "__plugin-vue_export-helper-CLhT7OCr.js"
+      "_AdminLayout-B36xm0SP.js",
+      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BXqYEa-R.js",
+      "__plugin-vue_export-helper-CSmm65sx.js"
     ]
   },
   "resources/js/Pages/Admin/Skills/Index.vue": {
-    "file": "assets/Index-BXc0K01_.js",
+    "file": "assets/Index-R3pUsdqQ.js",
     "name": "Index",
     "src": "resources/js/Pages/Admin/Skills/Index.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.ts",
-      "_AdminLayout-Cyx3szFE.js",
-      "__plugin-vue_export-helper-CLhT7OCr.js",
-      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BaMVH7dO.js"
+      "_AdminLayout-B36xm0SP.js",
+      "__plugin-vue_export-helper-CSmm65sx.js",
+      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BXqYEa-R.js"
     ]
   },
   "resources/js/Pages/Blog/Index.vue": {
-    "file": "assets/Index-DjLQ-eV8.js",
+    "file": "assets/Index-j0VfOGyh.js",
     "name": "Index",
     "src": "resources/js/Pages/Blog/Index.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.ts",
-      "_TalismanCanvas.vue_vue_type_script_setup_true_lang-3-D41wnU.js",
-      "_NextStepsHub.vue_vue_type_script_setup_true_lang-BSDaHtFX.js",
-      "__plugin-vue_export-helper-CLhT7OCr.js",
-      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BaMVH7dO.js"
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js",
+      "_TalismanCanvas.vue_vue_type_script_setup_true_lang-DvJTSWps.js",
+      "_NextStepsHub.vue_vue_type_script_setup_true_lang-Be1dsEjt.js",
+      "__plugin-vue_export-helper-CSmm65sx.js",
+      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BXqYEa-R.js"
     ]
   },
   "resources/js/Pages/Blog/Show.vue": {
-    "file": "assets/Show-COMZw5k4.js",
+    "file": "assets/Show-sb1NtnQy.js",
     "name": "Show",
     "src": "resources/js/Pages/Blog/Show.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.ts",
-      "_TalismanCanvas.vue_vue_type_script_setup_true_lang-3-D41wnU.js",
-      "_NextStepsHub.vue_vue_type_script_setup_true_lang-BSDaHtFX.js",
-      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BaMVH7dO.js",
-      "__plugin-vue_export-helper-CLhT7OCr.js"
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js",
+      "_TalismanCanvas.vue_vue_type_script_setup_true_lang-DvJTSWps.js",
+      "_NextStepsHub.vue_vue_type_script_setup_true_lang-Be1dsEjt.js",
+      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BXqYEa-R.js",
+      "__plugin-vue_export-helper-CSmm65sx.js"
     ],
     "css": [
-      "assets/Show-BcfVnhAc.css"
+      "assets/Show-D2kMqm4Z.css"
     ]
   },
   "resources/js/Pages/Contact/Index.vue": {
-    "file": "assets/Index-D5i4VLC5.js",
+    "file": "assets/Index-Cf_5AObI.js",
     "name": "Index",
     "src": "resources/js/Pages/Contact/Index.vue",
     "isDynamicEntry": true,
     "imports": [
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js",
+      "_TalismanCanvas.vue_vue_type_script_setup_true_lang-DvJTSWps.js",
+      "_ContactSection.vue_vue_type_script_setup_true_lang-B0Oe4PBr.js",
+      "_NextStepsHub.vue_vue_type_script_setup_true_lang-Be1dsEjt.js",
       "resources/js/app.ts",
-      "_TalismanCanvas.vue_vue_type_script_setup_true_lang-3-D41wnU.js",
-      "_ContactSection.vue_vue_type_script_setup_true_lang-BeWVu9BU.js",
-      "_NextStepsHub.vue_vue_type_script_setup_true_lang-BSDaHtFX.js",
-      "__plugin-vue_export-helper-CLhT7OCr.js",
-      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BaMVH7dO.js"
+      "__plugin-vue_export-helper-CSmm65sx.js",
+      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BXqYEa-R.js"
     ]
   },
   "resources/js/Pages/Game/Index.vue": {
-    "file": "assets/Index-DB2GNK6q.js",
+    "file": "assets/Index-w-nDiA0f.js",
     "name": "Index",
     "src": "resources/js/Pages/Game/Index.vue",
     "isDynamicEntry": true,
     "imports": [
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js",
+      "_TalismanCanvas.vue_vue_type_script_setup_true_lang-DvJTSWps.js",
       "resources/js/app.ts",
-      "_TalismanCanvas.vue_vue_type_script_setup_true_lang-3-D41wnU.js",
-      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BaMVH7dO.js",
-      "_MacatungMascot.vue_vue_type_script_setup_true_lang-BfojUnmV.js",
-      "_NextStepsHub.vue_vue_type_script_setup_true_lang-BSDaHtFX.js",
-      "__plugin-vue_export-helper-CLhT7OCr.js",
+      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BXqYEa-R.js",
+      "_MacatungMascot.vue_vue_type_script_setup_true_lang-Bfcpn8ah.js",
+      "_NextStepsHub.vue_vue_type_script_setup_true_lang-Be1dsEjt.js",
+      "__plugin-vue_export-helper-CSmm65sx.js",
       "_analytics-BTwv1W4P.js"
     ]
   },
   "resources/js/Pages/Home.vue": {
-    "file": "assets/Home-3GEzcltm.js",
+    "file": "assets/Home-aZEiBEAy.js",
     "name": "Home",
     "src": "resources/js/Pages/Home.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.ts",
-      "_TalismanCanvas.vue_vue_type_script_setup_true_lang-3-D41wnU.js",
-      "_MacatungMascot.vue_vue_type_script_setup_true_lang-BfojUnmV.js",
-      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BaMVH7dO.js",
-      "__plugin-vue_export-helper-CLhT7OCr.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js",
+      "_TalismanCanvas.vue_vue_type_script_setup_true_lang-DvJTSWps.js",
+      "_MacatungMascot.vue_vue_type_script_setup_true_lang-Bfcpn8ah.js",
+      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BXqYEa-R.js",
+      "__plugin-vue_export-helper-CSmm65sx.js",
       "_analytics-BTwv1W4P.js",
-      "_ProjectsSection.vue_vue_type_script_setup_true_lang-D6w5Dc4S.js",
-      "_MidnightTerminal.vue_vue_type_script_setup_true_lang-BB5NR0TN.js",
-      "_ContactSection.vue_vue_type_script_setup_true_lang-BeWVu9BU.js",
+      "_ProjectsSection.vue_vue_type_script_setup_true_lang-BaFBk2fS.js",
+      "_MidnightTerminal.vue_vue_type_script_setup_true_lang-ChZDCfNd.js",
+      "_ContactSection.vue_vue_type_script_setup_true_lang-B0Oe4PBr.js",
       "_projectsData-Cwjoa7Ox.js"
     ]
   },
   "resources/js/Pages/Projects/Index.vue": {
-    "file": "assets/Index-LoDybljd.js",
+    "file": "assets/Index-BG9HGDCS.js",
     "name": "Index",
     "src": "resources/js/Pages/Projects/Index.vue",
     "isDynamicEntry": true,
     "imports": [
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js",
+      "_TalismanCanvas.vue_vue_type_script_setup_true_lang-DvJTSWps.js",
+      "_ProjectsSection.vue_vue_type_script_setup_true_lang-BaFBk2fS.js",
+      "_NextStepsHub.vue_vue_type_script_setup_true_lang-Be1dsEjt.js",
       "resources/js/app.ts",
-      "_TalismanCanvas.vue_vue_type_script_setup_true_lang-3-D41wnU.js",
-      "_ProjectsSection.vue_vue_type_script_setup_true_lang-D6w5Dc4S.js",
-      "_NextStepsHub.vue_vue_type_script_setup_true_lang-BSDaHtFX.js",
-      "__plugin-vue_export-helper-CLhT7OCr.js",
-      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BaMVH7dO.js",
+      "__plugin-vue_export-helper-CSmm65sx.js",
+      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BXqYEa-R.js",
       "_projectsData-Cwjoa7Ox.js"
     ]
   },
   "resources/js/Pages/Talisman/Index.vue": {
-    "file": "assets/Index-BpqOd7EO.js",
+    "file": "assets/Index-CX6REPaC.js",
     "name": "Index",
     "src": "resources/js/Pages/Talisman/Index.vue",
     "isDynamicEntry": true,
     "imports": [
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js",
+      "_TalismanCanvas.vue_vue_type_script_setup_true_lang-DvJTSWps.js",
       "resources/js/app.ts",
-      "_TalismanCanvas.vue_vue_type_script_setup_true_lang-3-D41wnU.js",
-      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BaMVH7dO.js",
-      "_NextStepsHub.vue_vue_type_script_setup_true_lang-BSDaHtFX.js",
-      "__plugin-vue_export-helper-CLhT7OCr.js"
+      "_MiniMascotLogo.vue_vue_type_script_setup_true_lang-BXqYEa-R.js",
+      "_NextStepsHub.vue_vue_type_script_setup_true_lang-Be1dsEjt.js",
+      "__plugin-vue_export-helper-CSmm65sx.js"
     ]
   },
   "resources/js/Pages/Theravada/Apps.vue": {
-    "file": "assets/Apps-CC561DON.js",
+    "file": "assets/Apps-TvKRUawN.js",
     "name": "Apps",
     "src": "resources/js/Pages/Theravada/Apps.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js",
-      "_VipassanaTimer.vue_vue_type_script_setup_true_lang-TXwQZB9c.js",
-      "resources/js/app.ts"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_VipassanaTimer.vue_vue_type_script_setup_true_lang-DzqQGlBo.js",
+      "resources/js/app.ts",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "resources/js/Pages/Theravada/Category.vue": {
-    "file": "assets/Category-CdFXenc2.js",
+    "file": "assets/Category-B419FFDy.js",
     "name": "Category",
     "src": "resources/js/Pages/Theravada/Category.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "resources/js/Pages/Theravada/Glossary.vue": {
-    "file": "assets/Glossary-DrDnQZk0.js",
+    "file": "assets/Glossary-DKz6X9Lb.js",
     "name": "Glossary",
     "src": "resources/js/Pages/Theravada/Glossary.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "resources/js/Pages/Theravada/Index.vue": {
-    "file": "assets/Index-BGaS2sDt.js",
+    "file": "assets/Index-DL2fjWhZ.js",
     "name": "Index",
     "src": "resources/js/Pages/Theravada/Index.vue",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.ts",
-      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C0YEa0Hu.js",
-      "_VipassanaTimer.vue_vue_type_script_setup_true_lang-TXwQZB9c.js"
+      "_TheravadaLayout.vue_vue_type_script_setup_true_lang-C4pLznNg.js",
+      "_VipassanaTimer.vue_vue_type_script_setup_true_lang-DzqQGlBo.js",
+      "_SeoHead.vue_vue_type_script_setup_true_lang-B6hi_vO7.js"
     ]
   },
   "resources/js/app.ts": {
-    "file": "assets/app-CjwV3Oxp.js",
+    "file": "assets/app-CpD71wS9.js",
     "name": "app",
     "src": "resources/js/app.ts",
     "isEntry": true,
@@ -1182,7 +1241,7 @@
       "resources/js/Pages/Theravada/Category.vue",
       "resources/js/Pages/Theravada/Glossary.vue",
       "resources/js/Pages/Theravada/Index.vue",
-      "_Show-D2qnT4d8.js"
+      "_Show-BOQ1p7Rm.js"
     ],
     "css": [
       "assets/app-BZWqtIGm.css"

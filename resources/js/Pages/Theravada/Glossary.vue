@@ -44,13 +44,36 @@ const filteredList = computed(() => {
   });
 });
 
-const strikeBell = () => {
-  mindfulBell.strikeWoodenFish();
+const selectLetter = (letter: string) => {
+  selectedLetter.value = letter;
+  mindfulBell.ringBell(528, 2.0);
+};
+
+const glossaryJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'DefinedTermSet',
+  'name': 'Từ Điển Thuật Ngữ Pāḷi — Phật Học Nguyên Thủy Theravāda',
+  'description': 'Tra cứu chính xác hơn 50+ thuật ngữ Pāḷi cốt lõi: Anattā, Anicca, Dukkha, Nibbāna, Vipassanā, Sati kèm định nghĩa Phật học uyên áo.',
+  'url': 'https://theravada.macatung.dev/tu-dien-pali',
+  'inLanguage': ['vi', 'pi'],
+  'hasDefinedTerm': glossaryData.map(item => ({
+    '@type': 'DefinedTerm',
+    'name': item.term,
+    'alternateName': item.vietnamese,
+    'description': item.definition,
+    'inDefinedTermSet': 'https://theravada.macatung.dev/tu-dien-pali'
+  }))
 };
 </script>
 
 <template>
-  <TheravadaLayout :title="title">
+  <TheravadaLayout
+    :title="title || 'Từ Điển Pāḷi — Thuật Ngữ Phật Học Nguyên Thủy'"
+    description="Tra cứu chính xác các thuật ngữ Pāḷi kinh điển Phật giáo Theravāda: Vô ngã, Vô thường, Niết-bàn, Chánh niệm, Minh sát tuệ, Tứ Diệu Đế."
+    keywords="Từ điển Pali, Pāḷi Dictionary, Thuật ngữ Phật học, Pali Theravada, Anatta, Anicca, Vipassana, Nibbana"
+    canonical="https://theravada.macatung.dev/tu-dien-pali"
+    :json-ld="glossaryJsonLd"
+  >
     <div class="max-w-5xl mx-auto py-6 sm:py-10">
       <!-- Breadcrumb -->
       <nav class="flex items-center gap-2 text-xs font-serif text-stone-400 mb-6">

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
 import { ref } from 'vue';
+import SeoHead from '@/Components/common/SeoHead.vue';
 import Navbar from '@/Components/layout/Navbar.vue';
 import Footer from '@/Components/layout/Footer.vue';
 import TalismanCanvas from '@/Components/mascot/TalismanCanvas.vue';
@@ -32,10 +33,46 @@ const globalHopCount = ref(0);
 const handleHop = (count: number) => {
   globalHopCount.value = count;
 };
+
+const homeJsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': 'https://macatung.dev/#website',
+      'url': 'https://macatung.dev',
+      'name': 'Ma Cà Tưng • Code at midnight',
+      'description': 'Portfolio of macatung.dev — Full-Stack Developer & Creative Engineer crafting supernatural web applications under the midnight moon.',
+      'publisher': {
+        '@id': 'https://macatung.dev/#person'
+      },
+      'inLanguage': 'vi'
+    },
+    {
+      '@type': 'Person',
+      '@id': 'https://macatung.dev/#person',
+      'name': 'Ma Cà Tưng',
+      'alternateName': ['macatung', 'Midnight Architect'],
+      'url': 'https://macatung.dev',
+      'jobTitle': 'Senior Full-Stack Engineer & Creative Coder',
+      'knowsAbout': ['Laravel', 'Vue.js', 'Inertia.js', 'Tailwind CSS', 'TypeScript', 'Docker', 'Google Cloud Platform', 'Theravada Buddhism'],
+      'sameAs': [
+        'https://github.com/macatung',
+        'https://theravada.macatung.dev'
+      ]
+    }
+  ]
+};
 </script>
 
 <template>
-  <Head :title="title || 'Code at midnight — The Midnight Architect'" />
+  <SeoHead
+    :title="title || 'The Midnight Architect — Full-Stack & Creative Engineering'"
+    description="Khám phá Portfolio độc bản của Ma Cà Tưng (macatung.dev) — Lập trình viên Full-Stack & Creative Engineer chuyên sâu Laravel, Vue.js, Inertia.js, Cloud Architecture và các ứng dụng tương tác kỳ ảo."
+    keywords="Ma Cà Tưng, macatung.dev, Full-Stack Developer, Creative Engineer, Laravel Developer Vietnam, Vue.js Portfolio, Midnight Coder, Software Engineer"
+    canonical="https://macatung.dev"
+    :json-ld="homeJsonLd"
+  />
 
   <div
     class="min-h-screen bg-midnight-950 text-slate-100 selection:bg-phantom-mint selection:text-midnight-950 flex flex-col justify-between relative overflow-x-hidden w-full bg-grid-pattern transition-colors duration-1000"

@@ -9,10 +9,38 @@ defineProps<{
 }>();
 
 const activeTab = ref<'card' | 'timer'>('card');
+
+const appsJsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebApplication',
+      'name': 'Trợ Niệm Pháp Cú — Xuất Thẻ Ảnh Chia Sẻ HD',
+      'description': 'Ứng dụng rút quẻ kệ Kinh Pháp Cú (Dhammapada), tùy biến 4 phong cách thiền môn và xuất ảnh chất lượng cao 9:16 & 1:1 chia sẻ mạng xã hội.',
+      'applicationCategory': 'LifestyleApplication',
+      'operatingSystem': 'Any',
+      'url': 'https://theravada.macatung.dev/ung-dung-tu-hoc'
+    },
+    {
+      '@type': 'WebApplication',
+      'name': 'Đồng Hồ Tọa Thiền Minh Sát Vipassanā',
+      'description': 'Ứng dụng bấm giờ tọa thiền chánh niệm với chuông xoay Tây Tạng 432Hz và vòng thở Ānāpānasati quán sổ tức.',
+      'applicationCategory': 'HealthAndFitnessApplication',
+      'operatingSystem': 'Any',
+      'url': 'https://theravada.macatung.dev/ung-dung-tu-hoc'
+    }
+  ]
+};
 </script>
 
 <template>
-  <TheravadaLayout :title="title || 'Ứng Dụng Pháp Bảo & Tọa Thiền — Ma Cà Tưng Dhamma'">
+  <TheravadaLayout
+    :title="title || 'Ứng Dụng Pháp Bảo — Tạo Thẻ Pháp Cú & Tọa Thiền Vipassanā'"
+    description="Công cụ hỗ trợ tu học Phật giáo Theravāda: Tạo thẻ ảnh Kinh Pháp Cú HD chia sẻ đa nền tảng và Đồng hồ tọa thiền Vipassanā tích hợp chuông xoay 432Hz."
+    keywords="Tạo thẻ Pháp Cú, Dhammapada Card Generator, Đồng hồ tọa thiền, Vipassana Timer, Chuông xoay Tây Tạng, Phật giáo Theravada"
+    canonical="https://theravada.macatung.dev/ung-dung-tu-hoc"
+    :json-ld="appsJsonLd"
+  >
     <div class="max-w-5xl mx-auto py-6 sm:py-10 space-y-8 text-center font-serif">
       <!-- Hub Header -->
       <div>

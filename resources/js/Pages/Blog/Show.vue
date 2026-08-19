@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted } from 'vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Link } from '@inertiajs/vue3';
+import SeoHead from '@/Components/common/SeoHead.vue';
 import Navbar from '@/Components/layout/Navbar.vue';
 import Footer from '@/Components/layout/Footer.vue';
 import TalismanCanvas from '@/Components/mascot/TalismanCanvas.vue';
@@ -59,10 +60,10 @@ const getRelatedProjectInfo = (slug: string) => {
   }
   if (slug.includes('cap-quang') || slug.includes('qgis')) {
     return {
-      title: 'Hệ Thống Số Hóa Mạng Cáp Quang Quốc Gia (QGIS/GIS)',
-      desc: 'Quản lý 500,000+ điểm nút không gian trên PostGIS với thuật toán định tuyến OTDR.',
+      title: 'Telecom Fiber Network CAD to GIS Spatial Pipeline',
+      desc: 'Hệ thống chuẩn hóa 240+ file CAD sang QGIS PostgreSQL tự động hóa hoàn toàn.',
       icon: '🗺️',
-      badge: 'GIS / SPATIAL',
+      badge: 'GEO-SPATIAL',
     };
   }
   if (slug.includes('sdh') || slug.includes('nms')) {
@@ -122,10 +123,46 @@ onUnmounted(() => {
     window.removeEventListener('scroll', handleScroll);
   }
 });
+
+const articleJsonLd = computed(() => ({
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  'headline': props.article.title,
+  'description': props.article.excerpt,
+  'url': `https://macatung.dev/blog/${props.article.slug}`,
+  'datePublished': props.article.published_at,
+  'dateModified': props.article.published_at,
+  'author': {
+    '@type': 'Person',
+    'name': 'Ma Cà Tưng',
+    'url': 'https://macatung.dev'
+  },
+  'publisher': {
+    '@type': 'Person',
+    'name': 'Ma Cà Tưng',
+    'url': 'https://macatung.dev'
+  },
+  'keywords': props.article.tags ? props.article.tags.join(', ') : '',
+  'articleSection': 'Technology & Architecture',
+  'inLanguage': 'vi'
+}));
 </script>
 
 <template>
-  <Head :title="`${article.title} — Midnight Tech Chronicle`" />
+  <SeoHead
+    :title="article.title"
+    :description="article.excerpt"
+    :keywords="article.tags?.join(', ')"
+    :canonical="`https://macatung.dev/blog/${article.slug}`"
+    og-type="article"
+    :article="{
+      publishedTime: article.published_at,
+      author: 'Ma Cà Tưng',
+      section: 'Technology',
+      tags: article.tags
+    }"
+    :json-ld="articleJsonLd"
+  />
 
   <div class="min-h-screen bg-midnight-950 text-slate-100 selection:bg-phantom-mint selection:text-midnight-950 flex flex-col justify-between relative overflow-x-hidden w-full bg-grid-pattern">
     <!-- Reading Progress Bar Fixed at Top -->

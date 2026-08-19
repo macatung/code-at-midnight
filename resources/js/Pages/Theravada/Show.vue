@@ -169,10 +169,48 @@ const renderedMarkdown = computed(() => {
     return `<p class="mb-5 leading-loose text-stone-200 text-justify sm:text-left">${p}</p>`;
   }).join('\n');
 });
+
+const suttaJsonLd = computed(() => ({
+  '@context': 'https://schema.org',
+  '@type': 'ScholarlyArticle',
+  'headline': props.article.title,
+  'alternateName': props.article.pali_title,
+  'description': props.article.excerpt,
+  'url': `https://theravada.macatung.dev/kinh/${props.article.slug}`,
+  'datePublished': props.article.published_at,
+  'inLanguage': ['vi', 'pi'],
+  'about': {
+    '@type': 'Thing',
+    'name': props.article.pali_title || props.article.title,
+    'description': props.article.excerpt
+  },
+  'author': {
+    '@type': 'Organization',
+    'name': 'Ma Tọa Thiền • Theravāda'
+  },
+  'publisher': {
+    '@type': 'Organization',
+    'name': 'Ma Tọa Thiền',
+    'url': 'https://theravada.macatung.dev'
+  }
+}));
 </script>
 
 <template>
-  <TheravadaLayout :title="title">
+  <TheravadaLayout
+    :title="article.title"
+    :description="article.excerpt"
+    :keywords="`${article.title}, ${article.pali_title || ''}, Theravada, Pāḷi Sutta, Phật giáo nguyên thủy, ${article.tags ? article.tags.join(', ') : ''}`"
+    :canonical="`https://theravada.macatung.dev/kinh/${article.slug}`"
+    og-type="article"
+    :article="{
+      publishedTime: article.published_at,
+      author: 'Ma Tọa Thiền',
+      section: article.category,
+      tags: article.tags
+    }"
+    :json-ld="suttaJsonLd"
+  >
     <!-- Top Reading Progress Indicator -->
     <div
       class="fixed top-0 left-0 h-1 bg-amber-500 z-50 transition-all duration-100 ease-out"

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import SeoHead from '@/Components/common/SeoHead.vue';
 import Navbar from '@/Components/layout/Navbar.vue';
 import Footer from '@/Components/layout/Footer.vue';
 import TalismanCanvas from '@/Components/mascot/TalismanCanvas.vue';
@@ -9,10 +9,29 @@ import NextStepsHub from '@/Components/layout/NextStepsHub.vue';
 defineProps<{
   settings?: Record<string, string>;
 }>();
+
+const contactJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ContactPage',
+  'name': 'Triệu Hồi & Liên Hệ Hợp Tác Kỹ Thuật (Ma Cà Tưng)',
+  'description': 'Kết nối với Ma Cà Tưng để tư vấn kiến trúc phần mềm, phát triển ứng dụng Full-Stack, hệ thống AI Agents và tối ưu hóa hệ thống.',
+  'url': 'https://macatung.dev/contact',
+  'mainEntity': {
+    '@type': 'Person',
+    'name': 'Ma Cà Tưng',
+    'url': 'https://macatung.dev'
+  }
+};
 </script>
 
 <template>
-  <Head title="Triệu Hồi & Liên Hệ Tư Vấn — The Midnight Architect" />
+  <SeoHead
+    title="Triệu Hồi & Liên Hệ Tư Vấn — The Midnight Architect"
+    description="Gửi tin nhắn triệu hồi hoặc liên hệ hợp tác phát triển phần mềm, tư vấn kiến trúc giải pháp Full-Stack cùng Ma Cà Tưng."
+    keywords="Liên hệ Lập trình viên, Hire Full-Stack Developer, Freelance Engineer Vietnam, Tư vấn Phần Mềm"
+    canonical="https://macatung.dev/contact"
+    :json-ld="contactJsonLd"
+  />
 
   <div class="min-h-screen bg-midnight-950 text-slate-100 selection:bg-phantom-mint selection:text-midnight-950 flex flex-col justify-between relative overflow-x-hidden w-full bg-grid-pattern">
     <TalismanCanvas />

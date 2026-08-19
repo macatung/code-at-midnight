@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\AdminExperienceController;
 use App\Http\Controllers\Admin\AdminArticleController;
 use App\Http\Controllers\Admin\AdminSettingController;
 use App\Http\Controllers\Admin\AdminContactController;
+use App\Http\Controllers\SeoController;
 
 // 1. Theravāda Subdomain Routes (e.g. theravada.macatung.dev / theravada.localhost)
 $baseDomain = env('APP_BASE_DOMAIN', 'macatung.dev');
@@ -26,6 +27,8 @@ Route::domain('theravada.' . $baseDomain)->group(function () {
     Route::get('/tu-dien-pali', [TheravadaController::class, 'glossary'])->name('theravada.domain.glossary');
     Route::get('/ung-dung-tu-hoc', [TheravadaController::class, 'apps'])->name('theravada.domain.apps');
     Route::get('/phap-bao', [TheravadaController::class, 'apps']);
+    Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('theravada.domain.sitemap');
+    Route::get('/robots.txt', [SeoController::class, 'robots'])->name('theravada.domain.robots');
 });
 
 // 2. Theravāda Path-based Routes (Available on main domain /theravada/* & local testing)
@@ -37,9 +40,14 @@ Route::prefix('theravada')->name('theravada.')->group(function () {
     Route::get('/tu-dien-pali', [TheravadaController::class, 'glossary'])->name('glossary');
     Route::get('/ung-dung-tu-hoc', [TheravadaController::class, 'apps'])->name('apps');
     Route::get('/phap-bao', [TheravadaController::class, 'apps']);
+    Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('sitemap');
 });
 
-// 3. Public Multi-Page Portfolio Routes
+// 3. Global SEO Endpoints
+Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('sitemap');
+Route::get('/robots.txt', [SeoController::class, 'robots'])->name('robots');
+
+// 4. Public Multi-Page Portfolio Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/projects', [HomeController::class, 'projects'])->name('projects.index');
 Route::get('/about', [HomeController::class, 'about'])->name('about.index');

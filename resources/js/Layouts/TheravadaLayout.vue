@@ -1,12 +1,20 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { Link, Head } from '@inertiajs/vue3';
+import { Link } from '@inertiajs/vue3';
+import SeoHead from '@/Components/common/SeoHead.vue';
 import ZenMascotLogo from '@/Components/theravada/ZenMascotLogo.vue';
 import PaliGlossaryModal from '@/Components/theravada/PaliGlossaryModal.vue';
 import { useZenTimeCycle } from '@/composables/useZenTimeCycle';
 
 defineProps<{
   title?: string;
+  description?: string;
+  keywords?: string;
+  canonical?: string;
+  ogType?: 'website' | 'article' | 'profile';
+  ogImage?: string;
+  article?: any;
+  jsonLd?: any;
 }>();
 
 const isGlossaryOpen = ref(false);
@@ -15,7 +23,17 @@ const { activeZenPhase } = useZenTimeCycle();
 
 <template>
   <div class="min-h-screen bg-stone-950 text-stone-100 selection:bg-amber-500 selection:text-stone-950 font-serif flex flex-col justify-between relative overflow-x-hidden antialiased">
-    <Head :title="title || 'Ma Tọa Thiền — Phật Giáo Nguyên Thủy & Thiền Vipassanā'" />
+    <SeoHead
+      :title="title"
+      :description="description"
+      :keywords="keywords"
+      :canonical="canonical || 'https://theravada.macatung.dev'"
+      :og-type="ogType || 'website'"
+      :og-image="ogImage"
+      :article="article"
+      :json-ld="jsonLd"
+      :is-theravada="true"
+    />
 
     <!-- Ambient Subtle Warm Light Aura Dynamically Tinted by 24H Monastic Time -->
     <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">

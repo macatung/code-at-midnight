@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import SeoHead from '@/Components/common/SeoHead.vue';
 import Navbar from '@/Components/layout/Navbar.vue';
 import Footer from '@/Components/layout/Footer.vue';
 import TalismanCanvas from '@/Components/mascot/TalismanCanvas.vue';
@@ -10,10 +10,29 @@ defineProps<{
   projects?: any[];
   settings?: Record<string, string>;
 }>();
+
+const projectsJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  'name': 'Kho Dự Án Thực Chiến & Sản Phẩm Sáng Tạo (Grimoire)',
+  'description': 'Danh sách các dự án web, ứng dụng Full-Stack, game tương tác và thư viện mã nguồn mở do Ma Cà Tưng phát triển.',
+  'url': 'https://macatung.dev/projects',
+  'isPartOf': {
+    '@type': 'WebSite',
+    'name': 'Ma Cà Tưng • Code at midnight',
+    'url': 'https://macatung.dev'
+  }
+};
 </script>
 
 <template>
-  <Head title="Kho Grimoire Dự Án Thực Chiến — The Midnight Architect" />
+  <SeoHead
+    title="Kho Grimoire Dự Án Thực Chiến — Sản Phẩm Sáng Tạo"
+    description="Khám phá các sản phẩm phần mềm, kiến trúc hệ thống, ứng dụng tương tác kỳ ảo và thư viện mã nguồn mở thực chiến của Ma Cà Tưng."
+    keywords="Dự án Web, Laravel Projects, Vue.js Projects, Creative Coding, Full-Stack Portfolio, Web Applications"
+    canonical="https://macatung.dev/projects"
+    :json-ld="projectsJsonLd"
+  />
 
   <div class="min-h-screen bg-midnight-950 text-slate-100 selection:bg-phantom-mint selection:text-midnight-950 flex flex-col justify-between relative overflow-x-hidden w-full bg-grid-pattern">
     <TalismanCanvas />

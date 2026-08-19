@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import SeoHead from '@/Components/common/SeoHead.vue';
 import Navbar from '@/Components/layout/Navbar.vue';
 import Footer from '@/Components/layout/Footer.vue';
 import TalismanCanvas from '@/Components/mascot/TalismanCanvas.vue';
@@ -10,10 +10,31 @@ import { beginnerSpells, normalSpells, bossSpells } from '@/data/spellsData';
 defineProps<{
   settings?: Record<string, string>;
 }>();
+
+const gameJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'VideoGame',
+  'name': 'Rune Typer Arcade Chamber — Sàn Đấu Trừ Tà Nửa Đêm',
+  'description': 'Mini-game gõ phím luyện thần chú trừ tà phong cách arcade cổ điển kết hợp cyberpunk của Ma Cà Tưng.',
+  'genre': ['Arcade', 'Typing Game', 'Interactive Web Game'],
+  'gamePlatform': 'Web Browser',
+  'url': 'https://macatung.dev/game',
+  'author': {
+    '@type': 'Person',
+    'name': 'Ma Cà Tưng',
+    'url': 'https://macatung.dev'
+  }
+};
 </script>
 
 <template>
-  <Head title="Rune Typer Arcade Chamber — Sàn Đấu Trừ Tà Nửa Đêm" />
+  <SeoHead
+    title="Rune Typer Arcade Chamber — Sàn Đấu Trừ Tà Nửa Đêm"
+    description="Thử thách tốc độ gõ phím trừ tà, hóa giải thuật toán bóng tối với game tương tác Rune Typer phong cách retro arcade."
+    keywords="Rune Typer, Web Game, Typing Game, Arcade Game, Creative Coding, Mini Game Lập Trình"
+    canonical="https://macatung.dev/game"
+    :json-ld="gameJsonLd"
+  />
 
   <div class="min-h-screen bg-midnight-950 text-slate-100 selection:bg-phantom-mint selection:text-midnight-950 flex flex-col justify-between relative overflow-x-hidden w-full bg-grid-pattern">
     <TalismanCanvas />
