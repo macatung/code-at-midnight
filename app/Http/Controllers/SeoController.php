@@ -15,7 +15,7 @@ class SeoController extends Controller
     public function sitemap(Request $request): Response
     {
         $host = $request->getHost();
-        $baseDomain = env('APP_BASE_DOMAIN', 'macatung.dev');
+        $baseDomain = config('app.base_domain', 'macatung.dev');
         $isTheravada = str_starts_with($host, 'theravada.') || $request->path() === 'theravada/sitemap.xml';
 
         if ($isTheravada) {
@@ -31,10 +31,11 @@ class SeoController extends Controller
     public function robots(Request $request): Response
     {
         $host = $request->getHost();
+        $baseDomain = config('app.base_domain', 'macatung.dev');
         $isTheravada = str_starts_with($host, 'theravada.');
         $sitemapUrl = $isTheravada 
-            ? 'https://theravada.' . env('APP_BASE_DOMAIN', 'macatung.dev') . '/sitemap.xml'
-            : 'https://' . env('APP_BASE_DOMAIN', 'macatung.dev') . '/sitemap.xml';
+            ? 'https://theravada.' . $baseDomain . '/sitemap.xml'
+            : 'https://' . $baseDomain . '/sitemap.xml';
 
         $robots = <<<EOT
 User-agent: *

@@ -33,7 +33,7 @@ class AdminAuthController extends Controller
         ]);
 
         $storedPassword = SiteSetting::get('admin_password', 'macatung@midnight2026');
-        $envPassword = env('ADMIN_PASSWORD', 'macatung@midnight2026');
+        $envPassword = config('app.admin_password', 'macatung@midnight2026');
 
         $inputPassword = $request->input('password');
 

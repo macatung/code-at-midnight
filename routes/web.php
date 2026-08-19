@@ -20,7 +20,7 @@ use App\Http\Controllers\Admin\AdminSettingController;
 use App\Http\Controllers\Admin\AdminContactController;
 use App\Http\Controllers\SeoController;
 
-$baseDomain = env('APP_BASE_DOMAIN', 'macatung.dev');
+$baseDomain = config('app.base_domain', 'macatung.dev');
 
 // 1. Tasks Productivity Subdomain Routes (tasks.macatung.dev)
 Route::domain('tasks.' . $baseDomain)->group(function () {

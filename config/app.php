@@ -12,6 +12,10 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    'base_domain' => env('APP_BASE_DOMAIN', 'macatung.dev'),
+
+    'admin_password' => env('ADMIN_PASSWORD', 'macatung@midnight2026'),
+
     'timezone' => env('APP_TIMEZONE', 'Asia/Ho_Chi_Minh'),
 
     'locale' => env('APP_LOCALE', 'en'),
