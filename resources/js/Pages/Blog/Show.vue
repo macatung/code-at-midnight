@@ -77,38 +77,78 @@ const getRelatedProjectInfo = (slug: string) => {
   return null;
 };
 
+const isPaperMode = ref(true); // Default to white paper background for crystal clear reading
+const fontSize = ref(17);
+
+const toggleTheme = () => {
+  isPaperMode.value = !isPaperMode.value;
+  sound.playClick();
+};
+
 // Render basic markdown formatting safely
 const formattedContent = computed(() => {
   if (!props.article.content) return '';
   let md = props.article.content;
 
-  // Headings
-  md = md.replace(/^### (.*$)/gim, '<h3 class="text-xl font-display font-bold text-white mt-8 mb-3">$1</h3>');
-  md = md.replace(/^## (.*$)/gim, '<h2 class="text-2xl sm:text-3xl font-display font-bold text-white mt-10 mb-4 pb-2 border-b border-white/10">$1</h2>');
-  md = md.replace(/^# (.*$)/gim, '<h1 class="text-3xl sm:text-4xl font-display font-extrabold text-white mt-12 mb-6">$1</h1>');
+  if (isPaperMode.value) {
+    // High-contrast Light / White Paper typography
+    md = md.replace(/^### (.*$)/gim, '<h3 class="text-xl sm:text-2xl font-display font-bold text-slate-900 mt-8 mb-3 flex items-center gap-2"><span class="text-emerald-600 text-base">✦</span>$1</h3>');
+    md = md.replace(/^## (.*$)/gim, '<h2 class="text-2xl sm:text-3xl font-display font-bold text-slate-950 mt-10 mb-4 pb-2.5 border-b border-slate-200">$1</h2>');
+    md = md.replace(/^# (.*$)/gim, '<h1 class="text-3xl sm:text-4xl font-display font-extrabold text-slate-950 mt-12 mb-6">$1</h1>');
 
-  // Bold & Italic
-  md = md.replace(/\*\*(.*?)\*\*/gim, '<strong class="font-bold text-phantom-mint">$1</strong>');
-  md = md.replace(/\*(.*?)\*/gim, '<em class="italic text-slate-200">$1</em>');
+    md = md.replace(/\*\*(.*?)\*\*/gim, '<strong class="font-bold text-emerald-800">$1</strong>');
+    md = md.replace(/\*(.*?)\*/gim, '<em class="italic text-slate-700 font-serif">$1</em>');
 
-  // Lists
-  md = md.replace(/^\- (.*$)/gim, '<li class="flex items-start gap-2.5 my-2 text-slate-300"><span class="text-phantom-mint font-bold">⚡</span><span>$1</span></li>');
+    md = md.replace(/^\- (.*$)/gim, '<li class="flex items-start gap-2.5 my-2.5 text-slate-800 text-base sm:text-lg leading-relaxed"><span class="text-emerald-600 font-bold">⚡</span><span>$1</span></li>');
 
-  // Code blocks
-  md = md.replace(/```([a-z]*)\n([\s\S]*?)```/gim, (match, lang, code) => {
-    return `<div class="my-6 rounded-2xl bg-midnight-900 border border-white/10 overflow-hidden shadow-xl">
-      <div class="px-4 py-2 bg-midnight-950 border-b border-white/5 flex items-center justify-between text-xs font-mono text-slate-400">
-        <span class="text-phantom-mint font-bold uppercase">${lang || 'CODE'}</span>
-        <span class="text-[10px]">utf-8</span>
-      </div>
-      <pre class="p-4 overflow-x-auto text-xs sm:text-sm font-mono text-emerald-300 leading-relaxed"><code>${code.trim()}</code></pre>
-    </div>`;
-  });
+    md = md.replace(/```([a-z]*)\n([\s\S]*?)```/gim, (match, lang, code) => {
+      return `<div class="my-6 rounded-2xl bg-slate-950 border border-slate-800 overflow-hidden shadow-2xl">
+        <div class="px-4 py-2.5 bg-slate-900 border-b border-slate-800 flex items-center justify-between text-xs font-mono text-slate-400">
+          <span class="text-emerald-400 font-bold uppercase">${lang || 'CODE'}</span>
+          <span class="text-[10px]">utf-8</span>
+        </div>
+        <pre class="p-4 sm:p-5 overflow-x-auto text-xs sm:text-sm font-mono text-emerald-300 leading-relaxed"><code>${code.trim()}</code></pre>
+      </div>`;
+    });
 
-  // Paragraphs
-  md = md.replace(/\n\n/gim, '</p><p class="text-slate-300 text-base leading-relaxed font-sans mb-5">');
+    const paragraphs = md.split(/\n\n+/);
+    return paragraphs.map(p => {
+      p = p.trim();
+      if (p.startsWith('<div') || p.startsWith('<h') || p.startsWith('<li')) {
+        return p;
+      }
+      return `<p class="text-slate-800 leading-[1.85] font-sans mb-6 text-justify sm:text-left">${p.replace(/\n/g, '<br/>')}</p>`;
+    }).join('\n');
+  } else {
+    // Classic Dark Midnight typography
+    md = md.replace(/^### (.*$)/gim, '<h3 class="text-xl font-display font-bold text-white mt-8 mb-3 flex items-center gap-2"><span class="text-phantom-mint text-base">✦</span>$1</h3>');
+    md = md.replace(/^## (.*$)/gim, '<h2 class="text-2xl sm:text-3xl font-display font-bold text-white mt-10 mb-4 pb-2 border-b border-white/10">$1</h2>');
+    md = md.replace(/^# (.*$)/gim, '<h1 class="text-3xl sm:text-4xl font-display font-extrabold text-white mt-12 mb-6">$1</h1>');
 
-  return `<p class="text-slate-300 text-base leading-relaxed font-sans mb-5">${md}</p>`;
+    md = md.replace(/\*\*(.*?)\*\*/gim, '<strong class="font-bold text-phantom-mint">$1</strong>');
+    md = md.replace(/\*(.*?)\*/gim, '<em class="italic text-slate-200">$1</em>');
+
+    md = md.replace(/^\- (.*$)/gim, '<li class="flex items-start gap-2.5 my-2 text-slate-300"><span class="text-phantom-mint font-bold">⚡</span><span>$1</span></li>');
+
+    md = md.replace(/```([a-z]*)\n([\s\S]*?)```/gim, (match, lang, code) => {
+      return `<div class="my-6 rounded-2xl bg-midnight-900 border border-white/10 overflow-hidden shadow-xl">
+        <div class="px-4 py-2 bg-midnight-950 border-b border-white/5 flex items-center justify-between text-xs font-mono text-slate-400">
+          <span class="text-phantom-mint font-bold uppercase">${lang || 'CODE'}</span>
+          <span class="text-[10px]">utf-8</span>
+        </div>
+        <pre class="p-4 overflow-x-auto text-xs sm:text-sm font-mono text-emerald-300 leading-relaxed"><code>${code.trim()}</code></pre>
+      </div>`;
+    });
+
+    const paragraphs = md.split(/\n\n+/);
+    return paragraphs.map(p => {
+      p = p.trim();
+      if (p.startsWith('<div') || p.startsWith('<h') || p.startsWith('<li')) {
+        return p;
+      }
+      return `<p class="text-slate-200 leading-relaxed font-sans mb-5">${p.replace(/\n/g, '<br/>')}</p>`;
+    }).join('\n');
+  }
 });
 
 onMounted(() => {
@@ -185,7 +225,7 @@ const articleJsonLd = computed(() => ({
       </nav>
 
       <!-- Article Header -->
-      <header class="mb-10 pb-8 border-b border-white/10">
+      <header class="mb-8 pb-6 border-b border-white/10">
         <!-- Tags Array -->
         <div class="flex flex-wrap gap-2 mb-4">
           <span
@@ -201,27 +241,91 @@ const articleJsonLd = computed(() => ({
           {{ article.title }}
         </h1>
 
-        <!-- Reading Meta Info -->
-        <div class="flex flex-wrap items-center gap-4 sm:gap-6 text-xs font-mono text-slate-400">
-          <span class="flex items-center gap-1.5 text-phantom-mint font-bold">
-            ⏱ {{ article.reading_time_min }} Phút Đọc Chuyên Sâu
-          </span>
-          <span>·</span>
-          <span>👁 {{ (article.view_count || 120).toLocaleString() }} Lượt Xem</span>
-          <span>·</span>
-          <span>📅 {{ new Date(article.published_at).toLocaleDateString('vi-VN') }}</span>
-          <span>·</span>
-          <span class="text-talisman-gold font-bold">🌙 Midnight Edition</span>
+        <!-- Reading Meta Info & Reader Control Toolbar -->
+        <div class="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-white/5 text-xs font-mono text-slate-400">
+          <div class="flex flex-wrap items-center gap-3 sm:gap-4">
+            <span class="flex items-center gap-1.5 text-phantom-mint font-bold">
+              ⏱ {{ article.reading_time_min }} Phút Đọc
+            </span>
+            <span>·</span>
+            <span>👁 {{ (article.view_count || 120).toLocaleString() }} Lượt Xem</span>
+            <span>·</span>
+            <span>📅 {{ new Date(article.published_at).toLocaleDateString('vi-VN') }}</span>
+          </div>
+
+          <!-- Reader Controls: Theme Paper/Night Mode & Font Size -->
+          <div class="flex items-center gap-2.5">
+            <!-- Theme Toggle: Nền Trắng Sáng / Nền Tối -->
+            <button
+              @click="toggleTheme"
+              :class="[
+                'flex items-center gap-1.5 px-3 py-1.5 rounded-xl border transition-all cursor-pointer font-sans font-bold text-xs shadow-sm',
+                isPaperMode
+                  ? 'bg-white text-slate-900 border-emerald-400 shadow-glow-mint'
+                  : 'bg-midnight-900 text-slate-300 border-white/10 hover:border-phantom-mint/40'
+              ]"
+              :title="isPaperMode ? 'Chuyển sang nền tối' : 'Chuyển sang nền trắng giấy sáng'"
+            >
+              <span>{{ isPaperMode ? '☀️ Nền Sáng' : '🌙 Nền Tối' }}</span>
+            </button>
+
+            <!-- Adjust Font Size -->
+            <div class="flex items-center bg-midnight-900 rounded-xl border border-white/10 p-0.5 text-xs">
+              <button
+                @click="fontSize = Math.max(15, fontSize - 1); sound.playClick()"
+                class="px-2 py-1 hover:bg-white/10 rounded-lg text-slate-300 font-bold"
+                title="Giảm cỡ chữ"
+              >
+                A-
+              </button>
+              <span class="px-2 font-mono text-phantom-mint">{{ fontSize }}px</span>
+              <button
+                @click="fontSize = Math.min(26, fontSize + 1); sound.playClick()"
+                class="px-2 py-1 hover:bg-white/10 rounded-lg text-slate-300 font-bold"
+                title="Tăng cỡ chữ"
+              >
+                A+
+              </button>
+            </div>
+          </div>
         </div>
       </header>
 
-      <!-- Article Excerpt Highlight Box -->
-      <div class="p-6 rounded-2xl bg-midnight-900/90 border-l-4 border-phantom-mint mb-10 text-slate-200 font-sans italic text-base leading-relaxed shadow-lg">
-        "{{ article.excerpt }}"
-      </div>
+      <!-- Main Reading Container Card (High-Contrast White Paper vs Dark Mode) -->
+      <article
+        :class="[
+          'rounded-3xl p-6 sm:p-10 lg:p-12 mb-16 relative overflow-hidden transition-all duration-300',
+          isPaperMode
+            ? 'bg-white text-slate-900 border border-slate-200/90 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.45)]'
+            : 'bg-midnight-900/90 text-slate-100 border border-white/10 shadow-2xl backdrop-blur-md'
+        ]"
+      >
+        <!-- Top Accent Shimmer Bar -->
+        <div
+          class="absolute top-0 left-0 right-0 h-1.5"
+          :class="isPaperMode ? 'bg-gradient-to-r from-emerald-500 via-teal-400 to-amber-500' : 'bg-gradient-to-r from-phantom-mint via-phantom-cyan to-talisman-gold'"
+        />
 
-      <!-- Article Rendered Content -->
-      <div class="article-body prose prose-invert max-w-none mb-16 text-slate-200" v-html="formattedContent" />
+        <!-- Article Excerpt Highlight Box -->
+        <div
+          :class="[
+            'p-5 sm:p-6 rounded-2xl mb-8 font-sans italic text-base sm:text-lg leading-relaxed shadow-sm transition-all',
+            isPaperMode
+              ? 'bg-emerald-50/80 border-l-4 border-emerald-600 text-slate-800'
+              : 'bg-midnight-950/80 border-l-4 border-phantom-mint text-slate-200'
+          ]"
+        >
+          "{{ article.excerpt }}"
+        </div>
+
+        <!-- Article Rendered Content -->
+        <div
+          class="article-body max-w-none text-left"
+          :style="{ fontSize: `${fontSize}px` }"
+          :class="isPaperMode ? 'prose prose-slate' : 'prose prose-invert'"
+          v-html="formattedContent"
+        />
+      </article>
 
       <!-- Case Study Cross-Link Box (2-Way Bridge back to Projects) -->
       <div

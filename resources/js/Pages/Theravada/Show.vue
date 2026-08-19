@@ -30,6 +30,12 @@ const readingProgress = ref(0);
 const isRinging = ref(false);
 const isCandlelightOn = ref(false);
 const isFocusModeOn = ref(false);
+const isPaperMode = ref(true); // Default to clean white/parchment paper background for optimal readability
+
+const togglePaperMode = () => {
+  isPaperMode.value = !isPaperMode.value;
+  mindfulBell.ringBell(528, 1.0);
+};
 
 const toggleCandlelight = () => {
   isCandlelightOn.value = !isCandlelightOn.value;
@@ -51,32 +57,31 @@ const handleScroll = () => {
 
 const renderMermaidDiagrams = async () => {
   if (typeof window === 'undefined') return;
-  await nextTick();
   try {
     mermaid.initialize({
       startOnLoad: false,
       theme: 'dark',
       themeVariables: {
         darkMode: true,
-        background: 'transparent',
-        primaryColor: '#78350f',
-        primaryTextColor: '#fef08a',
-        primaryBorderColor: '#f59e0b',
+        background: '#1c1917',
+        primaryColor: '#f59e0b',
+        primaryTextColor: '#fffbeb',
+        primaryBorderColor: '#d97706',
         lineColor: '#fbbf24',
-        secondaryColor: '#1c1917',
-        tertiaryColor: '#292524',
-        fontFamily: 'Lora, serif',
-        fontSize: '15px'
-      }
+        secondaryColor: '#292524',
+        tertiaryColor: '#1c1917',
+      },
+      fontFamily: 'Playfair Display, serif',
     });
 
-    const elements = document.querySelectorAll('.zen-mermaid-container');
-    for (let i = 0; i < elements.length; i++) {
-      const el = elements[i];
+    await nextTick();
+    const containers = document.querySelectorAll('.zen-mermaid-container');
+    for (let i = 0; i < containers.length; i++) {
+      const el = containers[i];
       const rawCode = decodeURIComponent(el.getAttribute('data-code') || '');
       if (rawCode) {
-        const uniqueId = `mermaid-svg-${Date.now()}-${i}`;
-        const { svg } = await mermaid.render(uniqueId, rawCode);
+        const id = `mermaid-zen-${Date.now()}-${i}`;
+        const { svg } = await mermaid.render(id, rawCode);
         const target = el.querySelector('.mermaid-render-target');
         if (target) {
           target.innerHTML = svg;
@@ -94,7 +99,7 @@ onMounted(() => {
 });
 
 watch(
-  () => props.article.content,
+  () => [props.article.content, isPaperMode.value],
   () => {
     renderMermaidDiagrams();
   }
@@ -119,7 +124,7 @@ const renderedMarkdown = computed(() => {
 
   // 1. Mermaid Diagrams
   md = md.replace(/```mermaid\n([\s\S]*?)```/gim, (match, code) => {
-    return `<div class="zen-mermaid-container my-8 p-4 sm:p-6 rounded-3xl bg-stone-900/95 border border-amber-500/40 shadow-2xl overflow-x-auto flex flex-col items-center justify-center backdrop-blur-md" data-code="${encodeURIComponent(code.trim())}">
+    return `<div class="zen-mermaid-container my-8 p-4 sm:p-6 rounded-3xl bg-stone-900 border border-amber-500/40 shadow-2xl overflow-x-auto flex flex-col items-center justify-center" data-code="${encodeURIComponent(code.trim())}">
       <div class="w-full flex items-center justify-between pb-3 mb-4 border-b border-amber-500/20 text-xs font-serif text-amber-300 font-bold">
         <span class="flex items-center gap-2"><span>☸️</span><span>SƠ ĐỒ PHÁP HỌC & QUÁN CHIẾU</span></span>
         <span class="text-[11px] text-stone-400 font-mono">Mermaid Zen Flow</span>
@@ -129,40 +134,77 @@ const renderedMarkdown = computed(() => {
     </div>`;
   });
 
-  // 2. Blockquotes (Lời Phật Dạy trong Tam Tạng)
-  md = md.replace(/^>\s?(.*)$/gim, (match, p1) => {
-    return `<blockquote class="my-6 pl-5 py-3.5 border-l-4 border-amber-500 bg-amber-950/20 rounded-r-2xl text-amber-200/95 font-serif italic text-base sm:text-lg leading-relaxed shadow-sm">
-      <div class="flex items-start gap-2">
-        <span class="text-amber-400 text-xl select-none">“</span>
-        <div class="flex-1">${p1.trim()}</div>
-      </div>
-    </blockquote>`;
-  });
+  if (isPaperMode.value) {
+    // 2. Blockquotes (Paper Mode)
+    md = md.replace(/^>\s?(.*)$/gim, (match, p1) => {
+      return `<blockquote class="my-6 pl-5 py-4 border-l-4 border-amber-600 bg-amber-50/90 rounded-r-2xl text-stone-800 font-serif italic text-base sm:text-lg leading-relaxed shadow-sm">
+        <div class="flex items-start gap-2">
+          <span class="text-amber-700 text-xl select-none font-bold">“</span>
+          <div class="flex-1">${p1.trim()}</div>
+        </div>
+      </blockquote>`;
+    });
 
-  // 3. Headings
-  md = md.replace(/^### (.*$)/gim, '<h3 class="text-lg sm:text-xl font-bold text-amber-200 mt-8 mb-3 font-serif flex items-center gap-2"><span class="text-amber-500 text-sm">✦</span>$1</h3>');
-  md = md.replace(/^## (.*$)/gim, '<h2 class="text-xl sm:text-2xl font-bold text-amber-300 mt-10 mb-4 pb-2 border-b border-amber-500/20 font-serif flex items-center gap-2.5"><span>☸️</span>$1</h2>');
+    // 3. Headings
+    md = md.replace(/^### (.*$)/gim, '<h3 class="text-lg sm:text-xl font-bold text-amber-900 mt-8 mb-3 font-serif flex items-center gap-2"><span class="text-amber-600 text-sm">✦</span>$1</h3>');
+    md = md.replace(/^## (.*$)/gim, '<h2 class="text-xl sm:text-2xl font-bold text-amber-950 mt-10 mb-4 pb-2.5 border-b border-amber-200 font-serif flex items-center gap-2.5"><span>☸️</span>$1</h2>');
 
-  // 4. Horizontal Rules
-  md = md.replace(/^---$/gim, '<div class="my-10 flex items-center justify-center gap-3 text-amber-500/40 select-none"><span class="h-px w-24 bg-amber-500/30"></span><span>☸️ 🌸 ☸️</span><span class="h-px w-24 bg-amber-500/30"></span></div>');
+    // 4. Horizontal Rules
+    md = md.replace(/^---$/gim, '<div class="my-10 flex items-center justify-center gap-3 text-amber-600/40 select-none"><span class="h-px w-24 bg-amber-300"></span><span>☸️ 🌸 ☸️</span><span class="h-px w-24 bg-amber-300"></span></div>');
 
-  // 5. Bold & Italic
-  md = md.replace(/\*\*(.*?)\*\*/gim, '<strong class="font-bold text-amber-200">$1</strong>');
-  md = md.replace(/\*(.*?)\*/gim, '<em class="italic text-stone-300 font-serif">$1</em>');
+    // 5. Bold & Italic
+    md = md.replace(/\*\*(.*?)\*\*/gim, '<strong class="font-bold text-amber-900">$1</strong>');
+    md = md.replace(/\*(.*?)\*/gim, '<em class="italic text-stone-700 font-serif">$1</em>');
 
-  // 6. Ordered & Unordered Lists
-  md = md.replace(/^\d+\.\s(.*)$/gim, '<li class="ml-4 pl-2 list-decimal text-stone-200 my-1 leading-relaxed">$1</li>');
-  md = md.replace(/^-\s(.*)$/gim, '<li class="ml-4 pl-2 list-disc text-stone-200 my-1 leading-relaxed">$1</li>');
+    // 6. Ordered & Unordered Lists
+    md = md.replace(/^\d+\.\s(.*)$/gim, '<li class="ml-4 pl-2 list-decimal text-stone-800 my-1.5 leading-relaxed text-base sm:text-lg">$1</li>');
+    md = md.replace(/^-\s(.*)$/gim, '<li class="ml-4 pl-2 list-disc text-stone-800 my-1.5 leading-relaxed text-base sm:text-lg">$1</li>');
 
-  // 7. Paragraphs
-  const paragraphs = md.split(/\n\n+/);
-  return paragraphs.map(p => {
-    p = p.trim();
-    if (p.startsWith('<div') || p.startsWith('<blockquote') || p.startsWith('<h') || p.startsWith('<li')) {
-      return p;
-    }
-    return `<p class="my-4 text-stone-200 font-serif leading-relaxed text-justify">${p.replace(/\n/g, '<br/>')}</p>`;
-  }).join('\n');
+    // 7. Paragraphs
+    const paragraphs = md.split(/\n\n+/);
+    return paragraphs.map(p => {
+      p = p.trim();
+      if (p.startsWith('<div') || p.startsWith('<blockquote') || p.startsWith('<h') || p.startsWith('<li')) {
+        return p;
+      }
+      return `<p class="my-4 text-stone-800 font-serif leading-[2] text-base sm:text-lg text-justify">${p.replace(/\n/g, '<br/>')}</p>`;
+    }).join('\n');
+  } else {
+    // 2. Blockquotes (Night Mode)
+    md = md.replace(/^>\s?(.*)$/gim, (match, p1) => {
+      return `<blockquote class="my-6 pl-5 py-3.5 border-l-4 border-amber-500 bg-amber-950/20 rounded-r-2xl text-amber-200/95 font-serif italic text-base sm:text-lg leading-relaxed shadow-sm">
+        <div class="flex items-start gap-2">
+          <span class="text-amber-400 text-xl select-none">“</span>
+          <div class="flex-1">${p1.trim()}</div>
+        </div>
+      </blockquote>`;
+    });
+
+    // 3. Headings
+    md = md.replace(/^### (.*$)/gim, '<h3 class="text-lg sm:text-xl font-bold text-amber-200 mt-8 mb-3 font-serif flex items-center gap-2"><span class="text-amber-500 text-sm">✦</span>$1</h3>');
+    md = md.replace(/^## (.*$)/gim, '<h2 class="text-xl sm:text-2xl font-bold text-amber-300 mt-10 mb-4 pb-2 border-b border-amber-500/20 font-serif flex items-center gap-2.5"><span>☸️</span>$1</h2>');
+
+    // 4. Horizontal Rules
+    md = md.replace(/^---$/gim, '<div class="my-10 flex items-center justify-center gap-3 text-amber-500/40 select-none"><span class="h-px w-24 bg-amber-500/30"></span><span>☸️ 🌸 ☸️</span><span class="h-px w-24 bg-amber-500/30"></span></div>');
+
+    // 5. Bold & Italic
+    md = md.replace(/\*\*(.*?)\*\*/gim, '<strong class="font-bold text-amber-200">$1</strong>');
+    md = md.replace(/\*(.*?)\*/gim, '<em class="italic text-stone-300 font-serif">$1</em>');
+
+    // 6. Ordered & Unordered Lists
+    md = md.replace(/^\d+\.\s(.*)$/gim, '<li class="ml-4 pl-2 list-decimal text-stone-200 my-1 leading-relaxed">$1</li>');
+    md = md.replace(/^-\s(.*)$/gim, '<li class="ml-4 pl-2 list-disc text-stone-200 my-1 leading-relaxed">$1</li>');
+
+    // 7. Paragraphs
+    const paragraphs = md.split(/\n\n+/);
+    return paragraphs.map(p => {
+      p = p.trim();
+      if (p.startsWith('<div') || p.startsWith('<blockquote') || p.startsWith('<h') || p.startsWith('<li')) {
+        return p;
+      }
+      return `<p class="my-4 text-stone-200 font-serif leading-relaxed text-justify">${p.replace(/\n/g, '<br/>')}</p>`;
+    }).join('\n');
+  }
 });
 
 const suttaJsonLd = computed(() => ({
@@ -269,8 +311,22 @@ const suttaJsonLd = computed(() => ({
         <div class="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-stone-900 text-xs font-serif text-stone-400">
           <span class="italic">Tác giả / Nguồn: <strong class="text-stone-200 not-italic">{{ article.author || 'Pāḷi Tipiṭaka' }}</strong></span>
 
-          <!-- Reader Controls: Candlelight, Focus Mode, Font size & Bell -->
+          <!-- Reader Controls: Paper Mode, Candlelight, Focus Mode, Font size & Bell -->
           <div class="flex flex-wrap items-center gap-2">
+            <!-- Paper / Night Mode Toggle -->
+            <button
+              @click="togglePaperMode"
+              :class="[
+                'flex items-center gap-1.5 px-3 py-1.5 rounded-xl border transition-all cursor-pointer font-bold text-xs shadow-sm',
+                isPaperMode
+                  ? 'bg-amber-100 text-stone-900 border-amber-400 shadow-[0_0_15px_rgba(251,191,36,0.5)]'
+                  : 'bg-stone-900 text-stone-300 border-stone-800 hover:border-amber-500/40'
+              ]"
+              :title="isPaperMode ? 'Chuyển sang nền đêm tĩnh mịch' : 'Chuyển sang nền giấy trắng sáng'"
+            >
+              <span>{{ isPaperMode ? '📜 Nền Giấy' : '🌙 Nền Đêm' }}</span>
+            </button>
+
             <!-- Candlelight Glow Toggle -->
             <button
               @click="toggleCandlelight"
@@ -334,13 +390,21 @@ const suttaJsonLd = computed(() => ({
         </div>
       </header>
 
-      <!-- Main Text Body (Rendered HTML Markdown with Unified Sutta Blocks) -->
+      <!-- Main Text Body (Rendered HTML Markdown inside High-Contrast Container) -->
       <article
-        class="zen-article-content font-serif text-stone-200 leading-loose"
+        :class="[
+          'zen-article-content font-serif leading-loose rounded-3xl p-6 sm:p-10 lg:p-12 mb-12 relative overflow-hidden transition-all duration-500 shadow-2xl',
+          isPaperMode
+            ? 'bg-stone-50/95 text-stone-900 border border-amber-600/30 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.5)]'
+            : 'bg-stone-900/80 text-stone-200 border border-amber-500/30 backdrop-blur-md',
+          { 'focus-mode-active': isFocusModeOn }
+        ]"
         :style="{ fontSize: `${fontSize}px` }"
-        :class="{ 'focus-mode-active': isFocusModeOn }"
       >
-        <div class="space-y-4 font-serif" v-html="renderedMarkdown" />
+        <!-- Top Golden Accent Bar -->
+        <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-600 via-amber-400 to-yellow-400" />
+
+        <div class="space-y-4 font-serif text-left" v-html="renderedMarkdown" />
       </article>
 
       <!-- Pāḷi Terms Annotation Box (if present) -->
