@@ -99,6 +99,63 @@ const showReviewModal = ref(false);
 const isSubmitting = ref(false);
 const newSubtaskText = ref('');
 
+// PIN Security State (Master PIN: 301095)
+const isPinUnlocked = ref(false);
+const pinInput = ref('');
+const pinError = ref('');
+const isPinShaking = ref(false);
+const pinInputRef = ref<HTMLInputElement | null>(null);
+
+const checkPin = () => {
+  if (pinInput.value === '301095') {
+    sound.playSuccess();
+    isPinUnlocked.value = true;
+    pinError.value = '';
+    sessionStorage.setItem('macatung_tasks_pin_auth', '301095');
+  } else {
+    sound.playError();
+    pinError.value = 'Mã PIN bảo mật không chính xác. Vui lòng thử lại!';
+    isPinShaking.value = true;
+    setTimeout(() => {
+      isPinShaking.value = false;
+      pinInput.value = '';
+    }, 600);
+  }
+};
+
+const handleNumpadPress = (digit: string) => {
+  if (pinInput.value.length < 6) {
+    pinInput.value += digit;
+    sound.playClick();
+    pinError.value = '';
+    if (pinInput.value.length === 6) {
+      checkPin();
+    }
+  }
+};
+
+const handleNumpadBackspace = () => {
+  if (pinInput.value.length > 0) {
+    pinInput.value = pinInput.value.slice(0, -1);
+    sound.playClick();
+    pinError.value = '';
+  }
+};
+
+const handleNumpadClear = () => {
+  pinInput.value = '';
+  pinError.value = '';
+  sound.playClick();
+};
+
+const lockWorkspace = () => {
+  sessionStorage.removeItem('macatung_tasks_pin_auth');
+  isPinUnlocked.value = false;
+  pinInput.value = '';
+  pinError.value = '';
+  sound.playClick();
+};
+
 // Project CRUD Modal State
 const showProjectModal = ref(false);
 const projectModalMode = ref<'create' | 'edit'>('create');
@@ -539,6 +596,20 @@ const onDrop = async (e: DragEvent, targetStatus: TaskItem['status']) => {
 
 // Global Keyboard Shortcuts
 const handleGlobalKey = (e: KeyboardEvent) => {
+  if (!isPinUnlocked.value) {
+    if (e.key >= '0' && e.key <= '9') {
+      e.preventDefault();
+      handleNumpadPress(e.key);
+    } else if (e.key === 'Backspace') {
+      e.preventDefault();
+      handleNumpadBackspace();
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      checkPin();
+    }
+    return;
+  }
+
   if (['INPUT', 'TEXTAREA', 'SELECT'].includes((e.target as HTMLElement)?.tagName)) {
     if (e.key === 'Escape') {
       (e.target as HTMLElement).blur();
@@ -573,6 +644,10 @@ const closeAllMenus = () => {
 };
 
 onMounted(() => {
+  const saved = sessionStorage.getItem('macatung_tasks_pin_auth');
+  if (saved === '301095') {
+    isPinUnlocked.value = true;
+  }
   window.addEventListener('keydown', handleGlobalKey);
   window.addEventListener('click', closeAllMenus);
 });
@@ -638,6 +713,16 @@ onUnmounted(() => {
           >
             <span>🌙</span>
             <span class="hidden sm:inline">Review</span>
+          </button>
+
+          <!-- Lock Workspace -->
+          <button
+            @click="lockWorkspace"
+            class="px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-red-500/10 hover:border-red-500/30 text-slate-400 hover:text-red-400 border border-slate-800 text-xs font-medium transition-all flex items-center gap-1 cursor-pointer"
+            title="Khóa bảo mật Workspace (Yêu cầu mã PIN 301095)"
+          >
+            <span>🔒</span>
+            <span class="hidden md:inline text-[11px]">Khóa</span>
           </button>
 
           <!-- New Task CTA -->
@@ -718,7 +803,10 @@ onUnmounted(() => {
               <div
                 v-for="proj in workProjects"
                 :key="proj.id"
-                class="relative group"
+                :class="[
+                  'relative group',
+                  activeProjectMenuId === proj.id ? 'z-50' : 'z-10'
+                ]"
               >
                 <button
                   @click="selectedProjectId = proj.id"
@@ -740,10 +828,15 @@ onUnmounted(() => {
                 </button>
 
                 <!-- 3-Dot Action Button -->
-                <div class="absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div
+                  :class="[
+                    'absolute right-1.5 top-1/2 -translate-y-1/2 transition-opacity z-50',
+                    activeProjectMenuId === proj.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                  ]"
+                >
                   <button
                     @click.stop="activeProjectMenuId = activeProjectMenuId === proj.id ? null : proj.id"
-                    class="p-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs cursor-pointer"
+                    class="p-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs cursor-pointer border border-slate-700/60"
                     title="Tùy chọn dự án"
                   >
                     •••
@@ -752,19 +845,19 @@ onUnmounted(() => {
                   <!-- Dropdown Menu -->
                   <div
                     v-if="activeProjectMenuId === proj.id"
-                    class="absolute right-0 top-full mt-1 w-32 rounded-xl bg-slate-900 border border-slate-800 shadow-xl p-1 z-50 text-xs font-normal"
+                    class="absolute right-0 top-full mt-1.5 w-36 rounded-xl bg-[#0c111c] border border-slate-700 shadow-2xl p-1.5 z-50 text-xs font-medium backdrop-blur-2xl"
                     @click.stop
                   >
                     <button
-                      @click="openEditProjectModal(proj)"
-                      class="w-full px-2.5 py-1.5 rounded-lg text-left text-slate-200 hover:bg-slate-800 hover:text-white flex items-center gap-1.5 cursor-pointer"
+                      @click.stop="openEditProjectModal(proj)"
+                      class="w-full px-2.5 py-1.5 rounded-lg text-left text-slate-200 hover:bg-slate-800 hover:text-white flex items-center gap-2 cursor-pointer transition-colors"
                     >
                       <span>✏️</span>
                       <span>Chỉnh Sửa</span>
                     </button>
                     <button
-                      @click="handleDeleteProject(proj)"
-                      class="w-full px-2.5 py-1.5 rounded-lg text-left text-red-400 hover:bg-red-500/10 flex items-center gap-1.5 cursor-pointer"
+                      @click.stop="handleDeleteProject(proj)"
+                      class="w-full px-2.5 py-1.5 rounded-lg text-left text-red-400 hover:bg-red-500/10 hover:text-red-300 flex items-center gap-2 cursor-pointer transition-colors"
                     >
                       <span>🗑️</span>
                       <span>Xóa Dự Án</span>
@@ -799,7 +892,10 @@ onUnmounted(() => {
               <div
                 v-for="proj in personalProjects"
                 :key="proj.id"
-                class="relative group"
+                :class="[
+                  'relative group',
+                  activeProjectMenuId === proj.id ? 'z-50' : 'z-10'
+                ]"
               >
                 <button
                   @click="selectedProjectId = proj.id"
@@ -821,10 +917,15 @@ onUnmounted(() => {
                 </button>
 
                 <!-- 3-Dot Action Button -->
-                <div class="absolute right-1.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div
+                  :class="[
+                    'absolute right-1.5 top-1/2 -translate-y-1/2 transition-opacity z-50',
+                    activeProjectMenuId === proj.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                  ]"
+                >
                   <button
                     @click.stop="activeProjectMenuId = activeProjectMenuId === proj.id ? null : proj.id"
-                    class="p-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs cursor-pointer"
+                    class="p-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs cursor-pointer border border-slate-700/60"
                     title="Tùy chọn dự án"
                   >
                     •••
@@ -833,19 +934,19 @@ onUnmounted(() => {
                   <!-- Dropdown Menu -->
                   <div
                     v-if="activeProjectMenuId === proj.id"
-                    class="absolute right-0 top-full mt-1 w-32 rounded-xl bg-slate-900 border border-slate-800 shadow-xl p-1 z-50 text-xs font-normal"
+                    class="absolute right-0 top-full mt-1.5 w-36 rounded-xl bg-[#0c111c] border border-slate-700 shadow-2xl p-1.5 z-50 text-xs font-medium backdrop-blur-2xl"
                     @click.stop
                   >
                     <button
-                      @click="openEditProjectModal(proj)"
-                      class="w-full px-2.5 py-1.5 rounded-lg text-left text-slate-200 hover:bg-slate-800 hover:text-white flex items-center gap-1.5 cursor-pointer"
+                      @click.stop="openEditProjectModal(proj)"
+                      class="w-full px-2.5 py-1.5 rounded-lg text-left text-slate-200 hover:bg-slate-800 hover:text-white flex items-center gap-2 cursor-pointer transition-colors"
                     >
                       <span>✏️</span>
                       <span>Chỉnh Sửa</span>
                     </button>
                     <button
-                      @click="handleDeleteProject(proj)"
-                      class="w-full px-2.5 py-1.5 rounded-lg text-left text-red-400 hover:bg-red-500/10 flex items-center gap-1.5 cursor-pointer"
+                      @click.stop="handleDeleteProject(proj)"
+                      class="w-full px-2.5 py-1.5 rounded-lg text-left text-red-400 hover:bg-red-500/10 hover:text-red-300 flex items-center gap-2 cursor-pointer transition-colors"
                     >
                       <span>🗑️</span>
                       <span>Xóa Dự Án</span>
@@ -1841,6 +1942,137 @@ onUnmounted(() => {
             class="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-medium text-xs shadow-md transition-all cursor-pointer"
           >
             Nghỉ Ngơi Xả Stress 🌸
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Backdrop for Project Actions Dropdown Menu -->
+    <div
+      v-if="activeProjectMenuId !== null"
+      class="fixed inset-0 z-30 bg-transparent"
+      @click="activeProjectMenuId = null"
+    ></div>
+
+    <!-- ==================================================================== -->
+    <!-- 🔒 PIN SECURITY GATE MODAL (MASTER PIN: 301095)                      -->
+    <!-- ==================================================================== -->
+    <div
+      v-if="!isPinUnlocked"
+      class="fixed inset-0 z-50 bg-[#04070d]/95 backdrop-blur-2xl flex items-center justify-center p-4 selection:bg-emerald-500/30 select-none overflow-y-auto"
+    >
+      <!-- Background Ambient Glows -->
+      <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-[140px] pointer-events-none"></div>
+      <div class="absolute -bottom-40 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none"></div>
+
+      <div
+        :class="[
+          'relative w-full max-w-md bg-[#0a0f1d] border border-slate-800/90 rounded-3xl p-6 sm:p-8 shadow-2xl text-center z-10 transition-all duration-300',
+          isPinShaking ? 'animate-bounce !border-red-500/80 shadow-red-500/20' : 'border-slate-800'
+        ]"
+      >
+        <!-- Security Shield & Mascot Header -->
+        <div class="flex flex-col items-center mb-6">
+          <div class="relative mb-3">
+            <div class="w-16 h-16 rounded-2xl bg-slate-900 border border-emerald-500/30 flex items-center justify-center shadow-lg shadow-emerald-500/10">
+              <span class="text-3xl animate-pulse">🔒</span>
+            </div>
+            <div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-emerald-500 border-2 border-[#0a0f1d] flex items-center justify-center text-[10px] text-slate-950 font-bold">
+              ✓
+            </div>
+          </div>
+
+          <h2 class="text-lg sm:text-xl font-bold font-display text-white tracking-wide flex items-center gap-2">
+            <span>BẢO MẬT DỰ ÁN & NHIỆM VỤ</span>
+          </h2>
+          <p class="text-xs text-slate-400 mt-1.5 max-w-xs leading-relaxed">
+            Khu vực quản trị nội bộ. Vui lòng nhập mã PIN <strong class="text-emerald-400 font-mono">6 chữ số</strong> để mở khóa Workspace.
+          </p>
+        </div>
+
+        <!-- 6 PIN Digit Display Slots -->
+        <div class="flex items-center justify-center gap-2.5 sm:gap-3.5 mb-6">
+          <div
+            v-for="i in 6"
+            :key="i"
+            :class="[
+              'w-11 h-14 sm:w-12 sm:h-14 rounded-2xl border-2 flex items-center justify-center font-mono font-bold text-xl transition-all duration-200 shadow-inner',
+              pinInput.length >= i
+                ? 'border-emerald-400 bg-emerald-500/10 text-emerald-300 shadow-emerald-500/20 scale-105'
+                : pinInput.length === i - 1
+                ? 'border-slate-600 bg-slate-900/80 text-slate-400 ring-2 ring-emerald-500/30'
+                : 'border-slate-800 bg-slate-950/60 text-slate-600'
+            ]"
+          >
+            <span v-if="pinInput.length >= i" class="text-xl text-emerald-400">●</span>
+            <span v-else class="text-slate-700 text-xs">―</span>
+          </div>
+        </div>
+
+        <!-- Error Message -->
+        <div v-if="pinError" class="mb-4 text-xs text-red-400 font-medium bg-red-500/10 border border-red-500/20 py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 animate-fadeIn">
+          <span>⚠️</span>
+          <span>{{ pinError }}</span>
+        </div>
+
+        <!-- Interactive Cyber Numpad -->
+        <div class="grid grid-cols-3 gap-2.5 sm:gap-3 mb-6 max-w-xs mx-auto">
+          <button
+            v-for="num in ['1', '2', '3', '4', '5', '6', '7', '8', '9']"
+            :key="num"
+            @click="handleNumpadPress(num)"
+            class="h-12 sm:h-13 rounded-2xl bg-slate-900/90 hover:bg-slate-800 hover:border-emerald-500/40 active:scale-95 border border-slate-800 text-slate-200 font-mono font-bold text-lg transition-all cursor-pointer shadow-sm"
+          >
+            {{ num }}
+          </button>
+
+          <!-- Clear -->
+          <button
+            @click="handleNumpadClear"
+            class="h-12 sm:h-13 rounded-2xl bg-slate-950/80 hover:bg-slate-900 active:scale-95 border border-slate-800 text-slate-400 hover:text-slate-200 font-mono font-bold text-xs transition-all cursor-pointer"
+          >
+            XÓA
+          </button>
+
+          <!-- 0 -->
+          <button
+            @click="handleNumpadPress('0')"
+            class="h-12 sm:h-13 rounded-2xl bg-slate-900/90 hover:bg-slate-800 hover:border-emerald-500/40 active:scale-95 border border-slate-800 text-slate-200 font-mono font-bold text-lg transition-all cursor-pointer shadow-sm"
+          >
+            0
+          </button>
+
+          <!-- Backspace -->
+          <button
+            @click="handleNumpadBackspace"
+            class="h-12 sm:h-13 rounded-2xl bg-slate-950/80 hover:bg-slate-900 active:scale-95 border border-slate-800 text-slate-400 hover:text-red-400 font-mono font-bold text-lg transition-all cursor-pointer flex items-center justify-center"
+          >
+            ⌫
+          </button>
+        </div>
+
+        <!-- Footer Actions -->
+        <div class="flex items-center justify-between pt-4 border-t border-slate-800/80 text-xs">
+          <a
+            href="/"
+            class="text-slate-400 hover:text-white flex items-center gap-1.5 py-1.5 px-3 rounded-lg hover:bg-slate-900 transition-colors"
+          >
+            <span>←</span>
+            <span>Về Trang Chủ</span>
+          </a>
+
+          <button
+            @click="checkPin"
+            :disabled="pinInput.length !== 6"
+            :class="[
+              'px-5 py-2 rounded-xl font-bold font-mono text-xs transition-all flex items-center gap-1.5 shadow-md',
+              pinInput.length === 6
+                ? 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-emerald-500/20 cursor-pointer'
+                : 'bg-slate-800 text-slate-500 cursor-not-allowed opacity-50'
+            ]"
+          >
+            <span>MỞ KHÓA</span>
+            <span>🔓</span>
           </button>
         </div>
       </div>
