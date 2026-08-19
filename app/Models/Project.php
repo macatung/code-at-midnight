@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Project extends Model
 {
@@ -15,6 +16,8 @@ class Project extends Model
         'tagline',
         'description',
         'category',
+        'type', // 'work' or 'personal'
+        'color',
         'cover_gradient',
         'tags',
         'tech_stack',
@@ -35,6 +38,27 @@ class Project extends Model
         'featured' => 'boolean',
         'order' => 'integer',
     ];
+
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(Task::class);
+    }
+
+    /**
+     * Scope for work projects
+     */
+    public function scopeWork($query)
+    {
+        return $query->where('type', 'work');
+    }
+
+    /**
+     * Scope for personal projects
+     */
+    public function scopePersonal($query)
+    {
+        return $query->where('type', 'personal');
+    }
 
     /**
      * Scope for featured projects

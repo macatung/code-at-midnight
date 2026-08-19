@@ -956,13 +956,13 @@ EOF
                 'excerpt' => 'Bài kinh lịch sử được Đức Phật thuyết tại Vườn Lộc Uyển (Isipatana) cho nhóm 5 anh em Kiều Trần Như, mở ra kỷ nguyên Phật Pháp trường tồn.',
                 'author' => 'Đại Tạng Kinh Pāḷi — Tương Ưng Bộ (SN 56.11)',
                 'content' => <<< 'EOF'
-## 📜 Bối Cảnh Lịch Sử Của Bản Kinh
+## Bối Cảnh Lịch Sử Của Bản Kinh
 
 Sau khi đắc quả Vô Thượng Chánh Đẳng Chánh Giác dưới cội Bồ-đề, vào ngày rằm tháng Āsāḷha (tháng 6 âm lịch), Đức Phật đã đi bộ đến Vườn Nai (Isipatana, Sarnath gần Ba-la-nại) để chuyển bánh xe Pháp đầu tiên cho năm vị Tỳ-kheo đồng tu: Koṇḍañña (Kiều-trần-như), Bhaddiya, Vappa, Mahānāma, và Assaji.
 
 ---
 
-## ☸️ Nguyên Văn Song Ngữ Pāḷi — Việt
+## Nguyên Văn Song Ngữ Pāḷi — Việt
 
 > **Evaṃ me sutaṃ: Ekaṃ samayaṃ Bhagavā Bārāṇasiyaṃ viharati Isipatane Migadāye.**<br />
 > *Tôi nghe như vầy: Một thời Thế Tôn ngự tại Ba-la-nại, ở Vườn Lộc Uyển.*
@@ -976,7 +976,7 @@ Sau khi đắc quả Vô Thượng Chánh Đẳng Chánh Giác dưới cội B�
 
 ---
 
-## 🌟 Thành Quả Của Bài Pháp
+## Thành Quả Của Bài Pháp
 Khi Đức Thế Tôn thuyết giảng xong, Tôn giả Koṇḍañña (Kiều-trần-như) đã đắc Pháp Nhãn thanh tịnh (*Dhammacakkhu*):
 
 > *"Yaṅkiñci samudayadhammaṃ sabhantaṃ nirodhadhammanti."*<br />
@@ -1009,13 +1009,13 @@ EOF
                 'excerpt' => 'Bài kinh thứ hai Đức Phật thuyết giảng tại Vườn Nai, phân tích tường tận tính chất Vô Thường, Khổ não và Vô Ngã của Năm Uẩn.',
                 'author' => 'Đại Tạng Kinh Pāḷi — Tương Ưng Bộ (Saṃyutta Nikāya 22.59)',
                 'content' => <<< 'EOF'
-## 📜 Bối Cảnh Bản Kinh Vô Ngã Tướng
+## Bối Cảnh Bản Kinh Vô Ngã Tướng
 
 Sau khi thuyết Kinh Chuyển Pháp Luân và năm vị Tỳ-kheo đã chứng đắc quả vị Dự Lưu (Sotāpanna), Đức Thế Tôn tiếp tục thuyết **Kinh Vô Ngã Tướng (Anattalakkhaṇa Sutta)** tại Vườn Lộc Uyển để dứt trừ toàn bộ vi tế ngã chấp, đưa cả năm vị đồng chứng quả vị A-la-hán giải thoát tối hậu.
 
 ---
 
-## ☸️ Quán Chiếu Năm Uẩn Là Vô Ngã
+## Quán Chiếu Năm Uẩn Là Vô Ngã
 
 ```mermaid
 graph TD
@@ -1043,7 +1043,7 @@ graph TD
 
 ---
 
-## 🔍 Đối Thoại Khai Thị Chân Lý Vô Thường — Khổ — Vô Ngã
+## Đối Thoại Khai Thị Chân Lý Vô Thường — Khổ — Vô Ngã
 
 Đức Thế Tôn hỏi năm vị Tỳ-kheo:
 - *"Này các Tỳ-kheo, Sắc là thường hay vô thường?"*
@@ -1055,7 +1055,7 @@ graph TD
 
 ---
 
-## 🌟 Chân Ngôn Quán Chiếu Siêu Việt (Anatta Mantra)
+## Chân Ngôn Quán Chiếu Siêu Việt (Anatta Mantra)
 
 > **"N'etaṃ mama, n'eso'hamasmi, na meso attā."**<br />
 > *(Cái này không phải của tôi, cái này không phải là tôi, cái này không phải tự ngã của tôi).*
@@ -1087,7 +1087,7 @@ EOF
                 'excerpt' => 'Văn bản cốt lõi nhất của Thiền Minh Sát Vipassanā: Quán Thân, Quán Thọ, Quán Tâm, Quán Pháp — con đường thẳng tiến đến Niết-bàn giải thoát.',
                 'author' => 'Đại Tạng Kinh Pāḷi — Trung Bộ Kinh (MN 10) & Trường Bộ (DN 22)',
                 'content' => <<< 'EOF'
-## 🧘 Lời Tuyên Bố Lịch Sử Của Đức Thế Tôn
+## Lời Tuyên Bố Lịch Sử Của Đức Thế Tôn
 
 Trong *Kinh Đại Niệm Xứ (Mahāsatipaṭṭhāna Sutta)*, Đức Phật đã khẳng định giá trị vô song của pháp hành này:
 
@@ -1096,7 +1096,7 @@ Trong *Kinh Đại Niệm Xứ (Mahāsatipaṭṭhāna Sutta)*, Đức Phật đ
 
 ---
 
-## ☸️ Bốn Đối Tượng Quán Chiếu (Cattāro Satipaṭṭhānā)
+## Bốn Đối Tượng Quán Chiếu (Cattāro Satipaṭṭhānā)
 
 ```mermaid
 graph TD
@@ -1158,13 +1158,13 @@ EOF
                 'excerpt' => 'Bài kinh hộ trì (Paritta) tuyệt mỹ mở rộng lòng thương yêu vô lượng không phân biệt đến tất cả muôn loài chúng sinh.',
                 'author' => 'Đại Tạng Kinh Pāḷi — Khuddakapāṭha (Kinh Tiểu Tụng) & Sutta Nipāta',
                 'content' => <<< 'EOF'
-## 🌸 Ý Nghĩa Thiêng Liêng Của Kinh Từ Bi
+## Ý Nghĩa Thiêng Liêng Của Kinh Từ Bi
 
 Đức Thế Tôn thuyết giảng **Kinh Từ Bi (Karaṇīyamettā Sutta)** tại Kỳ Viên Tịnh Xá (Jetavana) trao tặng cho các Tỳ-kheo vào rừng sâu tu thiền bị chư thiên và dạ-xoa quấy nhiễu. Khi chư Tăng tụng đọc và rải tâm từ, chư thiên đã hoan hỷ trở thành những vị hộ pháp bảo bọc cho các hành giả thiền định.
 
 ---
 
-## ☸️ Nguyên Văn Pāḷi — Việt
+## Nguyên Văn Pāḷi — Việt
 
 > **"Karaṇīyamatthakusalena, yanta santaṃ padaṃ abhisamecca:<br />
 > Sakko ujū ca sūjū ca, suvaco cassa mudu anatimānī."**<br />
@@ -1207,13 +1207,13 @@ EOF
                 'excerpt' => 'Bài kinh khai thị vĩ đại về thái độ tiếp nhận chân lý: 10 điều chớ vội tin và tiêu chuẩn tối hậu để kiểm chứng thiện ác giải thoát.',
                 'author' => 'Đại Tạng Kinh Pāḷi — Tăng Chi Bộ Kinh (Aṅguttara Nikāya 3.65)',
                 'content' => <<< 'EOF'
-## 📜 Bối Cảnh Lịch Sử Tại Thị Trấn Kesaputta
+## Bối Cảnh Lịch Sử Tại Thị Trấn Kesaputta
 
 Khi Đức Phật cùng đại chúng du hóa đến thị trấn Kesaputta của bộ tộc Kālāma, các thiện nam tín nữ Kālāma đã đến bạch hỏi Đức Thế Tôn về nỗi hoang mang tột cùng của họ khi nhiều giáo sĩ và đạo sư thuộc các môn phái khác nhau đi qua, ai nấy đều hết lời ca ngợi giáo thuyết của mình và chê bai, bài xích giáo lý của kẻ khác.
 
 ---
 
-## ☸️ Mười Tiêu Chuẩn "Chớ Vội Tin" (10 Không Tin Mù Quáng)
+## Mười Tiêu Chuẩn "Chớ Vội Tin" (10 Không Tin Mù Quáng)
 
 Đức Thế Tôn đã ban cho người dân Kālāma bài học lịch sử về tư duy phản biện và chánh kiến:
 
@@ -1232,7 +1232,7 @@ Khi Đức Phật cùng đại chúng du hóa đến thị trấn Kesaputta củ
 
 ---
 
-## 🌟 Tiêu Chuẩn Thẩm Định Chân Lý Cốt Lõi
+## Tiêu Chuẩn Thẩm Định Chân Lý Cốt Lõi
 
 > *"Này người Kālāma, khi nào tự thân các ngươi biết rõ như thật:*<br />
 > *- 'Các pháp này là bất thiện; Các pháp này là có tội; Các pháp này bị người trí chỉ trích; Các pháp này nếu chấp nhận và thực hành sẽ dẫn đến bất hạnh, khổ đau' — thì các ngươi hãy từ bỏ chúng.*<br />
@@ -1263,7 +1263,7 @@ EOF
                 'excerpt' => 'Bài kinh Paritta hộ trì thiêng liêng tán thán bảo vật Tam Bảo Phật - Pháp - Tăng, đẩy lùi dịch bệnh, nạn đói và sự quấy nhiễu của phi nhân.',
                 'author' => 'Đại Tạng Kinh Pāḷi — Khuddakapāṭha 6 & Sutta Nipāta 2.1',
                 'content' => <<< 'EOF'
-## 📜 Bối Cảnh Lịch Sử Cứu Độ Thành Vesālī
+## Bối Cảnh Lịch Sử Cứu Độ Thành Vesālī
 
 Khi kinh đô Vesālī (Tỳ-xá-li) của vương quốc Licchavī lâm vào thảm cảnh tam tai: Hạn hán mất mùa đưa đến nạn đói khủng khiếp, dịch bệnh truyền nhiễm hoành hành khiến xác người nằm la liệt, và các loài phi nhân độc ác xâm nhập hãm hại cư dân. Các vương công Licchavī đã đến thỉnh Đức Phật và Tăng đoàn ngự giá quang lâm. 
 
@@ -1271,7 +1271,7 @@ Khi kinh đô Vesālī (Tỳ-xá-li) của vương quốc Licchavī lâm vào th
 
 ---
 
-## ☸️ Trích Đoạn Kinh Văn Pāḷi — Việt
+## Trích Đoạn Kinh Văn Pāḷi — Việt
 
 > **"Yānīdha bhūtāni samāgatāni, bhummāni vā yāni va antalikkhe;<br />
 > Sabbeva bhūtā sumanā bhavantu, athopi sakkacca suṇantu bhāsitaṃ."**<br />
@@ -1312,7 +1312,7 @@ EOF
                 'excerpt' => 'Giáo lý uyên áo bậc nhất chỉ rõ tiến trình sinh khởi và đoạn diệt của 12 nhân duyên: Vô minh sinh Hành, Hành sinh Thức... đưa đến toàn bộ khối khổ đau.',
                 'author' => 'Đại Tạng Kinh Pāḷi — Tương Ưng Bộ Kinh (Saṃyutta Nikāya 12)',
                 'content' => <<< 'EOF'
-## ☸️ Tuyên Ngôn Duyên Khởi Tối Thượng
+## Tuyên Ngôn Duyên Khởi Tối Thượng
 
 Đức Phật từng dạy Tôn giả Ānanda trong *Trường Bộ Kinh (Mahānidāna Sutta)*:
 
@@ -1320,7 +1320,7 @@ EOF
 
 ---
 
-## 🔄 Tiến Trình 12 Mắt Xích Duyên Sinh (Chiều Thuận — Samudaya)
+## Tiến Trình 12 Mắt Xích Duyên Sinh (Chiều Thuận — Samudaya)
 
 ```mermaid
 graph TD
@@ -1352,7 +1352,7 @@ graph TD
 
 ---
 
-## 🌟 Chiều Nghịch Đoạn Diệt (Nirodha — Con Đường Giải Thoát)
+## Chiều Nghịch Đoạn Diệt (Nirodha — Con Đường Giải Thoát)
 
 > **"Avijjāya tveva asesavirāganirodhā saṅkhāranirodho..."**<br />
 > *"Do Vô minh đoạn diệt không còn dư tàn nên Hành diệt; do Hành diệt nên Thức diệt; do Thức diệt nên Danh sắc diệt... do Sinh diệt nên Lão, Tử, Sầu, Bi, Khổ, Ưu, Não đoạn diệt. Như vậy là sự đoạn diệt hoàn toàn của toàn bộ khối khổ đau này."*

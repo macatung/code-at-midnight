@@ -5,6 +5,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Theravada\TheravadaController;
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\Api\ApiTaskController;
 use App\Http\Controllers\Api\AnalyticsEventController;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminDashboardController;
@@ -17,8 +19,39 @@ use App\Http\Controllers\Admin\AdminSettingController;
 use App\Http\Controllers\Admin\AdminContactController;
 use App\Http\Controllers\SeoController;
 
-// 1. Theravāda Subdomain Routes (e.g. theravada.macatung.dev / theravada.localhost)
 $baseDomain = env('APP_BASE_DOMAIN', 'macatung.dev');
+
+// 1. Tasks Productivity Subdomain Routes (tasks.macatung.dev)
+Route::domain('tasks.' . $baseDomain)->group(function () {
+    Route::get('/', [TaskController::class, 'index'])->name('tasks.domain.index');
+    Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('tasks.domain.sitemap');
+    Route::get('/robots.txt', [SeoController::class, 'robots'])->name('tasks.domain.robots');
+});
+
+// 2. Tasks Path-based Route (Available on main domain /tasks & local testing)
+Route::prefix('tasks')->name('tasks.')->group(function () {
+    Route::get('/', [TaskController::class, 'index'])->name('index');
+});
+
+// 3. Tasks REST API Endpoints (For Web UI & Desktop Mascot Sync)
+Route::prefix('api/tasks')->group(function () {
+    Route::get('/', [ApiTaskController::class, 'index']);
+    Route::post('/', [ApiTaskController::class, 'store']);
+    Route::patch('/{id}', [ApiTaskController::class, 'update']);
+    Route::delete('/{id}', [ApiTaskController::class, 'destroy']);
+    Route::get('/daily-dispatch', [ApiTaskController::class, 'dailyDispatch']);
+    Route::get('/daily-review', [ApiTaskController::class, 'dailyReview']);
+});
+
+// 3.1 Projects REST API Endpoints (For Projects Management)
+Route::prefix('api/projects')->group(function () {
+    Route::get('/', [ApiProjectController::class, 'index']);
+    Route::post('/', [ApiProjectController::class, 'store']);
+    Route::patch('/{id}', [ApiProjectController::class, 'update']);
+    Route::delete('/{id}', [ApiProjectController::class, 'destroy']);
+});
+
+// 4. Theravāda Subdomain Routes (e.g. theravada.macatung.dev / theravada.localhost)
 Route::domain('theravada.' . $baseDomain)->group(function () {
     Route::get('/', [TheravadaController::class, 'index'])->name('theravada.domain.index');
     Route::get('/kinh/{slug}', [TheravadaController::class, 'show'])->name('theravada.domain.show');
