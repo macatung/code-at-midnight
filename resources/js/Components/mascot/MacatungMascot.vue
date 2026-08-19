@@ -4,8 +4,10 @@ import confetti from 'canvas-confetti';
 import { sound } from '@/audio/soundEffects';
 import { trackEvent } from '@/utils/analytics';
 import { useTimeCycle } from '@/composables/useTimeCycle';
+import { useMascotReactor } from '@/composables/useMascotReactor';
 
 const { activePhase } = useTimeCycle();
+const { currentReaction, isIdleSleeping, totalHops, incrementHop } = useMascotReactor();
 
 type Mood = 'normal' | 'caffeine' | 'sleepy' | 'rage';
 type MascotSize = 'sm' | 'md' | 'lg' | 'hero';
@@ -106,10 +108,24 @@ const quotes = computed(() => {
   return phaseQuotes[activePhase.value.id] || phaseQuotes.midnight;
 });
 
-const currentQuote = computed(() => quotes.value[currentQuoteIndex.value % quotes.value.length]);
+const effectiveMood = computed<Mood>(() => {
+  if (currentReaction.value) return currentReaction.value.mood;
+  if (isIdleSleeping.value) return 'sleepy';
+  return mood.value;
+});
+
+const currentQuote = computed(() => {
+  if (currentReaction.value) {
+    return `${currentReaction.value.emoji} ${currentReaction.value.message}`;
+  }
+  if (isIdleSleeping.value) {
+    return '😴 Zzz... Khò khò... (Lữ khách đi vắng, chợp mắt tí)...';
+  }
+  return quotes.value[currentQuoteIndex.value % quotes.value.length];
+});
 
 const getPitchMultiplier = (): number => {
-  switch (mood.value) {
+  switch (effectiveMood.value) {
     case 'caffeine':
       return 1.35;
     case 'sleepy':
@@ -360,8 +376,20 @@ const dimensions = computed(() => {
 
         <!-- 8. Dynamic Eyes Based on Mood & Phase -->
         <g class="mascot-eyes">
+          <!-- Heart Eyes on Petting -->
+          <template v-if="currentReaction?.type === 'pet_loved'">
+            <text x="96" y="104" font-size="16" fill="#ff0054">💖</text>
+            <text x="132" y="104" font-size="16" fill="#ff0054">💖</text>
+          </template>
+
+          <!-- Dizzy Spiral Eyes on Fast Scroll -->
+          <template v-else-if="currentReaction?.type === 'fast_scroll'">
+            <circle cx="102" cy="98" r="8" fill="none" stroke="#00d2ff" stroke-width="2" stroke-dasharray="4 2" class="animate-spin origin-[102px_98px]" />
+            <circle cx="138" cy="98" r="8" fill="none" stroke="#00d2ff" stroke-width="2" stroke-dasharray="4 2" class="animate-spin origin-[138px_98px]" />
+          </template>
+
           <!-- Cyber Sunglasses Overlay in Afternoon Mode 🕶️ -->
-          <template v-if="activePhase.id === 'afternoon'">
+          <template v-else-if="activePhase.id === 'afternoon' && effectiveMood !== 'sleepy'">
             <!-- Left Frame -->
             <polygon points="86,90 114,90 110,106 90,106" fill="url(#sunglassesGrad)" stroke="#00d2ff" stroke-width="2" />
             <!-- Right Frame -->
@@ -373,16 +401,8 @@ const dimensions = computed(() => {
             <line x1="130" y1="94" x2="138" y2="94" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" />
           </template>
 
-          <!-- Normal Eyes -->
-          <template v-else-if="mood === 'normal'">
-            <circle cx="102" cy="98" r="6" :fill="activePhase.accentHex" />
-            <circle cx="104" cy="96" r="2" fill="#ffffff" />
-            <circle cx="138" cy="98" r="6" :fill="activePhase.accentHex" />
-            <circle cx="140" cy="96" r="2" fill="#ffffff" />
-          </template>
-
           <!-- Caffeine Eyes (Glowing Yellow) -->
-          <template v-else-if="mood === 'caffeine'">
+          <template v-else-if="effectiveMood === 'caffeine'">
             <circle cx="102" cy="98" r="7" fill="#ffd166" class="animate-ping" />
             <circle cx="102" cy="98" r="6.5" fill="#ffd166" />
             <circle cx="104" cy="96" r="2.5" fill="#ffffff" />
@@ -392,15 +412,23 @@ const dimensions = computed(() => {
           </template>
 
           <!-- Sleepy Eyes (Half-closed Violet Lines) -->
-          <template v-else-if="mood === 'sleepy'">
+          <template v-else-if="effectiveMood === 'sleepy' || isIdleSleeping">
             <path d="M96 98 Q103 104 110 98" stroke="#9d4edd" stroke-width="3.5" fill="none" stroke-linecap="round" />
             <path d="M130 98 Q137 104 144 98" stroke="#9d4edd" stroke-width="3.5" fill="none" stroke-linecap="round" />
           </template>
 
           <!-- Rage Eyes (Sharp Crimson Slits) -->
-          <template v-else-if="mood === 'rage'">
+          <template v-else-if="effectiveMood === 'rage'">
             <polygon points="94,92 110,99 95,102" fill="#ff0054" />
             <polygon points="146,92 130,99 145,102" fill="#ff0054" />
+          </template>
+
+          <!-- Normal Eyes -->
+          <template v-else>
+            <circle cx="102" cy="98" r="6" :fill="activePhase.accentHex" />
+            <circle cx="104" cy="96" r="2" fill="#ffffff" />
+            <circle cx="138" cy="98" r="6" :fill="activePhase.accentHex" />
+            <circle cx="140" cy="96" r="2" fill="#ffffff" />
           </template>
         </g>
 

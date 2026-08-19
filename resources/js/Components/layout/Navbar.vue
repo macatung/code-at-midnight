@@ -3,6 +3,7 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import MidnightClock from '@/Components/mascot/MidnightClock.vue';
 import MiniMascotLogo from '@/Components/mascot/MiniMascotLogo.vue';
+import FloatingMascotCompanion from '@/Components/mascot/FloatingMascotCompanion.vue';
 import SoundToggle from '@/Components/layout/SoundToggle.vue';
 import Icons from '@/Components/ui/Icons.vue';
 import { sound } from '@/audio/soundEffects';
@@ -229,5 +230,8 @@ onUnmounted(() => {
         </div>
       </div>
     </transition>
+
+    <!-- Global Floating Interactive Screen Pet Companion -->
+    <FloatingMascotCompanion />
   </header>
 </template>

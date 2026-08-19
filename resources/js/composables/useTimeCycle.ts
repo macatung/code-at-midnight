@@ -19,7 +19,7 @@ export interface TimePhaseConfig {
   gradientClass: string;
   particlePalette: string[];
   mascotState: 'Normal' | 'Caffeine' | 'Sleepy' | 'Rage';
-  mascotAccessory: 'none' | 'coffee' | 'sunglasses' | 'talisman';
+  mascotAccessory: 'none' | 'coffee' | 'sunglasses' | 'talisman' | 'stretch';
   tagline: string;
   themeDescription: string;
 }
@@ -101,24 +101,29 @@ export const TIME_PHASES: Record<TimePhaseId, TimePhaseConfig> = {
     gradientClass: 'from-purple-400 via-fuchsia-300 to-pink-400',
     particlePalette: ['#c084fc', '#f43f5e', '#e879f9', '#ffd166'],
     mascotState: 'Caffeine',
-    mascotAccessory: 'talisman',
+    mascotAccessory: 'stretch',
     tagline: 'Ánh đèn neon bật, phù phép bắt đầu',
     themeDescription: 'Chuyển giao năng lượng từ ngày sang đêm, vươn vai khởi động cho ca thâu đêm.'
   }
 };
 
-// Calculate phase from date
-export function getPhaseFromDate(date: Date): TimePhaseId {
-  const hour = date.getHours();
-  if (hour >= 0 && hour < 6) return 'midnight';
-  if (hour >= 6 && hour < 12) return 'dawn';
-  if (hour >= 12 && hour < 18) return 'afternoon';
+// Calculate phase from hour or date
+export function getPhaseFromHour(hour: number): TimePhaseId {
+  const h = ((hour % 24) + 24) % 24;
+  if (h >= 0 && h < 6) return 'midnight';
+  if (h >= 6 && h < 12) return 'dawn';
+  if (h >= 12 && h < 18) return 'afternoon';
   return 'twilight';
+}
+
+export function getPhaseFromDate(date: Date): TimePhaseId {
+  return getPhaseFromHour(date.getHours());
 }
 
 // Global Singleton State
 const currentTime = ref<Date>(new Date());
 const manualOverridePhase = ref<TimePhaseId | null>(null);
+const simulatedHour = ref<number | null>(null);
 const transitionToast = ref<{
   visible: boolean;
   phaseId: TimePhaseId;
@@ -131,12 +136,16 @@ let listenersCount = 0;
 let lastDetectedPhase: TimePhaseId | null = null;
 let toastTimeoutId: number | undefined;
 
-// Load persisted override from sessionStorage if available
+// Load persisted override from sessionStorage
 if (typeof window !== 'undefined') {
   try {
     const saved = sessionStorage.getItem('macatung_time_travel_phase');
     if (saved && (saved in TIME_PHASES)) {
       manualOverridePhase.value = saved as TimePhaseId;
+    }
+    const savedHour = sessionStorage.getItem('macatung_simulated_hour');
+    if (savedHour !== null) {
+      simulatedHour.value = parseInt(savedHour, 10);
     }
   } catch {
     // Ignore storage restrictions
@@ -146,7 +155,18 @@ if (typeof window !== 'undefined') {
 export function useTimeCycle() {
   const pad = (n: number) => String(n).padStart(2, '0');
 
+  const currentRealHour = computed(() => currentTime.value.getHours());
+
+  const currentDisplayHour = computed(() => {
+    if (simulatedHour.value !== null) return simulatedHour.value;
+    return currentRealHour.value;
+  });
+
   const formattedTime = computed(() => {
+    if (simulatedHour.value !== null) {
+      const d = currentTime.value;
+      return `${pad(simulatedHour.value)}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    }
     const d = currentTime.value;
     return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
   });
@@ -154,6 +174,9 @@ export function useTimeCycle() {
   const realPhaseId = computed<TimePhaseId>(() => getPhaseFromDate(currentTime.value));
 
   const activePhaseId = computed<TimePhaseId>(() => {
+    if (simulatedHour.value !== null) {
+      return getPhaseFromHour(simulatedHour.value);
+    }
     return manualOverridePhase.value || realPhaseId.value;
   });
 
@@ -161,20 +184,18 @@ export function useTimeCycle() {
     return TIME_PHASES[activePhaseId.value];
   });
 
-  const isTimeTravelActive = computed(() => manualOverridePhase.value !== null);
+  const isTimeTravelActive = computed(() => manualOverridePhase.value !== null || simulatedHour.value !== null);
 
   // Trigger phase transition toast & celestial sound
   function triggerPhaseTransition(newPhaseId: TimePhaseId, isManual: boolean = false) {
     const phase = TIME_PHASES[newPhaseId];
     
-    // Play celestial chime audio
     try {
       playCelestialChime(newPhaseId);
     } catch {
-      // Audio autoplay restrictions handled inside synth
+      // Audio synth handles safety
     }
 
-    // Show toast
     if (toastTimeoutId) clearTimeout(toastTimeoutId);
     transitionToast.value = {
       visible: true,
@@ -192,20 +213,50 @@ export function useTimeCycle() {
     }, 4500);
   }
 
+  function setSimulatedHour(hour: number) {
+    const clamped = Math.max(0, Math.min(23, Math.floor(hour)));
+    const prevPhase = activePhaseId.value;
+    simulatedHour.value = clamped;
+    const newPhase = getPhaseFromHour(clamped);
+    manualOverridePhase.value = newPhase;
+
+    try {
+      sessionStorage.setItem('macatung_simulated_hour', String(clamped));
+      sessionStorage.setItem('macatung_time_travel_phase', newPhase);
+    } catch {}
+
+    if (prevPhase !== newPhase) {
+      triggerPhaseTransition(newPhase, true);
+    }
+  }
+
   function setPhaseOverride(phaseId: TimePhaseId) {
-    if (manualOverridePhase.value === phaseId) return;
+    if (manualOverridePhase.value === phaseId && simulatedHour.value === null) return;
     manualOverridePhase.value = phaseId;
+    
+    // Map representative hour
+    const representativeHours: Record<TimePhaseId, number> = {
+      midnight: 2,
+      dawn: 8,
+      afternoon: 14,
+      twilight: 20
+    };
+    simulatedHour.value = representativeHours[phaseId];
+
     try {
       sessionStorage.setItem('macatung_time_travel_phase', phaseId);
+      sessionStorage.setItem('macatung_simulated_hour', String(simulatedHour.value));
     } catch {}
     triggerPhaseTransition(phaseId, true);
   }
 
   function resetToRealTime() {
-    if (manualOverridePhase.value === null) return;
+    if (manualOverridePhase.value === null && simulatedHour.value === null) return;
     manualOverridePhase.value = null;
+    simulatedHour.value = null;
     try {
       sessionStorage.removeItem('macatung_time_travel_phase');
+      sessionStorage.removeItem('macatung_simulated_hour');
     } catch {}
     const real = realPhaseId.value;
     triggerPhaseTransition(real, false);
@@ -218,7 +269,7 @@ export function useTimeCycle() {
       timerId = window.setInterval(() => {
         currentTime.value = new Date();
         const currentReal = getPhaseFromDate(currentTime.value);
-        if (!manualOverridePhase.value && lastDetectedPhase && currentReal !== lastDetectedPhase) {
+        if (!isTimeTravelActive.value && lastDetectedPhase && currentReal !== lastDetectedPhase) {
           lastDetectedPhase = currentReal;
           triggerPhaseTransition(currentReal, false);
         }
@@ -239,6 +290,9 @@ export function useTimeCycle() {
 
   return {
     currentTime,
+    currentRealHour,
+    currentDisplayHour,
+    simulatedHour,
     formattedTime,
     realPhaseId,
     activePhaseId,
@@ -247,8 +301,10 @@ export function useTimeCycle() {
     manualOverridePhase,
     transitionToast,
     TIME_PHASES,
+    setSimulatedHour,
     setPhaseOverride,
     resetToRealTime,
-    getPhaseFromDate
+    getPhaseFromDate,
+    getPhaseFromHour
   };
 }

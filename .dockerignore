@@ -9,12 +9,12 @@ npm-debug.log
 yarn-error.log
 .vite
 public/hot
-public/build
 
 # PHP & Backend dependencies
 vendor
 .phpunit.result.cache
 .phpunit.cache
+bootstrap/cache/*.php
 
 # Environment & Local secrets
 .env
@@ -22,13 +22,13 @@ vendor
 .env.production
 .env.local
 
-# Storage caches and logs (preserve directory structure)
+# Storage caches and logs
 storage/logs/*.log
 storage/framework/cache/data/*
 storage/framework/sessions/*
 storage/framework/views/*
 
-# Database files (SQLite database should be initialized at runtime or mounted)
+# Database files
 *.sqlite-journal
 
 # Temporary files & IDE
@@ -38,4 +38,3 @@ storage/framework/views/*
 *.swo
 .DS_Store
 Thumbs.db
-C:\Users\*
