@@ -18,14 +18,6 @@ const allPortals = [
     color: 'border-phantom-mint/30 hover:border-phantom-mint text-phantom-mint',
   },
   {
-    path: '/about',
-    title: 'Kỹ Năng & Hồ Sơ',
-    desc: 'Kho vũ khí kỹ năng, dòng thời gian kinh nghiệm & tuyên ngôn kiến trúc.',
-    icon: '⚡',
-    badge: 'ARSENAL',
-    color: 'border-phantom-cyan/30 hover:border-phantom-cyan text-phantom-cyan',
-  },
-  {
     path: '/blog',
     title: 'Midnight Tech Chronicle',
     desc: 'Ghi chép chuyên sâu về kiến trúc Multi-Agent & tối ưu hóa hệ thống.',

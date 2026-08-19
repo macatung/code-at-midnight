@@ -49,19 +49,13 @@ const aboutJsonLd = {
       <nav class="flex items-center gap-2 text-xs font-mono text-slate-400 mb-6" aria-label="Breadcrumb">
         <Link href="/" class="hover:text-phantom-mint transition-colors">Trang Chủ</Link>
         <span>/</span>
-        <span class="text-phantom-mint font-bold">Kỹ Năng & Hồ Sơ (Profile)</span>
+        <span class="text-phantom-mint font-bold">Triết Lý & Tuyên Ngôn (Manifesto)</span>
       </nav>
 
-      <!-- 1. Skills & Tech Rune Arsenal -->
-      <SkillsSection :skills="skills" />
-
-      <!-- 2. Experience & Chronicles -->
-      <ExperienceSection :experiences="experiences" />
-
-      <!-- 3. Developer Manifesto & Stats -->
+      <!-- 1. Developer Manifesto & Stats -->
       <AboutSection :stats="stats" />
 
-      <!-- 4. Interactive Terminal CLI Section -->
+      <!-- 2. Interactive Terminal CLI Section -->
       <section id="terminal" class="scroll-mt-24 w-full py-16 sm:py-20 text-left">
         <div class="flex flex-col items-start mb-8">
           <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-phantom-mint/10 border border-phantom-mint/30 text-phantom-mint text-xs font-mono mb-3 shadow-glow-mint">

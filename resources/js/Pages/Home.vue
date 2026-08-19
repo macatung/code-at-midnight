@@ -153,16 +153,10 @@ const homeJsonLd = {
       <!-- 2. Featured Grimoire Projects Showcase (Top 3 on Home) -->
       <ProjectsSection :projects="projects" :featured-only="true" />
 
-      <!-- 3. Skills & Tech Rune Arsenal (#skills) -->
-      <SkillsSection :skills="skills" />
-
-      <!-- 4. Experience & Chronicles (#experience) -->
-      <ExperienceSection :experiences="experiences" />
-
-      <!-- 5. Developer Manifesto & Stats (#about) -->
+      <!-- 3. Developer Manifesto & Stats (#about) -->
       <AboutSection :stats="stats" />
 
-      <!-- 6. Midnight Tech Chronicle / Featured Articles Section -->
+      <!-- 4. Midnight Tech Chronicle / Featured Articles Section -->
       <section v-if="latestArticles && latestArticles.length > 0" class="scroll-mt-24 w-full py-16 sm:py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-left">
         <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
           <div class="flex flex-col items-start">

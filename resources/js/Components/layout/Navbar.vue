@@ -22,7 +22,6 @@ interface NavItem {
 const navLinks: NavItem[] = [
   { label: 'Trang Chủ', href: '/', iconName: 'Home' },
   { label: 'Dự Án', href: '/projects', iconName: 'Layers' },
-  { label: 'Kỹ Năng & Hồ Sơ', href: '/about', iconName: 'Zap' },
   { label: 'Blog', href: '/blog', badge: 'MỚI', iconName: 'BookOpen' },
   { label: 'Game 🎮', href: '/game', badge: 'HOT', iconName: 'Gamepad' },
   { label: 'Bùa Dev', href: '/talisman', iconName: 'Sparkles' },

@@ -76,13 +76,13 @@ const triggerHeartEasterEgg = (e: MouseEvent) => {
         </ul>
       </div>
 
-      <!-- Col 2: Tech Arsenal -->
+      <!-- Col 2: Interactive Labs -->
       <div>
-        <h4 class="font-mono text-slate-400 uppercase tracking-wider mb-3 text-[11px]">Vũ Khí & Pháp Bảo</h4>
+        <h4 class="font-mono text-slate-400 uppercase tracking-wider mb-3 text-[11px]">Thí Nghiệm & Pháp Bảo</h4>
         <ul class="space-y-2 text-slate-400">
-          <li><a href="#skills" class="hover:text-phantom-mint transition-colors">Tech Rune Arsenal</a></li>
-          <li><a href="#experience" class="hover:text-phantom-mint transition-colors">Biên Niên Sử</a></li>
-          <li><a href="#talisman" class="hover:text-phantom-mint transition-colors">Lò Luyện Bùa Chú</a></li>
+          <li><a href="/projects" class="hover:text-phantom-mint transition-colors">Kho Dự Án Grimoire</a></li>
+          <li><a href="/game" class="hover:text-phantom-mint transition-colors">Phòng Máy Rune Typer</a></li>
+          <li><a href="/talisman" class="hover:text-phantom-mint transition-colors">Lò Luyện Bùa Chú</a></li>
         </ul>
       </div>
 
