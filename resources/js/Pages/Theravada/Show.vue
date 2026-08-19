@@ -33,7 +33,67 @@ const isRinging = ref(false);
 const isCandlelightOn = ref(false);
 const isFocusModeOn = ref(false);
 const isPaperMode = ref(true); // Default to clean white/parchment paper background for optimal readability
+const copiedLink = ref(false);
 const { isLeavesEnabled, toggleLeaves } = useZenAtmosphere();
+
+// Social Share Methods
+const copyArticleLink = async () => {
+  const url = typeof window !== 'undefined' ? window.location.href : `https://theravada.macatung.dev/kinh/${props.article.slug}`;
+  try {
+    await navigator.clipboard.writeText(url);
+    copiedLink.value = true;
+    mindfulBell.ringBell(528, 1.5);
+    setTimeout(() => {
+      copiedLink.value = false;
+    }, 3000);
+  } catch (err) {
+    console.error('Copy link error:', err);
+  }
+};
+
+const handleNativeArticleShare = async () => {
+  const url = typeof window !== 'undefined' ? window.location.href : `https://theravada.macatung.dev/kinh/${props.article.slug}`;
+  const shareTitle = `${props.article.title} — Ma Tọa Thiền`;
+  const shareText = `☸️ Đọc bài kinh: ${props.article.title}\n${props.article.excerpt || ''}`;
+
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: shareTitle,
+        text: shareText,
+        url: url,
+      });
+    } catch (err) {
+      if ((err as any).name !== 'AbortError') {
+        copyArticleLink();
+      }
+    }
+  } else {
+    copyArticleLink();
+  }
+};
+
+const shareArticleToFacebook = () => {
+  const url = encodeURIComponent(typeof window !== 'undefined' ? window.location.href : `https://theravada.macatung.dev/kinh/${props.article.slug}`);
+  window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'width=600,height=400');
+};
+
+const shareArticleToZalo = () => {
+  const url = encodeURIComponent(typeof window !== 'undefined' ? window.location.href : `https://theravada.macatung.dev/kinh/${props.article.slug}`);
+  window.open(`https://sp.zalo.me/plugins/share?url=${url}`, '_blank', 'width=600,height=400');
+};
+
+const shareArticleToTelegram = () => {
+  const url = encodeURIComponent(typeof window !== 'undefined' ? window.location.href : `https://theravada.macatung.dev/kinh/${props.article.slug}`);
+  const text = encodeURIComponent(`☸️ ${props.article.title}\n\n${props.article.excerpt || ''}`);
+  window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank', 'width=600,height=400');
+};
+
+const shareArticleToX = () => {
+  const url = encodeURIComponent(typeof window !== 'undefined' ? window.location.href : `https://theravada.macatung.dev/kinh/${props.article.slug}`);
+  const text = encodeURIComponent(`☸️ ${props.article.title}\n\n#Theravada #ChanhPhap`);
+  window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank', 'width=600,height=400');
+};
 
 // Interactive Pāḷi Tooltip State
 interface ActiveTooltipState {
@@ -617,6 +677,16 @@ const suttaJsonLd = computed(() => ({
               <span>Chuông</span>
             </button>
 
+            <!-- Share Article Trigger -->
+            <button
+              @click="handleNativeArticleShare"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-900 text-stone-300 hover:text-amber-200 hover:bg-stone-800 border border-stone-800 hover:border-amber-500/40 transition-all cursor-pointer font-bold"
+              title="Chia sẻ bài kinh"
+            >
+              <span>{{ copiedLink ? '✅' : '📤' }}</span>
+              <span class="hidden sm:inline">{{ copiedLink ? 'Đã Chép' : 'Chia Sẻ' }}</span>
+            </button>
+
             <!-- Adjust Font Size -->
             <div class="flex items-center bg-stone-900 rounded-xl border border-stone-800 p-0.5 text-xs">
               <button
@@ -686,6 +756,74 @@ const suttaJsonLd = computed(() => ({
           >
             <span class="text-sm font-serif font-bold text-amber-300">{{ item.term }}</span>
             <p class="text-xs font-serif text-stone-400 mt-1 leading-relaxed">{{ item.meaning }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Social Sharing Bar (Lan Tỏa Chánh Pháp) -->
+      <div class="my-10 p-6 sm:p-7 rounded-3xl bg-stone-900/90 border border-amber-500/30 shadow-xl text-left">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2 text-amber-300 font-serif font-bold text-sm sm:text-base">
+              <span>🌸</span>
+              <span>Lan Tỏa Chánh Pháp Đến Muôn Người</span>
+            </div>
+            <p class="text-xs font-serif text-stone-300">
+              Chia sẻ bài kinh văn đến người thân và đạo hữu để gieo duyên lành giải thoát.
+            </p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <button
+              @click="shareArticleToFacebook"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#1877F2]/15 hover:bg-[#1877F2] text-[#4ea1ff] hover:text-white border border-[#1877F2]/40 transition-all font-sans text-xs font-semibold shadow-sm hover:scale-105 active:scale-95 cursor-pointer"
+              title="Chia sẻ lên Facebook"
+            >
+              <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+              <span>Facebook</span>
+            </button>
+
+            <button
+              @click="shareArticleToZalo"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#0068FF]/15 hover:bg-[#0068FF] text-[#5295ff] hover:text-white border border-[#0068FF]/40 transition-all font-sans text-xs font-semibold shadow-sm hover:scale-105 active:scale-95 cursor-pointer"
+              title="Chia sẻ qua Zalo"
+            >
+              <span class="font-bold font-sans text-[11px] px-1 py-0.2 bg-blue-500/30 rounded text-white">Z</span>
+              <span>Zalo</span>
+            </button>
+
+            <button
+              @click="shareArticleToTelegram"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#24A1DE]/15 hover:bg-[#24A1DE] text-[#55c0f5] hover:text-white border border-[#24A1DE]/40 transition-all font-sans text-xs font-semibold shadow-sm hover:scale-105 active:scale-95 cursor-pointer"
+              title="Gửi qua Telegram"
+            >
+              <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
+              </svg>
+              <span>Telegram</span>
+            </button>
+
+            <button
+              @click="shareArticleToX"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-950 hover:bg-stone-900 text-stone-200 hover:text-white border border-stone-700 transition-all font-sans text-xs font-semibold shadow-sm hover:scale-105 active:scale-95 cursor-pointer"
+              title="Đăng lên X"
+            >
+              <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+              </svg>
+              <span>X</span>
+            </button>
+
+            <button
+              @click="copyArticleLink"
+              class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-stone-950 hover:bg-stone-900 text-amber-300 hover:text-amber-200 border border-amber-500/40 transition-all font-sans text-xs font-semibold shadow-sm hover:scale-105 active:scale-95 cursor-pointer"
+              title="Sao chép liên kết"
+            >
+              <span>{{ copiedLink ? '✅' : '🔗' }}</span>
+              <span>{{ copiedLink ? 'Đã Sao Chép!' : 'Chép Link' }}</span>
+            </button>
           </div>
         </div>
       </div>

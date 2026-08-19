@@ -513,99 +513,143 @@ const shareToZalo = () => {
         </div>
       </div>
 
-      <!-- Controls, Aspect Ratio & Social Sharing Bar -->
-      <div class="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-stone-800">
-        <!-- Aspect Ratio Selection -->
-        <div class="flex items-center gap-2 text-xs font-serif">
-          <span class="text-stone-400">Tỷ lệ ảnh:</span>
-          <button
-            @click="aspectRatio = 'story'"
-            :class="[
-              'px-3 py-1.5 rounded-xl border text-xs font-serif transition-all cursor-pointer',
-              aspectRatio === 'story'
-                ? 'bg-amber-500/20 border-amber-400 text-amber-300 font-bold'
-                : 'bg-stone-900 border-stone-700 text-stone-400 hover:text-white'
-            ]"
-          >
-            📱 Dọc 9:16 (Story/Zalo/Reels)
-          </button>
-          <button
-            @click="aspectRatio = 'square'"
-            :class="[
-              'px-3 py-1.5 rounded-xl border text-xs font-serif transition-all cursor-pointer',
-              aspectRatio === 'square'
-                ? 'bg-amber-500/20 border-amber-400 text-amber-300 font-bold'
-                : 'bg-stone-900 border-stone-700 text-stone-400 hover:text-white'
-            ]"
-          >
-            🖼️ Vuông 1:1 (Feed/Avatar)
-          </button>
+      <!-- Controls, Aspect Ratio & Social Sharing Bar (Redesigned Modern Zen Layout) -->
+      <div class="space-y-4 pt-5 border-t border-stone-800/90 text-left">
+        <!-- Row 1: Aspect Ratio & Main Action Buttons -->
+        <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+          <!-- Aspect Ratio Segmented Control -->
+          <div class="flex items-center gap-2.5">
+            <span class="text-xs font-serif text-stone-400 shrink-0 font-medium">Tỷ lệ ảnh:</span>
+            <div class="flex items-center p-1 bg-stone-950/90 rounded-2xl border border-stone-800 shadow-inner">
+              <button
+                @click="aspectRatio = 'story'"
+                :class="[
+                  'px-3.5 py-1.5 rounded-xl text-xs font-serif transition-all cursor-pointer flex items-center gap-1.5',
+                  aspectRatio === 'story'
+                    ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-stone-950 font-bold shadow-md'
+                    : 'text-stone-400 hover:text-stone-200'
+                ]"
+              >
+                <span>📱</span>
+                <span>Dọc 9:16 (Story/Zalo)</span>
+              </button>
+              <button
+                @click="aspectRatio = 'square'"
+                :class="[
+                  'px-3.5 py-1.5 rounded-xl text-xs font-serif transition-all cursor-pointer flex items-center gap-1.5',
+                  aspectRatio === 'square'
+                    ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-stone-950 font-bold shadow-md'
+                    : 'text-stone-400 hover:text-stone-200'
+                ]"
+              >
+                <span>🖼️</span>
+                <span>Vuông 1:1 (Feed/Avatar)</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Primary Action Buttons Group -->
+          <div class="flex flex-wrap items-center gap-2.5">
+            <!-- Copy Verse Text -->
+            <button
+              @click="copyVerseText"
+              class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-stone-900/90 hover:bg-stone-850 border border-stone-700/80 hover:border-amber-500/40 text-stone-200 text-xs sm:text-sm font-serif font-bold transition-all hover:text-amber-300 cursor-pointer shadow-md active:scale-95"
+            >
+              <span>{{ copied ? '✅' : '📋' }}</span>
+              <span>{{ copied ? 'Đã Sao Chép!' : 'Sao Chép Kệ' }}</span>
+            </button>
+
+            <!-- 1-Click Multi-Platform Web Share Button -->
+            <button
+              @click="handleNativeShare"
+              :disabled="isSharing"
+              class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 rounded-2xl bg-stone-900 border border-amber-500/50 hover:border-amber-400 text-amber-300 hover:text-amber-200 hover:bg-stone-850 text-xs sm:text-sm font-serif font-bold shadow-lg transition-all hover:scale-[1.02] active:scale-95 cursor-pointer disabled:opacity-50"
+            >
+              <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+              </svg>
+              <span>{{ isSharing ? 'Đang Xử Lý...' : 'Chia Sẻ Thẻ' }}</span>
+            </button>
+
+            <!-- Download HD PNG Card (Primary CTA) -->
+            <button
+              @click="downloadCardImage"
+              :disabled="isDrawing"
+              class="w-full sm:w-auto flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-stone-950 text-xs sm:text-sm font-serif font-bold shadow-xl transition-all hover:scale-[1.03] active:scale-95 cursor-pointer disabled:opacity-50 ring-1 ring-amber-300/40"
+            >
+              <span>📥</span>
+              <span>{{ isDrawing ? 'Đang Tạo Ảnh...' : 'Tải Ảnh Thẻ HD (PNG)' }}</span>
+            </button>
+          </div>
         </div>
 
-        <!-- Download & Social Action Buttons -->
-        <div class="flex flex-wrap items-center gap-2.5">
-          <!-- Copy Verse Text -->
-          <button
-            @click="copyVerseText"
-            class="flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-stone-900 hover:bg-stone-800 border border-stone-700 text-stone-300 text-xs font-serif font-bold transition-all hover:text-amber-300 cursor-pointer shadow-md"
-          >
-            <span>{{ copied ? '✅' : '📋' }}</span>
-            <span>{{ copied ? 'Đã Sao Chép' : 'Sao Chép Chữ' }}</span>
-          </button>
+        <!-- Row 2: Dedicated Social Share Strip with Brand Badges & Crisp Contrast -->
+        <div class="p-3.5 rounded-2xl bg-stone-950/85 border border-stone-800/90 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner">
+          <div class="flex items-center gap-2 text-xs font-serif text-amber-300/90 font-medium">
+            <span class="text-amber-400">✨</span>
+            <span>Lan tỏa Pháp Bảo đến người thân & bạn bè:</span>
+          </div>
 
-          <!-- 1-Click Multi-Platform Web Share Button -->
-          <button
-            @click="handleNativeShare"
-            :disabled="isSharing"
-            class="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white text-xs sm:text-sm font-serif font-bold shadow-lg transition-all hover:scale-105 active:scale-95 cursor-pointer disabled:opacity-50"
-          >
-            <span>📤</span>
-            <span>{{ isSharing ? 'Đang Chia Sẻ...' : 'Chia Sẻ Mạng Xã Hội' }}</span>
-          </button>
+          <div class="flex flex-wrap items-center gap-2">
+            <!-- Facebook Button -->
+            <button
+              @click="shareToFacebook"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#1877F2]/15 hover:bg-[#1877F2] text-[#4ea1ff] hover:text-white border border-[#1877F2]/40 transition-all font-sans text-xs font-semibold shadow-sm hover:scale-105 active:scale-95 cursor-pointer"
+              title="Chia sẻ lên Facebook"
+            >
+              <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+              <span>Facebook</span>
+            </button>
 
-          <!-- Download HD PNG Card -->
-          <button
-            @click="downloadCardImage"
-            :disabled="isDrawing"
-            class="flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-stone-950 text-xs sm:text-sm font-serif font-bold shadow-lg transition-all hover:scale-105 active:scale-95 cursor-pointer disabled:opacity-50"
-          >
-            <span>📥</span>
-            <span>{{ isDrawing ? 'Đang Xuất...' : 'Tải Ảnh Thẻ HD (PNG)' }}</span>
-          </button>
+            <!-- Zalo Button -->
+            <button
+              @click="shareToZalo"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#0068FF]/15 hover:bg-[#0068FF] text-[#5295ff] hover:text-white border border-[#0068FF]/40 transition-all font-sans text-xs font-semibold shadow-sm hover:scale-105 active:scale-95 cursor-pointer"
+              title="Chia sẻ qua Zalo"
+            >
+              <span class="font-bold font-sans text-[11px] px-1 py-0.2 bg-blue-500/30 rounded text-white">Z</span>
+              <span>Zalo</span>
+            </button>
+
+            <!-- Telegram Button -->
+            <button
+              @click="shareToTelegram"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#24A1DE]/15 hover:bg-[#24A1DE] text-[#55c0f5] hover:text-white border border-[#24A1DE]/40 transition-all font-sans text-xs font-semibold shadow-sm hover:scale-105 active:scale-95 cursor-pointer"
+              title="Gửi qua Telegram"
+            >
+              <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
+              </svg>
+              <span>Telegram</span>
+            </button>
+
+            <!-- X (Twitter) Button -->
+            <button
+              @click="shareToX"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-stone-200 hover:text-white border border-stone-700 transition-all font-sans text-xs font-semibold shadow-sm hover:scale-105 active:scale-95 cursor-pointer"
+              title="Đăng lên X (Twitter)"
+            >
+              <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+              </svg>
+              <span>X (Twitter)</span>
+            </button>
+
+            <!-- Copy Direct Link Button -->
+            <button
+              @click="copyVerseText"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-amber-300/90 hover:text-amber-200 border border-amber-500/30 transition-all font-sans text-xs font-semibold shadow-sm hover:scale-105 active:scale-95 cursor-pointer"
+              title="Sao chép toàn văn lời kệ"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+              </svg>
+              <span>{{ copied ? 'Đã chép' : 'Sao chép' }}</span>
+            </button>
+          </div>
         </div>
-      </div>
-
-      <!-- Quick Social Sharing Links Strip (Direct Buttons) -->
-      <div class="pt-3 flex flex-wrap items-center justify-center gap-2 text-xs font-serif text-stone-400">
-        <span class="mr-1">Chia sẻ nhanh:</span>
-        <button
-          @click="shareToFacebook"
-          class="px-2.5 py-1 rounded-lg bg-blue-950/60 hover:bg-blue-900 border border-blue-800/60 text-blue-200 flex items-center gap-1 transition-all cursor-pointer"
-        >
-          <span>📘</span>
-          <span>Facebook</span>
-        </button>
-        <button
-          @click="shareToZalo"
-          class="px-2.5 py-1 rounded-lg bg-sky-950/60 hover:bg-sky-900 border border-sky-800/60 text-sky-200 flex items-center gap-1 transition-all cursor-pointer"
-        >
-          <span>💬</span>
-          <span>Zalo</span>
-        </button>
-        <button
-          @click="shareToTelegram"
-          class="px-2.5 py-1 rounded-lg bg-cyan-950/60 hover:bg-cyan-900 border border-cyan-800/60 text-cyan-200 flex items-center gap-1 transition-all cursor-pointer"
-        >
-          <span>✈️</span>
-          <span>Telegram</span>
-        </button>
-        <button
-          @click="shareToX"
-          class="px-2.5 py-1 rounded-lg bg-stone-900 hover:bg-stone-800 border border-stone-700 text-stone-300 flex items-center gap-1 transition-all cursor-pointer"
-        >
-          <span>𝕏</span>
-          <span>Twitter (X)</span>
-        </button>
       </div>
     </div>
   </div>
