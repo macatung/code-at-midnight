@@ -36,9 +36,11 @@ export default {
       },
       fontFamily: {
         sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+        serif: ['"Lora"', '"Merriweather"', 'Georgia', 'serif'],
+        pali: ['"Lora"', 'Georgia', 'serif'],
         display: ['"Space Grotesk"', '"Syne"', 'sans-serif'],
         mono: ['"JetBrains Mono"', '"Fira Code"', 'monospace'],
-        rune: ['"Cinzel Decorative"', 'serif'],
+        rune: ['"Lora"', 'serif'],
       },
       animation: {
         'hop': 'hop 1s cubic-bezier(0.28, 0.84, 0.42, 1) infinite',

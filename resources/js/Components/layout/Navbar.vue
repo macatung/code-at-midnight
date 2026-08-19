@@ -230,8 +230,8 @@ onUnmounted(() => {
         </div>
       </div>
     </transition>
-
-    <!-- Global Floating Interactive Screen Pet Companion -->
-    <FloatingMascotCompanion />
   </header>
+
+  <!-- Global Floating Interactive Screen Pet Companion -->
+  <FloatingMascotCompanion />
 </template>

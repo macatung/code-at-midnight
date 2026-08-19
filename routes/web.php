@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\Theravada\TheravadaController;
 use App\Http\Controllers\Api\AnalyticsEventController;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminDashboardController;
@@ -15,7 +16,30 @@ use App\Http\Controllers\Admin\AdminArticleController;
 use App\Http\Controllers\Admin\AdminSettingController;
 use App\Http\Controllers\Admin\AdminContactController;
 
-// Public Multi-Page Portfolio Routes
+// 1. Theravāda Subdomain Routes (e.g. theravada.macatung.dev / theravada.localhost)
+$baseDomain = env('APP_BASE_DOMAIN', 'macatung.dev');
+Route::domain('theravada.' . $baseDomain)->group(function () {
+    Route::get('/', [TheravadaController::class, 'index'])->name('theravada.domain.index');
+    Route::get('/kinh/{slug}', [TheravadaController::class, 'show'])->name('theravada.domain.show');
+    Route::get('/bai-viet/{slug}', [TheravadaController::class, 'show']);
+    Route::get('/danh-muc/{category}', [TheravadaController::class, 'category'])->name('theravada.domain.category');
+    Route::get('/tu-dien-pali', [TheravadaController::class, 'glossary'])->name('theravada.domain.glossary');
+    Route::get('/ung-dung-tu-hoc', [TheravadaController::class, 'apps'])->name('theravada.domain.apps');
+    Route::get('/phap-bao', [TheravadaController::class, 'apps']);
+});
+
+// 2. Theravāda Path-based Routes (Available on main domain /theravada/* & local testing)
+Route::prefix('theravada')->name('theravada.')->group(function () {
+    Route::get('/', [TheravadaController::class, 'index'])->name('index');
+    Route::get('/kinh/{slug}', [TheravadaController::class, 'show'])->name('show');
+    Route::get('/bai-viet/{slug}', [TheravadaController::class, 'show']);
+    Route::get('/danh-muc/{category}', [TheravadaController::class, 'category'])->name('category');
+    Route::get('/tu-dien-pali', [TheravadaController::class, 'glossary'])->name('glossary');
+    Route::get('/ung-dung-tu-hoc', [TheravadaController::class, 'apps'])->name('apps');
+    Route::get('/phap-bao', [TheravadaController::class, 'apps']);
+});
+
+// 3. Public Multi-Page Portfolio Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/projects', [HomeController::class, 'projects'])->name('projects.index');
 Route::get('/about', [HomeController::class, 'about'])->name('about.index');

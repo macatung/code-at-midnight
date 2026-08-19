@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ProjectSeeder::class,
             ContentAndAnalyticsSeeder::class,
+            TheravadaContentSeeder::class,
         ]);
     }
 }

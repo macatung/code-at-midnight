@@ -1,0 +1,84 @@
+<script setup lang="ts">
+import { Link } from '@inertiajs/vue3';
+import TheravadaLayout from '@/Layouts/TheravadaLayout.vue';
+
+defineProps<{
+  categorySlug: string;
+  categoryName: string;
+  articles: any[];
+  title?: string;
+}>();
+</script>
+
+<template>
+  <TheravadaLayout :title="title">
+    <div class="max-w-6xl mx-auto py-6 sm:py-10">
+      <!-- Breadcrumb -->
+      <nav class="flex items-center gap-2 text-xs font-serif text-stone-400 mb-6" aria-label="Breadcrumb">
+        <Link href="/theravada" class="hover:text-amber-300">Theravāda</Link>
+        <span>/</span>
+        <span class="text-amber-400 font-bold">{{ categoryName }}</span>
+      </nav>
+
+      <!-- Header -->
+      <header class="mb-10 text-left border-b border-stone-800 pb-8">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs font-serif mb-3">
+          <span>{{ categorySlug === 'phap-hoc' ? '📖' : categorySlug === 'phap-hanh' ? '🧘' : '📜' }}</span>
+          <span>Chuyên Mục Theravāda</span>
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-serif font-bold text-amber-100">
+          {{ categoryName }}
+        </h1>
+        <p class="text-sm text-stone-400 font-serif mt-2">
+          Tuyển tập các kinh văn, giáo lý và hướng dẫn thực hành thuộc chuyên mục {{ categoryName }}.
+        </p>
+      </header>
+
+      <!-- Articles Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <article
+          v-for="item in articles"
+          :key="item.id"
+          class="flex flex-col justify-between rounded-3xl bg-stone-900/70 border border-stone-800 hover:border-amber-500/40 p-6 transition-all duration-300 hover:-translate-y-1 hover:bg-stone-900"
+        >
+          <div>
+            <div class="flex items-center justify-between text-[11px] font-mono text-stone-400 mb-3">
+              <span>⏱️ {{ item.reading_time_min }} phút đọc</span>
+            </div>
+
+            <h3 class="text-lg font-serif font-bold text-stone-100 hover:text-amber-300 transition-colors leading-snug mb-2">
+              <Link :href="`/theravada/kinh/${item.slug}`">
+                {{ item.title }}
+              </Link>
+            </h3>
+
+            <p v-if="item.pali_title" class="text-xs font-serif text-amber-500/80 italic mb-3">
+              Pāḷi: {{ item.pali_title }}
+            </p>
+
+            <p class="text-xs text-stone-400 font-sans leading-relaxed line-clamp-3 mb-4">
+              {{ item.excerpt }}
+            </p>
+          </div>
+
+          <div class="pt-4 border-t border-stone-800/80 flex items-center justify-between text-xs font-serif text-stone-400">
+            <span class="truncate max-w-[160px] italic">
+              {{ item.author || 'Pāḷi Canon' }}
+            </span>
+            <Link
+              :href="`/theravada/kinh/${item.slug}`"
+              class="font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1"
+            >
+              <span>Đọc kinh</span>
+              <span>➔</span>
+            </Link>
+          </div>
+        </article>
+
+        <div v-if="articles.length === 0" class="col-span-full py-16 text-center text-stone-500 font-serif">
+          Chuyên mục đang được cập nhật kinh văn và giáo lý mới...
+        </div>
+      </div>
+    </div>
+  </TheravadaLayout>
+</template>
