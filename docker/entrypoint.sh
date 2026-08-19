@@ -31,9 +31,8 @@ if [ ! -f /var/www/html/database/database.sqlite ]; then
     echo "🗄️ Initializing SQLite database file..."
     touch /var/www/html/database/database.sqlite
 fi
-chmod -R 777 /var/www/html/database
 
-# 4. Storage & Cache Directory Permissions
+# 4. Storage & Cache Directory Preparation
 mkdir -p /var/www/html/storage/framework/cache/data \
          /var/www/html/storage/framework/sessions \
          /var/www/html/storage/framework/views \
@@ -42,9 +41,6 @@ mkdir -p /var/www/html/storage/framework/cache/data \
 
 # Clear stale dev caches
 rm -f /var/www/html/bootstrap/cache/*.php
-
-chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
-chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # 5. Database Migration & Seeding
 php artisan package:discover --ansi || true
@@ -56,6 +52,11 @@ echo "🚀 Caching Laravel configurations for production..."
 php artisan config:cache || true
 php artisan route:cache || true
 php artisan view:cache || true
+
+# 7. CRITICAL: Final Ownership and Full Write Permissions for www-data
+chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
+chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
+chmod 666 /var/www/html/database/database.sqlite 2>/dev/null || true
 
 echo "✨ [macatung.dev] Container ready on port $PORT!"
 
