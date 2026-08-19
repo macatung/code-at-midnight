@@ -234,7 +234,34 @@ const escapeRegExp = (str: string) => {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 };
 
-// Automatic Pāḷi Term Highlighter & Explanations Injector
+const annotateTextSegment = (
+  text: string,
+  pattern: RegExp,
+  termMap: Map<string, PaliGlossaryEntry>,
+  termSeenCount: Map<string, number>
+) => {
+  return text.replace(pattern, (matched) => {
+    const entry = termMap.get(matched.toLowerCase());
+    if (!entry) return matched;
+
+    // Limit highlighting the same term up to 3 times per article to maintain clean reading flow
+    const count = termSeenCount.get(entry.term) || 0;
+    if (count >= 3) {
+      return matched;
+    }
+    termSeenCount.set(entry.term, count + 1);
+
+    const safeTerm = encodeURIComponent(entry.term);
+    const safePali = encodeURIComponent(entry.pali || entry.term);
+    const safeVietnamese = encodeURIComponent(entry.vietnamese || matched);
+    const safeCategory = encodeURIComponent(entry.category || 'Pháp Học Pāḷi');
+    const safeMeaning = encodeURIComponent(entry.definition);
+
+    return `<span class="zen-pali-term" data-term="${safeTerm}" data-pali="${safePali}" data-vietnamese="${safeVietnamese}" data-category="${safeCategory}" data-meaning="${safeMeaning}" tabindex="0" role="button" aria-haspopup="dialog" title="Nhấp để xem giải nghĩa: ${entry.vietnamese || entry.pali}">${matched}</span>`;
+  });
+};
+
+// Automatic Pāḷi Term Highlighter & Explanations Injector (Only for body paragraphs, strictly skipping Headings, Code, and Buttons)
 const annotatePaliTermsInHtml = (html: string) => {
   if (!html) return '';
 
@@ -269,36 +296,52 @@ const annotatePaliTermsInHtml = (html: string) => {
   if (searchPhrases.length === 0) return html;
 
   const pattern = new RegExp(`(?<![\\p{L}\\p{N}])(${searchPhrases.map(w => escapeRegExp(w)).join('|')})(?![\\p{L}\\p{N}])`, 'gui');
-  const segments = html.split(/(<[^>]+>)/g);
   const termSeenCount = new Map<string, number>();
 
-  const transformed = segments.map(segment => {
-    if (segment.startsWith('<') && segment.endsWith('>')) {
-      return segment;
+  // Excluded tags: Headings, Code, SVGs, Pre, Buttons, Links, Strong
+  const tagRegex = /(<\/?([a-z0-9]+)[^>]*>)/gi;
+  let lastIndex = 0;
+  let result = '';
+  let insideExcludedTag = 0;
+  const excludedTags = new Set(['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'code', 'pre', 'svg', 'button', 'a']);
+
+  let match: RegExpExecArray | null;
+  while ((match = tagRegex.exec(html)) !== null) {
+    const text = html.substring(lastIndex, match.index);
+    if (text) {
+      if (insideExcludedTag === 0) {
+        result += annotateTextSegment(text, pattern, termMap, termSeenCount);
+      } else {
+        result += text;
+      }
     }
 
-    return segment.replace(pattern, (matched) => {
-      const entry = termMap.get(matched.toLowerCase());
-      if (!entry) return matched;
+    const fullTag = match[1];
+    const tagName = match[2].toLowerCase();
+    const isClosing = fullTag.startsWith('</');
 
-      // Limit highlighting the same term up to 4 times per article to maintain clean reading flow
-      const count = termSeenCount.get(entry.term) || 0;
-      if (count >= 4) {
-        return matched;
+    if (excludedTags.has(tagName)) {
+      if (isClosing) {
+        insideExcludedTag = Math.max(0, insideExcludedTag - 1);
+      } else if (!fullTag.endsWith('/>')) {
+        insideExcludedTag++;
       }
-      termSeenCount.set(entry.term, count + 1);
+    }
 
-      const safeTerm = encodeURIComponent(entry.term);
-      const safePali = encodeURIComponent(entry.pali || entry.term);
-      const safeVietnamese = encodeURIComponent(entry.vietnamese || matched);
-      const safeCategory = encodeURIComponent(entry.category || 'Pháp Học Pāḷi');
-      const safeMeaning = encodeURIComponent(entry.definition);
+    result += fullTag;
+    lastIndex = tagRegex.lastIndex;
+  }
 
-      return `<span class="zen-pali-term" data-term="${safeTerm}" data-pali="${safePali}" data-vietnamese="${safeVietnamese}" data-category="${safeCategory}" data-meaning="${safeMeaning}" tabindex="0" role="button" aria-haspopup="dialog" title="Nhấp hoặc rê chuột để xem giải nghĩa: ${entry.vietnamese || entry.pali}">${matched}<span class="zen-term-icon" aria-hidden="true">💡</span></span>`;
-    });
-  });
+  const remainingText = html.substring(lastIndex);
+  if (remainingText) {
+    if (insideExcludedTag === 0) {
+      result += annotateTextSegment(remainingText, pattern, termMap, termSeenCount);
+    } else {
+      result += remainingText;
+    }
+  }
 
-  return transformed.join('');
+  return result;
 };
 
 // Rich Markdown to Zen HTML Parser with Sutta-first readability & Pāḷi Annotation
@@ -318,68 +361,70 @@ const renderedMarkdown = computed(() => {
     </div>`;
   });
 
+  const cleanHeadingText = (text: string) => text.replace(/^[☸️🌸✦🔄📖🧘💡\s]+/, '').trim();
+
   let parsedHtml = '';
 
   if (isPaperMode.value) {
-    // 2. Blockquotes (Paper Mode)
+    // 2. Blockquotes (Paper Mode - High Contrast)
     md = md.replace(/^>\s?(.*)$/gim, (match, p1) => {
-      return `<blockquote class="my-6 pl-5 py-4 border-l-4 border-amber-600 bg-amber-50/90 rounded-r-2xl text-stone-800 font-serif italic text-base sm:text-lg leading-relaxed shadow-sm">
+      return `<blockquote class="my-6 pl-5 pr-4 py-4 border-l-4 border-amber-700 bg-amber-50/90 rounded-r-2xl text-[#1c1917] font-serif italic text-base sm:text-lg leading-relaxed shadow-sm">
         <div class="flex items-start gap-2">
-          <span class="text-amber-700 text-xl select-none font-bold">“</span>
-          <div class="flex-1">${p1.trim()}</div>
+          <span class="text-amber-800 text-xl select-none font-bold">“</span>
+          <div class="flex-1 not-italic font-serif text-[#1c1917]">${p1.trim()}</div>
         </div>
       </blockquote>`;
     });
 
-    // 3. Headings
-    md = md.replace(/^### (.*$)/gim, '<h3 class="text-lg sm:text-xl font-bold text-amber-900 mt-8 mb-3 font-serif flex items-center gap-2"><span class="text-amber-600 text-sm">✦</span>$1</h3>');
-    md = md.replace(/^## (.*$)/gim, '<h2 class="text-xl sm:text-2xl font-bold text-amber-950 mt-10 mb-4 pb-2.5 border-b border-amber-200 font-serif flex items-center gap-2.5"><span>☸️</span>$1</h2>');
+    // 3. Headings (Clean without duplicate icons)
+    md = md.replace(/^### (.*$)/gim, (m, p1) => `<h3 class="text-lg sm:text-xl font-bold text-amber-950 mt-8 mb-3 font-serif flex items-center gap-2"><span class="text-amber-700 text-sm">✦</span><span>${cleanHeadingText(p1)}</span></h3>`);
+    md = md.replace(/^## (.*$)/gim, (m, p1) => `<h2 class="text-xl sm:text-2xl font-bold text-amber-950 mt-10 mb-4 pb-2.5 border-b border-amber-300 font-serif flex items-center gap-2.5"><span class="text-amber-700">☸️</span><span>${cleanHeadingText(p1)}</span></h2>`);
 
     // 4. Horizontal Rules
-    md = md.replace(/^---$/gim, '<div class="my-10 flex items-center justify-center gap-3 text-amber-600/40 select-none"><span class="h-px w-24 bg-amber-300"></span><span>☸️ 🌸 ☸️</span><span class="h-px w-24 bg-amber-300"></span></div>');
+    md = md.replace(/^---$/gim, '<div class="my-10 flex items-center justify-center gap-3 text-amber-700/60 select-none"><span class="h-px w-24 bg-amber-300"></span><span>☸️ 🌸 ☸️</span><span class="h-px w-24 bg-amber-300"></span></div>');
 
     // 5. Bold & Italic
-    md = md.replace(/\*\*(.*?)\*\*/gim, '<strong class="font-bold text-amber-900">$1</strong>');
-    md = md.replace(/\*(.*?)\*/gim, '<em class="italic text-stone-700 font-serif">$1</em>');
+    md = md.replace(/\*\*(.*?)\*\*/gim, '<strong class="font-bold text-amber-950">$1</strong>');
+    md = md.replace(/\*(.*?)\*/gim, '<em class="italic text-stone-800 font-serif">$1</em>');
 
     // 6. Ordered & Unordered Lists
-    md = md.replace(/^\d+\.\s(.*)$/gim, '<li class="ml-4 pl-2 list-decimal text-stone-800 my-1.5 leading-relaxed text-base sm:text-lg">$1</li>');
-    md = md.replace(/^-\s(.*)$/gim, '<li class="ml-4 pl-2 list-disc text-stone-800 my-1.5 leading-relaxed text-base sm:text-lg">$1</li>');
+    md = md.replace(/^\d+\.\s(.*)$/gim, '<li class="ml-4 pl-2 list-decimal text-[#1c1917] my-1.5 leading-relaxed text-base sm:text-lg font-serif">$1</li>');
+    md = md.replace(/^-\s(.*)$/gim, '<li class="ml-4 pl-2 list-disc text-[#1c1917] my-1.5 leading-relaxed text-base sm:text-lg font-serif">$1</li>');
 
-    // 7. Paragraphs
+    // 7. Paragraphs (WCAG AAA High Contrast)
     const paragraphs = md.split(/\n\n+/);
     parsedHtml = paragraphs.map(p => {
       p = p.trim();
       if (p.startsWith('<div') || p.startsWith('<blockquote') || p.startsWith('<h') || p.startsWith('<li')) {
         return p;
       }
-      return `<p class="my-4 text-stone-800 font-serif leading-[2] text-base sm:text-lg text-justify">${p.replace(/\n/g, '<br/>')}</p>`;
+      return `<p class="my-5 text-[#1c1917] font-serif leading-[2.1] text-base sm:text-lg text-justify font-normal">${p.replace(/\n/g, '<br/>')}</p>`;
     }).join('\n');
   } else {
     // 2. Blockquotes (Night Mode)
     md = md.replace(/^>\s?(.*)$/gim, (match, p1) => {
-      return `<blockquote class="my-6 pl-5 py-3.5 border-l-4 border-amber-500 bg-amber-950/20 rounded-r-2xl text-amber-200/95 font-serif italic text-base sm:text-lg leading-relaxed shadow-sm">
+      return `<blockquote class="my-6 pl-5 pr-4 py-4 border-l-4 border-amber-500 bg-amber-950/30 rounded-r-2xl text-stone-100 font-serif italic text-base sm:text-lg leading-relaxed shadow-sm">
         <div class="flex items-start gap-2">
-          <span class="text-amber-400 text-xl select-none">“</span>
-          <div class="flex-1">${p1.trim()}</div>
+          <span class="text-amber-400 text-xl select-none font-bold">“</span>
+          <div class="flex-1 not-italic text-stone-100">${p1.trim()}</div>
         </div>
       </blockquote>`;
     });
 
     // 3. Headings
-    md = md.replace(/^### (.*$)/gim, '<h3 class="text-lg sm:text-xl font-bold text-amber-200 mt-8 mb-3 font-serif flex items-center gap-2"><span class="text-amber-500 text-sm">✦</span>$1</h3>');
-    md = md.replace(/^## (.*$)/gim, '<h2 class="text-xl sm:text-2xl font-bold text-amber-300 mt-10 mb-4 pb-2 border-b border-amber-500/20 font-serif flex items-center gap-2.5"><span>☸️</span>$1</h2>');
+    md = md.replace(/^### (.*$)/gim, (m, p1) => `<h3 class="text-lg sm:text-xl font-bold text-amber-200 mt-8 mb-3 font-serif flex items-center gap-2"><span class="text-amber-500 text-sm">✦</span><span>${cleanHeadingText(p1)}</span></h3>`);
+    md = md.replace(/^## (.*$)/gim, (m, p1) => `<h2 class="text-xl sm:text-2xl font-bold text-amber-300 mt-10 mb-4 pb-2 border-b border-amber-500/30 font-serif flex items-center gap-2.5"><span>☸️</span><span>${cleanHeadingText(p1)}</span></h2>`);
 
     // 4. Horizontal Rules
     md = md.replace(/^---$/gim, '<div class="my-10 flex items-center justify-center gap-3 text-amber-500/40 select-none"><span class="h-px w-24 bg-amber-500/30"></span><span>☸️ 🌸 ☸️</span><span class="h-px w-24 bg-amber-500/30"></span></div>');
 
     // 5. Bold & Italic
-    md = md.replace(/\*\*(.*?)\*\*/gim, '<strong class="font-bold text-amber-200">$1</strong>');
-    md = md.replace(/\*(.*?)\*/gim, '<em class="italic text-stone-300 font-serif">$1</em>');
+    md = md.replace(/\*\*(.*?)\*\*/gim, '<strong class="font-bold text-amber-300">$1</strong>');
+    md = md.replace(/\*(.*?)\*/gim, '<em class="italic text-stone-200 font-serif">$1</em>');
 
     // 6. Ordered & Unordered Lists
-    md = md.replace(/^\d+\.\s(.*)$/gim, '<li class="ml-4 pl-2 list-decimal text-stone-200 my-1 leading-relaxed">$1</li>');
-    md = md.replace(/^-\s(.*)$/gim, '<li class="ml-4 pl-2 list-disc text-stone-200 my-1 leading-relaxed">$1</li>');
+    md = md.replace(/^\d+\.\s(.*)$/gim, '<li class="ml-4 pl-2 list-decimal text-stone-100 my-1.5 leading-relaxed text-base sm:text-lg font-serif">$1</li>');
+    md = md.replace(/^-\s(.*)$/gim, '<li class="ml-4 pl-2 list-disc text-stone-100 my-1.5 leading-relaxed text-base sm:text-lg font-serif">$1</li>');
 
     // 7. Paragraphs
     const paragraphs = md.split(/\n\n+/);
@@ -388,11 +433,11 @@ const renderedMarkdown = computed(() => {
       if (p.startsWith('<div') || p.startsWith('<blockquote') || p.startsWith('<h') || p.startsWith('<li')) {
         return p;
       }
-      return `<p class="my-4 text-stone-200 font-serif leading-relaxed text-justify">${p.replace(/\n/g, '<br/>')}</p>`;
+      return `<p class="my-5 text-stone-100 font-serif leading-[2.1] text-base sm:text-lg text-justify font-normal">${p.replace(/\n/g, '<br/>')}</p>`;
     }).join('\n');
   }
 
-  // 8. Inject Pāḷi Term Explanations Tooltips
+  // 8. Inject Pāḷi Term Explanations Tooltips (Body only)
   return annotatePaliTermsInHtml(parsedHtml);
 });
 
@@ -611,13 +656,13 @@ const suttaJsonLd = computed(() => ({
         <!-- Top Golden Accent Bar -->
         <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-600 via-amber-400 to-yellow-400" />
 
-        <!-- Notification Banner about Pāḷi Term Highlights -->
-        <div class="mb-6 pb-4 border-b border-amber-500/20 flex items-center justify-between gap-2 text-xs font-serif text-amber-800 dark:text-amber-300/80 bg-amber-500/10 px-4 py-2.5 rounded-2xl">
-          <span class="flex items-center gap-1.5">
-            <span>💡</span>
-            <span><strong>Chánh Niệm Tra Cứu:</strong> Rê chuột hoặc nhấp vào các thuật ngữ có gạch chân nét đứt để xem giải nghĩa Pāḷi chi tiết.</span>
-          </span>
-          <span class="text-[11px] font-mono opacity-70 hidden sm:inline">Pāḷi Canon Tooltips</span>
+        <!-- Notification Banner about Pāḷi Term Highlights (High Contrast Dark Slate Card) -->
+        <div class="mb-8 flex items-center justify-between gap-3 text-xs sm:text-sm font-serif bg-stone-900 text-stone-100 border border-amber-500/50 px-4 sm:px-5 py-3.5 rounded-2xl shadow-lg">
+          <div class="flex items-center gap-2.5 text-left">
+            <span class="text-amber-400 text-base shrink-0">💡</span>
+            <span><strong class="text-amber-300 font-bold">Chánh Niệm Tra Cứu:</strong> Rê chuột hoặc nhấp vào các thuật ngữ có gạch chân nét đứt để xem chú giải Pāḷi chi tiết.</span>
+          </div>
+          <span class="text-[11px] font-mono text-amber-300 border border-amber-500/40 px-2.5 py-1 rounded-xl bg-stone-950 shrink-0 hidden sm:inline shadow-inner">Pāḷi Canon</span>
         </div>
 
         <div class="space-y-4 font-serif text-left" v-html="renderedMarkdown" />
@@ -804,46 +849,32 @@ const suttaJsonLd = computed(() => ({
   border-radius: 8px;
 }
 
-/* Pāḷi Term Highlight & Tooltip Trigger */
+/* Pāḷi Term Highlight & Tooltip Trigger - Clean & Elegant */
 :deep(.zen-pali-term) {
   cursor: help;
   font-weight: 600;
-  display: inline-flex;
-  align-items: baseline;
-  border-bottom: 2px dotted #d97706;
-  color: #92400e;
-  padding: 0 2px;
-  border-radius: 4px;
+  display: inline;
+  border-bottom: 1.5px dotted #b45309;
+  color: #78350f;
+  padding: 0 1px;
+  border-radius: 2px;
   transition: all 0.2s ease;
   text-decoration: none;
 }
 
 :deep(.zen-pali-term:hover),
 :deep(.zen-pali-term:focus) {
-  background-color: rgba(251, 191, 36, 0.25);
-  color: #78350f;
+  background-color: rgba(251, 191, 36, 0.22);
+  color: #92400e;
   border-bottom-style: solid;
-  border-bottom-color: #b45309;
+  border-bottom-color: #d97706;
   outline: none;
 }
 
-:deep(.zen-term-icon) {
-  font-size: 10px;
-  margin-left: 2px;
-  opacity: 0.65;
-  transition: opacity 0.2s;
-  user-select: none;
-}
-
-:deep(.zen-pali-term:hover .zen-term-icon) {
-  opacity: 1;
-  transform: scale(1.15);
-}
-
-/* Night Mode Colors */
+/* Night Mode Colors for terms */
 :global(.dark) :deep(.zen-pali-term),
 .zen-article-content:not(.bg-stone-50\/95) :deep(.zen-pali-term) {
-  border-bottom: 2px dotted #f59e0b;
+  border-bottom: 1.5px dotted #fbbf24;
   color: #fde68a;
 }
 
@@ -853,7 +884,7 @@ const suttaJsonLd = computed(() => ({
   background-color: rgba(120, 53, 15, 0.45);
   color: #fef3c7;
   border-bottom-style: solid;
-  border-bottom-color: #fbbf24;
+  border-bottom-color: #f59e0b;
 }
 
 /* High Contrast Popover Enforcements */

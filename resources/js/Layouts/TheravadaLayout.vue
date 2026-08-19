@@ -82,37 +82,37 @@ const { activeZenPhase } = useZenTimeCycle();
         <nav class="flex items-center gap-1 sm:gap-2 shrink-0 whitespace-nowrap">
           <Link
             href="/theravada"
-            class="px-3 sm:px-4 py-2 rounded-2xl text-xs sm:text-sm font-serif text-stone-300 hover:text-amber-200 hover:bg-stone-900/80 transition-all font-medium whitespace-nowrap shrink-0"
+            class="px-3 sm:px-4 py-2 rounded-2xl text-xs sm:text-sm font-serif text-stone-200 hover:text-amber-300 hover:bg-stone-900/90 transition-all font-semibold whitespace-nowrap shrink-0"
           >
             Trang Chủ
           </Link>
           <Link
             href="/theravada/danh-muc/phap-hoc"
-            class="px-3 sm:px-4 py-2 rounded-2xl text-xs sm:text-sm font-serif text-stone-300 hover:text-amber-200 hover:bg-stone-900/80 transition-all font-medium whitespace-nowrap shrink-0"
+            class="px-3 sm:px-4 py-2 rounded-2xl text-xs sm:text-sm font-serif text-stone-200 hover:text-amber-300 hover:bg-stone-900/90 transition-all font-semibold whitespace-nowrap shrink-0"
           >
             Pháp Học
           </Link>
           <Link
             href="/theravada/danh-muc/phap-hanh"
-            class="px-3 sm:px-4 py-2 rounded-2xl text-xs sm:text-sm font-serif text-stone-300 hover:text-amber-200 hover:bg-stone-900/80 transition-all font-medium whitespace-nowrap shrink-0"
+            class="px-3 sm:px-4 py-2 rounded-2xl text-xs sm:text-sm font-serif text-stone-200 hover:text-amber-300 hover:bg-stone-900/90 transition-all font-semibold whitespace-nowrap shrink-0"
           >
             Pháp Hành (Vipassanā)
           </Link>
           <Link
             href="/theravada/danh-muc/kinh-tung"
-            class="px-3 sm:px-4 py-2 rounded-2xl text-xs sm:text-sm font-serif text-stone-300 hover:text-amber-200 hover:bg-stone-900/80 transition-all font-medium whitespace-nowrap shrink-0"
+            class="px-3 sm:px-4 py-2 rounded-2xl text-xs sm:text-sm font-serif text-stone-200 hover:text-amber-300 hover:bg-stone-900/90 transition-all font-semibold whitespace-nowrap shrink-0"
           >
             Kinh Tụng
           </Link>
           <Link
             href="/theravada/ung-dung-tu-hoc"
-            class="px-3 sm:px-4 py-2 rounded-2xl text-xs sm:text-sm font-serif text-amber-300 hover:text-amber-100 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 transition-all font-bold whitespace-nowrap shrink-0"
+            class="px-3 sm:px-4 py-2 rounded-2xl text-xs sm:text-sm font-serif text-amber-300 hover:text-amber-100 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 transition-all font-bold whitespace-nowrap shrink-0 shadow-sm"
           >
             ✨ Ứng Dụng Tu Học
           </Link>
           <Link
             href="/theravada/tu-dien-pali"
-            class="px-3 sm:px-4 py-2 rounded-2xl text-xs sm:text-sm font-serif text-stone-300 hover:text-amber-200 hover:bg-stone-900/80 transition-all font-medium whitespace-nowrap shrink-0"
+            class="px-3 sm:px-4 py-2 rounded-2xl text-xs sm:text-sm font-serif text-stone-200 hover:text-amber-300 hover:bg-stone-900/90 transition-all font-semibold whitespace-nowrap shrink-0"
           >
             Từ Điển Pāḷi
           </Link>
@@ -126,7 +126,7 @@ const { activeZenPhase } = useZenTimeCycle();
     </main>
 
     <!-- 2. Zen Footer -->
-    <footer class="relative z-10 border-t border-stone-800/80 bg-stone-950/95 py-12 px-4 sm:px-6 lg:px-8 text-center font-serif text-stone-400 text-sm">
+    <footer class="relative z-10 border-t border-stone-800/90 bg-stone-950/98 py-12 px-4 sm:px-6 lg:px-8 text-center font-serif text-stone-300 text-sm">
       <div class="max-w-4xl mx-auto flex flex-col items-center gap-5">
         <!-- Dharma Lotus Seal -->
         <div class="flex items-center justify-center gap-3 text-amber-400 text-xl">
@@ -137,27 +137,27 @@ const { activeZenPhase } = useZenTimeCycle();
           <span>🌸</span>
         </div>
 
-        <p class="italic text-stone-300 max-w-2xl leading-relaxed text-base">
+        <p class="italic text-stone-200 max-w-2xl leading-relaxed text-base">
           "Sabbapāpassa akaraṇaṃ, kusalassa upasampadā; Sacittapariyodapanaṃ, etaṃ buddhāna sāsanaṃ."<br />
-          <span class="text-amber-300 text-xs sm:text-sm not-italic mt-1 block">
+          <span class="text-amber-300 text-xs sm:text-sm not-italic mt-1 block font-semibold">
             (Không làm mọi điều ác, Thành tựu các hạnh lành, Giữ tâm ý trong sạch, Đó lời chư Phật dạy — Kinh Pháp Cú 183)
           </span>
         </p>
 
-        <div class="flex flex-wrap items-center justify-center gap-4 text-xs sm:text-sm text-stone-400 pt-4 border-t border-stone-900 w-full font-serif">
+        <div class="flex flex-wrap items-center justify-center gap-4 text-xs sm:text-sm text-stone-300 pt-4 border-t border-stone-900 w-full font-serif">
           <span>© 2026 Ma Tọa Thiền • Theravāda Dhamma • macatung.dev</span>
           <span>•</span>
-          <Link href="/theravada/danh-muc/phap-hoc" class="hover:text-amber-300">Pháp Học</Link>
+          <Link href="/theravada/danh-muc/phap-hoc" class="hover:text-amber-300 font-semibold">Pháp Học</Link>
           <span>•</span>
-          <Link href="/theravada/danh-muc/phap-hanh" class="hover:text-amber-300">Thiền Vipassanā</Link>
+          <Link href="/theravada/danh-muc/phap-hanh" class="hover:text-amber-300 font-semibold">Thiền Vipassanā</Link>
           <span>•</span>
-          <Link href="/theravada/danh-muc/kinh-tung" class="hover:text-amber-300">Kinh Tụng</Link>
+          <Link href="/theravada/danh-muc/kinh-tung" class="hover:text-amber-300 font-semibold">Kinh Tụng</Link>
           <span>•</span>
-          <Link href="/theravada/ung-dung-tu-hoc" class="hover:text-amber-300">Ứng Dụng</Link>
+          <Link href="/theravada/ung-dung-tu-hoc" class="hover:text-amber-300 font-semibold">Ứng Dụng</Link>
           <span>•</span>
-          <Link href="/theravada/tu-dien-pali" class="hover:text-amber-300">Từ Điển Pāḷi</Link>
+          <Link href="/theravada/tu-dien-pali" class="hover:text-amber-300 font-semibold">Từ Điển Pāḷi</Link>
           <span>•</span>
-          <Link href="/" class="hover:text-amber-300 font-sans">macatung.dev</Link>
+          <Link href="/" class="hover:text-amber-300 font-sans font-semibold">macatung.dev</Link>
         </div>
       </div>
     </footer>

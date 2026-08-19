@@ -222,34 +222,34 @@ const theravadaHomeJsonLd = {
           v-for="cat in categories"
           :key="cat.slug"
           :href="`/theravada/danh-muc/${cat.slug}`"
-          class="group relative overflow-hidden flex flex-col justify-between p-6 sm:p-7 rounded-3xl bg-stone-900/80 border border-stone-800 hover:border-amber-500/60 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_15px_35px_-10px_rgba(245,158,11,0.25)] text-left backdrop-blur-md"
+          class="group relative overflow-hidden flex flex-col justify-between p-6 sm:p-7 rounded-3xl bg-stone-900/90 border border-stone-800 hover:border-amber-500/60 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_-10px_rgba(245,158,11,0.3)] text-left backdrop-blur-md"
         >
           <!-- Shimmering Golden Rim Highlight -->
           <div class="absolute inset-0 bg-gradient-to-r from-transparent via-amber-400/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 pointer-events-none" />
 
           <div>
             <div class="flex items-center justify-between mb-4">
-              <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/10 border border-amber-500/20 text-2xl text-amber-400 group-hover:scale-110 transition-transform shadow-inner">
+              <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/15 border border-amber-500/30 text-2xl text-amber-300 group-hover:scale-110 transition-transform shadow-inner">
                 {{ cat.slug === 'phap-hoc' ? '📖' : cat.slug === 'phap-hanh' ? '🧘' : '📜' }}
               </span>
-              <span class="text-xs font-serif text-amber-400/90 font-bold bg-stone-950 px-2.5 py-1 rounded-full border border-stone-800">
+              <span class="text-xs font-serif text-amber-300 font-bold bg-stone-950 px-3 py-1 rounded-full border border-stone-800 shadow-sm">
                 {{ cat.count }} Bài viết
               </span>
             </div>
 
-            <h3 class="text-lg font-serif font-bold text-amber-200 group-hover:text-amber-100 transition-colors">
+            <h3 class="text-xl font-serif font-bold text-amber-100 group-hover:text-amber-300 transition-colors">
               {{ cat.name }}
             </h3>
-            <p class="text-xs font-serif text-amber-500/80 italic mb-3">
+            <p class="text-xs font-serif text-amber-400/90 italic font-medium mb-3">
               {{ cat.pali }}
             </p>
 
-            <p class="text-xs text-stone-400 font-serif leading-relaxed">
+            <p class="text-xs sm:text-sm text-stone-300 font-serif leading-relaxed">
               {{ cat.description }}
             </p>
           </div>
 
-          <div class="mt-6 pt-4 border-t border-stone-800/80 flex items-center justify-between text-xs font-serif font-bold text-amber-400">
+          <div class="mt-6 pt-4 border-t border-stone-800 flex items-center justify-between text-xs font-serif font-bold text-amber-400 group-hover:text-amber-300">
             <span>Khám phá chuyên mục</span>
             <span class="group-hover:translate-x-1.5 transition-transform">➔</span>
           </div>
@@ -274,36 +274,36 @@ const theravadaHomeJsonLd = {
         <article
           v-for="item in articles"
           :key="item.id"
-          class="group relative overflow-hidden flex flex-col justify-between rounded-3xl bg-stone-900/70 border border-stone-800 hover:border-amber-500/50 p-6 sm:p-7 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_-12px_rgba(245,158,11,0.25)] hover:bg-stone-900/90 text-left backdrop-blur-md"
+          class="group relative overflow-hidden flex flex-col justify-between rounded-3xl bg-stone-900/90 border border-stone-800 hover:border-amber-500/60 p-6 sm:p-7 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_-12px_rgba(245,158,11,0.3)] text-left backdrop-blur-md"
         >
           <!-- Shimmering Golden Rim Highlight -->
           <div class="absolute inset-0 bg-gradient-to-r from-transparent via-amber-400/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 pointer-events-none" />
 
           <div>
-            <div class="flex items-center justify-between gap-2 text-xs font-serif text-stone-400 mb-3">
-              <span class="px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 font-serif font-medium">
+            <div class="flex items-center justify-between gap-2 text-xs font-serif text-stone-300 mb-3">
+              <span class="px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 font-serif font-bold">
                 {{ item.category === 'phap-hoc' ? 'Pháp Học' : item.category === 'phap-hanh' ? 'Pháp Hành' : 'Kinh Tụng' }}
               </span>
-              <span>⏱️ {{ item.reading_time_min }} phút đọc</span>
+              <span class="text-stone-300 font-medium">⏱️ {{ item.reading_time_min }} phút đọc</span>
             </div>
 
-            <h3 class="text-base sm:text-lg font-serif font-bold text-stone-100 group-hover:text-amber-300 transition-colors leading-snug line-clamp-2 mb-2">
+            <h3 class="text-lg font-serif font-bold text-stone-100 group-hover:text-amber-300 transition-colors leading-snug line-clamp-2 mb-2">
               <Link :href="`/theravada/kinh/${item.slug}`">
                 {{ item.title }}
               </Link>
             </h3>
 
-            <p v-if="item.pali_title" class="text-xs font-serif text-amber-500/80 italic mb-3">
+            <p v-if="item.pali_title" class="text-xs font-serif text-amber-400/90 italic font-medium mb-3">
               Pāḷi: {{ item.pali_title }}
             </p>
 
-            <p class="text-xs text-stone-400 font-serif leading-relaxed line-clamp-3 mb-4">
+            <p class="text-xs sm:text-sm text-stone-300 font-serif leading-relaxed line-clamp-3 mb-4">
               {{ item.excerpt }}
             </p>
           </div>
 
-          <div class="pt-4 border-t border-stone-800/80 flex items-center justify-between text-xs font-serif text-stone-400">
-            <span class="truncate max-w-[160px] italic">
+          <div class="pt-4 border-t border-stone-800 flex items-center justify-between text-xs font-serif text-stone-400">
+            <span class="truncate max-w-[160px] italic text-stone-300">
               {{ item.author || 'Pāḷi Canon' }}
             </span>
             <Link
