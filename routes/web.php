@@ -8,6 +8,7 @@ use App\Http\Controllers\Theravada\TheravadaController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\Api\ApiTaskController;
 use App\Http\Controllers\Api\ApiProjectController;
+use App\Http\Controllers\Api\ApiSprintController;
 use App\Http\Controllers\Api\AnalyticsEventController;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminDashboardController;
@@ -50,6 +51,17 @@ Route::prefix('api/projects')->group(function () {
     Route::post('/', [ApiProjectController::class, 'store']);
     Route::patch('/{id}', [ApiProjectController::class, 'update']);
     Route::delete('/{id}', [ApiProjectController::class, 'destroy']);
+});
+
+// 3.2 Sprints REST API Endpoints (For Scrum Sprint Management)
+Route::prefix('api/sprints')->group(function () {
+    Route::get('/', [ApiSprintController::class, 'index']);
+    Route::post('/', [ApiSprintController::class, 'store']);
+    Route::patch('/{sprint}', [ApiSprintController::class, 'update']);
+    Route::delete('/{sprint}', [ApiSprintController::class, 'destroy']);
+    Route::post('/{sprint}/start', [ApiSprintController::class, 'start']);
+    Route::post('/{sprint}/complete', [ApiSprintController::class, 'complete']);
+    Route::post('/move-tasks', [ApiSprintController::class, 'moveTasks']);
 });
 
 // 4. Theravāda Subdomain Routes (e.g. theravada.macatung.dev / theravada.localhost)

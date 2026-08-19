@@ -12,10 +12,26 @@ class ApiTaskController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Task::with('project');
+        $query = Task::with(['project', 'sprint', 'epic']);
 
         if ($request->has("project_id") && $request->query("project_id") !== 'all') {
-            $query->where("project_id", $request->query("project_id"));
+            if ($request->query("project_id") === 'unassigned') {
+                $query->whereNull("project_id");
+            } else {
+                $query->where("project_id", $request->query("project_id"));
+            }
+        }
+
+        if ($request->has("sprint_id")) {
+            if ($request->query("sprint_id") === 'backlog') {
+                $query->whereNull("sprint_id");
+            } elseif ($request->query("sprint_id") !== 'all') {
+                $query->where("sprint_id", $request->query("sprint_id"));
+            }
+        }
+
+        if ($request->has("issue_type") && $request->query("issue_type") !== 'all') {
+            $query->where("issue_type", $request->query("issue_type"));
         }
 
         if ($request->has("status")) {
@@ -45,12 +61,18 @@ class ApiTaskController extends Controller
     {
         $validated = $request->validate([
             "project_id" => "nullable|exists:projects,id",
+            "issue_key" => "nullable|string|max:20",
+            "issue_type" => "nullable|in:epic,story,task,bug",
             "title" => "required|string|max:255",
             "description" => "nullable|string",
             "status" => "nullable|in:todo,in_progress,review,done",
             "priority" => "nullable|in:urgent,high,medium,low",
             "category" => "nullable|string",
+            "story_points" => "nullable|integer|min:0|max:100",
+            "sprint_id" => "nullable|exists:sprints,id",
+            "epic_id" => "nullable|exists:tasks,id",
             "estimated_pomodoros" => "nullable|integer|min:1|max:20",
+            "start_date" => "nullable|date",
             "due_date" => "nullable|date",
             "notes" => "nullable|string",
         ]);
@@ -60,7 +82,7 @@ class ApiTaskController extends Controller
         }
 
         $task = Task::create($validated);
-        $task->load('project');
+        $task->load(['project', 'sprint', 'epic']);
 
         return response()->json([
             "success" => true,
@@ -75,13 +97,19 @@ class ApiTaskController extends Controller
 
         $validated = $request->validate([
             "project_id" => "nullable|exists:projects,id",
+            "issue_key" => "nullable|string|max:20",
+            "issue_type" => "nullable|in:epic,story,task,bug",
             "title" => "sometimes|string|max:255",
             "description" => "nullable|string",
             "status" => "sometimes|in:todo,in_progress,review,done",
             "priority" => "sometimes|in:urgent,high,medium,low",
             "category" => "sometimes|string",
+            "story_points" => "nullable|integer|min:0|max:100",
+            "sprint_id" => "nullable",
+            "epic_id" => "nullable",
             "estimated_pomodoros" => "sometimes|integer|min:1|max:20",
             "completed_pomodoros" => "sometimes|integer|min:0",
+            "start_date" => "nullable|date",
             "due_date" => "nullable|date",
             "notes" => "nullable|string",
         ]);
@@ -93,7 +121,7 @@ class ApiTaskController extends Controller
         }
 
         $task->update($validated);
-        $task->load('project');
+        $task->load(['project', 'sprint', 'epic']);
 
         return response()->json([
             "success" => true,

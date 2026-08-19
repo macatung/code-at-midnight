@@ -12,6 +12,7 @@ class Project extends Model
 
     protected $fillable = [
         'slug',
+        'key',
         'title',
         'tagline',
         'description',
@@ -42,6 +43,31 @@ class Project extends Model
     public function tasks(): HasMany
     {
         return $this->hasMany(Task::class);
+    }
+
+    public function sprints(): HasMany
+    {
+        return $this->hasMany(Sprint::class);
+    }
+
+    public function epics(): HasMany
+    {
+        return $this->hasMany(Task::class)->where('issue_type', 'epic');
+    }
+
+    public function getEffectiveKeyAttribute(): string
+    {
+        if (!empty($this->key)) {
+            return strtoupper($this->key);
+        }
+        // Fallback key from title/slug
+        $words = preg_split('/[\s_-]+/', $this->slug ?: $this->title);
+        $key = '';
+        foreach ($words as $w) {
+            if (!empty($w)) $key .= strtoupper($w[0]);
+            if (strlen($key) >= 4) break;
+        }
+        return $key ?: ('PRJ' . $this->id);
     }
 
     /**
