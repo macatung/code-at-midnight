@@ -44,6 +44,6 @@ jobs:
             --region ${{ env.REGION }} \
             --project ${{ env.PROJECT_ID }} \
             --add-cloudsql-instances ${{ env.PROJECT_ID }}:${{ env.REGION }}:nendoi-db-serverless \
-            --set-env-vars "DB_CONNECTION=pgsql,DB_HOST=/cloudsql/${{ env.PROJECT_ID }}:${{ env.REGION }}:nendoi-db-serverless,DB_PORT=5432,DB_DATABASE=macatung,DB_USERNAME=macatung_user,DB_PASSWORD=MacaTungPg_2026_SecureKey" \
+            --update-env-vars "DB_CONNECTION=pgsql,DB_HOST=/cloudsql/${{ env.PROJECT_ID }}:${{ env.REGION }}:nendoi-db-serverless,DB_PORT=5432,DB_DATABASE=macatung,DB_USERNAME=macatung_user,DB_PASSWORD=MacaTungPg_2026_SecureKey" \
             --allow-unauthenticated \
             --quiet
