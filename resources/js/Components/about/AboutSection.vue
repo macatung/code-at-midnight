@@ -18,7 +18,7 @@ const props = withDefaults(defineProps<Props>(), {
   stats: () => ({}),
 });
 
-type ManifestoTabId = 'philosophy' | 'day-night' | 'craftsmanship';
+type ManifestoTabId = 'philosophy' | 'humanistic' | 'sustainable' | 'craftsmanship';
 
 const activeTab = ref<ManifestoTabId>('philosophy');
 
@@ -27,23 +27,31 @@ const tabs = [
     id: 'philosophy',
     title: 'Triết Lý 00:00 AM',
     subtitle: 'Khi cả thành phố chìm vào giấc ngủ, thế giới của dòng code mới thực sự bừng tỉnh.',
-    content: 'Không có tiếng thông báo Slack, không có họp hành ngắt quãng. Chỉ có âm thanh gõ phím, ly Robusta đậm đà và dòng chảy tư duy thuần khiết.',
+    content: 'Không có tiếng thông báo Slack, không có họp hành ngắt quãng. Đêm sâu là không gian tĩnh tại tuyệt đối để gạn đục khơi trong, đưa tư duy kiến trúc vào trạng thái Ultra-Flow thuần khiết.',
     icon: 'Moon',
     badge: 'Ultra-Flow'
   },
   {
-    id: 'day-night',
-    title: 'Day vs Night Developer',
-    subtitle: 'Ban ngày bảo trì hệ thống — Ban đêm kiến tạo tương lai.',
-    content: 'Ban ngày là giao tiếp, đồng bộ và lập kế hoạch. Ban đêm là thời khắc của kiến trúc, thuật toán tối ưu và những sáng tạo vượt bậc.',
-    icon: 'Sun',
-    badge: 'Dual Mindset'
+    id: 'humanistic',
+    title: 'Vị Nhân Sinh & Vô Ngã',
+    subtitle: 'Code không phải để phô trương cái tôi, mà để xoa dịu nỗi đau và phụng sự cuộc đời.',
+    content: 'Gạt bỏ bản ngã để viết những dòng mã sáng rõ, dễ hiểu. Thiết kế giao diện thuần khiết, nói không với các thủ thuật thao túng tâm lý (Dark Patterns), tôn trọng thời gian và sự an lạc của người dùng.',
+    icon: 'Heart',
+    badge: 'Human-First'
+  },
+  {
+    id: 'sustainable',
+    title: 'Duyên Khởi Kiến Trúc',
+    subtitle: 'Mọi module vận hành nương tựa nhau trong một sinh thái bền vững, tiết kiệm tài nguyên.',
+    content: 'Ứng dụng lý Duyên Khởi (Paṭiccasamuppāda) vào hệ thống: Tối ưu Green Computing, kiến trúc phân tán Decoupled thích ứng linh hoạt trước biến chuyển vô thường của công nghệ mà không bị gãy đổ.',
+    icon: 'Layers',
+    badge: 'Resilience'
   },
   {
     id: 'craftsmanship',
-    title: 'Khắc Bùa Chất Lượng',
-    subtitle: 'Mỗi dòng mã là một đạo bùa chú trừ khử bug tận gốc.',
-    content: 'Không chấp nhận sự cẩu thả. Mọi API đều phải chuẩn chỉ, mọi UI đều phải mượt mà 60 FPS, và mọi test suite đều phải pass 100% trước khi deploy.',
+    title: 'Chánh Niệm Kỹ Thuật',
+    subtitle: 'Mỗi dòng mã là một đạo bùa chú trừ khử bug và loại bỏ nợ kỹ thuật tận gốc.',
+    content: 'Nợ kỹ thuật là nguồn gốc của bất an. Cam kết 100% Strict Type-safety, automated tests bao phủ toàn diện và Zero-Crash architecture để mang lại sự an tâm tuyệt đối cho người dùng và đối tác.',
     icon: 'Shield',
     badge: 'Craftsmanship'
   }
@@ -115,19 +123,19 @@ const displayStats = computed(() => {
 
 const pillars = [
   {
-    icon: 'Moon',
-    title: 'Vùng Tĩnh Lặng (Ultra-Flow)',
-    desc: 'Tập trung tuyệt đối vào giải quyết core logic, không bị gián đoạn bởi xao nhãng.',
+    icon: 'Heart',
+    title: 'Kỹ Nghệ Vị Nhân Sinh',
+    desc: 'Lấy con người làm gốc rễ, UX chân thật, giải phóng thời gian và xoa dịu nỗi đau thao tác.',
+  },
+  {
+    icon: 'Layers',
+    title: 'Duyên Khởi & Bền Vững',
+    desc: 'Kiến trúc phân tán tối ưu Green Computing, thích ứng biến đổi vô thường của công nghệ.',
   },
   {
     icon: 'Shield',
-    title: 'Kiến Trúc & Type-Safety',
-    desc: 'TypeScript nghiêm ngặt 100%, cấu trúc phân tán chuẩn SOLID, loại bỏ runtime crash.',
-  },
-  {
-    icon: 'Zap',
-    title: 'Tối Ưu Tốc Độ Thực Chiến',
-    desc: 'Độ trễ phản hồi sub-millisecond, giao diện 60 FPS mượt mà và khả năng chịu tải cao.',
+    title: 'Chánh Niệm Kỹ Thuật',
+    desc: '100% Strict Type-Safety, Zero-Debt, kiểm thử tự động toàn diện và bảo mật phòng vệ.',
   },
 ];
 </script>
@@ -234,12 +242,12 @@ const pillars = [
             🏆 Giải Quốc Gia Tin Học · 8+ Năm Thực Chiến Hệ Thống Tải Cao
           </p>
           <p class="text-slate-300 text-sm leading-relaxed font-sans mb-4">
-            Chuyên sâu kiến trúc hệ thống backend tải cao, nền tảng viễn thông GIS/NMS và thiết kế các hệ sinh thái <strong>Multi-Agent AI tự trị</strong> thay thế quy trình Customer Service truyền thống 24/7 với độ chính xác > 92%.
+            Chuyên sâu kiến trúc hệ thống phân tán chịu tải cao, nền tảng viễn thông GIS/NMS và thiết kế các hệ sinh thái <strong>Multi-Agent AI tự trị</strong> giải phóng sức lao động con người, phụng sự cuộc sống với độ chính xác > 92%.
           </p>
         </div>
         <div class="pt-4 border-t border-white/5 flex items-center justify-between text-xs font-mono text-slate-400 relative z-10">
           <span>📍 Ho Chi Minh City / Remote</span>
-          <span class="text-phantom-mint font-bold">⚡ Zero Downtime Pledge</span>
+          <span class="text-phantom-mint font-bold">🌿 Kỹ Nghệ Vị Nhân Sinh</span>
         </div>
       </div>
 

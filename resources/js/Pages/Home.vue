@@ -10,6 +10,7 @@ import ProjectsSection from '@/Components/projects/ProjectsSection.vue';
 import SkillsSection from '@/Components/skills/SkillsSection.vue';
 import ExperienceSection from '@/Components/experience/ExperienceSection.vue';
 import AboutSection from '@/Components/about/AboutSection.vue';
+import HumanisticPhilosophySection from '@/Components/philosophy/HumanisticPhilosophySection.vue';
 import MidnightTerminal from '@/Components/terminal/MidnightTerminal.vue';
 import ContactSection from '@/Components/contact/ContactSection.vue';
 import MiniMascotLogo from '@/Components/mascot/MiniMascotLogo.vue';
@@ -67,9 +68,9 @@ const homeJsonLd = {
 
 <template>
   <SeoHead
-    :title="title || 'The Midnight Architect — Full-Stack & Creative Engineering'"
-    description="Khám phá Portfolio độc bản của Ma Cà Tưng (macatung.dev) — Lập trình viên Full-Stack & Creative Engineer chuyên sâu Laravel, Vue.js, Inertia.js, Cloud Architecture và các ứng dụng tương tác kỳ ảo."
-    keywords="Ma Cà Tưng, macatung.dev, Full-Stack Developer, Creative Engineer, Laravel Developer Vietnam, Vue.js Portfolio, Midnight Coder, Software Engineer"
+    :title="title || 'The Midnight Architect — Full-Stack, AI Systems & Triết Lý Vị Nhân Sinh'"
+    description="Khám phá Portfolio độc bản của Ma Cà Tưng (macatung.dev) — Lập trình viên Full-Stack & AI Systems Architect với triết lý kiến tạo phần mềm vị nhân sinh, hệ thống phân tán chịu tải cao và trải nghiệm tương tác kỳ ảo."
+    keywords="Ma Cà Tưng, macatung.dev, Triết lý xây dựng ứng dụng, Triết lý nhân sinh, Full-Stack Developer, AI Agent Architect, Laravel, Vue.js, Midnight Coder, Software Craftsmanship"
     canonical="https://macatung.dev"
     :json-ld="homeJsonLd"
   />
@@ -153,7 +154,10 @@ const homeJsonLd = {
       <!-- 2. Featured Grimoire Projects Showcase (Top 3 on Home) -->
       <ProjectsSection :projects="projects" :featured-only="true" />
 
-      <!-- 3. Developer Manifesto & Stats (#about) -->
+      <!-- 3. Triết Lý Nhân Sinh Trong Kiến Tạo Ứng Dụng (#philosophy) -->
+      <HumanisticPhilosophySection />
+
+      <!-- 4. Developer Manifesto & Stats (#about) -->
       <AboutSection :stats="stats" />
 
       <!-- 4. Midnight Tech Chronicle / Featured Articles Section -->

@@ -71,7 +71,8 @@ const triggerHeartEasterEgg = (e: MouseEvent) => {
         <h4 class="font-mono text-slate-400 uppercase tracking-wider mb-3 text-[11px]">Grimoire & Lore</h4>
         <ul class="space-y-2 text-slate-400">
           <li><a href="#hero" class="hover:text-phantom-mint transition-colors">Vương Quốc Đêm</a></li>
-          <li><a href="#about" class="hover:text-phantom-mint transition-colors">Triết Lý 00:00 AM</a></li>
+          <li><a href="#philosophy" class="hover:text-phantom-mint transition-colors">Triết Lý Vị Nhân Sinh</a></li>
+          <li><a href="#about" class="hover:text-phantom-mint transition-colors">Bản Lĩnh Đêm & Manifesto</a></li>
           <li><a href="#projects" class="hover:text-phantom-mint transition-colors">Hệ Thống Grimoire</a></li>
         </ul>
       </div>

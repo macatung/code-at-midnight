@@ -52,6 +52,7 @@ const quickSpells = [
   'cv',
   'projects',
   'skills',
+  'manifesto',
   'hop',
   'coffee',
   'talisman',
@@ -114,7 +115,7 @@ const execute = (rawCmd: string): string => {
 
   switch (command) {
     case 'help':
-      output = `Available spells:\n• time / clock   : Xem thời gian thực & phân kỳ nhịp sống\n• cycle / phase  : Xem bảng ma trận 4 phân kỳ trong ngày\n• travel <phase> : Du hành thời gian (midnight|dawn|noon|dusk)\n• reset-time     : Đồng bộ lại theo giờ thực tế của máy\n• whoami / bio   : Giới thiệu bản thân & định vị kiến trúc\n• cv / resume    : Xem tóm tắt hồ sơ năng lực & CV\n• projects / ls  : Danh sách Grimoire dự án thực chiến\n• skills         : Toàn bộ kho vũ khí kỹ thuật (18 runes)\n• game / play    : Bật Dev Mini-Game Rune Typer luyện phím\n• socials        : Các kênh liên lạc (Email, Telegram, GitHub)\n• summon / hire  : Mở bàn thờ triệu hồi / gửi yêu cầu dự án\n• hop            : Cho Ma Cà Tưng nhảy 1 cú cực cao\n• coffee         : Nạp 1 ly Robusta 100% không đường\n• talisman       : Nhận đạo bùa code 0 bug đã khai quang\n• sudo rm -rf bugs : Trừ tà diệt sạch bug trên production\n• clear          : Xóa sạch màn hình terminal`;
+      output = `Available spells:\n• time / clock   : Xem thời gian thực & phân kỳ nhịp sống\n• cycle / phase  : Xem bảng ma trận 4 phân kỳ trong ngày\n• travel <phase> : Du hành thời gian (midnight|dawn|noon|dusk)\n• reset-time     : Đồng bộ lại theo giờ thực tế của máy\n• whoami / bio   : Giới thiệu bản thân & định vị kiến trúc\n• manifesto / nhansinh : Tuyên ngôn Triết Lý Kiến Tạo Phần Mềm Vị Nhân Sinh\n• cv / resume    : Xem tóm tắt hồ sơ năng lực & CV\n• projects / ls  : Danh sách Grimoire dự án thực chiến\n• skills         : Toàn bộ kho vũ khí kỹ thuật (18 runes)\n• game / play    : Bật Dev Mini-Game Rune Typer luyện phím\n• socials        : Các kênh liên lạc (Email, Telegram, GitHub)\n• summon / hire  : Mở bàn thờ triệu hồi / gửi yêu cầu dự án\n• hop            : Cho Ma Cà Tưng nhảy 1 cú cực cao\n• coffee         : Nạp 1 ly Robusta 100% không đường\n• talisman       : Nhận đạo bùa code 0 bug đã khai quang\n• sudo rm -rf bugs : Trừ tà diệt sạch bug trên production\n• clear          : Xóa sạch màn hình terminal`;
       sound.playClick();
       break;
     case 'time':
@@ -236,8 +237,34 @@ const execute = (rawCmd: string): string => {
         }
       }
       break;
+    case 'manifesto':
+    case 'philosophy':
+    case 'nhansinh':
+      output = `══════════════════════════════════════════════════════════════════════════
+ 🌿 TUYÊN NGÔN KIẾN TẠO PHẦN MỀM VỊ NHÂN SINH (HUMANISTIC MANIFESTO)
+══════════════════════════════════════════════════════════════════════════
+ "Code Khởi Tâm Thiện — Ứng Dụng Độ Nhân Sinh"
+ 
+ 1. 🌿 VÔ NGÃ TRONG MÃ NGUỒN (Anattā & Karuṇā):
+    • Gạt bỏ bản ngã phô trương, thấu cảm sâu sắc nỗi đau người dùng.
+    • Nói KHÔNG với Dark Patterns, tôn trọng quyền riêng tư & tự do.
+
+ 2. ☸️ DUYÊN KHỞI & BỀN VỮNG (Paṭiccasamuppāda):
+    • Mọi module tương hỗ, tối ưu Green Computing tiết kiệm tài nguyên.
+    • Kiến trúc Decoupled thích ứng linh hoạt trước biến chuyển vô thường.
+
+ 3. 🧘 CHÁNH NIỆM TỪNG DÒNG LỆNH (Sati & Appamāda):
+    • Nợ kỹ thuật là gốc rễ của bất an; 100% Strict Type-Safety & Zero Debt.
+    • Tỉnh thức gạn đục khơi trong giữa đêm sâu (Midnight Flow 00:00 AM).
+
+ 4. 🕊️ PHỤNG SỰ & GIẢI PHÓNG CON NGƯỜI (Vimutti & Mettā):
+    • Multi-Agent AI tự trị gánh vác tác vụ lặp lại nặng nhọc 24/7.
+    • Trao lại thời gian để con người sống trọn vẹn và nuôi dưỡng nội tâm.
+──────────────────────────────────────────────────────────────────────────`;
+      sound.playCelestialChime(activePhase.value.id);
+      break;
     case 'slogan':
-      output = '✨ "Code at midnight. Deploy with confidence. Rest when the city wakes."';
+      output = '✨ "Code Khởi Tâm Thiện — Ứng Dụng Độ Nhân Sinh. Code at midnight, deploy with peace."';
       sound.playClick();
       break;
     case 'summon':
