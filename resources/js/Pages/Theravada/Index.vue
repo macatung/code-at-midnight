@@ -4,9 +4,6 @@ import { Link } from '@inertiajs/vue3';
 import TheravadaLayout from '@/Layouts/TheravadaLayout.vue';
 import ZenMascot from '@/Components/mascot/ZenMascot.vue';
 import ZenTimeSlider from '@/Components/theravada/ZenTimeSlider.vue';
-import DhammapadaCardGenerator from '@/Components/theravada/DhammapadaCardGenerator.vue';
-import VipassanaTimer from '@/Components/theravada/VipassanaTimer.vue';
-import AnattaContemplationEngine from '@/Components/theravada/AnattaContemplationEngine.vue';
 import { mindfulBell } from '@/audio/mindfulBellAudio';
 import { useZenTimeCycle } from '@/composables/useZenTimeCycle';
 
@@ -24,18 +21,6 @@ const props = defineProps<{
 
 const { activeZenPhase } = useZenTimeCycle();
 const isChanting = ref(false);
-const activeAppTab = ref<'card' | 'timer' | 'anatta'>('card');
-
-const openAnattaContemplation = () => {
-  activeAppTab.value = 'anatta';
-  mindfulBell.ringBell(528, 6.0);
-  if (typeof document !== 'undefined') {
-    const el = document.getElementById('buddhist-apps');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
-  }
-};
 
 const playChantBell = () => {
   isChanting.value = true;
@@ -70,7 +55,7 @@ const theravadaHomeJsonLd = {
 <template>
   <TheravadaLayout
     :title="title || 'Chánh Niệm Từng Giây • Tam Tạng Kinh Điển Theravāda'"
-    description="Hệ thống tu học và bảo tồn kinh điển Phật giáo nguyên thủy Theravāda: Tứ Thánh Đế, Bát Chánh Đạo, Thiền Minh Sát Vipassanā, Thẻ ảnh Pháp Cú và Từ điển Pāḷi thuần khiết."
+    description="Hệ thống tu học và bảo tồn kinh điển Phật giáo nguyên thủy Theravāda: Tứ Thánh Đế, Bát Chánh Đạo, Thiền Minh Sát Vipassanā và Từ điển Pāḷi thuần khiết."
     keywords="Ma Tọa Thiền, Theravada, Phật giáo nguyên thủy, Tam Tạng Pāḷi, Kinh Pháp Cú, Dhammapada, Thiền Vipassana, Tứ Niệm Xứ, Bát Chánh Đạo, Chánh Niệm"
     canonical="https://theravada.macatung.dev"
     :json-ld="theravadaHomeJsonLd"
@@ -102,21 +87,14 @@ const theravadaHomeJsonLd = {
         "Dù là Ma Cà Tưng lang thang trong bóng đêm vô minh, khi có duyên lành hạnh ngộ Chánh Pháp cũng buông bỏ vọng niệm để tọa thiền, nương tựa Tam Bảo tìm về sự an tịnh và giải thoát tối hậu."
       </p>
 
-      <!-- 4 CTA Action Buttons -->
+      <!-- CTA Action Buttons -->
       <div class="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3.5 mb-4 w-full max-w-2xl px-2 sm:px-0">
-        <button
-          type="button"
-          @click="openAnattaContemplation"
-          class="px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 text-stone-950 font-serif font-bold text-xs sm:text-sm hover:brightness-110 transition-all shadow-lg hover:scale-105 active:scale-95 text-center flex items-center justify-center gap-2 min-h-[44px] cursor-pointer"
-        >
-          <span>☸️</span>
-          <span>Thể Nghiệm Vô Ngã</span>
-        </button>
         <Link
           href="/theravada/danh-muc/phap-hoc"
-          class="px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl bg-amber-500/20 border border-amber-500/50 text-amber-200 font-serif font-bold text-xs sm:text-sm hover:bg-amber-500/30 transition-all shadow-md hover:scale-105 active:scale-95 text-center flex items-center justify-center min-h-[44px]"
+          class="px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 text-stone-950 font-serif font-bold text-xs sm:text-sm hover:brightness-110 transition-all shadow-lg hover:scale-105 active:scale-95 text-center flex items-center justify-center gap-2 min-h-[44px]"
         >
-          Khảo Cứu Pháp Học ➔
+          <span>📖</span>
+          <span>Khảo Cứu Pháp Học ➔</span>
         </Link>
         <Link
           href="/theravada/danh-muc/phap-hanh"
@@ -125,10 +103,16 @@ const theravadaHomeJsonLd = {
           Thực Hành Thiền Vipassanā 🧘
         </Link>
         <Link
-          href="/theravada/ung-dung-tu-hoc"
+          href="/theravada/danh-muc/kinh-tung"
+          class="px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl bg-stone-900 border border-stone-700 text-stone-300 hover:text-white font-serif text-xs sm:text-sm transition-all hover:bg-stone-800 text-center flex items-center justify-center min-h-[44px]"
+        >
+          Kinh Tụng Pāḷi 📜
+        </Link>
+        <Link
+          href="/theravada/tu-dien-pali"
           class="px-4 sm:px-5 py-3 sm:py-3.5 rounded-2xl bg-stone-900/80 border border-stone-700 text-stone-300 hover:text-white font-serif text-xs sm:text-sm transition-all hover:bg-stone-800 text-center flex items-center justify-center min-h-[44px]"
         >
-          ✨ Ứng Dụng Pháp Bảo
+          Từ Điển Pāḷi ☸️
         </Link>
       </div>
     </section>
@@ -138,70 +122,7 @@ const theravadaHomeJsonLd = {
       <ZenTimeSlider />
     </section>
 
-    <!-- 3. Interactive Buddhist Applications Hub (Ứng Dụng Tu Học Trực Tiếp) -->
-    <section id="buddhist-apps" class="my-10 sm:my-14 space-y-6 scroll-mt-24">
-      <div class="text-center max-w-2xl mx-auto px-3">
-        <div class="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[11px] sm:text-xs font-bold mb-2">
-          <span>✨</span>
-          <span>CÔNG CỤ TU HỌC & LAN TỎA CHÁNH PHÁP</span>
-        </div>
-        <h2 class="text-xl sm:text-3xl font-serif font-bold text-amber-100 tracking-tight">
-          Ứng Dụng Pháp Bảo Tương Tác
-        </h2>
-        <p class="text-xs sm:text-sm text-stone-400 font-serif mt-1">
-          Quán chiếu ngũ uẩn vô ngã, trợ niệm lời dạy Kinh Pháp Cú và thực hành thiền định Vipassanā theo nhịp thở chánh niệm
-        </p>
-
-        <!-- App Switcher Tabs (3 Tabs) -->
-        <div class="mt-4 flex flex-wrap items-center justify-center gap-2 p-1.5 bg-stone-900/90 rounded-2xl border border-stone-800 max-w-lg mx-auto w-full">
-          <button
-            @click="activeAppTab = 'anatta'"
-            :class="[
-              'flex-1 py-2.5 sm:py-2 px-2 sm:px-3 rounded-xl text-xs font-serif font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 min-h-[40px] whitespace-nowrap',
-              activeAppTab === 'anatta'
-                ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-stone-950 shadow-md'
-                : 'text-stone-400 hover:text-white'
-            ]"
-          >
-            <span>☸️</span>
-            <span>Quán Chiếu Vô Ngã</span>
-          </button>
-          <button
-            @click="activeAppTab = 'card'"
-            :class="[
-              'flex-1 py-2.5 sm:py-2 px-2 sm:px-3 rounded-xl text-xs font-serif font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 min-h-[40px] whitespace-nowrap',
-              activeAppTab === 'card'
-                ? 'bg-amber-500 text-stone-950 shadow-md'
-                : 'text-stone-400 hover:text-white'
-            ]"
-          >
-            <span>📜</span>
-            <span>Tạo Thẻ Pháp Cú</span>
-          </button>
-          <button
-            @click="activeAppTab = 'timer'"
-            :class="[
-              'flex-1 py-2.5 sm:py-2 px-2 sm:px-3 rounded-xl text-xs font-serif font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 min-h-[40px] whitespace-nowrap',
-              activeAppTab === 'timer'
-                ? 'bg-amber-500 text-stone-950 shadow-md'
-                : 'text-stone-400 hover:text-white'
-            ]"
-          >
-            <span>🧘</span>
-            <span>Đồng Hồ Tọa Thiền</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- App Canvas / Widget -->
-      <div>
-        <AnattaContemplationEngine v-if="activeAppTab === 'anatta'" @switch-to-timer="activeAppTab = 'timer'" />
-        <DhammapadaCardGenerator v-else-if="activeAppTab === 'card'" />
-        <VipassanaTimer v-else />
-      </div>
-    </section>
-
-    <!-- 4. Daily Dhammapada Verse (Lời Phật Dạy Mỗi Ngày) -->
+    <!-- 3. Daily Dhammapada Verse (Lời Phật Dạy Mỗi Ngày) -->
     <section class="my-8 sm:my-10 p-5 sm:p-8 rounded-3xl bg-gradient-to-br from-amber-950/40 via-stone-900/90 to-stone-950 border border-amber-500/30 shadow-2xl relative overflow-hidden backdrop-blur-md">
       <div class="absolute -right-6 -bottom-6 text-8xl text-amber-500/5 select-none pointer-events-none font-serif">
         ☸️
@@ -239,7 +160,7 @@ const theravadaHomeJsonLd = {
       </div>
     </section>
 
-    <!-- 5. Category Portals (3 Trụ Cột Tu Tập) -->
+    <!-- 4. Category Portals (3 Trụ Cột Tu Tập) -->
     <section class="my-14">
       <div class="text-center mb-10">
         <h2 class="text-2xl sm:text-3xl font-serif font-bold text-amber-100 tracking-tight">
@@ -290,7 +211,7 @@ const theravadaHomeJsonLd = {
       </div>
     </section>
 
-    <!-- 6. Latest Teachings & Suttas Grid -->
+    <!-- 5. Latest Teachings & Suttas Grid -->
     <section class="my-14">
       <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 text-left">
         <div>

@@ -30,7 +30,6 @@ const navItems = [
   { label: 'Pháp Học', href: '/theravada/danh-muc/phap-hoc', icon: 'BookOpen' },
   { label: 'Pháp Hành (Vipassanā)', href: '/theravada/danh-muc/phap-hanh', icon: 'Sparkles' },
   { label: 'Kinh Tụng', href: '/theravada/danh-muc/kinh-tung', icon: 'Scroll' },
-  { label: 'Ứng Dụng Tu Học', href: '/theravada/ung-dung-tu-hoc', icon: 'Sparkles', isHighlight: true },
   { label: 'Từ Điển Pāḷi', href: '/theravada/tu-dien-pali', icon: 'Compass' },
 ];
 
@@ -153,16 +152,6 @@ onUnmounted(() => {
 
         <!-- Mobile & Tablet Action Controls -->
         <div class="flex items-center gap-2 lg:hidden shrink-0">
-          <!-- Quick Ứng Dụng Pill on Mobile -->
-          <Link
-            href="/theravada/ung-dung-tu-hoc"
-            class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-serif font-bold text-amber-300 bg-amber-500/15 border border-amber-500/30"
-            @click="closeMobileMenu"
-          >
-            <span>✨</span>
-            <span>Ứng Dụng</span>
-          </Link>
-
           <!-- Mobile Hamburger Drawer Toggle Button -->
           <button
             type="button"
@@ -276,8 +265,6 @@ onUnmounted(() => {
           <Link href="/theravada/danh-muc/phap-hanh" class="hover:text-amber-300 font-semibold px-1">Thiền Vipassanā</Link>
           <span>•</span>
           <Link href="/theravada/danh-muc/kinh-tung" class="hover:text-amber-300 font-semibold px-1">Kinh Tụng</Link>
-          <span>•</span>
-          <Link href="/theravada/ung-dung-tu-hoc" class="hover:text-amber-300 font-semibold px-1">Ứng Dụng</Link>
           <span>•</span>
           <Link href="/theravada/tu-dien-pali" class="hover:text-amber-300 font-semibold px-1">Từ Điển Pāḷi</Link>
           <span>•</span>

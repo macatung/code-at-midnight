@@ -1337,37 +1337,445 @@ graph TD
     K --> L[12. Lão Tử, Sầu Bi Khổ Ưu Não Jarāmaraṇa]
 ```
 
-### 12 Chi Phần Duyên Khởi Chi Tiết:
-1. **Do Duyên Vô Minh (Avijjā) sinh Khởi Hành (Saṅkhāra)**: Sự si mê không thấy Tứ Đế tạo tác nên các nghiệp thiện, ác và bất động.
-2. **Do Duyên Hành sinh Khởi Thức (Viññāṇa)**: Thức tái sinh nhập vào thai mẹ.
-3. **Do Duyên Thức sinh Khởi Danh Sắc (Nāmarūpa)**: Thân thể vật chất và các yếu tố tâm lý hình thành.
-4. **Do Duyên Danh Sắc sinh Khởi Lục Nhập (Saḷāyatana)**: 6 giác quan (mắt, tai, mũi, lưỡi, thân, ý).
-5. **Do Duyên Lục Nhập sinh Khởi Xúc (Phassa)**: Sự tiếp xúc giữa căn, trần và thức.
-6. **Do Duyên Xúc sinh Khởi Thọ (Vedanā)**: Cảm giác lạc, khổ hoặc không lạc không khổ.
-7. **Do Duyên Thọ sinh Khởi Ái (Taṇhā)**: Lòng ham muốn khao khát vị kỷ.
-8. **Do Duyên Ái sinh Khởi Thủ (Upādāna)**: Sự chấp chặt, bám víu không buông.
-9. **Do Duyên Thủ sinh Khởi Hữu (Bhava)**: Tiến trình tạo nghiệp dẫn đến kiếp sống tương lai.
-10. **Do Duyên Hữu sinh Khởi Sinh (Jāti)**: Sự chào đời trong kiếp sống mới.
-11. **Do Duyên Sinh sinh Khởi Lão Tử (Jarāmaraṇa)**: Già, chết, sầu, bi, khổ, ưu, não.
+            // =========================================================================
+            // 20. TAM QUY & NGŨ GIỚI (TISARAṆA & PAÑCASĪLA)
+            // =========================================================================
+            [
+                'site_domain' => 'theravada',
+                'title' => 'Tam Quy (Tisaraṇa) & Ngũ Giới (Pañcasīla) — Nền Tảng Giới Hạnh Của Người Cư Sĩ Phật Tử',
+                'pali_title' => 'Tisaraṇa & Pañcasīla',
+                'slug' => 'tam-quy-ngu-gioi-tisarana-pancasila-nen-tang-gioi-hanh',
+                'category' => 'phap-hoc',
+                'excerpt' => 'Nương tựa Ba Ngôi Báu (Phật - Pháp - Tăng) và giữ gìn 5 giới căn bản: không sát sinh, không trộm cắp, không tà dâm, không nói dối, không say sưa — chiếc áo giáp tâm linh hộ trì an lạc đời này và đời sau.',
+                'author' => 'Đại Tạng Kinh Pāḷi — Tiểu Bộ (Khuddakapāṭha) & Tương Ưng Bộ (Saṃyutta Nikāya 55)',
+                'content' => <<< 'EOF'
+## 1. Tam Quy (Tisaraṇa) — Ba Nơi Nương Tựa Tối Thượng
+
+Trong Phật giáo Theravāda, bước đầu tiên bước vào cửa Đạo là phát nguyện quy y **Tam Bảo (Ratanattaya)**:
+
+```mermaid
+graph TD
+    A[Tam Quy Tisaraṇa] --> B[1. Phật Bảo Buddharatana]
+    A --> C[2. Pháp Bảo Dhammaratana]
+    A --> D[3. Tăng Bảo Saṅgharatana]
+    
+    B --> B1[Buddhaṃ saraṇaṃ gacchāmi - Nương tựa Bậc Giác Ngộ Toàn Tri]
+    C --> C1[Dhammaṃ saraṇaṃ gacchāmi - Nương tựa Chân Lý Thực Chứng]
+    D --> D1[Saṅghaṃ saraṇaṃ gacchāmi - Nương tựa Đoàn Thể Thánh Chúng]
+```
+
+- **Buddhaṃ saraṇaṃ gacchāmi**: Con đem hết lòng thành kính xin quy y Phật — Đấng Toàn Giác đã tự mình khám phá ra chân lý và chỉ đường diệt khổ.
+- **Dhammaṃ saraṇaṃ gacchāmi**: Con đem hết lòng thành kính xin quy y Pháp — Giáo pháp do Đức Phật khéo thuyết giảng, thiết thực hiện tại, đến để mà thấy, tự mình chứng nghiệm.
+- **Saṅghaṃ saraṇaṃ gacchāmi**: Con đem hết lòng thành kính xin quy y Tăng — Bậc Thánh chúng đệ tử Thế Tôn thực hành chân chánh, là ruộng phước tối thượng của thế gian.
 
 ---
 
-## Chiều Nghịch Đoạn Diệt (Nirodha — Con Đường Giải Thoát)
+## 2. Ngũ Giới (Pañcasīla) — Năm Chuẩn Mực Đạo Đức Bất Biến
 
-> **"Avijjāya tveva asesavirāganirodhā saṅkhāranirodho..."**<br />
-> *"Do Vô minh đoạn diệt không còn dư tàn nên Hành diệt; do Hành diệt nên Thức diệt; do Thức diệt nên Danh sắc diệt... do Sinh diệt nên Lão, Tử, Sầu, Bi, Khổ, Ưu, Não đoạn diệt. Như vậy là sự đoạn diệt hoàn toàn của toàn bộ khối khổ đau này."*
+Đức Phật dạy rằng giữ gìn 5 giới là đem lại sự không sợ hãi (*Abhaya*), không hận thù (*Avera*), không tổn hại (*Abyāpajja*) đến cho vô lượng chúng sinh:
+
+```mermaid
+graph LR
+    A[Ngũ Giới Pañcasīla] --> B[1. Tránh Sát Sinh Pāṇātipātā]
+    A --> C[2. Tránh Trộm Cắp Adinnādānā]
+    A --> D[3. Tránh Tà Dâm Kāmesumicchācārā]
+    A --> E[4. Tránh Nói Dối Musāvādā]
+    A --> F[5. Tránh Say Sưa Surāmeraya]
+```
+
+### Chi Tiết Năm Học Giới:
+1. **Pāṇātipātā veramaṇī sikkhāpadaṃ samādiyāmi**: Con xin vâng giữ điều học là kiêng tránh sát hại sinh mạng muôn loài. Nuôi dưỡng lòng từ bi và tôn trọng sự sống.
+2. **Adinnādānā veramaṇī sikkhāpadaṃ samādiyāmi**: Con xin vâng giữ điều học là kiêng tránh lấy của không cho. Nuôi dưỡng lòng thanh liêm, tôn trọng tài sản người khác.
+3. **Kāmesumicchācārā veramaṇī sikkhāpadaṃ samādiyāmi**: Con xin vâng giữ điều học là kiêng tránh tà dâm, lang chạ bất chính. Bảo vệ hạnh phúc gia đình và sự chung thủy.
+4. **Musāvādā veramaṇī sikkhāpadaṃ samādiyāmi**: Con xin vâng giữ điều học là kiêng tránh nói dối, nói lời đâm thọc, thô ác và phù phiếm. Tôn trọng sự thật và uy tín.
+5. **Surāmerayamajjapamādaṭṭhānā veramaṇī sikkhāpadaṃ samādiyāmi**: Con xin vâng giữ điều học là kiêng tránh uống rượu và các chất say gây mê mờ, buông lung, mất tự chủ tâm trí.
+
+---
+
+## 3. Năm Lợi Ích Của Người Trì Giới Trong Sạch (Kinh Đại Bát Niết Bàn)
+
+Đức Thế Tôn dạy trong *Trường Bộ Kinh (DN 16)*:
+1. Có được khối tài sản lớn nhờ siêng năng và không phóng dật.
+2. Tiếng thơm đồn xa khắp mười phương.
+3. Tự tin, không sợ hãi khi bước vào bất kỳ hội chúng nào (vua chúa, trí thức, tu sĩ).
+4. Lúc lâm chung tâm trí sáng suốt, bình thản, không mê mờ hốt hoảng.
+5. Sau khi thân hoại mạng chung, sinh vào cõi lành, thiên giới an vui.
 EOF
 ,
-                'tags' => ['Paticcasamuppada', 'Duyên Khởi', 'Tương Ưng Bộ', 'Vô Minh', 'Pali'],
+                'tags' => ['Tam Quy', 'Ngũ Giới', 'Tisaraṇa', 'Pañcasīla', 'Cư Sĩ', 'Theravada'],
                 'pali_terms' => [
-                    ['term' => 'Paṭiccasamuppāda', 'meaning' => 'Duyên khởi — cái này có thì cái kia có, cái này diệt thì cái kia diệt'],
-                    ['term' => 'Avijjā', 'meaning' => 'Vô minh — không thấy như thật Bốn Chân Lý Thánh'],
-                    ['term' => 'Upādāna', 'meaning' => 'Thủ chấp — sự ôm giữ bám chặt vào ngũ dục, tà kiến'],
+                    ['term' => 'Tisaraṇa', 'meaning' => 'Tam Quy — ba nơi nương tựa vững chắc: Phật, Pháp, Tăng'],
+                    ['term' => 'Pañcasīla', 'meaning' => 'Ngũ Giới — năm điều học đạo đức của người tại gia'],
+                    ['term' => 'Sīla', 'meaning' => 'Giới hạnh — sự ngăn giữ thân khẩu không làm điều ác'],
+                    ['term' => 'Samādiyāmi', 'meaning' => 'Xin nguyện thọ trì và thực hành nghiêm mật'],
                 ],
                 'audio_chanting_url' => null,
-                'reading_time_min' => 11,
+                'reading_time_min' => 8,
                 'is_published' => true,
-                'published_at' => Carbon::now()->subHours(6),
+                'published_at' => Carbon::now()->subHours(5),
+            ],
+
+            // =========================================================================
+            // 21. TỨ VÔ LƯỢNG TÂM (BRAHMAVIHĀRA)
+            // =========================================================================
+            [
+                'site_domain' => 'theravada',
+                'title' => 'Tứ Vô Lượng Tâm (Brahmavihāra) — Từ, Bi, Hỷ, Xả: Bốn Cung Bậc Tâm Vô Cùng Tận',
+                'pali_title' => 'Cattāro Brahmavihārā',
+                'slug' => 'tu-vo-luong-tam-brahmavihara-tu-bi-hy-xa',
+                'category' => 'phap-hoc',
+                'excerpt' => 'Bốn trạng thái tâm cao thượng của bậc Phạm Thiên: Từ (Mettā), Bi (Karuṇā), Hỷ (Muditā), Xả (Upekkhā) — con đường chuyển hóa sân hận, oán kết và mở rộng tình thương bao la đến muôn loài.',
+                'author' => 'Đại Tạng Kinh Pāḷi — Trường Bộ Kinh (Kinh Tevijja DN 13) & Thanh Tịnh Đạo (Visuddhimagga IX)',
+                'content' => <<< 'EOF'
+## 1. Khái Niệm Tứ Vô Lượng Tâm (Brahmavihāra)
+
+**Brahmavihāra** (Phạm Trú) là cảnh giới an trú tâm vô lượng, thanh cao tựa như tâm của chư Phạm Thiên. Bốn tâm này không có giới hạn ranh giới (vô lượng - *Appamaññā*), trải rộng không phân biệt thân sơ:
+
+```mermaid
+graph TD
+    A[Tứ Vô Lượng Tâm Brahmavihāra] --> B[1. Tâm Từ Mettā]
+    A --> C[2. Tâm Bi Karuṇā]
+    A --> D[3. Tâm Hỷ Muditā]
+    A --> E[4. Tâm Xả Upekkhā]
+    
+    B --> B1[Ước nguyện chúng sinh an vui - Đối trị Sân Hận]
+    C --> C1[Xót thương chúng sinh đau khổ - Đối trị Tàn Bạo]
+    D --> D1[Vui mừng khi thấy người khác thành công - Đối trị Ganh Tỵ]
+    E --> E1[Bình thản trước thăng trầm nhân quả - Đối trị Dính Mắc]
+```
+
+---
+
+## 2. Bản Chất & Kẻ Thù Trá Hình Của Từng Tâm
+
+Trong luận thư *Thanh Tịnh Đạo (Visuddhimagga)*, mỗi tâm vô lượng đều có một kẻ thù xa (đối nghịch trực diện) và một kẻ thù gần (ngụy trang trá hình dễ gây hiểu lầm):
+
+| Pháp | Ý Nghĩa Chân Thực | Kẻ Thù Xa (Trực diện) | Kẻ Thù Gần (Trá hình hiểm độc) |
+| :--- | :--- | :--- | :--- |
+| **Từ (Mettā)** | Lòng mong ước chân thành cho muôn loài được an vui hạnh phúc. | **Sân hận (Dosa / Vyāpāda)** | **Tham ái vị kỷ (Rāga / Taṇhā)**: Đội lốt tình thương nhưng đòi hỏi sở hữu. |
+| **Bi (Karuṇā)** | Lòng trắc ẩn, đồng cảm sâu sắc muốn xoa dịu nỗi khổ của chúng sinh. | **Tâm tàn bạo, độc ác (Vihiṃsā)** | **Sầu bi u uất (Domanassa)**: Rơi vào đau buồn tuyệt vọng cùng người khác. |
+| **Hỷ (Muditā)** | Niềm vui thanh tịnh khi thấy người khác gặt hái phước lành, thành công. | **Ganh ghét, đố kỵ (Issā)** | **Hỷ lạc thế tục (Pahāsa)**: Cười cợt, phấn khích bốc đồng theo dục lạc trần gian. |
+| **Xả (Upekkhā)** | Tâm điềm tĩnh, thấy rõ định luật nghiệp báo chi phối, không thiên lệch. | **Tham ái & Sân hận** | **Thờ ơ, ngu muội (Aññāṇupekkha)**: Lãnh đạm, vô cảm, thiếu trí tuệ. |
+
+---
+
+## 3. Lời Dạy Về Rải Tâm Từ Khắp Mười Phương
+
+Đức Phật dạy trong *Trung Bộ Kinh (Majjhima Nikāya)* phương pháp quán rải tâm từ:
+
+> *"Hành giả an trú, biến mãn một phương với tâm câu hành với Từ, cũng vậy phương thứ hai, cũng vậy phương thứ ba, cũng vậy phương thứ tư. Như vậy, cùng khắp thế giới, trên, dưới, bề ngang, cùng khắp mọi nơi, vị ấy an trú biến mãn toàn thể vũ trụ với tâm câu hành với Từ — quảng đại, vô biên, vô lượng, không hận, không sân."*
+EOF
+,
+                'tags' => ['Brahmavihara', 'Tứ Vô Lượng Tâm', 'Metta', 'Karuna', 'Mudita', 'Upekkha', 'Theravada'],
+                'pali_terms' => [
+                    ['term' => 'Brahmavihāra', 'meaning' => 'Phạm Trú — nơi an trú của tâm thanh tịnh cao thượng'],
+                    ['term' => 'Mettā', 'meaning' => 'Tâm Từ — lòng yêu thương mong muốn chúng sinh an lạc'],
+                    ['term' => 'Karuṇā', 'meaning' => 'Tâm Bi — lòng trắc ẩn muốn cứu vớt nỗi khổ đau'],
+                    ['term' => 'Muditā', 'meaning' => 'Tâm Hỷ — niềm vui hoan hỷ trước hạnh phúc của người khác'],
+                    ['term' => 'Upekkhā', 'meaning' => 'Tâm Xả — sự bình thản trước biến dịch cuộc đời'],
+                ],
+                'audio_chanting_url' => null,
+                'reading_time_min' => 9,
+                'is_published' => true,
+                'published_at' => Carbon::now()->subHours(4),
+            ],
+
+            // =========================================================================
+            // 22. NĂM TRIỀN CÁI (PAÑCA NĪVARAṆĀNI)
+            // =========================================================================
+            [
+                'site_domain' => 'theravada',
+                'title' => 'Năm Triền Cái (Pañca Nīvaraṇāni) — Nhận Diện & Đoạn Trừ Năm Chướng Ngại Tâm Trói Buộc',
+                'pali_title' => 'Pañca Nīvaraṇāni',
+                'slug' => 'nam-trien-cai-panca-nivarana-nhan-dien-va-doan-tru',
+                'category' => 'phap-hoc',
+                'excerpt' => 'Năm bức màn đen tối che lấp trí tuệ: Tham dục (Kāmacchanda), Sân hận (Vyāpāda), Hôn trầm thụy miên (Thīna-middha), Trạo hối (Uddhacca-kukkucca), Hoài nghi (Vicikicchā) và phương thuốc trị liệu của bậc Đạo Sư.',
+                'author' => 'Đại Tạng Kinh Pāḷi — Tăng Chi Bộ (AN 5.51) & Tương Ưng Bộ (SN 46.55 Sangaarava Sutta)',
+                'content' => <<< 'EOF'
+## 1. Bản Chất Của Triền Cái (Nīvaraṇa)
+
+**Triền Cái (Nīvaraṇa)** là những chướng ngại tinh thần che lấp tâm trí, làm suy yếu tuệ giác và ngăn cản hành giả chứng đắc các tầng Thiền Định (*Jhāna*) cũng như Minh Sát Tuệ (*Vipassanā*).
+
+```mermaid
+graph TD
+    A[Năm Triền Cái Pañca Nīvaraṇāni] --> B[1. Tham Dục Kāmacchanda]
+    A --> C[2. Sân Hận Vyāpāda]
+    A --> D[3. Hôn Trầm Thụy Miên Thīna-middha]
+    A --> E[4. Trạo Cử Hối Quá Uddhacca-kukkucca]
+    A --> F[5. Hoài Nghi Vicikicchā]
+    
+    B --> B1[Ví như nước pha màu sắc sặc sỡ]
+    C --> C1[Ví như nước sôi sùng sục bốc hơi]
+    D --> D1[Ví như nước đóng rêu bèo che phủ]
+    E --> E1[Ví như nước bị gió thổi sóng cuộn trào]
+    F --> F1[Ví như nước bị khuấy bùn đục ngầu bóng tối]
+```
+
+---
+
+## 2. Ẩn Dụ Năm Bát Nước Trong Kinh Saṅgārava (SN 46.55)
+
+Đức Phật ví tâm trí của người bị Triền Cái chi phối như nhìn mặt mình trong 5 bát nước:
+1. **Tham dục**: Như nhìn bóng mình trong bát nước pha phẩm nhuộm xanh, đỏ, vàng — không thể thấy chân thực khuôn mặt.
+2. **Sân hận**: Như nhìn bóng mình trong bát nước sôi bốc khói cuồn cuộn — hình ảnh bị bóp méo, bỏng rát.
+3. **Hôn trầm thụy miên**: Như nhìn bóng mình trong bát nước đầy rêu bèo phủ kín — tối tăm, mù mịt, không thấy gì.
+4. **Trạo cử hối quá**: Như nhìn bóng mình trong bát nước bị gió mạnh thổi sóng sánh chao đảo — hình ảnh vỡ vụn, dao động.
+5. **Hoài nghi**: Như nhìn bóng mình trong bát nước bị khuấy đục ngầu bùn đất đặt trong bóng đêm — mờ mịt, ngờ vực.
+
+---
+
+## 3. Pháp Đoạn Trừ Triền Cái Theo Lời Phật Dạy
+
+```mermaid
+graph LR
+    A[Phương Thuốc Đoạn Trừ] --> B[Quán Bất Tịnh Asubha diệt Tham Dục]
+    A --> C[Quán Tâm Từ Mettā diệt Sân Hận]
+    A --> D[Khởi Tác Ý Ánh Sáng & Tinh Tấn diệt Hôn Trầm]
+    A --> E[Trú Tâm Chỉ Quán & Hơi Thở diệt Trạo Cử]
+    A --> F[Học Hỏi Giáo Lý & Phân Tích Chân Đế diệt Hoài Nghi]
+```
+
+Khi Năm Triền Cái được lắng dịu hoàn toàn, tâm hành giả trở nên thanh tịnh, nhu nhuyễn, dễ sử dụng, sẵn sàng chứng nhập **Sơ Thiền (Paṭhamajjhāna)** tràn đầy Hỷ (*Pīti*) và Lạc (*Sukha*).
+EOF
+,
+                'tags' => ['Nīvaraṇa', 'Triền Cái', 'Thiền Định', 'Tăng Chi Bộ', 'Theravada'],
+                'pali_terms' => [
+                    ['term' => 'Nīvaraṇa', 'meaning' => 'Triền cái — màn che ngăn lấp tâm trí, cản trở tuệ giác'],
+                    ['term' => 'Kāmacchanda', 'meaning' => 'Dục ái triền cái — sự ham muốn thèm khát ngũ trần'],
+                    ['term' => 'Vyāpāda', 'meaning' => 'Sân độc triền cái — tâm oán ghét, bất mãn, bực bội'],
+                    ['term' => 'Thīna-middha', 'meaning' => 'Hôn trầm thụy miên — sự dã dượi của tâm và lừ đừ của thân'],
+                    ['term' => 'Uddhacca-kukkucca', 'meaning' => 'Trạo cử hối quá — tâm lăng xăng tán loạn và ray rứt việc đã qua'],
+                    ['term' => 'Vicikicchā', 'meaning' => 'Hoài nghi — sự phân vân, ngờ vực không tin Chánh Pháp'],
+                ],
+                'audio_chanting_url' => null,
+                'reading_time_min' => 9,
+                'is_published' => true,
+                'published_at' => Carbon::now()->subHours(3),
+            ],
+
+            // =========================================================================
+            // 23. BÁT PHONG (AṬṬHA LOKADHAMMĀ)
+            // =========================================================================
+            [
+                'site_domain' => 'theravada',
+                'title' => 'Bát Phong (Aṭṭha Lokadhammā) — Tám Ngọn Gió Thế Gian & Nghệ Thuật Giữ Tâm Bất Động Tự Tại',
+                'pali_title' => 'Aṭṭha Lokadhammā',
+                'slug' => 'bat-phong-attha-lokadhamma-tam-ngon-gio-doi-va-tam-bat-dong',
+                'category' => 'phap-hoc',
+                'excerpt' => 'Thấu hiểu tám ngọn gió đời luôn xoay vần: Được - Mất, Danh - Nhục, Chê - Khen, Lạc - Khổ để tâm an nhiên tự tại như vách đá kiên cố trước phong ba bão táp.',
+                'author' => 'Đại Tạng Kinh Pāḷi — Tăng Chi Bộ (Aṅguttara Nikāya 8.5 & 8.6 Lokadhamma Sutta)',
+                'content' => <<< 'EOF'
+## 1. Tám Ngọn Gió Đời (Aṭṭha Lokadhammā)
+
+Trong *Kinh Các Pháp Thế Gian (Lokadhamma Sutta - AN 8.5)*, Đức Thế Tôn dạy rằng có 8 ngọn gió luôn thổi qua cuộc đời của mọi chúng sinh:
+
+```mermaid
+graph TD
+    A[Bát Phong Aṭṭha Lokadhammā] --> B[Cặp 1: Được & Mất Lābha & Alābha]
+    A --> C[Cặp 2: Danh thơm & Tiếng xấu Yasa & Ayasa]
+    A --> D[Cặp 3: Chê bai & Khen ngợi Nindā & Pasaṃsā]
+    A --> E[Cặp 4: An lạc & Khổ đau Sukha & Dukkha]
+    
+    B --> F[4 Pháp Thuận Cảnh - Dễ sinh Tâm Tham Dính Mắc]
+    C --> F
+    D --> F
+    E --> F
+    
+    B --> G[4 Pháp Nghịch Cảnh - Dễ sinh Tâm Sân Phẫn Uất]
+    C --> G
+    D --> G
+    E --> G
+```
+
+---
+
+## 2. Sự Khác Biệt Giữa Kẻ Phàm Phu & Bậc Thánh Đệ Tử
+
+### Người Phàm Phu Không Tu Tập:
+- Khi gặp pháp thuận (**Được tài sản, Có danh vọng, Được ca tụng, Hưởng an lạc**): Tâm khởi lên tham ái, kiêu ngạo, say đắm và dính mắc.
+- Khi gặp pháp nghịch (**Mất tài sản, Mất danh vọng, Bị chỉ trích, Chịu đau khổ**): Tâm chìm trong sân hận, đau đớn, than khóc và tuyệt vọng.
+- Người ấy bị Bát Phong trói buộc, xô đẩy trôi dạt trong biển khổ luân hồi.
+
+### Bậc Thánh Đệ Tử Có Trí Tuệ:
+- Ngài quán sát rõ ràng: *"Được hay Mất này là vô thường (*Anicca*), là khổ (*Dukkha*), là biến dịch (*Vipariṇāma-dhamma*)."*
+- Ngài không hân hoan khi được, không sầu não khi mất. Tâm giải thoát ly trần, an nhiên tĩnh lặng.
+
+---
+
+## 3. Lời Dạy Vàng Trong Kinh Pháp Cú (Dhammapada 81)
+
+> **"Selo yathā ekaghano, vātena na samīrati;<br />
+> Evaṃ nindāpasaṃsāsu, na samiñjanti paṇḍitā."**<br />
+> *"Như tảng đá kiên cố nguyên khối, không bị gió bão làm rung chuyển;<br />
+> Cũng vậy, trước mọi lời khen chê của thế gian, bậc hiền trí luôn giữ tâm an tịnh, không hề lay động."*
+EOF
+,
+                'tags' => ['Bát Phong', 'Lokadhamma', 'Pháp Cú', 'Tăng Chi Bộ', 'Theravada'],
+                'pali_terms' => [
+                    ['term' => 'Lokadhamma', 'meaning' => 'Thế Gian Pháp — tám thực tại xoay vần của cuộc sống'],
+                    ['term' => 'Lābha - Alābha', 'meaning' => 'Được tài lợi — Mất mát tài lợi'],
+                    ['term' => 'Yasa - Ayasa', 'meaning' => 'Có danh vọng, chức quyền — Mất danh vọng, thất thế'],
+                    ['term' => 'Nindā - Pasaṃsā', 'meaning' => 'Bị chê bai, vu khống — Được khen ngợi, tôn vinh'],
+                    ['term' => 'Sukha - Dukkha', 'meaning' => 'Hưởng an lạc thân tâm — Chịu đựng khổ não bức bách'],
+                ],
+                'audio_chanting_url' => null,
+                'reading_time_min' => 8,
+                'is_published' => true,
+                'published_at' => Carbon::now()->subHours(2),
+            ],
+
+            // =========================================================================
+            // 24. KINH ĐIỀM LÀNH TỐI THƯỢNG (MAHĀ-MAṄGALA SUTTA)
+            // =========================================================================
+            [
+                'site_domain' => 'theravada',
+                'title' => 'Kinh Điềm Lành Tối Thượng (Mahā-maṅgala Sutta) — 38 Hạnh Phúc Chân Thật Của Cuộc Đời',
+                'pali_title' => 'Mahā-maṅgala Sutta',
+                'slug' => 'kinh-diem-lanh-toi-thuong-maha-mangala-sutta-38-hanh-phuc',
+                'category' => 'phap-hoc',
+                'excerpt' => 'Bản kinh châu báu chỉ dạy 38 điều điềm lành tối thượng: từ việc gần gũi bạn lành, hiếu dưỡng song thân, nghề nghiệp trong sạch đến tâm bất động trước nghịch cảnh và chứng ngộ Niết-bàn.',
+                'author' => 'Đại Tạng Kinh Pāḷi — Tiểu Bộ Kinh (Sutta Nipāta 2.4 & Khuddakapāṭha 5)',
+                'content' => <<< 'EOF'
+## 1. Duyên Khởi Kinh Điềm Lành (Mahā-maṅgala Sutta)
+
+Tại thành Sāvatthī (Xá-vệ), chư Thiên và nhân loại đã tranh luận suốt 12 năm về câu hỏi: *"Thế nào là Điềm Lành (Hạnh Phúc) Tối Thượng đích thực trong đời?"*. Giữa đêm khuya, một vị Thiên tử hào quang rực rỡ đã đến đảnh lễ và thỉnh cầu Đức Thế Tôn giải đáp.
+
+```mermaid
+graph TD
+    A[38 Điềm Lành Mahā-maṅgala Sutta] --> B[Tầng 1: Đạo Đức Xã Hội & Môi Trường]
+    A --> C[Tầng 2: Bổn Phận Gia Đình & Xã Hội]
+    A --> D[Tầng 3: Tu Dưỡng Tâm Tính & Giới Đức]
+    A --> E[Tầng 4: Thực Chứng Chân Lý & Giải Thoát]
+    
+    B --> B1[Tránh kẻ ác, thân cận bậc hiền, ở trú xứ thích hợp]
+    C --> C1[Hiếu dưỡng cha mẹ, nuôi nấng vợ con, làm nghề không tội lỗi]
+    D --> D1[Khiêm cung, biết đủ, tri ân, nhẫn nại, nghe Pháp đúng thời]
+    E --> E1[Thấy Bốn Thánh Đế, tâm không dao động trước Bát Phong, đắc Niết-bàn]
+```
+
+---
+
+## 2. Các Bài Kệ Pháp Cốt Lõi Của 38 Điềm Lành
+
+### Kệ 1 — Lựa Chọn Bạn Bè & Môi Trường
+> **"Asevanā ca bālānaṃ, paṇḍitānañca sevanā;<br />
+> Pūjā ca pūjanīyānaṃ, etaṃ maṅgalamuttamaṃ."**<br />
+> *"Không thân cận kẻ ác, gần gũi bậc hiền trí, tôn kính bậc đáng kính — Đó là Điềm Lành Tối Thượng."*
+
+### Kệ 2 — Học Vấn & Giới Hạnh
+> *"Học nhiều, nghề khéo léo, giới luật rèn luyện nghiêm, lời nói khéo trau chuốt — Đó là Điềm Lành Tối Thượng."*
+
+### Kệ 3 — Hiếu Nghĩa Gia Đình
+> *"Hiếu dưỡng cha và mẹ, chăm sóc vợ và con, hành nghề không tội lỗi — Đó là Điềm Lành Tối Thượng."*
+
+### Kệ 4 — Phẩm Chất Cao Quý
+> *"Bố thí, sống đúng pháp, giúp đỡ hàng thân quyến, hành vi không tỳ vết — Đó là Điềm Lành Tối Thượng."*
+
+### Kệ 5 — Rèn Luyện Tâm Trí
+> *"Tránh xa việc ác độc, không uống rượu say sưa, siêng năng trong thiện pháp — Đó là Điềm Lành Tối Thượng."*
+
+### Kệ 6 — Đức Tính Tốt Lành
+> *"Tôn kính và khiêm tốn, biết đủ và tri ân, đúng thời lắng nghe Pháp — Đó là Điềm Lành Tối Thượng."*
+
+### Kệ 7 — Tinh Thần Cầu Tiến
+> *"Nhẫn nại, lời hòa ái, yết kiến các Sa-môn, đúng thời đàm luận Pháp — Đó là Điềm Lành Tối Thượng."*
+
+### Kệ 8 — Đạo Lộ Tu Tập
+> *"Tự chế, sống phạm hạnh, thấy rõ Tứ Thánh Đế, thực chứng quả Niết-bàn — Đó là Điềm Lành Tối Thượng."*
+
+### Kệ 9 & 10 — Tâm Bất Động Tối Hậu
+> **"Phuṭṭhassa lokadhammehi, cittaṃ yassa na kampati;<br />
+> Asokaṃ virajaṃ khemaṃ, etaṃ maṅgalamuttamaṃ."**<br />
+> *"Khi tiếp xúc việc đời, tâm không hề rung động, không sầu, sạch bụi trần, an ổn không sợ hãi — Đó là Điềm Lành Tối Thượng."*
+EOF
+,
+                'tags' => ['Mangala Sutta', 'Điềm Lành', 'Hạnh Phúc', 'Tiểu Bộ Kinh', 'Theravada'],
+                'pali_terms' => [
+                    ['term' => 'Maṅgala', 'meaning' => 'Điềm lành — những phước hạnh chân thật đưa đến cát tường'],
+                    ['term' => 'Paṇḍita', 'meaning' => 'Bậc trí tuệ — người có chánh kiến và sống theo giới hạnh'],
+                    ['term' => 'Asokaṃ', 'meaning' => 'Không sầu não — tâm vượt thoát đau buồn phiền muộn'],
+                    ['term' => 'Khemaṃ', 'meaning' => 'An ổn tuyệt đối — cảnh giới tịch tịnh Niết-bàn'],
+                ],
+                'audio_chanting_url' => null,
+                'reading_time_min' => 10,
+                'is_published' => true,
+                'published_at' => Carbon::now()->subHours(1),
+            ],
+
+            // =========================================================================
+            // 25. BỐN PHÁP THÀNH TỰU CỦA NGƯỜI CƯ SĨ (KINH DĪGHAJĀṆU)
+            // =========================================================================
+            [
+                'site_domain' => 'theravada',
+                'title' => 'Bốn Pháp Thành Tựu Của Người Cư Sĩ (Kinh Dīghajāṇu) — Nghệ Thuật Làm Giàu Chân Chính & Hạnh Phúc Gia Đình',
+                'pali_title' => 'Diṭṭhadhammikattha & Samparāyikattha (Dīghajāṇu Sutta)',
+                'slug' => 'bon-phap-thanh-tuu-kinh-dighajanu-tai-chanh-hanh-phuc',
+                'category' => 'phap-hoc',
+                'excerpt' => 'Lời Phật dạy về 4 nguyên tắc thành công tài chánh hiện đời: Siêng năng nghề nghiệp, Gìn giữ tài sản, Thân cận bạn lành, Chi tiêu điều hòa; cùng 4 pháp phước đức tâm linh cho đời sau.',
+                'author' => 'Đại Tạng Kinh Pāḷi — Tăng Chi Bộ (Aṅguttara Nikāya 8.54 Dīghajāṇu Sutta)',
+                'content' => <<< 'EOF'
+## 1. Duyên Khởi Kinh Dīghajāṇu (Vyagghapajja Sutta)
+
+Một thanh niên cư sĩ tên Dīghajāṇu đến đảnh lễ Đức Phật và bạch:
+
+> *"Bạch Đức Thế Tôn, chúng con là những người cư sĩ tại gia, sống thê nhi ràng buộc, dùng hương hoa phấn sáp, thọ hưởng tiền tài châu báu. Kính xin Thế Tôn thuyết giảng giáo pháp giúp chúng con được an lạc, hạnh phúc ngay trong hiện tại (*Diṭṭhadhamma*) và an lạc, hạnh phúc trong tương lai (*Samparāya*)."*
+
+```mermaid
+graph TD
+    A[Kinh Dīghajāṇu AN 8.54] --> B[I. 4 Pháp Thành Tựu Hiện Tại Diṭṭhadhammikattha]
+    A --> C[II. 4 Pháp Thành Tựu Vị Lai Samparāyikattha]
+    
+    B --> B1[1. Đầy đủ siêng năng Uṭṭhāna-sampadā]
+    B --> B2[2. Đầy đủ gìn giữ Ārakkhasampadā]
+    B --> B3[3. Bạn bè hiền thiện Kalyāṇamittatā]
+    B --> B4[4. Chi tiêu thăng bằng Samajīvitā]
+    
+    C --> C1[1. Đầy đủ Đức tin Saddhā-sampadā]
+    C --> C2[2. Đầy đủ Giới đức Sīla-sampadā]
+    C --> C3[3. Đầy đủ Bố thí Cāga-sampadā]
+    C --> C4[4. Đầy đủ Trí tuệ Paññā-sampadā]
+```
+
+---
+
+## 2. Bốn Pháp Đưa Đến Thịnh Vượng Tài Chánh Hiện Tại
+
+### 1. Đầy Đủ Siêng Năng (Uṭṭhāna-sampadā)
+Dù làm bất kỳ nghề nghiệp chân chính nào (kinh doanh, nông nghiệp, công nghệ, quản lý), người cư sĩ phải thuần thục kỹ năng, không biếng nhác, siêng năng học hỏi và chủ động trong công việc.
+
+### 2. Đầy Đủ Gìn Giữ (Ārakkhasampadā)
+Tài sản kiếm được bằng mồ hôi nước mắt chân chính phải biết bảo vệ an toàn: không để bị trộm cắp, không bị lửa cháy lũ cuốn, không bị kẻ xấu lừa đảo, không bị người thừa kế bất lương phá tán.
+
+### 3. Làm Bạn Với Người Lành (Kalyāṇamittatā)
+Chọn bạn mà chơi: Thân cận những bậc có giới hạnh, có đức tin, có trí tuệ và rộng lượng; tránh xa kẻ cờ bạc, rượu chè, lười biếng, lừa gạt.
+
+### 4. Chi Tiêu Thăng Bằng Điều Hòa (Samajīvitā)
+Biết rõ cán cân thu chi của mình, không tiêu xài hoang phí vượt quá thu nhập (*như người ăn quả sung không biết chừng mực*), cũng không bủn xỉn bóp chắt (*như kẻ chết đói bên đống vàng*). Sống vừa vặn, có tích lũy dự phòng.
+
+---
+
+## 3. Bốn Cửa Ngõ Làm Tiêu Tán Tài Sản Cần Tuyệt Đối Tránh
+
+Đức Phật ví 4 cửa ngõ làm rò rỉ tài sản như một hồ nước lớn có 4 cống xả mở toang:
+1. **Đam mê nữ sắc, sắc dục buông thả**.
+2. **Nghiện ngập rượu chè và các chất say**.
+3. **Mê muội cờ bạc, đỏ đen, cá độ**.
+4. **Kết giao với bạn bè bất lương xúi giục điều ác**.
+
+Tránh được 4 hố sâu này và thực hành 4 pháp thành tựu, người cư sĩ sẽ xây dựng được đời sống kinh tế vững mạnh, gia đạo êm ấm và tâm linh thăng hoa.
+EOF
+,
+                'tags' => ['Dighajanu', 'Kinh Cư Sĩ', 'Tài Chánh Phật Giáo', 'Tăng Chi Bộ', 'Theravada'],
+                'pali_terms' => [
+                    ['term' => 'Diṭṭhadhammikattha', 'meaning' => 'Lợi ích hiện tiền — hạnh phúc, an lạc ngay trong đời sống này'],
+                    ['term' => 'Samparāyikattha', 'meaning' => 'Lợi ích tương lai — phước báu cho các kiếp sống mai sau'],
+                    ['term' => 'Kalyāṇamitta', 'meaning' => 'Thiện tri thức — bạn bè hiền thiện trợ duyên điều lành'],
+                    ['term' => 'Samajīvitā', 'meaning' => 'Sống thăng bằng — quản lý tài chánh thu chi hài hòa'],
+                ],
+                'audio_chanting_url' => null,
+                'reading_time_min' => 9,
+                'is_published' => true,
+                'published_at' => Carbon::now()->subMinutes(30),
             ],
         ];
 
