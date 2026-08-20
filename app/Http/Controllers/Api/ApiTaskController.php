@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Task;
 use App\Models\Project;
+use App\Models\SiteSetting;
+use App\Models\TaskUsageEvent;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Carbon\Carbon;
 
 class ApiTaskController extends Controller
@@ -83,6 +86,7 @@ class ApiTaskController extends Controller
 
         $task = Task::create($validated);
         $task->load(['project', 'sprint', 'epic']);
+        $this->track('task_created', 'task', $task->id);
 
         return response()->json([
             "success" => true,
@@ -122,6 +126,9 @@ class ApiTaskController extends Controller
 
         $task->update($validated);
         $task->load(['project', 'sprint', 'epic']);
+        if (($validated['status'] ?? null) === 'done') {
+            $this->track('task_completed', 'task', $task->id);
+        }
 
         return response()->json([
             "success" => true,
@@ -153,7 +160,7 @@ class ApiTaskController extends Controller
             ->where("status", "!=", "done")
             ->orderByRaw("CASE WHEN status = \"in_progress\" THEN 1 ELSE 2 END")
             ->orderByRaw("CASE WHEN priority = \"urgent\" THEN 1 WHEN priority = \"high\" THEN 2 WHEN priority = \"medium\" THEN 3 ELSE 4 END")
-            ->take(5)
+            ->take(3)
             ->get();
 
         $completedToday = Task::where("status", "done")
@@ -165,6 +172,8 @@ class ApiTaskController extends Controller
             "dispatch_date" => Carbon::today()->toDateString(),
             "active_tasks" => $todayTasks,
             "completed_today_count" => $completedToday,
+            "overdue_count" => Task::where('status', '!=', 'done')->whereDate('due_date', '<', Carbon::today())->count(),
+            "focus_limit" => 3,
             "greeting" => "Chào buổi sáng! Hãy cùng Ma Cà Tưng chinh phục các nhiệm vụ trọng tâm hôm nay 🚀",
         ]);
     }
@@ -201,6 +210,19 @@ class ApiTaskController extends Controller
         ]);
     }
 
+    public function nextAction()
+    {
+        $task = Task::with('project')
+            ->where('status', '!=', 'done')
+            ->orderByRaw("CASE WHEN status = 'in_progress' THEN 1 WHEN priority = 'urgent' THEN 2 WHEN priority = 'high' THEN 3 ELSE 4 END")
+            ->orderByRaw("CASE WHEN due_date IS NULL THEN 1 ELSE 0 END")
+            ->orderBy('due_date')
+            ->orderBy('estimated_pomodoros')
+            ->first();
+
+        return response()->json(['success' => true, 'data' => $task]);
+    }
+
     /**
      * AI / Smart Project Breakdown Preview
      */
@@ -217,7 +239,8 @@ class ApiTaskController extends Controller
             'start_date' => 'nullable|date',
         ]);
 
-        $plan = $service->generatePlan($validated['prompt'], $validated);
+        $plan = $service->generatePlanWithProvider($validated['prompt'], $validated);
+        $this->track('ai_plan_previewed', null, null, ['provider' => $service->planningSettings()['provider']]);
 
         return response()->json($plan);
     }
@@ -238,8 +261,43 @@ class ApiTaskController extends Controller
         $result = $service->executePlan($validated['plan'], [
             'project_id' => $validated['project_id'] ?? null,
         ]);
+        $this->track('ai_plan_committed', 'project', $result['project_id'] ?? null, ['task_count' => count($result['task_ids'] ?? [])]);
 
         return response()->json($result, 201);
+    }
+
+    public function getAiSettings(\App\Services\SmartProjectBreakdownService $service)
+    {
+        $settings = $service->planningSettings();
+        unset($settings['api_key']);
+        $settings['has_api_key'] = !empty($service->planningSettings()['api_key']);
+
+        return response()->json(['success' => true, 'data' => $settings]);
+    }
+
+    public function saveAiSettings(Request $request)
+    {
+        $validated = $request->validate([
+            'provider' => 'required|in:template,openai_compatible',
+            'base_url' => 'required|url|max:255',
+            'model' => 'required|string|max:128',
+            'temperature' => 'nullable|numeric|min:0|max:2',
+            'api_key' => 'nullable|string|max:500',
+            'clear_api_key' => 'nullable|boolean',
+        ]);
+
+        SiteSetting::set('tasks_ai_provider', $validated['provider']);
+        SiteSetting::set('tasks_ai_base_url', rtrim($validated['base_url'], '/'));
+        SiteSetting::set('tasks_ai_model', $validated['model']);
+        SiteSetting::set('tasks_ai_temperature', (string) ($validated['temperature'] ?? 0.2));
+
+        if (($validated['clear_api_key'] ?? false) === true) {
+            SiteSetting::set('tasks_ai_api_key', null);
+        } elseif (!empty($validated['api_key'])) {
+            SiteSetting::set('tasks_ai_api_key', Crypt::encryptString($validated['api_key']));
+        }
+
+        return response()->json(['success' => true, 'message' => 'AI settings saved securely.']);
     }
 
     /**
@@ -295,5 +353,16 @@ class ApiTaskController extends Controller
         $result = $reportService->sendReport($validated['email'] ?? null, $projectIds);
 
         return response()->json($result, $result['success'] ? 200 : 422);
+    }
+
+    private function track(string $eventType, ?string $entityType = null, ?int $entityId = null, array $metadata = []): void
+    {
+        TaskUsageEvent::create([
+            'event_type' => $eventType,
+            'entity_type' => $entityType,
+            'entity_id' => $entityId,
+            'metadata' => $metadata,
+            'occurred_at' => now(),
+        ]);
     }
 }

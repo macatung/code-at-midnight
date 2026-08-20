@@ -388,6 +388,87 @@ const warningTasksCount = computed(() => {
   return overdueTasksCount.value + delayedTasksCount.value;
 });
 
+// Personal command center: daily focus, review and next action.
+const dailyFocusTasks = computed(() => taskList.value
+  .filter(task => task.status !== 'done')
+  .sort((a, b) => {
+    const statusRank = (status: string) => status === 'in_progress' ? 0 : status === 'review' ? 1 : 2;
+    const priorityRank = (priority: string) => ({ urgent: 0, high: 1, medium: 2, low: 3 }[priority] ?? 4);
+    return statusRank(a.status) - statusRank(b.status) || priorityRank(a.priority) - priorityRank(b.priority) || (a.due_date || '9999').localeCompare(b.due_date || '9999');
+  })
+  .slice(0, 3));
+
+const nextActionTask = computed(() => dailyFocusTasks.value[0] || null);
+const showDailyReview = ref(false);
+const dailyReviewData = ref<{ completed_tasks: TaskItem[]; incompleted_tasks: TaskItem[]; total_pomodoros_done: number } | null>(null);
+const isDailyLoading = ref(false);
+
+const startMyDay = () => {
+  currentView.value = 'board';
+  filterSprintId.value = activeSprint.value ? 'active' : 'all';
+  filterHealth.value = 'all';
+  sound.playSuccess();
+};
+
+const openNextAction = () => {
+  if (nextActionTask.value) openTaskDrawer(nextActionTask.value);
+  sound.playClick();
+};
+
+const openDailyReview = async () => {
+  showDailyReview.value = true;
+  isDailyLoading.value = true;
+  try {
+    const res = await axios.get('/api/tasks/daily-review');
+    dailyReviewData.value = res.data;
+  } catch (err) {
+    console.error('Daily review error:', err);
+  } finally {
+    isDailyLoading.value = false;
+  }
+};
+
+// Private AI provider settings: the API only returns whether a key exists.
+const showAiSettingsModal = ref(false);
+const isAiSettingsSaving = ref(false);
+const aiSettingsFeedback = ref('');
+const aiSettings = ref({
+  provider: 'template' as 'template' | 'openai_compatible',
+  base_url: 'https://api.openai.com/v1',
+  model: 'gpt-4o-mini',
+  temperature: 0.2,
+  api_key: '',
+  has_api_key: false,
+});
+
+const openAiSettings = async () => {
+  showAiSettingsModal.value = true;
+  aiSettingsFeedback.value = '';
+  try {
+    const res = await axios.get('/api/tasks/ai-settings');
+    if (res.data.success) aiSettings.value = { ...aiSettings.value, ...res.data.data, api_key: '' };
+  } catch (err) {
+    aiSettingsFeedback.value = 'Không thể tải cài đặt AI.';
+  }
+};
+
+const saveAiSettings = async () => {
+  isAiSettingsSaving.value = true;
+  aiSettingsFeedback.value = '';
+  try {
+    const res = await axios.post('/api/tasks/ai-settings', aiSettings.value);
+    if (res.data.success) {
+      aiSettingsFeedback.value = '✓ Đã lưu an toàn. API key không được hiển thị lại.';
+      aiSettings.value.api_key = '';
+      sound.playSuccess();
+    }
+  } catch (err: any) {
+    aiSettingsFeedback.value = err.response?.data?.message || 'Không thể lưu cài đặt AI.';
+  } finally {
+    isAiSettingsSaving.value = false;
+  }
+};
+
 // Modals & Drawer State
 const selectedTask = ref<TaskItem | null>(null);
 const isEditingDescription = ref(false);
@@ -1634,6 +1715,8 @@ const handleGlobalKey = (e: KeyboardEvent) => {
       showProjectModal.value = false;
       showCreateModal.value = false;
       showSprintModal.value = false;
+      showAiSettingsModal.value = false;
+      showDailyReview.value = false;
       activeProjectMenuId.value = null;
     }
     return;
@@ -1658,6 +1741,8 @@ const handleGlobalKey = (e: KeyboardEvent) => {
     showStartSprintModal.value = false;
     showCompleteSprintModal.value = false;
     showProjectModal.value = false;
+    showAiSettingsModal.value = false;
+    showDailyReview.value = false;
     activeProjectMenuId.value = null;
   }
 };
@@ -1833,6 +1918,15 @@ onUnmounted(() => {
             <span>✨</span>
             <span class="hidden sm:inline">AI Lập Kế Hoạch</span>
             <span class="sm:hidden">AI</span>
+          </button>
+
+          <button
+            @click="openAiSettings"
+            :class="['px-3 py-2 rounded-xl border text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-xs', isDarkMode ? 'bg-slate-900 border-slate-700 text-purple-300 hover:bg-slate-800' : 'bg-white border-slate-300 text-purple-800 hover:bg-purple-50']"
+            title="Cấu hình provider AI và API key riêng tư"
+          >
+            <span>⚙️</span>
+            <span class="hidden xl:inline">AI Settings</span>
           </button>
 
           <!-- Light / Dark Toggle Button -->
@@ -2362,6 +2456,34 @@ onUnmounted(() => {
             </div>
           </div>
         </div>
+
+        <!-- ===================================================================== -->
+        <!-- PERSONAL DAILY COMMAND CENTER                                         -->
+        <!-- ===================================================================== -->
+        <section :class="['p-4 sm:p-6 border-b', isDarkMode ? 'bg-indigo-950/20 border-slate-800' : 'bg-indigo-50/50 border-slate-200']">
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+            <div>
+              <p :class="['text-[10px] font-mono font-bold uppercase tracking-widest', isDarkMode ? 'text-indigo-300' : 'text-indigo-700']">Personal Command Center</p>
+              <h2 :class="['text-lg font-bold tracking-tight', isDarkMode ? 'text-white' : 'text-slate-950']">Hôm nay cần làm gì?</h2>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <button @click="startMyDay" class="px-3 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold cursor-pointer shadow-xs">☀️ Start my day</button>
+              <button @click="openNextAction" :disabled="!nextActionTask" class="px-3 py-2 rounded-xl border text-xs font-bold cursor-pointer disabled:opacity-50" :class="isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-200' : 'bg-white border-slate-300 text-slate-800'">▶ Next action</button>
+              <button @click="openDailyReview" class="px-3 py-2 rounded-xl border text-xs font-bold cursor-pointer" :class="isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-200' : 'bg-white border-slate-300 text-slate-800'">🌙 End my day</button>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <button v-for="task in dailyFocusTasks" :key="task.id" @click="openTaskDrawer(task)" :class="['text-left p-3 rounded-2xl border transition-all hover:-translate-y-0.5 cursor-pointer', isDarkMode ? 'bg-slate-950/70 border-slate-800 hover:border-indigo-500' : 'bg-white border-slate-200 hover:border-indigo-400 shadow-xs']">
+              <div class="flex items-center justify-between gap-2 mb-1">
+                <span class="font-mono text-[10px] text-slate-500">{{ task.issue_key }}</span>
+                <span class="text-[10px] font-bold uppercase" :class="task.priority === 'urgent' ? 'text-rose-600' : task.priority === 'high' ? 'text-amber-600' : 'text-slate-500'">{{ task.priority }}</span>
+              </div>
+              <p :class="['text-xs font-bold line-clamp-2', isDarkMode ? 'text-slate-100' : 'text-slate-900']">{{ task.title }}</p>
+              <p class="mt-1 text-[10px] text-slate-500 truncate">{{ task.project?.title || 'Chung' }} · {{ task.due_date || 'Không hạn' }}</p>
+            </button>
+            <div v-if="dailyFocusTasks.length === 0" :class="['p-4 rounded-2xl border text-xs font-medium', isDarkMode ? 'bg-slate-950/70 border-emerald-800 text-emerald-300' : 'bg-white border-emerald-200 text-emerald-800']">✓ Không còn task đang mở. Hãy tạo kế hoạch tiếp theo.</div>
+          </div>
+        </section>
 
         <!-- ===================================================================== -->
         <!-- VIEW 1: CLEAN KANBAN BOARD (HIGH CONTRAST & CARD ELEVATION)          -->
@@ -3908,6 +4030,34 @@ onUnmounted(() => {
             </button>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- DAILY REVIEW MODAL -->
+    <div v-if="showDailyReview" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4" @click.self="showDailyReview = false">
+      <div :class="['w-full max-w-lg rounded-3xl border shadow-2xl p-6 space-y-5', isDarkMode ? 'bg-[#0b101e] border-slate-700 text-white' : 'bg-white border-slate-200 text-slate-950']">
+        <div class="flex items-center justify-between border-b pb-3" :class="isDarkMode ? 'border-slate-800' : 'border-slate-200'"><div><p class="text-[10px] font-mono uppercase text-indigo-500 font-bold">Daily Review</p><h2 class="text-lg font-bold">Kết thúc ngày</h2></div><button @click="showDailyReview = false" class="text-slate-400 font-bold cursor-pointer">✕</button></div>
+        <div v-if="isDailyLoading" class="py-8 text-center text-slate-500 text-xs">Đang tổng kết...</div>
+        <div v-else-if="dailyReviewData" class="space-y-4 text-xs">
+          <div class="grid grid-cols-3 gap-2"><div class="p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800"><strong class="block text-xl text-emerald-600">{{ dailyReviewData.completed_tasks?.length || 0 }}</strong><span>Hoàn thành</span></div><div class="p-3 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800"><strong class="block text-xl text-amber-600">{{ dailyReviewData.incompleted_tasks?.length || 0 }}</strong><span>Còn lại</span></div><div class="p-3 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800"><strong class="block text-xl text-indigo-600">{{ dailyReviewData.total_pomodoros_done || 0 }}</strong><span>Pomodoros</span></div></div>
+          <div><h3 class="font-bold mb-2">Việc chưa xong</h3><div v-if="dailyReviewData.incompleted_tasks?.length" class="space-y-1.5 max-h-48 overflow-y-auto"><button v-for="task in dailyReviewData.incompleted_tasks" :key="task.id" @click="showDailyReview = false; openTaskDrawer(task)" class="w-full text-left p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-indigo-400 cursor-pointer"><span class="font-mono text-[10px] text-slate-500">{{ task.issue_key }}</span> · <span class="font-medium">{{ task.title }}</span></button></div><p v-else class="text-emerald-600 font-medium">✓ Bạn đã xử lý hết việc trọng tâm hôm nay.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI SETTINGS MODAL -->
+    <div v-if="showAiSettingsModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4" @click.self="showAiSettingsModal = false">
+      <div :class="['w-full max-w-lg rounded-3xl border shadow-2xl p-6 space-y-5', isDarkMode ? 'bg-[#0b101e] border-slate-700 text-white' : 'bg-white border-slate-200 text-slate-950']">
+        <div class="flex items-center justify-between border-b pb-3" :class="isDarkMode ? 'border-slate-800' : 'border-slate-200'"><div><p class="text-[10px] font-mono uppercase text-purple-500 font-bold">Private Configuration</p><h2 class="text-lg font-bold">AI Planning Settings</h2></div><button @click="showAiSettingsModal = false" class="text-slate-400 font-bold cursor-pointer">✕</button></div>
+        <div v-if="aiSettingsFeedback" class="p-3 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 text-xs font-bold">{{ aiSettingsFeedback }}</div>
+        <div class="space-y-3 text-xs">
+          <label class="block"><span class="block mb-1 font-bold">Provider</span><select v-model="aiSettings.provider" class="w-full p-2.5 rounded-xl border bg-transparent"><option value="template">Offline template fallback</option><option value="openai_compatible">OpenAI-compatible API</option></select></label>
+          <label class="block"><span class="block mb-1 font-bold">Base URL</span><input v-model="aiSettings.base_url" class="w-full p-2.5 rounded-xl border bg-transparent" placeholder="https://api.openai.com/v1" /></label>
+          <div class="grid grid-cols-2 gap-3"><label class="block"><span class="block mb-1 font-bold">Model</span><input v-model="aiSettings.model" class="w-full p-2.5 rounded-xl border bg-transparent" /></label><label class="block"><span class="block mb-1 font-bold">Temperature</span><input v-model.number="aiSettings.temperature" type="number" min="0" max="2" step="0.1" class="w-full p-2.5 rounded-xl border bg-transparent" /></label></div>
+          <label class="block"><span class="block mb-1 font-bold">API key <span v-if="aiSettings.has_api_key" class="text-emerald-600">(đã lưu)</span></span><input v-model="aiSettings.api_key" type="password" autocomplete="new-password" class="w-full p-2.5 rounded-xl border bg-transparent" placeholder="Để trống nếu không muốn thay đổi" /></label>
+          <p class="text-[11px] text-slate-500">Key được mã hóa ở server và không bao giờ trả về trình duyệt. Nếu provider lỗi, hệ thống tự dùng template offline.</p>
+        </div>
+        <div class="flex justify-end gap-2 border-t pt-3" :class="isDarkMode ? 'border-slate-800' : 'border-slate-200'"><button @click="showAiSettingsModal = false" class="px-4 py-2 rounded-xl text-xs font-bold cursor-pointer">Hủy</button><button @click="saveAiSettings" :disabled="isAiSettingsSaving" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold cursor-pointer disabled:opacity-50">{{ isAiSettingsSaving ? 'Đang lưu...' : 'Lưu cài đặt' }}</button></div>
       </div>
     </div>
 

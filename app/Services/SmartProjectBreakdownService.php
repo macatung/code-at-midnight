@@ -2,13 +2,17 @@
 
 namespace App\Services;
 
+use App\Contracts\ProjectPlanningProvider;
 use App\Models\Project;
 use App\Models\Sprint;
 use App\Models\Task;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use RuntimeException;
 
-class SmartProjectBreakdownService
+class SmartProjectBreakdownService implements ProjectPlanningProvider
 {
     /**
      * Generate a structured plan (Sprints, Epics, Tasks, Subtasks) from a project requirement prompt.
@@ -64,10 +68,38 @@ class SmartProjectBreakdownService
         ];
     }
 
+    /** Use the configured provider while retaining the deterministic planner as fallback. */
+    public function generatePlanWithProvider(string $prompt, array $options = []): array
+    {
+        $settings = $this->planningSettings();
+
+        if (($settings['provider'] ?? 'template') === 'openai_compatible' && !empty($settings['api_key'])) {
+            try {
+                return $this->normalizePlan((new OpenAiCompatiblePlanningProvider(
+                    $settings['base_url'],
+                    $settings['model'],
+                    $settings['api_key'],
+                    (float) $settings['temperature'],
+                ))->generatePlan($prompt, $options), $options);
+            } catch (\Throwable $exception) {
+                report($exception);
+            }
+        }
+
+        return $this->normalizePlan($this->generatePlan($prompt, $options), $options);
+    }
+
     /**
      * Commit the generated plan into the database (Project, Sprints, Epics, Tasks, Subtasks).
      */
     public function executePlan(array $planData, array $options = []): array
+    {
+        $normalized = $this->normalizePlan($planData, $options);
+
+        return DB::transaction(fn () => $this->executePlanUnsafe($normalized, $options));
+    }
+
+    private function executePlanUnsafe(array $planData, array $options = []): array
     {
         $projectInfo = $planData['project'] ?? [];
         $sprintsData = $planData['sprints'] ?? [];
@@ -171,6 +203,91 @@ class SmartProjectBreakdownService
             'project' => $project,
             'sprints' => $createdSprints,
             'tasks' => $createdTasks,
+        ];
+    }
+
+    /** Validate and normalize provider output before preview or persistence. */
+    public function normalizePlan(array $plan, array $options = []): array
+    {
+        if (!isset($plan['project']) || !is_array($plan['project']) || !isset($plan['sprints']) || !is_array($plan['sprints'])) {
+            throw new RuntimeException('The project plan has an invalid structure.');
+        }
+
+        $project = $plan['project'];
+        $project['title'] = trim((string) ($project['title'] ?? ''));
+        if ($project['title'] === '') {
+            throw new RuntimeException('The project plan must include a title.');
+        }
+        $project['key'] = strtoupper(substr((string) ($project['key'] ?? $this->inferProjectKey($project['title'])), 0, 10));
+        $project['type'] = in_array(($project['type'] ?? 'work'), ['work', 'personal'], true) ? $project['type'] : 'work';
+        $project['color'] = (string) ($project['color'] ?? '#2563eb');
+        $project['description'] = (string) ($project['description'] ?? '');
+
+        $sprints = [];
+        foreach (array_values($plan['sprints']) as $index => $sprint) {
+            if (!is_array($sprint) || trim((string) ($sprint['name'] ?? '')) === '') continue;
+            $tasks = [];
+            foreach (($sprint['tasks'] ?? []) as $task) {
+                if (!is_array($task) || trim((string) ($task['title'] ?? '')) === '') continue;
+                $tasks[] = [
+                    'issue_type' => in_array(($task['issue_type'] ?? 'task'), ['epic', 'story', 'task', 'bug'], true) ? $task['issue_type'] : 'task',
+                    'title' => trim((string) $task['title']),
+                    'description' => (string) ($task['description'] ?? ''),
+                    'priority' => in_array(($task['priority'] ?? 'medium'), ['urgent', 'high', 'medium', 'low'], true) ? $task['priority'] : 'medium',
+                    'category' => trim((string) ($task['category'] ?? 'general')) ?: 'general',
+                    'story_points' => max(0, min(100, (int) ($task['story_points'] ?? 1))),
+                    'status' => in_array(($task['status'] ?? 'todo'), ['todo', 'in_progress'], true) ? $task['status'] : 'todo',
+                    'estimated_pomodoros' => max(1, min(20, (int) ($task['estimated_pomodoros'] ?? 1))),
+                    'start_date' => $task['start_date'] ?? $sprint['start_date'] ?? null,
+                    'due_date' => $task['due_date'] ?? $sprint['end_date'] ?? null,
+                    'subtasks' => is_array($task['subtasks'] ?? null) ? array_slice($task['subtasks'], 0, 20) : [],
+                ];
+            }
+            $sprints[] = [
+                'name' => trim((string) $sprint['name']),
+                'goal' => (string) ($sprint['goal'] ?? ''),
+                'start_date' => $sprint['start_date'] ?? null,
+                'end_date' => $sprint['end_date'] ?? null,
+                'status' => $index === 0 ? 'active' : 'future',
+                'tasks' => $tasks,
+            ];
+        }
+
+        if ($sprints === []) throw new RuntimeException('The project plan must include at least one sprint.');
+
+        $tasks = collect($sprints)->flatMap(fn (array $sprint) => $sprint['tasks']);
+        $startDate = $sprints[0]['start_date'] ?? ($options['start_date'] ?? Carbon::today()->toDateString());
+
+        return [
+            'success' => true,
+            'project' => $project,
+            'summary' => [
+                'sprint_count' => count($sprints),
+                'total_tasks' => $tasks->count(),
+                'total_story_points' => $tasks->sum('story_points'),
+                'total_pomodoros' => $tasks->sum('estimated_pomodoros'),
+                'estimated_weeks' => max(1, (int) ($options['sprint_duration_weeks'] ?? 2)) * count($sprints),
+                'start_date' => $startDate,
+                'end_date' => $sprints[array_key_last($sprints)]['end_date'] ?? $startDate,
+            ],
+            'sprints' => $sprints,
+        ];
+    }
+
+    public function planningSettings(): array
+    {
+        $encryptedKey = \App\Models\SiteSetting::get('tasks_ai_api_key');
+        $apiKey = null;
+        if ($encryptedKey) {
+            try { $apiKey = Crypt::decryptString($encryptedKey); } catch (\Throwable) { $apiKey = null; }
+        }
+
+        return [
+            'provider' => \App\Models\SiteSetting::get('tasks_ai_provider', 'template'),
+            'base_url' => \App\Models\SiteSetting::get('tasks_ai_base_url', 'https://api.openai.com/v1'),
+            'model' => \App\Models\SiteSetting::get('tasks_ai_model', 'gpt-4o-mini'),
+            'temperature' => (float) \App\Models\SiteSetting::get('tasks_ai_temperature', '0.2'),
+            'api_key' => $apiKey,
         ];
     }
 

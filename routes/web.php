@@ -48,6 +48,9 @@ Route::prefix('api/tasks')->group(function () {
     Route::delete('/{id}', [ApiTaskController::class, 'destroy']);
     Route::get('/daily-dispatch', [ApiTaskController::class, 'dailyDispatch']);
     Route::get('/daily-review', [ApiTaskController::class, 'dailyReview']);
+    Route::get('/next-action', [ApiTaskController::class, 'nextAction']);
+    Route::get('/ai-settings', [ApiTaskController::class, 'getAiSettings']);
+    Route::post('/ai-settings', [ApiTaskController::class, 'saveAiSettings']);
 });
 
 // 3.1 Projects REST API Endpoints (For Projects Management)
