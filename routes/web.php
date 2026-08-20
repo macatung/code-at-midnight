@@ -47,8 +47,6 @@ Route::prefix('api/tasks')->group(function () {
     Route::get('/report-settings', [ApiTaskController::class, 'getReportSettings']);
     Route::post('/report-settings', [ApiTaskController::class, 'saveReportSettings']);
     Route::post('/send-report-now', [ApiTaskController::class, 'sendReportNow']);
-    Route::patch('/{id}', [ApiTaskController::class, 'update']);
-    Route::delete('/{id}', [ApiTaskController::class, 'destroy']);
     Route::get('/daily-dispatch', [ApiTaskController::class, 'dailyDispatch']);
     Route::get('/daily-review', [ApiTaskController::class, 'dailyReview']);
     Route::get('/next-action', [ApiTaskController::class, 'nextAction']);
@@ -71,6 +69,12 @@ Route::prefix('api/tasks')->group(function () {
 Route::get('/auth/github', [GithubAuthController::class, 'redirect'])->name('auth.github');
 Route::get('/auth/github/callback', [GithubAuthController::class, 'callback'])->name('auth.github.callback');
 Route::post('/auth/github/logout', [GithubAuthController::class, 'logout'])->name('auth.github.logout');
+
+// Keep dynamic task routes after all named API endpoints.
+Route::prefix('api/tasks')->group(function () {
+    Route::patch('/{id}', [ApiTaskController::class, 'update']);
+    Route::delete('/{id}', [ApiTaskController::class, 'destroy']);
+});
 
 // 3.1 Projects REST API Endpoints (For Projects Management)
 Route::prefix('api/projects')->group(function () {
