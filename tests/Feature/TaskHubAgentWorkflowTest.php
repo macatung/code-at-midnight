@@ -172,4 +172,10 @@ class TaskHubAgentWorkflowTest extends TestCase
         putenv('GITHUB_CLIENT_ID');
         putenv('GITHUB_CLIENT_SECRET');
     }
+
+    public function test_github_oauth_fallback_redirects_to_tasks_subdomain_root(): void
+    {
+        $this->get('https://tasks.macatung.dev/auth/github/callback?state=invalid')
+            ->assertRedirect('https://tasks.macatung.dev/');
+    }
 }
