@@ -28,7 +28,7 @@ class TaskHubMcpController extends ApiAgentRunController
                 'initialize' => ['protocolVersion' => '2024-11-05', 'serverInfo' => ['name' => 'task-hub', 'version' => '1.0.0'], 'capabilities' => ['tools' => (object) []]],
                 'notifications/initialized' => null,
                 'tools/list' => ['tools' => $this->tools()],
-                'tools/call' => $this->callTool($params, $contextService, app(SmartProjectBreakdownService::class)),
+                'tools/call' => $this->callTool($params, $contextService, app(SmartProjectBreakdownService::class), app(GithubProjectIntegrationService::class)),
                 default => throw new \InvalidArgumentException('Method not found: ' . $method),
             };
             $response = ['jsonrpc' => '2.0', 'id' => $id, 'result' => $result];
@@ -50,6 +50,8 @@ class TaskHubMcpController extends ApiAgentRunController
             ['name' => 'request_human_approval', 'description' => 'Request human approval after evidence is attached.', 'inputSchema' => ['type' => 'object', 'properties' => ['task_id' => ['type' => 'integer']], 'required' => ['task_id']]],
             ['name' => 'get_next_action', 'description' => 'Return the next smallest actionable task.', 'inputSchema' => ['type' => 'object', 'properties' => []]],
             ['name' => 'get_project_state', 'description' => 'Read the current project state before planning more work: progress, sprints, blockers, agent runs, verification and GitHub snapshot.', 'inputSchema' => ['type' => 'object', 'properties' => ['project_id' => ['type' => 'integer']], 'required' => ['project_id']]],
+            ['name' => 'get_repository_context', 'description' => 'Read repository tree, recent commits, open pull requests and open issues. Read-only.', 'inputSchema' => ['type' => 'object', 'properties' => ['project_id' => ['type' => 'integer']], 'required' => ['project_id']]],
+            ['name' => 'get_repository_file', 'description' => 'Read one text file from the linked repository. Read-only and truncated to 30,000 characters.', 'inputSchema' => ['type' => 'object', 'properties' => ['project_id' => ['type' => 'integer'], 'path' => ['type' => 'string']], 'required' => ['project_id', 'path']]],
             ['name' => 'preview_project_breakdown', 'description' => 'Generate and validate a project plan without writing to the database. Human approval is required before commit.', 'inputSchema' => ['type' => 'object', 'properties' => [
                 'prompt' => ['type' => 'string', 'description' => 'Project idea or requirement.'],
                 'project_title' => ['type' => 'string'], 'project_key' => ['type' => 'string'],
@@ -62,7 +64,7 @@ class TaskHubMcpController extends ApiAgentRunController
         ];
     }
 
-    private function callTool(array $params, TaskHubContextPackService $contextService, SmartProjectBreakdownService $planningService): array
+    private function callTool(array $params, TaskHubContextPackService $contextService, SmartProjectBreakdownService $planningService, GithubProjectIntegrationService $githubService): array
     {
         $name = $params['name'] ?? '';
         $args = $params['arguments'] ?? [];
@@ -75,6 +77,8 @@ class TaskHubMcpController extends ApiAgentRunController
             'request_human_approval' => $this->approve(Task::findOrFail($args['task_id']))->getData(true),
             'get_next_action' => ['success' => true, 'data' => Task::with('project')->where('status', '!=', 'done')->orderByRaw("CASE WHEN status = 'in_progress' THEN 1 WHEN priority = 'urgent' THEN 2 WHEN priority = 'high' THEN 3 ELSE 4 END")->orderBy('due_date')->first()],
             'get_project_state' => ['success' => true, 'data' => $this->projectState((int) $args['project_id'])],
+            'get_repository_context' => ['success' => true, 'data' => $githubService->repositoryContext(Project::findOrFail((int) $args['project_id']))],
+            'get_repository_file' => ['success' => true, 'data' => $githubService->repositoryFile(Project::findOrFail((int) $args['project_id']), (string) ($args['path'] ?? ''))],
             'preview_project_breakdown' => $this->previewProjectBreakdown($args, $planningService),
             default => throw new \InvalidArgumentException('Unknown tool: ' . $name),
         };

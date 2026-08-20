@@ -55,6 +55,51 @@ class GithubProjectIntegrationService
         });
     }
 
+    public function repositoryContext(Project $project): array
+    {
+        if (!$project->github_repository) throw new \RuntimeException('Project chưa được liên kết với GitHub repository.');
+        $request = $this->githubRequest($project);
+        $branch = $project->github_default_branch ?: 'main';
+        $tree = $request->get('https://api.github.com/repos/' . $project->github_repository . '/git/trees/' . rawurlencode($branch), ['recursive' => 1])->throw()->json();
+        $commits = $request->get('https://api.github.com/repos/' . $project->github_repository . '/commits', ['sha' => $branch, 'per_page' => 10])->throw()->json();
+        $pulls = $request->get('https://api.github.com/repos/' . $project->github_repository . '/pulls', ['state' => 'open', 'per_page' => 30])->throw()->json();
+        $issues = $request->get('https://api.github.com/repos/' . $project->github_repository . '/issues', ['state' => 'open', 'per_page' => 30])->throw()->json();
+
+        return [
+            'repository' => $project->github_repository, 'branch' => $branch,
+            'tree_truncated' => (bool) ($tree['truncated'] ?? false),
+            'files' => collect($tree['tree'] ?? [])->take(500)->map(fn (array $item) => [
+                'path' => $item['path'] ?? null, 'type' => $item['type'] ?? null, 'size' => $item['size'] ?? null,
+            ])->values()->all(),
+            'recent_commits' => collect($commits)->map(fn (array $commit) => [
+                'sha' => substr((string) ($commit['sha'] ?? ''), 0, 12), 'message' => Str::limit(trim((string) data_get($commit, 'commit.message')), 240),
+                'author' => data_get($commit, 'commit.author.name'), 'date' => data_get($commit, 'commit.author.date'),
+                'url' => $commit['html_url'] ?? null,
+            ])->values()->all(),
+            'open_pull_requests' => collect($pulls)->map(fn (array $pull) => ['number' => $pull['number'] ?? null, 'title' => $pull['title'] ?? null, 'body' => Str::limit($pull['body'] ?? '', 500), 'url' => $pull['html_url'] ?? null, 'updated_at' => $pull['updated_at'] ?? null])->values()->all(),
+            'open_issues' => collect($issues)->reject(fn (array $issue) => isset($issue['pull_request']))->map(fn (array $issue) => ['number' => $issue['number'] ?? null, 'title' => $issue['title'] ?? null, 'body' => Str::limit($issue['body'] ?? '', 500), 'url' => $issue['html_url'] ?? null, 'updated_at' => $issue['updated_at'] ?? null])->values()->all(),
+        ];
+    }
+
+    public function repositoryFile(Project $project, string $path): array
+    {
+        if (!$project->github_repository) throw new \RuntimeException('Project chưa được liên kết với GitHub repository.');
+        if (trim($path) === '' || Str::contains($path, ['..', '\\\\'])) throw new \InvalidArgumentException('Invalid repository path.');
+        $response = $this->githubRequest($project)->get('https://api.github.com/repos/' . $project->github_repository . '/contents/' . str_replace('%2F', '/', rawurlencode(trim($path))), ['ref' => $project->github_default_branch ?: 'main'])->throw()->json();
+        if (($response['type'] ?? null) !== 'file') throw new \RuntimeException('Path is not a file.');
+        $content = base64_decode((string) ($response['content'] ?? ''), true);
+        return ['path' => $response['path'] ?? $path, 'sha' => $response['sha'] ?? null, 'size' => $response['size'] ?? null, 'encoding' => 'utf-8', 'content' => $content === false ? '' : Str::limit($content, 30000, "\n[truncated]")];
+    }
+
+    private function githubRequest(Project $project)
+    {
+        $project->loadMissing('user');
+        $token = $project->user ? $this->secret($project->user->github_access_token) : null;
+        $token = $token ?: $this->secret($project->github_token);
+        $request = Http::acceptJson()->withHeaders(['User-Agent' => 'TaskHub/1.0'])->timeout(20);
+        return $token ? $request->withToken($token) : $request;
+    }
+
     public function connect(Project $project, array $input): Project
     {
         $repository = trim($input['github_repository']);
