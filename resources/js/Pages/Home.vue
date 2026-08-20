@@ -56,10 +56,9 @@ const homeJsonLd = {
       'alternateName': ['macatung', 'Midnight Architect'],
       'url': 'https://macatung.dev',
       'jobTitle': 'Senior Full-Stack Engineer & Creative Coder',
-      'knowsAbout': ['Laravel', 'Vue.js', 'Inertia.js', 'Tailwind CSS', 'TypeScript', 'Docker', 'Google Cloud Platform', 'Theravada Buddhism'],
+      'knowsAbout': ['Laravel', 'Vue.js', 'Inertia.js', 'Tailwind CSS', 'TypeScript', 'Docker', 'Google Cloud Platform', 'AI Multi-Agent Systems'],
       'sameAs': [
-        'https://github.com/macatung',
-        'https://theravada.macatung.dev'
+        'https://github.com/macatung'
       ]
     }
   ]

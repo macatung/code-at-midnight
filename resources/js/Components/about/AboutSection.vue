@@ -18,42 +18,42 @@ const props = withDefaults(defineProps<Props>(), {
   stats: () => ({}),
 });
 
-type ManifestoTabId = 'philosophy' | 'humanistic' | 'sustainable' | 'craftsmanship';
+type ManifestoTabId = 'flow' | 'concurrency' | 'agents' | 'fullstack';
 
-const activeTab = ref<ManifestoTabId>('philosophy');
+const activeTab = ref<ManifestoTabId>('flow');
 
 const tabs = [
   {
-    id: 'philosophy',
-    title: 'Triết Lý 00:00 AM',
-    subtitle: 'Khi cả thành phố chìm vào giấc ngủ, thế giới của dòng code mới thực sự bừng tỉnh.',
-    content: 'Không có tiếng thông báo Slack, không có họp hành ngắt quãng. Đêm sâu là không gian tĩnh tại tuyệt đối để gạn đục khơi trong, đưa tư duy kiến trúc vào trạng thái Ultra-Flow thuần khiết.',
+    id: 'flow',
+    title: 'Trạng Thái 00:00 AM',
+    subtitle: 'Ultra-Flow State giữa đêm sâu — không phân tâm, tối ưu tư duy giải thuật.',
+    content: 'Khi cả thành phố chìm vào giấc ngủ, không còn họp hành hay tin nhắn ngắt quãng. Đêm sâu là không gian tĩnh tại tuyệt đối để giải quyết các bài toán kiến trúc hóc búa, đưa tư duy vào trạng thái Ultra-Flow thuần khiết.',
     icon: 'Moon',
     badge: 'Ultra-Flow'
   },
   {
-    id: 'humanistic',
-    title: 'Vị Nhân Sinh & Vô Ngã',
-    subtitle: 'Code không phải để phô trương cái tôi, mà để xoa dịu nỗi đau và phụng sự cuộc đời.',
-    content: 'Gạt bỏ bản ngã để viết những dòng mã sáng rõ, dễ hiểu. Thiết kế giao diện thuần khiết, nói không với các thủ thuật thao túng tâm lý (Dark Patterns), tôn trọng thời gian và sự an lạc của người dùng.',
-    icon: 'Heart',
-    badge: 'Human-First'
+    id: 'concurrency',
+    title: 'Kiến Trúc Tải Cao',
+    subtitle: '8+ năm thực chiến hệ thống phân tán, xử lý hàng triệu requests với latency < 18ms.',
+    content: 'Chuyên sâu tối ưu hóa cơ sở dữ liệu lớn (GIS/NMS), caching đa tầng (Redis/In-Memory), hệ thống hàng đợi bất đồng bộ (Queue/PubSub) và cam kết SLA 99.9% Uptime cho các nền tảng doanh nghiệp.',
+    icon: 'Zap',
+    badge: 'High-Scale'
   },
   {
-    id: 'sustainable',
-    title: 'Duyên Khởi Kiến Trúc',
-    subtitle: 'Mọi module vận hành nương tựa nhau trong một sinh thái bền vững, tiết kiệm tài nguyên.',
-    content: 'Ứng dụng lý Duyên Khởi (Paṭiccasamuppāda) vào hệ thống: Tối ưu Green Computing, kiến trúc phân tán Decoupled thích ứng linh hoạt trước biến chuyển vô thường của công nghệ mà không bị gãy đổ.',
-    icon: 'Layers',
-    badge: 'Resilience'
+    id: 'agents',
+    title: 'Multi-Agent AI Tự Trị',
+    subtitle: 'Tiên phong tích hợp AI Agents thế hệ mới phục vụ tự động hóa quy trình nghiệp vụ.',
+    content: 'Thiết kế các Agent thông minh sở hữu năng lực Tool Calling, Semantic Search (RAG) và kết nối MCP (Model Context Protocol), giải phóng sức lao động con người với độ chính xác và an toàn dữ liệu cao.',
+    icon: 'Sparkles',
+    badge: 'AI Systems'
   },
   {
-    id: 'craftsmanship',
-    title: 'Chánh Niệm Kỹ Thuật',
-    subtitle: 'Mỗi dòng mã là một đạo bùa chú trừ khử bug và loại bỏ nợ kỹ thuật tận gốc.',
-    content: 'Nợ kỹ thuật là nguồn gốc của bất an. Cam kết 100% Strict Type-safety, automated tests bao phủ toàn diện và Zero-Crash architecture để mang lại sự an tâm tuyệt đối cho người dùng và đối tác.',
+    id: 'fullstack',
+    title: 'Kỹ Nghệ Toàn Diện',
+    subtitle: 'Làm chủ từ giao diện tương tác kỳ ảo đến hạ tầng đám mây kiên cố.',
+    content: 'Kết hợp hài hòa giữa Frontend tương tác mượt mà (Vue 3, TypeScript, Web Audio, Canvas) và Backend vững chắc (Laravel 11, Docker, GCP Cloud Run/Compute Engine), tuân thủ nghiêm ngặt chuẩn bảo mật OWASP.',
     icon: 'Shield',
-    badge: 'Craftsmanship'
+    badge: 'Full-Stack'
   }
 ];
 
@@ -123,19 +123,19 @@ const displayStats = computed(() => {
 
 const pillars = [
   {
-    icon: 'Heart',
-    title: 'Kỹ Nghệ Vị Nhân Sinh',
-    desc: 'Lấy con người làm gốc rễ, UX chân thật, giải phóng thời gian và xoa dịu nỗi đau thao tác.',
+    icon: 'Activity',
+    title: 'Tối Ưu Độ Trễ (<18ms)',
+    desc: 'Bộ nhớ đệm đa tầng, index cơ sở dữ liệu chuyên sâu và truy vấn bất đồng bộ non-blocking.',
   },
   {
     icon: 'Layers',
-    title: 'Duyên Khởi & Bền Vững',
-    desc: 'Kiến trúc phân tán tối ưu Green Computing, thích ứng biến đổi vô thường của công nghệ.',
+    title: 'Co Giãn Linh Hoạt (Elastic)',
+    desc: 'Kiến trúc container hóa, microservices và hàng đợi xử lý sẵn sàng mở rộng khi lưu lượng tăng đột biến.',
   },
   {
     icon: 'Shield',
-    title: 'Chánh Niệm Kỹ Thuật',
-    desc: '100% Strict Type-Safety, Zero-Debt, kiểm thử tự động toàn diện và bảo mật phòng vệ.',
+    title: 'Chất Lượng Phòng Vệ (Zero-Crash)',
+    desc: '100% Strict TypeScript, tự động hóa CI/CD, unit testing bao phủ và bảo mật đa tầng.',
   },
 ];
 </script>

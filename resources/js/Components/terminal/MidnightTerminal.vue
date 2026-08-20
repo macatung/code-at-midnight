@@ -206,6 +206,32 @@ const execute = (rawCmd: string): string => {
       output = `📡 Spectral Communication Channels:\n  • Email   : dev@macatung.dev\n  • GitHub  : https://github.com/macatung\n  • Telegram: @macatung_dev\n  • Realm   : GMT+7 (Midnight Zone)`;
       sound.playClick();
       break;
+    case 'manifesto':
+    case 'philosophy':
+    case 'nhansinh':
+      output = `══════════════════════════════════════════════════════════════════════════
+ 🌿 TUYÊN NGÔN KỸ NGHỆ PHẦN MỀM VỊ NHÂN SINH (HUMANISTIC MANIFESTO)
+══════════════════════════════════════════════════════════════════════════
+ "Code Khởi Tâm Thiện — Ứng Dụng Phụng Sự Nhân Sinh"
+ 
+ 1. 🌿 THIẾT KẾ VỊ NHÂN SINH (Empathy & User-First):
+    • Gạt bỏ bản ngã phô trương, thấu cảm sâu sắc nỗi đau người dùng.
+    • Nói KHÔNG với Dark Patterns, tôn trọng quyền riêng tư & tự do.
+
+ 2. ⚡ KIẾN TRÚC SINH THÁI BỀN VỮNG (Resilient & Green Computing):
+    • Mọi module tương hỗ, tối ưu tài nguyên máy chủ và hiệu năng.
+    • Kiến trúc Decoupled thích ứng linh hoạt trước biến chuyển công nghệ.
+
+ 3. 🛡️ KỶ LUẬT & CHẤT LƯỢNG TUYỆT ĐỐI (Zero-Debt Craftsmanship):
+    • Nợ kỹ thuật là gốc rễ của bất an; 100% Strict Type-Safety & Zero Debt.
+    • Tỉ mỉ gạn đục khơi trong giữa đêm sâu (Midnight Flow 00:00 AM).
+
+ 4. ✨ GIẢI PHÓNG SỨC LAO ĐỘNG (AI for Human Empowerment):
+    • Multi-Agent AI tự trị gánh vác tác vụ lặp lại nặng nhọc 24/7.
+    • Trao lại thời gian để con người tự do sáng tạo và nâng tầm cuộc sống.
+──────────────────────────────────────────────────────────────────────────`;
+      sound.playCelestialChime(activePhase.value.id);
+      break;
     case 'admin':
       output = '⚙️ [CMS PORTAL] Opening Admin Dashboard at /admin ... Nhấp để quản lý Projects & Contacts: https://macatung.dev/admin';
       sound.playSuccess();
@@ -237,34 +263,8 @@ const execute = (rawCmd: string): string => {
         }
       }
       break;
-    case 'manifesto':
-    case 'philosophy':
-    case 'nhansinh':
-      output = `══════════════════════════════════════════════════════════════════════════
- 🌿 TUYÊN NGÔN KIẾN TẠO PHẦN MỀM VỊ NHÂN SINH (HUMANISTIC MANIFESTO)
-══════════════════════════════════════════════════════════════════════════
- "Code Khởi Tâm Thiện — Ứng Dụng Độ Nhân Sinh"
- 
- 1. 🌿 VÔ NGÃ TRONG MÃ NGUỒN (Anattā & Karuṇā):
-    • Gạt bỏ bản ngã phô trương, thấu cảm sâu sắc nỗi đau người dùng.
-    • Nói KHÔNG với Dark Patterns, tôn trọng quyền riêng tư & tự do.
-
- 2. ☸️ DUYÊN KHỞI & BỀN VỮNG (Paṭiccasamuppāda):
-    • Mọi module tương hỗ, tối ưu Green Computing tiết kiệm tài nguyên.
-    • Kiến trúc Decoupled thích ứng linh hoạt trước biến chuyển vô thường.
-
- 3. 🧘 CHÁNH NIỆM TỪNG DÒNG LỆNH (Sati & Appamāda):
-    • Nợ kỹ thuật là gốc rễ của bất an; 100% Strict Type-Safety & Zero Debt.
-    • Tỉnh thức gạn đục khơi trong giữa đêm sâu (Midnight Flow 00:00 AM).
-
- 4. 🕊️ PHỤNG SỰ & GIẢI PHÓNG CON NGƯỜI (Vimutti & Mettā):
-    • Multi-Agent AI tự trị gánh vác tác vụ lặp lại nặng nhọc 24/7.
-    • Trao lại thời gian để con người sống trọn vẹn và nuôi dưỡng nội tâm.
-──────────────────────────────────────────────────────────────────────────`;
-      sound.playCelestialChime(activePhase.value.id);
-      break;
     case 'slogan':
-      output = '✨ "Code Khởi Tâm Thiện — Ứng Dụng Độ Nhân Sinh. Code at midnight, deploy with peace."';
+      output = '✨ "Code Khởi Tâm Thiện — Ứng Dụng Phụng Sự Nhân Sinh. Code at midnight, deploy with peace."';
       sound.playClick();
       break;
     case 'summon':
