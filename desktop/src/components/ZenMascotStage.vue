@@ -85,7 +85,7 @@ defineProps<{
       <!-- Compact Zen Badge -->
       <div class="mt-0.5 px-2.5 py-0.5 rounded-full bg-stone-950/95 border border-amber-400 text-[10px] font-serif text-amber-300 font-bold shadow-md flex items-center gap-1 backdrop-blur-md">
         <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
-        <span>🧘 Ma Tọa Thiền</span>
+        <span>⚡ Task Companion</span>
       </div>
     </div>
   </div>

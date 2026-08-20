@@ -65,7 +65,7 @@ const handlePraise = () => {
         <span>Ma Cà Tưng Tán Thán:</span>
       </div>
       <p class="italic leading-relaxed">
-        "Bạn đã nỗ lực hết mình hôm nay! Hãy gác lại mọi lo toan, thở một hơi thật sâu và cho phép tâm trí được nghỉ ngơi trọn vẹn."
+        "Bạn đã nỗ lực hết mình hôm nay! Hãy xem lại kết quả và chọn việc quan trọng tiếp theo."
       </p>
     </div>
 
@@ -76,7 +76,7 @@ const handlePraise = () => {
         class="py-2 px-5 rounded-xl bg-purple-500 hover:bg-purple-400 text-white font-bold text-xs shadow-lg hover:scale-105 transition-all cursor-pointer flex items-center gap-1.5"
       >
         <span>🔔</span>
-        <span>Thỉnh Chuông Tán Thán & Nghỉ Ngơi</span>
+        <span>Tiếp tục với task tiếp theo</span>
       </button>
     </div>
   </div>

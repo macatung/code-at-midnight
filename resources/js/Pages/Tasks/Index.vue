@@ -1944,6 +1944,13 @@ onMounted(() => {
 
   window.addEventListener('keydown', handleGlobalKey);
   window.addEventListener('click', closeAllMenus);
+
+  // Allow the desktop mascot to deep-link into the same actions as the web
+  // header without duplicating the modal implementations.
+  const requestedAction = new URLSearchParams(window.location.search).get('open');
+  if (requestedAction === 'ai-plan') openAiGeneratorModal();
+  if (requestedAction === 'email-report') openReportModal();
+  if (requestedAction === 'ai-settings') openAiSettings();
 });
 
 onUnmounted(() => {

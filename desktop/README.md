@@ -1,6 +1,6 @@
-# 🧘 Ma Cà Tưng & Ma Tọa Thiền — Desktop Companion App (Windows)
+# ⚡ Task Companion — Desktop App (Windows)
 
-Ứng dụng **Desktop Pet / Companion Chánh Niệm & Nhắc Nhở Kinh Kệ Pháp Cú** chạy lơ lửng trên màn hình Windows.
+Ứng dụng mascot desktop chạy lơ lửng trên Windows, tập trung vào quản lý task, productivity và kết nối AI agent.
 
 ---
 
@@ -11,18 +11,41 @@
    - Kéo thả tự do (`Drag & Drop`) tới bất kỳ góc màn hình nào bạn thích.
    - Luôn ở trên cùng (`Always-on-Top`) để bạn không bỏ lỡ những khoảnh khắc chánh niệm.
 
-2. **Chuyển Đổi 2 Hình Thái Linh Vật (Persona)**:
-   - 🧘 **Ma Tọa Thiền**: Phong cách Phật học Zen, ngồi đài sen ngũ sắc, phát hào quang vàng kim và vòng quay Pháp Luân (Dhamma Wheel).
-   - ☕ **Ma Cà Tưng Coder**: Phong cách Midnight Architect, lá bùa hộ mệnh Code 00:00 và tách cà phê bốc khói.
+2. **Task workspace**: task dispatch, Pomodoro, review, quick notes và debug.
 
-3. **Lời Nhắc Chánh Niệm & Kinh Kệ Pháp Cú (Dhammapada)**:
-   - 📜 **Rút Quẻ Kệ Pháp Cú**: Hiển thị kệ số, nguyên văn Pāḷi, thơ dịch tiếng Việt và tuệ giác chiêm nghiệm.
-   - 🔔 **Chuông Chánh Niệm 432Hz / 528Hz**: Bộ tổng hợp âm thanh chuông xoay Tây Tạng ngân vang thuần khiết bằng Web Audio API.
-   - 🌸 **Điều Tức 3 Nhịp Thở**: Vòng tròn hướng dẫn hít vào tĩnh lặng, thở ra mỉm cười.
-   - 💧 **Nhắc Nhở Sức Khỏe**: Uống nước, thư giãn mắt 20-20-20, thả lỏng vai gáy định kỳ.
+3. **AI Agent Workspace**: kết nối Codex, Antigravity và Claude Code; cấu hình MCP Task Hub cho workspace.
 
-4. **Khay Hệ Thống (System Tray)**:
-   - Icon góc phải Taskbar với menu chuột phải đầy đủ: Ẩn/Hiện, Rút kệ mới, Thỉnh chuông, Đổi hình thái, Cài đặt và Thoát.
+4. **Khay hệ thống**: mở mascot, task dispatch, agent workspace, Pomodoro, review và Task Hub.
+
+5. **Agent Workspace**:
+   - Mở console từ `Tasks → Agent` để làm việc với Codex, Claude Code hoặc Antigravity.
+   - Với Codex/Claude Code, chọn thư mục repository, mở một phiên CLI và gửi prompt/lệnh qua stdin; output được stream trực tiếp về desktop app.
+   - Với Antigravity 2.0 desktop, app mở `Antigravity.exe` vào workspace đã chọn và copy prompt vào clipboard để dán vào Agent panel. Bản desktop không expose `agy` stdin/stdout API.
+   - Agent Workspace bắt buộc chọn đúng một task đang mở từ Task Hub production; task không có project không thể chạy.
+   - App dùng device pairing với GitHub approval, tự lấy context pack, tạo `agent_run`, cấu hình MCP và truyền contract vào agent.
+
+   Các CLI cần có sẵn trong `PATH` của Windows:
+
+   ```powershell
+   codex --version
+   claude --version
+   agy --version
+   ```
+
+   Agent bridge chỉ cho phép ba provider trên và chạy trong thư mục mà người dùng chọn. Không nhập token vào prompt; hãy đăng nhập/authenticate từng CLI theo hướng dẫn riêng của chúng.
+
+   Với Antigravity IDE, chọn provider `Antigravity` và workspace, sau đó approve project trong browser khi app yêu cầu. Không cần nhập Project ID hay MCP token thủ công. App sẽ tạo hoặc cập nhật:
+
+   ```text
+   <workspace>/.agents/mcp_config.json
+   ```
+
+   Sau đó mở workspace này trong Antigravity IDE. Trong IDE, kiểm tra MCP ở `Settings → Customizations → Installed MCP Servers`; agent có thể dùng các tool `task-hub` để đọc task, lấy context pack, ghi lifecycle và đính verification evidence. Token chỉ tồn tại trong pairing response/config local và không được đưa vào prompt hoặc log.
+
+6. **Auto-update**:
+   - Bản đã cài tự kiểm tra GitHub Releases sau khi khởi động và định kỳ mỗi 6 giờ.
+   - Update được tải nền; app chỉ restart khi người dùng bấm `Khởi động lại và cập nhật`.
+   - Release chính thức dùng tag `desktop-v<version>`, ví dụ `desktop-v1.0.1`.
 
 ---
 
@@ -40,6 +63,22 @@ cd d:\Work\macatung\desktop
 npm run build
 ```
 File cài đặt `.exe` sẽ được tạo tự động trong thư mục `desktop/dist/`.
+
+### 3. Phát hành bản cập nhật Windows
+
+Tăng version trong `desktop/package.json`, commit thay đổi rồi tạo tag release:
+
+```powershell
+cd d:\Work\macatung\desktop
+npm version patch
+git add package.json package-lock.json
+git commit -m "chore(desktop): release v1.0.1"
+git tag desktop-v1.0.1
+git push origin main --tags
+```
+
+GitHub Actions sẽ kiểm tra version, build installer NSIS per-user và publish
+`.exe`, `latest.yml` cùng blockmap lên GitHub Releases.
 
 ---
 

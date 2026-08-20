@@ -44,7 +44,7 @@ class TaskHubMcpController extends ApiAgentRunController
         return [
             ['name' => 'get_work_item', 'description' => 'Read a Task Hub work item.', 'inputSchema' => ['type' => 'object', 'properties' => ['task_id' => ['type' => 'integer']], 'required' => ['task_id']]],
             ['name' => 'get_context_pack', 'description' => 'Build the current context pack for a task.', 'inputSchema' => ['type' => 'object', 'properties' => ['task_id' => ['type' => 'integer']], 'required' => ['task_id']]],
-            ['name' => 'start_agent_run', 'description' => 'Create an auditable agent run.', 'inputSchema' => ['type' => 'object', 'properties' => ['task_id' => ['type' => 'integer'], 'provider' => ['type' => 'string'], 'agent_session_id' => ['type' => 'string']], 'required' => ['provider']]],
+            ['name' => 'start_agent_run', 'description' => 'Create an auditable agent run for the selected task.', 'inputSchema' => ['type' => 'object', 'properties' => ['task_id' => ['type' => 'integer'], 'provider' => ['type' => 'string'], 'agent_session_id' => ['type' => 'string'], 'repository' => ['type' => 'string'], 'branch' => ['type' => 'string'], 'context' => ['type' => 'object'], 'instruction' => ['type' => 'object']], 'required' => ['task_id', 'provider']]],
             ['name' => 'update_agent_run', 'description' => 'Update agent lifecycle and repository references.', 'inputSchema' => ['type' => 'object', 'properties' => ['run_id' => ['type' => 'integer'], 'status' => ['type' => 'string'], 'summary' => ['type' => 'string']], 'required' => ['run_id']]],
             ['name' => 'attach_verification_evidence', 'description' => 'Attach test/build/security evidence to an agent run.', 'inputSchema' => ['type' => 'object', 'properties' => ['run_id' => ['type' => 'integer'], 'evidence_type' => ['type' => 'string'], 'status' => ['type' => 'string'], 'command' => ['type' => 'string'], 'summary' => ['type' => 'string']], 'required' => ['run_id', 'evidence_type', 'status']]],
             ['name' => 'request_human_approval', 'description' => 'Request human approval after evidence is attached.', 'inputSchema' => ['type' => 'object', 'properties' => ['task_id' => ['type' => 'integer']], 'required' => ['task_id']]],
@@ -71,7 +71,15 @@ class TaskHubMcpController extends ApiAgentRunController
         $data = match ($name) {
             'get_work_item' => Task::with(['project', 'sprint', 'agentRuns.evidence'])->findOrFail($args['task_id']),
             'get_context_pack' => $contextService->build(Task::findOrFail($args['task_id']), $args),
-            'start_agent_run' => $this->store(Request::create('/', 'POST', ['task_id' => $args['task_id'] ?? null, 'provider' => $args['provider'], 'agent_session_id' => $args['agent_session_id'] ?? null]), $contextService)->getData(true),
+            'start_agent_run' => $this->store(Request::create('/', 'POST', [
+                'task_id' => $args['task_id'] ?? null,
+                'provider' => $args['provider'],
+                'agent_session_id' => $args['agent_session_id'] ?? null,
+                'repository' => $args['repository'] ?? null,
+                'branch' => $args['branch'] ?? null,
+                'context' => $args['context'] ?? null,
+                'instruction' => $args['instruction'] ?? null,
+            ]), $contextService)->getData(true),
             'update_agent_run' => $this->update(Request::create('/', 'PATCH', $args), AgentRun::findOrFail($args['run_id']))->getData(true),
             'attach_verification_evidence' => $this->evidence(Request::create('/', 'POST', $args), AgentRun::findOrFail($args['run_id']))->getData(true),
             'request_human_approval' => $this->approve(Task::findOrFail($args['task_id']))->getData(true),

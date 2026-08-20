@@ -4,6 +4,8 @@ export interface ProjectItem {
   id: number;
   title: string;
   slug: string;
+  key?: string | null;
+  color?: string | null;
 }
 
 export interface TaskItem {
@@ -19,6 +21,13 @@ export interface TaskItem {
   completed_pomodoros: number;
   due_date: string | null;
   completed_at: string | null;
+  issue_key?: string | null;
+  issue_type?: 'epic' | 'story' | 'task' | 'bug';
+  story_points?: number | null;
+  acceptance_criteria?: string | null;
+  definition_of_done?: string | null;
+  risk_level?: 'low' | 'medium' | 'high' | 'critical';
+  notes?: string | null;
 }
 
 export interface DailyDispatchData {
@@ -38,10 +47,11 @@ export interface DailyReviewData {
   wisdom_quote: string;
 }
 
-const API_BASE = 'http://localhost:8005/api/tasks';
+const API_BASE = `${(import.meta as any).env?.VITE_TASK_HUB_URL || 'https://tasks.macatung.dev'}/api/tasks`;
 
 export function useTaskSync() {
   const tasks = ref<TaskItem[]>([]);
+  const agentTasks = ref<TaskItem[]>([]);
   const activeTask = ref<TaskItem | null>(null);
   const isLoading = ref(false);
   const isOnline = ref(true);
@@ -87,6 +97,20 @@ export function useTaskSync() {
       isLoading.value = false;
     }
     loadLocalCache();
+  };
+
+  const fetchAgentTasks = async () => {
+    try {
+      const statuses = ['todo', 'in_progress', 'review'];
+      const responses = await Promise.all(statuses.map(status => fetch(`${API_BASE}?status=${status}`)));
+      const payloads = await Promise.all(responses.map(response => response.ok ? response.json() : null));
+      const unique = new Map<number, TaskItem>();
+      payloads.forEach(payload => (payload?.data || []).forEach((task: TaskItem) => unique.set(task.id, task)));
+      agentTasks.value = Array.from(unique.values());
+    } catch (e) {
+      console.warn('Cannot load agent tasks:', e);
+      agentTasks.value = tasks.value.filter(task => task.status !== 'done');
+    }
   };
 
   // Create task
@@ -166,14 +190,17 @@ export function useTaskSync() {
 
   onMounted(() => {
     fetchTasks();
+    fetchAgentTasks();
   });
 
   return {
     tasks,
+    agentTasks,
     activeTask,
     isLoading,
     isOnline,
     fetchTasks,
+    fetchAgentTasks,
     createTask,
     toggleTaskComplete,
     incrementPomodoro,

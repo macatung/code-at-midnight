@@ -23,7 +23,7 @@ const loadData = () => {
       todos.value = [
         { id: '1', text: 'Hoàn thành module quan trọng nhất hôm nay', done: false },
         { id: '2', text: 'Code review & dọn dẹp pull requests', done: false },
-        { id: '3', text: 'Tọa thiền 10 phút xả stress cuối ngày', done: false },
+        { id: '3', text: 'Kiểm tra lại task đang chờ review', done: false },
       ];
     }
 

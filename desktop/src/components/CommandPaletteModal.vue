@@ -16,17 +16,12 @@ const emit = defineEmits<{
   (e: 'close'): void;
   (e: 'create-task', title: string): void;
   (e: 'start-pomodoro', mode?: string): void;
-  (e: 'ring-bell'): void;
-  (e: 'toggle-persona'): void;
-  (e: 'draw-verse'): void;
-  (e: 'add-water'): void;
   (e: 'open-duck'): void;
   (e: 'open-notes'): void;
-  (e: 'open-stretch'): void;
-  (e: 'start-breathing'): void;
-  (e: 'open-settings'): void;
   (e: 'open-dispatch'): void;
   (e: 'open-review'): void;
+  (e: 'check-updates'): void;
+  (e: 'install-update'): void;
 }>();
 
 const searchInput = ref<HTMLInputElement | null>(null);
@@ -62,66 +57,12 @@ const allCommands: CommandItem[] = [
     action: () => emit('open-dispatch'),
   },
   {
-    id: 'ring-bell',
-    title: 'Thỉnh chuông chánh niệm',
-    subtitle: 'Tần số 432Hz / 528Hz giải phóng căng thẳng',
-    icon: '🔔',
-    category: 'Chánh Niệm',
-    keywords: ['chuong', 'bell', 'thinh chuong', 'chanh niem', 'zen', 'sound'],
-    action: () => emit('ring-bell'),
-  },
-  {
-    id: 'draw-verse',
-    title: 'Rút 1 bài Kệ Pháp Cú ngẫu nhiên',
-    subtitle: 'Lời Phật dạy tỉnh thức trong ngày',
-    icon: '📜',
-    category: 'Chánh Niệm',
-    keywords: ['phap cu', 'ke', 'verse', 'dhammapada', 'kinh', 'loi khuyen'],
-    action: () => emit('draw-verse'),
-  },
-  {
-    id: 'start-breathing',
-    title: 'Tập thở 3 nhịp (Box Breathing)',
-    subtitle: 'Cân bằng nhịp tim và giảm áp lực',
-    icon: '🌸',
-    category: 'Chánh Niệm',
-    keywords: ['tho', 'breath', 'breathing', '3 nhip', 'oxigen', 'relax'],
-    action: () => emit('start-breathing'),
-  },
-  {
-    id: 'add-water',
-    title: 'Ghi nhận đã uống 1 ly nước',
-    subtitle: 'Mục tiêu 8 ly nước mỗi ngày',
-    icon: '💧',
-    category: 'Sức Khỏe',
-    keywords: ['nuoc', 'water', 'uong nuoc', '8 ly', 'suc khoe'],
-    action: () => emit('add-water'),
-  },
-  {
-    id: 'open-stretch',
-    title: 'Vận động cột sống & nghỉ mắt (30s)',
-    subtitle: 'Bảo vệ vai gáy khi ngồi máy tính lâu',
-    icon: '🧘‍♂️',
-    category: 'Sức Khỏe',
-    keywords: ['gian co', 'stretch', 'nghi mat', 'cot song', 'vai gay'],
-    action: () => emit('open-stretch'),
-  },
-  {
-    id: 'toggle-persona',
-    title: 'Đổi chế độ Dev Coder ⇋ Tọa Thiền',
-    subtitle: 'Thay đổi diện mạo và phong cách Mascot',
-    icon: '🎭',
-    category: 'Tùy Chỉnh',
-    keywords: ['doi che do', 'persona', 'zen', 'coder', 'monk', 'switch'],
-    action: () => emit('toggle-persona'),
-  },
-  {
     id: 'open-duck',
-    title: 'Debug Tâm Thức & Yểm Bùa 0 Bug',
-    subtitle: 'Giải tỏa tư duy logic cùng Vịt cao su',
+    title: 'Debug cùng Rubber Duck',
+    subtitle: 'Phân tích vấn đề và tìm hướng xử lý',
     icon: '🦆',
     category: 'Công Cụ Dev',
-    keywords: ['duck', 'vit', 'debug', 'yem bua', '0 bug', 'bua'],
+    keywords: ['duck', 'rubber duck', 'debug', 'bug'],
     action: () => emit('open-duck'),
   },
   {
@@ -143,15 +84,6 @@ const allCommands: CommandItem[] = [
     action: () => emit('open-review'),
   },
   {
-    id: 'open-settings',
-    title: 'Cài đặt chu kỳ nhắc nhở',
-    subtitle: 'Tùy chỉnh khoảng cách chuông, nước, thiền',
-    icon: '⚙️',
-    category: 'Cài Đặt',
-    keywords: ['cai dat', 'settings', 'config', 'chu ky', 'nhac nho'],
-    action: () => emit('open-settings'),
-  },
-  {
     id: 'open-web',
     title: 'Mở Tasks Hub trên Web',
     subtitle: 'Quản lý bảng Kanban đầy đủ (tasks.macatung.dev)',
@@ -159,8 +91,28 @@ const allCommands: CommandItem[] = [
     category: 'Liên Kết',
     keywords: ['web', 'kanban', 'browser', 'macatung', 'link'],
     action: () => {
-      window.open('http://localhost:8005/tasks', '_blank');
+      const url = `${(import.meta as any).env?.VITE_TASK_HUB_URL || 'https://tasks.macatung.dev'}/tasks`;
+      if ((window as any).desktopApi?.openExternal) (window as any).desktopApi.openExternal(url);
+      else window.open(url, '_blank');
     },
+  },
+  {
+    id: 'check-updates',
+    title: 'Kiểm tra cập nhật',
+    subtitle: 'Tìm phiên bản mới của Mascot Desktop',
+    icon: '🔄',
+    category: 'Hệ Thống',
+    keywords: ['update', 'updates', 'cap nhat', 'version', 'phien ban'],
+    action: () => emit('check-updates'),
+  },
+  {
+    id: 'install-update',
+    title: 'Khởi động lại để cập nhật',
+    subtitle: 'Cài phiên bản đã tải xuống',
+    icon: '⬆️',
+    category: 'Hệ Thống',
+    keywords: ['install', 'restart', 'update', 'cai dat', 'khoi dong lai'],
+    action: () => emit('install-update'),
   },
 ];
 

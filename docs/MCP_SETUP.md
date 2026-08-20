@@ -10,7 +10,35 @@ The endpoint uses JSON-RPC over HTTP. Authentication is project-scoped: use the
 MCP token from the project settings and the numeric project ID. Do not commit
 either value or put them in `AGENTS.md`, `CLAUDE.md`, or source code.
 
-## 1. Prepare a project token
+## 1. Desktop Agent Workspace (recommended)
+
+Do not enter a project ID or MCP token in the desktop app. Open `Tasks →
+Agent`, choose exactly one open task and a local repository workspace, then
+click **Đăng nhập & kết nối Task Hub**. The app starts a short-lived device
+pairing request and opens the Task Hub approval page. Sign in with GitHub and
+approve the selected project. If the project has no MCP token yet, Task Hub
+creates and encrypts one during approval.
+
+After approval the desktop app receives the credential once over HTTPS, calls
+`get_context_pack` and `start_agent_run`, writes the provider-specific local
+MCP config, and only then starts the selected agent. The credential is kept in
+memory for that session; it is never shown in the UI or copied into the agent
+prompt. A successful process ends the run in `needs_review`; a failed process
+ends it in `failed`.
+
+The generated files are:
+
+```text
+<workspace>/.agents/mcp_config.json  # Antigravity/agy
+<workspace>/.mcp.json                # Codex/Claude Code
+```
+
+Existing MCP servers are preserved and a backup is created before merging.
+The generated path is also added to the workspace's local
+`.git/info/exclude`. Agents must use the Task Hub MCP lifecycle/evidence tools
+and must not merge or deploy.
+
+## 2. Manual setup (fallback)
 
 1. Sign in to `https://tasks.macatung.dev` with GitHub.
 2. Open a project and choose **Edit project**.
@@ -25,7 +53,7 @@ $env:TASK_HUB_PROJECT_ID = "123"
 $env:TASK_HUB_PROJECT_MCP_TOKEN = "paste-token-locally"
 ```
 
-## 2. Claude Code
+## 3. Claude Code
 
 The repository already contains `.mcp.json`. Run Claude Code from the
 repository with the three environment variables above. If configuring a
@@ -46,14 +74,14 @@ global server, use this equivalent entry in Claude's MCP configuration:
 }
 ```
 
-## 3. Codex
+## 4. Codex
 
 Use the same HTTP MCP server configuration in Codex's MCP settings. If the
 Codex installation does not support remote MCP, use the repository's `AGENTS.md`
 contract and the CLI bridge when available; report the run and verification
 evidence to Task Hub after the code changes are complete.
 
-## 4. Antigravity
+## 5. Antigravity
 
 Add a remote MCP server in Antigravity with:
 

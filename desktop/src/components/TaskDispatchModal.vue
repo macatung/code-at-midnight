@@ -39,9 +39,9 @@ const handleSelectForPomodoro = (task: TaskItem) => {
 
 const openWebHub = () => {
   if ((window as any).electron?.shell?.openExternal) {
-    (window as any).electron.shell.openExternal('http://localhost:8005/tasks');
+    (window as any).desktopApi?.openExternal?.(`${(import.meta as any).env?.VITE_TASK_HUB_URL || 'https://tasks.macatung.dev'}/tasks`);
   } else {
-    window.open('http://localhost:8005/tasks', '_blank');
+    window.open(`${(import.meta as any).env?.VITE_TASK_HUB_URL || 'https://tasks.macatung.dev'}/tasks`, '_blank');
   }
 };
 </script>

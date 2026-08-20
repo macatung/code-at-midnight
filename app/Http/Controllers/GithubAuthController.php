@@ -17,7 +17,8 @@ class GithubAuthController extends Controller
         }
         $state = Str::random(64);
         $request->session()->put('github_oauth_state', $state);
-        $request->session()->put('github_oauth_intended', $this->safeIntendedUrl($request));
+        $pairingIntended = $request->session()->pull('desktop_pairing_intended');
+        $request->session()->put('github_oauth_intended', $pairingIntended ?: $this->safeIntendedUrl($request));
         return redirect()->away($oauth->authorizationUrl($state));
     }
 

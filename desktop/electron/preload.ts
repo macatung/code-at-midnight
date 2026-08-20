@@ -10,4 +10,38 @@ contextBridge.exposeInMainWorld('desktopApi', {
   onTrayAction: (callback: (action: string) => void) => {
     ipcRenderer.on('tray-action', (_event, action) => callback(action));
   },
+  openExternal: (url: string) => ipcRenderer.invoke('open-external', url),
+  updater: {
+    getState: () => ipcRenderer.invoke('updater-get-state'),
+    check: () => ipcRenderer.invoke('updater-check'),
+    install: () => ipcRenderer.invoke('updater-install'),
+    dismiss: () => ipcRenderer.invoke('updater-dismiss'),
+    onState: (callback: (state: { status: string; version?: string; percent?: number; message?: string }) => void) => {
+      const listener = (_event: Electron.IpcRendererEvent, state: { status: string; version?: string; percent?: number; message?: string }) => callback(state);
+      ipcRenderer.on('updater-state', listener);
+      return () => ipcRenderer.removeListener('updater-state', listener);
+    },
+  },
+  taskHub: {
+    startPairing: (taskHubUrl: string, projectId: number) => ipcRenderer.invoke('taskhub-pairing-start', { taskHubUrl, projectId }),
+    pollPairing: (taskHubUrl: string, pairingId: string, deviceSecret: string) => ipcRenderer.invoke('taskhub-pairing-status', { taskHubUrl, pairingId, deviceSecret }),
+    mcpCall: (taskHubUrl: string, token: string, projectId: string, method: string, params?: Record<string, any>) => ipcRenderer.invoke('taskhub-mcp-call', { taskHubUrl, token, projectId, method, params }),
+  },
+  agent: {
+    pickWorkspace: () => ipcRenderer.invoke('agent-pick-workspace'),
+    configureMcp: (options: { cwd: string; provider: string; taskHubUrl: string; projectId: string; token: string }) => ipcRenderer.invoke('agent-configure-mcp', options),
+    start: (provider: string, cwd: string, prompt?: string) => ipcRenderer.invoke('agent-start', { provider, cwd, prompt }),
+    send: (sessionId: string, input: string) => ipcRenderer.send('agent-input', { sessionId, input }),
+    stop: (sessionId: string) => ipcRenderer.invoke('agent-stop', sessionId),
+    onOutput: (callback: (event: { sessionId: string; stream: string; text: string }) => void) => {
+      const listener = (_event: Electron.IpcRendererEvent, payload: { sessionId: string; stream: string; text: string }) => callback(payload);
+      ipcRenderer.on('agent-output', listener);
+      return () => ipcRenderer.removeListener('agent-output', listener);
+    },
+    onExit: (callback: (event: { sessionId: string; code: number | null; signal: string | null }) => void) => {
+      const listener = (_event: Electron.IpcRendererEvent, payload: { sessionId: string; code: number | null; signal: string | null }) => callback(payload);
+      ipcRenderer.on('agent-exit', listener);
+      return () => ipcRenderer.removeListener('agent-exit', listener);
+    },
+  },
 });

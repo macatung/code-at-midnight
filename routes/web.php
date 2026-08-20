@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\AnalyticsEventController;
 use App\Http\Controllers\Api\ApiAgentRunController;
 use App\Http\Controllers\Api\TaskHubMcpController;
 use App\Http\Controllers\GithubAuthController;
+use App\Http\Controllers\DesktopPairingController;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminAnalyticsController;
@@ -76,6 +77,13 @@ Route::prefix('api/tasks')->group(function () {
     Route::delete('/{id}', [ApiTaskController::class, 'destroy']);
 });
 
+// Desktop Agent Workspace device pairing and one-time MCP grant.
+Route::post('/api/desktop/pairing/start', [DesktopPairingController::class, 'start']);
+Route::get('/api/desktop/pairing/{pairingId}/status', [DesktopPairingController::class, 'status']);
+Route::get('/desktop/pairing/{pairingId}/approve', [DesktopPairingController::class, 'approveForm']);
+Route::post('/desktop/pairing/{pairingId}/approve', [DesktopPairingController::class, 'approve']);
+Route::post('/desktop/pairing/{pairingId}/deny', [DesktopPairingController::class, 'deny']);
+
 // 3.1 Projects REST API Endpoints (For Projects Management)
 Route::prefix('api/projects')->group(function () {
     Route::get('/', [ApiProjectController::class, 'index']);
@@ -132,6 +140,7 @@ Route::get('/robots.txt', [SeoController::class, 'robots'])->name('robots');
 // 4. Public Multi-Page Portfolio Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/projects', [HomeController::class, 'projects'])->name('projects.index');
+Route::get('/desktop', [HomeController::class, 'desktop'])->name('desktop.index');
 Route::get('/about', [HomeController::class, 'about'])->name('about.index');
 Route::get('/skills', [HomeController::class, 'about'])->name('skills.index');
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');

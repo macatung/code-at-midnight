@@ -4,7 +4,6 @@ import { TaskItem } from '../composables/useTaskSync';
 
 const props = defineProps<{
   tasks: TaskItem[];
-  waterCount?: number;
   pomodoroGoal?: number;
 }>();
 
@@ -16,7 +15,6 @@ const totalTasks = computed(() => props.tasks.length);
 const completedTasks = computed(() => props.tasks.filter(t => t.status === 'done').length);
 
 const targetPomodoros = computed(() => props.pomodoroGoal || 8);
-const currentWater = computed(() => props.waterCount || 4);
 
 const focusProgressPercent = computed(() => {
   const pRatio = Math.min(1, completedPomodoros.value / targetPomodoros.value);
@@ -56,10 +54,6 @@ const focusProgressPercent = computed(() => {
         <div class="flex justify-between">
           <span class="text-slate-400">Task hoàn tất:</span>
           <span class="text-emerald-300 font-bold">{{ completedTasks }}/{{ totalTasks }}</span>
-        </div>
-        <div class="flex justify-between">
-          <span class="text-slate-400">Uống nước:</span>
-          <span class="text-blue-300 font-bold">{{ currentWater }}/8 ly</span>
         </div>
       </div>
     </div>

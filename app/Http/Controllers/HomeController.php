@@ -67,6 +67,14 @@ class HomeController extends Controller
     }
 
     /**
+     * Desktop Task Companion product and download page.
+     */
+    public function desktop(): Response
+    {
+        return Inertia::render('Desktop/Index');
+    }
+
+    /**
      * Dedicated Skills & Profile Lore page.
      */
     public function about(): Response

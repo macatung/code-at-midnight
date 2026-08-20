@@ -1,0 +1,1 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Đã từ chối</title></head><body style="font-family:system-ui;background:#0f172a;color:#e2e8f0;display:grid;place-items:center;min-height:100vh"><main><h1>Đã từ chối kết nối</h1><p>Desktop app sẽ không nhận được credential.</p></main></body></html>
