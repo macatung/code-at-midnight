@@ -41,47 +41,47 @@ const appsJsonLd = {
     canonical="https://theravada.macatung.dev/ung-dung-tu-hoc"
     :json-ld="appsJsonLd"
   >
-    <div class="max-w-5xl mx-auto py-6 sm:py-10 space-y-8 text-center font-serif">
+    <div class="max-w-5xl mx-auto py-4 sm:py-10 space-y-6 sm:space-y-8 text-center font-serif px-2 sm:px-4">
       <!-- Hub Header -->
       <div>
-        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-bold mb-3 shadow-sm">
+        <div class="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[11px] sm:text-xs font-bold mb-2 sm:mb-3 shadow-sm max-w-[92vw]">
           <span>☸️</span>
-          <span>TRUNG TÂM PHÁP BẢO & THỰC HÀNH CHÁNH NIỆM</span>
+          <span class="truncate">TRUNG TÂM PHÁP BẢO & THỰC HÀNH CHÁNH NIỆM</span>
         </div>
-        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-amber-100 tracking-tight">
+        <h1 class="text-2xl sm:text-4xl lg:text-5xl font-bold text-amber-100 tracking-tight">
           Ứng Dụng Tu Học & Lan Tỏa Chánh Pháp
         </h1>
-        <p class="text-sm sm:text-base text-stone-400 max-w-2xl mx-auto mt-3 leading-relaxed">
+        <p class="text-xs sm:text-base text-stone-400 max-w-2xl mx-auto mt-2 sm:mt-3 leading-relaxed px-2">
           Công cụ hỗ trợ hành giả tĩnh tâm, thực hành thiền định Vipassanā mỗi ngày và tạo thẻ ảnh trích dẫn lời Phật dạy để gieo duyên lành đến muôn người.
         </p>
       </div>
 
       <!-- Quick Tab Switcher -->
-      <div class="flex items-center justify-center gap-3 p-1.5 bg-stone-900/90 rounded-2xl border border-stone-800 max-w-md mx-auto">
+      <div class="flex items-center justify-center gap-2 sm:gap-3 p-1 sm:p-1.5 bg-stone-900/90 rounded-2xl border border-stone-800 max-w-md mx-auto w-full">
         <button
           @click="activeTab = 'card'"
           :class="[
-            'flex-1 py-3 px-4 rounded-xl text-xs sm:text-sm font-serif font-bold transition-all cursor-pointer flex items-center justify-center gap-2',
+            'flex-1 py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl text-xs sm:text-sm font-serif font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 sm:gap-2 min-h-[42px]',
             activeTab === 'card'
               ? 'bg-amber-500 text-stone-950 shadow-md'
               : 'text-stone-400 hover:text-white hover:bg-stone-800/60'
           ]"
         >
           <span>📜</span>
-          <span>Tạo Thẻ Pháp Cú</span>
+          <span class="truncate">Tạo Thẻ Pháp Cú</span>
         </button>
 
         <button
           @click="activeTab = 'timer'"
           :class="[
-            'flex-1 py-3 px-4 rounded-xl text-xs sm:text-sm font-serif font-bold transition-all cursor-pointer flex items-center justify-center gap-2',
+            'flex-1 py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl text-xs sm:text-sm font-serif font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 sm:gap-2 min-h-[42px]',
             activeTab === 'timer'
               ? 'bg-amber-500 text-stone-950 shadow-md'
               : 'text-stone-400 hover:text-white hover:bg-stone-800/60'
           ]"
         >
           <span>🧘</span>
-          <span>Đồng Hồ Tọa Thiền</span>
+          <span class="truncate">Đồng Hồ Tọa Thiền</span>
         </button>
       </div>
 

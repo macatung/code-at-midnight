@@ -46,7 +46,7 @@ const currentDisplayQuote = () => {
 </script>
 
 <template>
-  <div class="relative inline-flex flex-col items-center select-none group">
+  <div class="relative inline-flex flex-col items-center select-none group max-w-full">
     <!-- 1. Floating Speech Bubble (Lời Khai Thị Biến Đổi Theo Thời Gian) -->
     <transition
       enter-active-class="transition duration-300 ease-out transform"
@@ -58,19 +58,19 @@ const currentDisplayQuote = () => {
     >
       <div
         v-if="isSpeaking || isHovered"
-        class="absolute -top-28 sm:-top-24 z-30 max-w-xs sm:max-w-md px-4 py-3 rounded-2xl bg-stone-900/95 border-2 border-amber-500/60 text-amber-100 text-xs sm:text-sm font-serif shadow-[0_20px_50px_rgba(217,119,6,0.35)] backdrop-blur-xl text-center leading-relaxed"
+        class="absolute -top-24 sm:-top-24 z-30 w-[270px] sm:w-auto max-w-[88vw] sm:max-w-md px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-2xl bg-stone-900/98 border-2 border-amber-500/60 text-amber-100 text-xs sm:text-sm font-serif shadow-[0_20px_50px_rgba(217,119,6,0.35)] backdrop-blur-xl text-center leading-relaxed left-1/2 -translate-x-1/2"
       >
-        <p class="italic">"{{ currentDisplayQuote() }}"</p>
-        <div class="flex items-center justify-center gap-2 mt-1.5 pt-1.5 border-t border-amber-500/20 text-[10px] text-amber-400 font-sans font-bold">
+        <p class="italic text-[11px] sm:text-xs md:text-sm break-words">"{{ currentDisplayQuote() }}"</p>
+        <div class="flex items-center justify-center gap-1.5 sm:gap-2 mt-1.5 pt-1.5 border-t border-amber-500/20 text-[10px] text-amber-400 font-sans font-bold">
           <span>{{ activeZenPhase.icon }}</span>
           <span>Ma Cà Tưng • {{ activeZenPhase.vietnameseName }}</span>
         </div>
         <!-- Speech Bubble Arrow -->
-        <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-stone-900 border-r-2 border-b-2 border-amber-500/60 rotate-45" />
+        <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-3.5 h-3.5 bg-stone-900 border-r-2 border-b-2 border-amber-500/60 rotate-45" />
       </div>
     </transition>
 
-    <!-- 2. Dynamic 4-Phase Zen Mascot SVG Stage (~200-220px) -->
+    <!-- 2. Dynamic 4-Phase Zen Mascot SVG Stage (~160-220px) -->
     <div
       class="relative cursor-pointer transition-all duration-500 hover:scale-105 active:scale-95 flex items-center justify-center"
       @click="handleMascotClick"
@@ -80,13 +80,13 @@ const currentDisplayQuote = () => {
     >
       <!-- Radiant Golden Aura Atmosphere dynamically tinted by time phase -->
       <div
-        class="absolute -inset-4 rounded-full blur-xl animate-pulse-glow pointer-events-none transition-all duration-700"
+        class="absolute -inset-3 sm:-inset-4 rounded-full blur-xl animate-pulse-glow pointer-events-none transition-all duration-700"
         :style="{ background: `radial-gradient(circle, ${activeZenPhase.accentGlow} 0%, transparent 70%)` }"
       />
 
       <!-- HD SVG Canvas (320x320) -->
       <svg
-        class="w-44 h-44 sm:w-52 sm:h-52 lg:w-56 lg:h-56 filter drop-shadow-[0_12px_28px_rgba(245,158,11,0.35)] transition-all duration-500"
+        class="w-40 h-40 sm:w-52 sm:h-52 lg:w-56 lg:h-56 filter drop-shadow-[0_12px_28px_rgba(245,158,11,0.35)] transition-all duration-500"
         viewBox="0 0 320 320"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -338,10 +338,10 @@ const currentDisplayQuote = () => {
     </div>
 
     <!-- 3. Interactive Call to Action Banner -->
-    <div class="mt-2.5 flex items-center gap-2 px-3.5 py-1 rounded-full bg-gradient-to-r from-amber-500/15 via-amber-500/25 to-amber-500/15 border border-amber-500/40 text-amber-300 text-xs font-serif shadow-md transition-all group-hover:border-amber-400">
-      <span class="text-xs animate-pulse">🌸</span>
-      <span class="font-bold">Ma Cà Tưng • {{ activeZenPhase.vietnameseName }}</span>
-      <span class="text-xs animate-pulse">{{ activeZenPhase.icon }}</span>
+    <div class="mt-2.5 inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1 rounded-full bg-gradient-to-r from-amber-500/15 via-amber-500/25 to-amber-500/15 border border-amber-500/40 text-amber-300 text-[11px] sm:text-xs font-serif shadow-md transition-all group-hover:border-amber-400 max-w-[90vw] text-center">
+      <span class="text-[10px] sm:text-xs animate-pulse">🌸</span>
+      <span class="font-bold truncate">Ma Cà Tưng • {{ activeZenPhase.vietnameseName }}</span>
+      <span class="text-[10px] sm:text-xs animate-pulse">{{ activeZenPhase.icon }}</span>
     </div>
   </div>
 </template>

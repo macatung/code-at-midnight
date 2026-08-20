@@ -645,96 +645,96 @@ const suttaJsonLd = computed(() => ({
           </span>
         </div>
 
-        <h1 class="text-2xl sm:text-4xl lg:text-5xl font-serif font-bold text-amber-100 leading-tight mb-3">
+        <h1 class="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-amber-100 leading-tight mb-2 sm:mb-3">
           {{ article.title }}
         </h1>
 
-        <p v-if="article.pali_title" class="text-base sm:text-lg font-serif italic text-amber-400/90 mb-4">
+        <p v-if="article.pali_title" class="text-sm sm:text-base md:text-lg font-serif italic text-amber-400/90 mb-3 sm:mb-4">
           Pāḷi: {{ article.pali_title }}
         </p>
 
-        <div class="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-stone-900 text-xs font-serif text-stone-400">
-          <span class="italic">Tác giả / Nguồn: <strong class="text-stone-200 not-italic">{{ article.author || 'Pāḷi Tipiṭaka' }}</strong></span>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 sm:pt-4 border-t border-stone-900 text-xs font-serif text-stone-400">
+          <span class="italic text-[11px] sm:text-xs">Tác giả / Nguồn: <strong class="text-stone-200 not-italic">{{ article.author || 'Pāḷi Tipiṭaka' }}</strong></span>
 
-          <!-- Reader Controls: Minimalist Toolbar -->
-          <div class="flex flex-wrap items-center gap-1.5">
+          <!-- Reader Controls: Minimalist Toolbar (Horizontally Scrollable Pill on Mobile) -->
+          <div class="w-full sm:w-auto flex items-center gap-1.5 overflow-x-auto pb-1.5 pt-0.5 sm:flex-wrap no-scrollbar">
             <!-- Paper / Night Mode Toggle -->
             <button
               @click="togglePaperMode"
               :class="[
-                'px-3 py-1.5 rounded-xl border transition-all cursor-pointer font-medium text-xs shadow-sm',
+                'px-2.5 sm:px-3 py-1.5 rounded-xl border transition-all cursor-pointer font-medium text-[11px] sm:text-xs shadow-sm whitespace-nowrap shrink-0',
                 isPaperMode
                   ? 'bg-amber-100 text-stone-900 border-amber-400 font-bold'
                   : 'bg-stone-900 text-stone-300 border-stone-800 hover:border-amber-500/40'
               ]"
               :title="isPaperMode ? 'Chuyển sang nền đêm' : 'Chuyển sang nền giấy'"
             >
-              <span>{{ isPaperMode ? 'Nền Giấy' : 'Nền Đêm' }}</span>
+              <span>{{ isPaperMode ? '📜 Nền Giấy' : '🌙 Nền Đêm' }}</span>
             </button>
 
             <!-- Falling Leaves Toggle -->
             <button
               @click="toggleLeaves"
               :class="[
-                'px-3 py-1.5 rounded-xl border transition-all cursor-pointer font-medium text-xs shadow-sm',
+                'px-2.5 sm:px-3 py-1.5 rounded-xl border transition-all cursor-pointer font-medium text-[11px] sm:text-xs shadow-sm whitespace-nowrap shrink-0',
                 isLeavesEnabled
                   ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
                   : 'bg-stone-900 text-stone-400 border-stone-800 hover:border-stone-700'
               ]"
               title="Bật/tắt hiệu ứng lá rơi"
             >
-              <span>{{ isLeavesEnabled ? 'Lá Rơi: Bật' : 'Lá Rơi: Tắt' }}</span>
+              <span>🍃 Lá Rơi</span>
             </button>
 
             <!-- Candlelight Glow Toggle -->
             <button
               @click="toggleCandlelight"
               :class="[
-                'px-3 py-1.5 rounded-xl border transition-all cursor-pointer font-medium text-xs',
+                'px-2.5 sm:px-3 py-1.5 rounded-xl border transition-all cursor-pointer font-medium text-[11px] sm:text-xs whitespace-nowrap shrink-0',
                 isCandlelightOn
                   ? 'bg-amber-500 text-stone-950 border-amber-400 font-bold'
                   : 'bg-stone-900 text-stone-300 border-stone-800 hover:border-amber-500/40'
               ]"
               title="Chế độ đèn dầu thiền quán"
             >
-              <span>Đèn Dầu</span>
+              <span>🕯️ Đèn Dầu</span>
             </button>
 
             <!-- Focus Paragraph Mode Toggle -->
             <button
               @click="toggleFocusMode"
               :class="[
-                'px-3 py-1.5 rounded-xl border transition-all cursor-pointer font-medium text-xs',
+                'px-2.5 sm:px-3 py-1.5 rounded-xl border transition-all cursor-pointer font-medium text-[11px] sm:text-xs whitespace-nowrap shrink-0',
                 isFocusModeOn
                   ? 'bg-amber-500 text-stone-950 border-amber-400 font-bold'
                   : 'bg-stone-900 text-stone-300 border-stone-800 hover:border-amber-500/40'
               ]"
               title="Chế độ đọc tập trung"
             >
-              <span>Đọc Tập Trung</span>
+              <span>🎯 Tập Trung</span>
             </button>
 
             <!-- Bell Trigger -->
             <button
               @click="ringBell"
-              class="px-3 py-1.5 rounded-xl bg-amber-500/15 text-amber-300 hover:bg-amber-500/25 border border-amber-500/30 transition-all cursor-pointer font-medium"
+              class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-amber-500/15 text-amber-300 hover:bg-amber-500/25 border border-amber-500/30 transition-all cursor-pointer font-medium text-[11px] sm:text-xs whitespace-nowrap shrink-0"
               :class="{ 'animate-pulse ring-2 ring-amber-400': isRinging }"
               title="Thỉnh chuông chánh niệm"
             >
-              <span>Thỉnh Chuông</span>
+              <span>🔔 Thỉnh Chuông</span>
             </button>
 
             <!-- Share Article Trigger -->
             <button
               @click="handleNativeArticleShare"
-              class="px-3 py-1.5 rounded-xl bg-stone-900 text-stone-300 hover:text-amber-200 hover:bg-stone-800 border border-stone-800 hover:border-amber-500/40 transition-all cursor-pointer font-medium"
+              class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-stone-900 text-stone-300 hover:text-amber-200 hover:bg-stone-800 border border-stone-800 hover:border-amber-500/40 transition-all cursor-pointer font-medium text-[11px] sm:text-xs whitespace-nowrap shrink-0"
               title="Chia sẻ bài kinh"
             >
-              <span>{{ copiedLink ? 'Đã Chép' : 'Chia Sẻ' }}</span>
+              <span>{{ copiedLink ? '✅ Đã Chép' : '🔗 Chia Sẻ' }}</span>
             </button>
 
             <!-- Adjust Font Size -->
-            <div class="flex items-center bg-stone-900 rounded-xl border border-stone-800 p-0.5 text-xs">
+            <div class="flex items-center bg-stone-900 rounded-xl border border-stone-800 p-0.5 text-xs whitespace-nowrap shrink-0">
               <button
                 @click="fontSize = Math.max(15, fontSize - 1)"
                 class="px-2 py-1 hover:bg-stone-800 rounded-lg text-stone-300 font-bold"
@@ -742,7 +742,7 @@ const suttaJsonLd = computed(() => ({
               >
                 A-
               </button>
-              <span class="px-2 font-mono text-amber-300">{{ fontSize }}px</span>
+              <span class="px-1.5 font-mono text-amber-300 text-[11px] sm:text-xs">{{ fontSize }}px</span>
               <button
                 @click="fontSize = Math.min(26, fontSize + 1)"
                 class="px-2 py-1 hover:bg-stone-800 rounded-lg text-stone-300 font-bold"
@@ -755,10 +755,10 @@ const suttaJsonLd = computed(() => ({
         </div>
       </header>
 
-      <!-- Main Text Body (Rendered HTML Markdown inside High-Contrast Container with Pāḷi Hover Explanations) -->
+      <!-- Main Text Body -->
       <article
         :class="[
-          'zen-article-content font-serif leading-relaxed rounded-3xl p-6 sm:p-10 lg:p-12 mb-12 relative overflow-hidden transition-all duration-500 shadow-2xl',
+          'zen-article-content font-serif leading-relaxed rounded-3xl p-4 sm:p-10 lg:p-12 mb-8 sm:mb-12 relative overflow-hidden transition-all duration-500 shadow-2xl',
           isPaperMode
             ? 'bg-stone-50/95 text-[#1c1917] border border-amber-600/20 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.4)]'
             : 'bg-stone-900/80 text-stone-200 border border-amber-500/30 backdrop-blur-md',

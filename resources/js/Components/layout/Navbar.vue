@@ -25,6 +25,7 @@ const navLinks: NavItem[] = [
   { label: 'Blog', href: '/blog', badge: 'MỚI', iconName: 'BookOpen' },
   { label: 'Game 🎮', href: '/game', badge: 'HOT', iconName: 'Gamepad' },
   { label: 'Bùa Dev', href: '/talisman', iconName: 'Sparkles' },
+  { label: 'Tọa Thiền 🧘', href: '/theravada', badge: 'ZEN', iconName: 'Sparkles' },
 ];
 
 const isScrolled = ref(false);

@@ -83,6 +83,7 @@ const triggerHeartEasterEgg = (e: MouseEvent) => {
           <li><a href="/projects" class="hover:text-phantom-mint transition-colors">Kho Dự Án Grimoire</a></li>
           <li><a href="/game" class="hover:text-phantom-mint transition-colors">Phòng Máy Rune Typer</a></li>
           <li><a href="/talisman" class="hover:text-phantom-mint transition-colors">Lò Luyện Bùa Chú</a></li>
+          <li><a href="/theravada" class="hover:text-amber-300 transition-colors flex items-center gap-1"><span>Ma Tọa Thiền (Theravāda)</span> <span>🧘</span></a></li>
         </ul>
       </div>
 

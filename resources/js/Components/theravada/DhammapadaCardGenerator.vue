@@ -380,22 +380,22 @@ const shareToZalo = () => {
 </script>
 
 <template>
-  <div class="w-full max-w-4xl mx-auto p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-stone-900/95 via-stone-950/90 to-stone-900/95 border border-amber-500/30 shadow-2xl backdrop-blur-xl font-serif text-stone-100 relative overflow-hidden">
+  <div class="w-full max-w-4xl mx-auto p-4 sm:p-8 rounded-3xl bg-gradient-to-br from-stone-900/95 via-stone-950/90 to-stone-900/95 border border-amber-500/30 shadow-2xl backdrop-blur-xl font-serif text-stone-100 relative overflow-hidden">
     <!-- Ambient Center Warm Aura Dynamically Tinted by Selected Theme -->
     <div
-      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-[140px] pointer-events-none transition-all duration-700 opacity-30"
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 sm:w-96 h-72 sm:h-96 rounded-full blur-[100px] sm:blur-[140px] pointer-events-none transition-all duration-700 opacity-30"
       :style="{ backgroundColor: selectedTheme.borderColor }"
     />
 
-    <div class="relative z-10 space-y-6">
+    <div class="relative z-10 space-y-5 sm:space-y-6">
       <!-- Section Header -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-amber-500/20 pb-5 text-left">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 border-b border-amber-500/20 pb-4 sm:pb-5 text-left">
         <div>
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-bold mb-2">
+          <div class="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[11px] sm:text-xs font-bold mb-2">
             <span>🌸</span>
             <span>ỨNG DỤNG PHÁP BẢO • LAN TỎA CHÁNH PHÁP</span>
           </div>
-          <h3 class="text-xl sm:text-2xl font-bold text-amber-100 tracking-tight">
+          <h3 class="text-lg sm:text-2xl font-bold text-amber-100 tracking-tight">
             Trợ Niệm Pháp Cú & Xuất Thẻ Ảnh Chia Sẻ HD
           </h3>
           <p class="text-xs sm:text-sm text-stone-400 mt-1">
@@ -406,7 +406,7 @@ const shareToZalo = () => {
         <!-- Action: Random Draw Button -->
         <button
           @click="drawRandomVerse"
-          class="shrink-0 flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-stone-950 font-bold text-xs sm:text-sm shadow-xl transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap"
+          class="w-full sm:w-auto shrink-0 flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-stone-950 font-bold text-xs sm:text-sm shadow-xl transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap min-h-[44px]"
         >
           <span>🎲</span>
           <span>Rút Quẻ Kệ Mới</span>
@@ -414,19 +414,19 @@ const shareToZalo = () => {
       </div>
 
       <!-- 🎨 4 Zen Theme Selector Strip -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded-2xl bg-stone-950/80 border border-stone-800 text-left">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 p-2.5 sm:p-3 rounded-2xl bg-stone-950/80 border border-stone-800 text-left">
         <span class="text-xs font-serif text-stone-400 flex items-center gap-1.5 shrink-0">
           <span>🎨</span>
           <span>Chủ đề Thiền Môn:</span>
         </span>
 
-        <div class="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2">
+        <div class="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-1.5 sm:gap-2">
           <button
             v-for="th in CARD_THEMES"
             :key="th.id"
             @click="selectTheme(th)"
             :class="[
-              'flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-serif transition-all cursor-pointer border',
+              'flex items-center justify-center sm:justify-start gap-1.5 px-2.5 sm:px-3 py-2 sm:py-1.5 rounded-xl text-[11px] sm:text-xs font-serif transition-all cursor-pointer border min-h-[38px]',
               selectedTheme.id === th.id
                 ? 'bg-amber-500/20 border-amber-400 text-amber-200 font-bold shadow-md ring-1 ring-amber-400/50'
                 : 'bg-stone-900/90 border-stone-800 text-stone-400 hover:text-white hover:border-stone-700'
@@ -440,8 +440,8 @@ const shareToZalo = () => {
 
       <!-- Main Live Card Preview Stage (Dynamic Theme Styled) -->
       <div
-        class="relative mx-auto rounded-3xl border-2 p-6 sm:p-8 shadow-2xl transition-all duration-500 flex flex-col justify-between text-center overflow-hidden"
-        :class="aspectRatio === 'story' ? 'max-w-md aspect-[9/12]' : 'max-w-md aspect-square'"
+        class="relative mx-auto rounded-3xl border-2 p-4 sm:p-8 shadow-2xl transition-all duration-500 flex flex-col justify-between text-center overflow-hidden w-full max-w-sm sm:max-w-md"
+        :class="aspectRatio === 'story' ? 'aspect-[9/12]' : 'aspect-square'"
         :style="{
           backgroundColor: selectedTheme.bgDark,
           borderColor: selectedTheme.borderColor,
@@ -455,44 +455,44 @@ const shareToZalo = () => {
         />
 
         <!-- Card Frame Corner Symbols -->
-        <div class="absolute top-3.5 left-3.5 text-xs select-none" :style="{ color: selectedTheme.borderColor }">☸️</div>
-        <div class="absolute top-3.5 right-3.5 text-xs select-none" :style="{ color: selectedTheme.borderColor }">☸️</div>
-        <div class="absolute bottom-3.5 left-3.5 text-xs select-none" :style="{ color: selectedTheme.borderColor }">🌸</div>
-        <div class="absolute bottom-3.5 right-3.5 text-xs select-none" :style="{ color: selectedTheme.borderColor }">🌸</div>
+        <div class="absolute top-3 left-3 sm:top-3.5 sm:left-3.5 text-[10px] sm:text-xs select-none" :style="{ color: selectedTheme.borderColor }">☸️</div>
+        <div class="absolute top-3 right-3 sm:top-3.5 sm:right-3.5 text-[10px] sm:text-xs select-none" :style="{ color: selectedTheme.borderColor }">☸️</div>
+        <div class="absolute bottom-3 left-3 sm:bottom-3.5 sm:left-3.5 text-[10px] sm:text-xs select-none" :style="{ color: selectedTheme.borderColor }">🌸</div>
+        <div class="absolute bottom-3 right-3 sm:bottom-3.5 sm:right-3.5 text-[10px] sm:text-xs select-none" :style="{ color: selectedTheme.borderColor }">🌸</div>
 
         <!-- Top Card Seal -->
-        <div class="relative z-10">
+        <div class="relative z-10 px-2">
           <span
-            class="text-[11px] font-serif uppercase tracking-widest font-bold block mb-1"
+            class="text-[10px] sm:text-[11px] font-serif uppercase tracking-wider sm:tracking-widest font-bold block mb-0.5 sm:mb-1"
             :style="{ color: selectedTheme.titleColor }"
           >
             KINH PHÁP CÚ — KỆ SỐ {{ currentVerse.verse_number }}
           </span>
-          <span class="text-xs text-stone-400 italic block">
+          <span class="text-[11px] sm:text-xs text-stone-400 italic block">
             {{ currentVerse.chapter_vi }} ({{ currentVerse.chapter_pali }})
           </span>
-          <div class="my-3 flex items-center justify-center gap-2 text-xs opacity-60" :style="{ color: selectedTheme.borderColor }">
-            <span class="h-px w-12 bg-current"></span>
+          <div class="my-2 sm:my-3 flex items-center justify-center gap-2 text-xs opacity-60" :style="{ color: selectedTheme.borderColor }">
+            <span class="h-px w-8 sm:w-12 bg-current"></span>
             <span>🌸</span>
-            <span class="h-px w-12 bg-current"></span>
+            <span class="h-px w-8 sm:w-12 bg-current"></span>
           </div>
         </div>
 
         <!-- Middle: Pali & Vietnamese Verses -->
-        <div class="my-auto space-y-4 relative z-10">
+        <div class="my-auto space-y-2.5 sm:space-y-4 relative z-10 px-2">
           <!-- Pali Original -->
           <p
-            class="text-xs sm:text-sm font-serif italic leading-relaxed whitespace-pre-line"
+            class="text-[11px] sm:text-xs md:text-sm font-serif italic leading-relaxed whitespace-pre-line"
             :style="{ color: selectedTheme.paliColor }"
           >
             "{{ currentVerse.pali }}"
           </p>
 
-          <div class="h-px w-20 mx-auto opacity-30" :style="{ backgroundColor: selectedTheme.borderColor }"></div>
+          <div class="h-px w-14 sm:w-20 mx-auto opacity-30" :style="{ backgroundColor: selectedTheme.borderColor }"></div>
 
           <!-- Vietnamese Translation -->
           <p
-            class="text-sm sm:text-base md:text-lg font-serif font-bold leading-relaxed whitespace-pre-line"
+            class="text-xs sm:text-base md:text-lg font-serif font-bold leading-relaxed whitespace-pre-line"
             :style="{ color: selectedTheme.viColor }"
           >
             {{ currentVerse.vietnamese }}
@@ -500,60 +500,60 @@ const shareToZalo = () => {
         </div>
 
         <!-- Bottom: Insight Note & Watermark -->
-        <div class="pt-3 border-t border-stone-800/80 relative z-10">
+        <div class="pt-2 sm:pt-3 border-t border-stone-800/80 relative z-10 px-1">
           <p
-            class="text-[11px] font-serif italic mb-2"
+            class="text-[10px] sm:text-[11px] font-serif italic mb-1.5 sm:mb-2 line-clamp-2 sm:line-clamp-none"
             :style="{ color: selectedTheme.accentColor }"
           >
             💡 {{ currentVerse.insight }}
           </p>
-          <span class="text-[10px] text-stone-400 font-sans tracking-wide block">
+          <span class="text-[9px] sm:text-[10px] text-stone-400 font-sans tracking-wide block">
             Ma Tọa Thiền • theravada.macatung.dev
           </span>
         </div>
       </div>
 
-      <!-- Controls, Aspect Ratio & Social Sharing Bar (Redesigned Modern Zen Layout) -->
-      <div class="space-y-4 pt-5 border-t border-stone-800/90 text-left">
+      <!-- Controls, Aspect Ratio & Social Sharing Bar -->
+      <div class="space-y-4 pt-4 sm:pt-5 border-t border-stone-800/90 text-left">
         <!-- Row 1: Aspect Ratio & Main Action Buttons -->
-        <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+        <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 sm:gap-4">
           <!-- Aspect Ratio Segmented Control -->
-          <div class="flex items-center gap-2.5">
+          <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-2.5">
             <span class="text-xs font-serif text-stone-400 shrink-0 font-medium">Tỷ lệ ảnh:</span>
-            <div class="flex items-center p-1 bg-stone-950/90 rounded-2xl border border-stone-800 shadow-inner">
+            <div class="flex items-center p-1 bg-stone-950/90 rounded-2xl border border-stone-800 shadow-inner w-full sm:w-auto">
               <button
                 @click="aspectRatio = 'story'"
                 :class="[
-                  'px-3.5 py-1.5 rounded-xl text-xs font-serif transition-all cursor-pointer flex items-center gap-1.5',
+                  'flex-1 sm:flex-none px-3 py-2 sm:py-1.5 rounded-xl text-xs font-serif transition-all cursor-pointer flex items-center justify-center gap-1.5 min-h-[38px]',
                   aspectRatio === 'story'
                     ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-stone-950 font-bold shadow-md'
                     : 'text-stone-400 hover:text-stone-200'
                 ]"
               >
                 <span>📱</span>
-                <span>Dọc 9:16 (Story/Zalo)</span>
+                <span>Dọc 9:16</span>
               </button>
               <button
                 @click="aspectRatio = 'square'"
                 :class="[
-                  'px-3.5 py-1.5 rounded-xl text-xs font-serif transition-all cursor-pointer flex items-center gap-1.5',
+                  'flex-1 sm:flex-none px-3 py-2 sm:py-1.5 rounded-xl text-xs font-serif transition-all cursor-pointer flex items-center justify-center gap-1.5 min-h-[38px]',
                   aspectRatio === 'square'
                     ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-stone-950 font-bold shadow-md'
                     : 'text-stone-400 hover:text-stone-200'
                 ]"
               >
                 <span>🖼️</span>
-                <span>Vuông 1:1 (Feed/Avatar)</span>
+                <span>Vuông 1:1</span>
               </button>
             </div>
           </div>
 
           <!-- Primary Action Buttons Group -->
-          <div class="flex flex-wrap items-center gap-2.5">
+          <div class="flex flex-wrap items-center gap-2 sm:gap-2.5">
             <!-- Copy Verse Text -->
             <button
               @click="copyVerseText"
-              class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-stone-900/90 hover:bg-stone-850 border border-stone-700/80 hover:border-amber-500/40 text-stone-200 text-xs sm:text-sm font-serif font-bold transition-all hover:text-amber-300 cursor-pointer shadow-md active:scale-95"
+              class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-stone-900/90 hover:bg-stone-850 border border-stone-700/80 hover:border-amber-500/40 text-stone-200 text-xs sm:text-sm font-serif font-bold transition-all hover:text-amber-300 cursor-pointer shadow-md active:scale-95 min-h-[42px]"
             >
               <span>{{ copied ? '✅' : '📋' }}</span>
               <span>{{ copied ? 'Đã Sao Chép!' : 'Sao Chép Kệ' }}</span>
@@ -563,7 +563,7 @@ const shareToZalo = () => {
             <button
               @click="handleNativeShare"
               :disabled="isSharing"
-              class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 rounded-2xl bg-stone-900 border border-amber-500/50 hover:border-amber-400 text-amber-300 hover:text-amber-200 hover:bg-stone-850 text-xs sm:text-sm font-serif font-bold shadow-lg transition-all hover:scale-[1.02] active:scale-95 cursor-pointer disabled:opacity-50"
+              class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 rounded-2xl bg-stone-900 border border-amber-500/50 hover:border-amber-400 text-amber-300 hover:text-amber-200 hover:bg-stone-850 text-xs sm:text-sm font-serif font-bold shadow-lg transition-all hover:scale-[1.02] active:scale-95 cursor-pointer disabled:opacity-50 min-h-[42px]"
             >
               <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
@@ -575,16 +575,16 @@ const shareToZalo = () => {
             <button
               @click="downloadCardImage"
               :disabled="isDrawing"
-              class="w-full sm:w-auto flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-stone-950 text-xs sm:text-sm font-serif font-bold shadow-xl transition-all hover:scale-[1.03] active:scale-95 cursor-pointer disabled:opacity-50 ring-1 ring-amber-300/40"
+              class="w-full sm:w-auto flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-stone-950 text-xs sm:text-sm font-serif font-bold shadow-xl transition-all hover:scale-[1.03] active:scale-95 cursor-pointer disabled:opacity-50 ring-1 ring-amber-300/40 min-h-[44px]"
             >
               <span>📥</span>
-              <span>{{ isDrawing ? 'Đang Tạo Ảnh...' : 'Tải Ảnh Thẻ HD (PNG)' }}</span>
+              <span>{{ isDrawing ? 'Đang Tạo Ảnh...' : 'Tải Ảnh Thẻ HD' }}</span>
             </button>
           </div>
         </div>
 
         <!-- Row 2: Dedicated Social Share Strip with Brand Badges & Crisp Contrast -->
-        <div class="p-3.5 rounded-2xl bg-stone-950/85 border border-stone-800/90 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner">
+        <div class="p-3 sm:p-3.5 rounded-2xl bg-stone-950/85 border border-stone-800/90 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner">
           <div class="flex items-center gap-2 text-xs font-serif text-amber-300/90 font-medium">
             <span class="text-amber-400">✨</span>
             <span>Lan tỏa Pháp Bảo đến người thân & bạn bè:</span>

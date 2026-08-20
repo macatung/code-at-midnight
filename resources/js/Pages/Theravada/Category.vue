@@ -28,34 +28,34 @@ const categoryJsonLd = computed(() => ({
     :canonical="`https://theravada.macatung.dev/danh-muc/${categorySlug}`"
     :json-ld="categoryJsonLd"
   >
-    <div class="max-w-6xl mx-auto py-6 sm:py-10">
+    <div class="max-w-6xl mx-auto py-4 sm:py-10">
       <!-- Breadcrumb -->
-      <nav class="flex items-center gap-2 text-xs font-serif text-stone-300 mb-6" aria-label="Breadcrumb">
+      <nav class="flex flex-wrap items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-serif text-stone-300 mb-4 sm:mb-6" aria-label="Breadcrumb">
         <Link href="/theravada" class="hover:text-amber-300">Theravāda</Link>
         <span>/</span>
-        <span class="text-amber-400 font-bold">{{ categoryName }}</span>
+        <span class="text-amber-400 font-bold truncate max-w-[200px] sm:max-w-none">{{ categoryName }}</span>
       </nav>
 
       <!-- Header -->
-      <header class="mb-10 text-left border-b border-stone-800 pb-8">
-        <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-serif font-bold mb-3 shadow-sm">
+      <header class="mb-6 sm:mb-10 text-left border-b border-stone-800 pb-5 sm:pb-8">
+        <div class="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[11px] sm:text-xs font-serif font-bold mb-2 sm:mb-3 shadow-sm">
           <span>{{ categorySlug === 'phap-hoc' ? '📖' : categorySlug === 'phap-hanh' ? '🧘' : '📜' }}</span>
           <span>Chuyên Mục Theravāda</span>
         </div>
-        <h1 class="text-3xl sm:text-4xl font-serif font-bold text-amber-100">
+        <h1 class="text-2xl sm:text-4xl font-serif font-bold text-amber-100">
           {{ categoryName }}
         </h1>
-        <p class="text-xs sm:text-sm text-stone-300 font-serif mt-2 leading-relaxed max-w-3xl">
+        <p class="text-xs sm:text-sm text-stone-300 font-serif mt-1.5 sm:mt-2 leading-relaxed max-w-3xl">
           Tuyển tập các kinh văn, giáo lý và hướng dẫn thực hành thuộc chuyên mục {{ categoryName }}.
         </p>
       </header>
 
       <!-- Articles Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <article
           v-for="item in articles"
           :key="item.id"
-          class="group relative overflow-hidden flex flex-col justify-between rounded-3xl bg-stone-900/90 border border-stone-800 hover:border-amber-500/60 p-6 sm:p-7 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_-12px_rgba(245,158,11,0.3)] text-left backdrop-blur-md"
+          class="group relative overflow-hidden flex flex-col justify-between rounded-3xl bg-stone-900/90 border border-stone-800 hover:border-amber-500/60 p-5 sm:p-7 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_-12px_rgba(245,158,11,0.3)] text-left backdrop-blur-md"
         >
           <!-- Shimmering Golden Rim Highlight -->
           <div class="absolute inset-0 bg-gradient-to-r from-transparent via-amber-400/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 pointer-events-none" />

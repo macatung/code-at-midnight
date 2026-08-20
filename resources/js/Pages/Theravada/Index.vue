@@ -64,49 +64,49 @@ const theravadaHomeJsonLd = {
     :json-ld="theravadaHomeJsonLd"
   >
     <!-- 1. Hero Section: Saffron Zen Wisdom & Meditating Mascot -->
-    <section class="pt-2 sm:pt-4 pb-10 sm:pb-16 max-w-5xl mx-auto flex flex-col items-center text-center">
+    <section class="pt-2 sm:pt-4 pb-8 sm:pb-16 max-w-5xl mx-auto flex flex-col items-center text-center px-2 sm:px-4">
       
       <!-- Top Tag Badge -->
-      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-serif mb-4 shadow-sm">
+      <div class="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[11px] sm:text-xs font-serif mb-3 sm:mb-4 shadow-sm max-w-[92vw] text-center">
         <span>☸️</span>
-        <span class="font-bold tracking-wider">EHIPASSIKO — HÃY ĐẾN ĐỂ THẤY & THỂ NGHIỆM</span>
+        <span class="font-bold tracking-wide sm:tracking-wider truncate">EHIPASSIKO — HÃY ĐẾN ĐỂ THẤY & THỂ NGHIỆM</span>
       </div>
 
-      <!-- Mascot Ma Cà Tưng Tọa Thiền Stage (~200px balanced height) -->
-      <div class="mb-4">
+      <!-- Mascot Ma Cà Tưng Tọa Thiền Stage (~160-220px balanced height) -->
+      <div class="mb-3 sm:mb-4 w-full flex justify-center">
         <ZenMascot />
       </div>
 
       <!-- Main Headline / Slogan Trau Chuốt -->
-      <h1 class="text-2xl sm:text-4xl lg:text-5xl font-serif font-bold text-amber-100 tracking-tight leading-snug sm:leading-tight mb-4">
-        Vượt Khỏi Đêm Đen Vô Minh <br />
+      <h1 class="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-amber-100 tracking-tight leading-snug sm:leading-tight mb-3 sm:mb-4 px-2">
+        Vượt Khỏi Đêm Đen Vô Minh <br class="hidden sm:inline" />
         <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-200 to-amber-500">
           Hướng Về Ánh Sáng Chánh Tri Kiến
         </span>
       </h1>
 
       <!-- Triết Lý Đại Ý "Dù Là Ma Cũng Giác Ngộ Phật Giáo" -->
-      <p class="text-xs sm:text-sm md:text-base text-stone-300 font-serif leading-relaxed max-w-2xl mx-auto mb-8 text-center px-4">
+      <p class="text-xs sm:text-sm md:text-base text-stone-300 font-serif leading-relaxed max-w-2xl mx-auto mb-6 sm:mb-8 text-center px-3 sm:px-4">
         "Dù là Ma Cà Tưng lang thang trong bóng đêm vô minh, khi có duyên lành hạnh ngộ Chánh Pháp cũng buông bỏ vọng niệm để tọa thiền, nương tựa Tam Bảo tìm về sự an tịnh và giải thoát tối hậu."
       </p>
 
       <!-- 3 CTA Action Buttons -->
-      <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-4">
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2.5 sm:gap-4 mb-4 w-full max-w-md sm:max-w-none px-2 sm:px-0">
         <Link
           href="/theravada/danh-muc/phap-hoc"
-          class="px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl bg-amber-500 text-stone-950 font-serif font-bold text-xs sm:text-sm hover:bg-amber-400 transition-all shadow-lg hover:scale-105 active:scale-95"
+          class="px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl bg-amber-500 text-stone-950 font-serif font-bold text-xs sm:text-sm hover:bg-amber-400 transition-all shadow-lg hover:scale-105 active:scale-95 text-center flex items-center justify-center min-h-[44px]"
         >
           Khảo Cứu Pháp Học (Pariyatti) ➔
         </Link>
         <Link
           href="/theravada/danh-muc/phap-hanh"
-          class="px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl bg-stone-900 border border-amber-500/40 text-amber-300 font-serif font-bold text-xs sm:text-sm hover:bg-stone-800 transition-all hover:scale-105 active:scale-95"
+          class="px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl bg-stone-900 border border-amber-500/40 text-amber-300 font-serif font-bold text-xs sm:text-sm hover:bg-stone-800 transition-all hover:scale-105 active:scale-95 text-center flex items-center justify-center min-h-[44px]"
         >
           Thực Hành Thiền Vipassanā 🧘
         </Link>
         <Link
           href="/theravada/ung-dung-tu-hoc"
-          class="px-4 sm:px-5 py-3 sm:py-3.5 rounded-2xl bg-amber-500/20 border border-amber-400/50 text-amber-200 hover:text-white font-serif text-xs sm:text-sm transition-all hover:bg-amber-500/30"
+          class="px-4 sm:px-5 py-3 sm:py-3.5 rounded-2xl bg-amber-500/20 border border-amber-400/50 text-amber-200 hover:text-white font-serif text-xs sm:text-sm transition-all hover:bg-amber-500/30 text-center flex items-center justify-center min-h-[44px]"
         >
           ✨ Ứng Dụng Pháp Bảo
         </Link>
@@ -114,18 +114,18 @@ const theravadaHomeJsonLd = {
     </section>
 
     <!-- 2. Interactive 24H Zen Monastic Time Traveler (Tua Giờ Thiền Môn) -->
-    <section class="my-6">
+    <section class="my-4 sm:my-6">
       <ZenTimeSlider />
     </section>
 
     <!-- 3. Interactive Buddhist Applications Hub (Ứng Dụng Tu Học Trực Tiếp) -->
-    <section class="my-14 space-y-6">
-      <div class="text-center max-w-2xl mx-auto">
-        <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-bold mb-2">
+    <section class="my-10 sm:my-14 space-y-6">
+      <div class="text-center max-w-2xl mx-auto px-3">
+        <div class="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[11px] sm:text-xs font-bold mb-2">
           <span>✨</span>
           <span>CÔNG CỤ TU HỌC & LAN TỎA CHÁNH PHÁP</span>
         </div>
-        <h2 class="text-2xl sm:text-3xl font-serif font-bold text-amber-100 tracking-tight">
+        <h2 class="text-xl sm:text-3xl font-serif font-bold text-amber-100 tracking-tight">
           Ứng Dụng Pháp Bảo Tương Tác
         </h2>
         <p class="text-xs sm:text-sm text-stone-400 font-serif mt-1">
@@ -133,30 +133,30 @@ const theravadaHomeJsonLd = {
         </p>
 
         <!-- App Switcher Tabs -->
-        <div class="mt-4 flex items-center justify-center gap-2 p-1 bg-stone-900/90 rounded-2xl border border-stone-800 max-w-sm mx-auto">
+        <div class="mt-4 flex items-center justify-center gap-2 p-1 bg-stone-900/90 rounded-2xl border border-stone-800 max-w-sm mx-auto w-full">
           <button
             @click="activeAppTab = 'card'"
             :class="[
-              'flex-1 py-2 px-3 rounded-xl text-xs font-serif font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5',
+              'flex-1 py-2.5 sm:py-2 px-2 sm:px-3 rounded-xl text-xs font-serif font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 min-h-[40px]',
               activeAppTab === 'card'
                 ? 'bg-amber-500 text-stone-950 shadow-md'
                 : 'text-stone-400 hover:text-white'
             ]"
           >
             <span>📜</span>
-            <span>Tạo Thẻ Pháp Cú HD</span>
+            <span class="truncate">Tạo Thẻ Pháp Cú</span>
           </button>
           <button
             @click="activeAppTab = 'timer'"
             :class="[
-              'flex-1 py-2 px-3 rounded-xl text-xs font-serif font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5',
+              'flex-1 py-2.5 sm:py-2 px-2 sm:px-3 rounded-xl text-xs font-serif font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 min-h-[40px]',
               activeAppTab === 'timer'
                 ? 'bg-amber-500 text-stone-950 shadow-md'
                 : 'text-stone-400 hover:text-white'
             ]"
           >
             <span>🧘</span>
-            <span>Đồng Hồ Tọa Thiền</span>
+            <span class="truncate">Đồng Hồ Tọa Thiền</span>
           </button>
         </div>
       </div>
@@ -169,12 +169,12 @@ const theravadaHomeJsonLd = {
     </section>
 
     <!-- 4. Daily Dhammapada Verse (Lời Phật Dạy Mỗi Ngày) -->
-    <section class="my-10 p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-amber-950/40 via-stone-900/90 to-stone-950 border border-amber-500/30 shadow-2xl relative overflow-hidden backdrop-blur-md">
+    <section class="my-8 sm:my-10 p-5 sm:p-8 rounded-3xl bg-gradient-to-br from-amber-950/40 via-stone-900/90 to-stone-950 border border-amber-500/30 shadow-2xl relative overflow-hidden backdrop-blur-md">
       <div class="absolute -right-6 -bottom-6 text-8xl text-amber-500/5 select-none pointer-events-none font-serif">
         ☸️
       </div>
 
-      <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-5 sm:gap-6">
         <div class="flex-1 space-y-3 text-left">
           <div class="flex flex-wrap items-center gap-2">
             <span class="px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 text-xs font-serif font-bold border border-amber-500/30">
@@ -198,7 +198,7 @@ const theravadaHomeJsonLd = {
 
         <button
           @click="playChantBell"
-          class="shrink-0 flex items-center gap-2 px-4 py-3 rounded-2xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 font-serif text-xs font-bold transition-all hover:scale-105 active:scale-95 shadow-md cursor-pointer"
+          class="w-full md:w-auto shrink-0 flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 font-serif text-xs font-bold transition-all hover:scale-105 active:scale-95 shadow-md cursor-pointer min-h-[44px]"
         >
           <span>🔔</span>
           <span>Lắng Lòng Chiêm Nghiệm</span>

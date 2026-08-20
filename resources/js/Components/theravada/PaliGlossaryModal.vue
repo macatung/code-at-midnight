@@ -70,32 +70,32 @@ const handleTermClick = () => {
 <template>
   <div
     v-if="isOpen"
-    class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-stone-950/80 backdrop-blur-md animate-fade-in"
+    class="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-6 bg-stone-950/85 backdrop-blur-md animate-fade-in"
     @click.self="handleClose"
   >
     <div
-      class="relative w-full max-w-3xl max-h-[85vh] flex flex-col rounded-3xl bg-stone-900 border border-amber-500/30 text-stone-100 shadow-2xl overflow-hidden font-sans"
+      class="relative w-full max-w-3xl max-h-[92vh] sm:max-h-[85vh] flex flex-col rounded-2xl sm:rounded-3xl bg-stone-900 border border-amber-500/30 text-stone-100 shadow-2xl overflow-hidden font-sans"
       :style="{ boxShadow: '0 25px 60px -15px rgba(217, 119, 6, 0.25)' }"
     >
       <!-- Header -->
-      <div class="flex items-center justify-between p-5 sm:p-6 border-b border-amber-500/20 bg-stone-950/60">
-        <div class="flex items-center gap-3">
-          <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-500/10 border border-amber-500/30 text-xl text-amber-400">
+      <div class="flex items-center justify-between p-3.5 sm:p-6 border-b border-amber-500/20 bg-stone-950/70 gap-2">
+        <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+          <span class="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-2xl bg-amber-500/10 border border-amber-500/30 text-lg sm:text-xl text-amber-400 shrink-0">
             ☸️
           </span>
-          <div>
-            <h3 class="text-lg font-serif font-bold text-amber-200 tracking-tight">
-              Từ Điển Thuật Ngữ Pāḷi Nguyên Thủy
+          <div class="min-w-0">
+            <h3 class="text-base sm:text-lg font-serif font-bold text-amber-200 tracking-tight truncate">
+              Từ Điển Thuật Ngữ Pāḷi
             </h3>
-            <p class="text-xs text-stone-400 font-sans">
-              Tra cứu nhanh 20+ thuật ngữ Pāḷi cốt lõi trong Tam Tạng & Thiền Vipassanā
+            <p class="text-[10px] sm:text-xs text-stone-400 font-sans truncate">
+              Tra cứu nhanh 20+ thuật ngữ Pāḷi cốt lõi trong Tam Tạng & Vipassanā
             </p>
           </div>
         </div>
 
         <button
           @click="handleClose"
-          class="text-stone-400 hover:text-white p-2 rounded-xl hover:bg-stone-800 transition-colors"
+          class="text-stone-400 hover:text-white p-2 rounded-xl hover:bg-stone-800 transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center cursor-pointer shrink-0"
           aria-label="Đóng"
         >
           ✕
@@ -103,24 +103,24 @@ const handleTermClick = () => {
       </div>
 
       <!-- Search & Filters -->
-      <div class="p-4 sm:p-5 border-b border-stone-800 bg-stone-900/90 flex flex-col sm:flex-row gap-3">
+      <div class="p-3 sm:p-5 border-b border-stone-800 bg-stone-900/90 flex flex-col sm:flex-row gap-2.5 sm:gap-3">
         <div class="relative flex-1">
           <input
             v-model="searchQuery"
             type="text"
             placeholder="Tìm theo thuật ngữ Pāḷi, tiếng Việt hoặc ý nghĩa..."
-            class="w-full pl-9 pr-4 py-2.5 rounded-xl bg-stone-950/80 border border-stone-700 text-sm text-stone-100 placeholder-stone-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+            class="w-full pl-9 pr-4 py-2.5 rounded-xl bg-stone-950/80 border border-stone-700 text-xs sm:text-sm text-stone-100 placeholder-stone-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
           />
-          <span class="absolute left-3 top-2.5 text-stone-500 text-sm">🔍</span>
+          <span class="absolute left-3 top-2.5 text-stone-500 text-xs sm:text-sm">🔍</span>
         </div>
 
-        <div class="flex flex-wrap gap-1.5">
+        <div class="flex flex-wrap gap-1 sm:gap-1.5">
           <button
             v-for="cat in ['all', 'Tam Tướng', 'Cốt Lõi', 'Thiền Định', 'Đạo Lộ', 'Tâm Lý']"
             :key="cat"
             @click="selectedCategory = cat"
             :class="[
-              'px-3 py-1.5 rounded-xl text-xs font-serif transition-colors',
+              'px-2.5 sm:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-serif transition-colors min-h-[32px]',
               selectedCategory === cat
                 ? 'bg-amber-500 text-stone-950 font-bold shadow-md'
                 : 'bg-stone-800 text-stone-300 hover:bg-stone-700'
@@ -132,42 +132,42 @@ const handleTermClick = () => {
       </div>
 
       <!-- Terms List Body -->
-      <div class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-3 divide-y divide-stone-800/60">
+      <div class="flex-1 overflow-y-auto p-3.5 sm:p-6 space-y-2.5 sm:space-y-3 divide-y divide-stone-800/60">
         <div
           v-for="item in filteredTerms"
           :key="item.term"
-          class="pt-3 first:pt-0 group cursor-pointer"
+          class="pt-2.5 sm:pt-3 first:pt-0 group cursor-pointer"
           @click="handleTermClick"
         >
-          <div class="flex flex-wrap items-baseline justify-between gap-2 mb-1">
-            <div class="flex items-center gap-2">
-              <h4 class="text-base font-serif font-bold text-amber-300 group-hover:text-amber-200 transition-colors">
+          <div class="flex flex-wrap items-baseline justify-between gap-1.5 sm:gap-2 mb-1">
+            <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+              <h4 class="text-sm sm:text-base font-serif font-bold text-amber-300 group-hover:text-amber-200 transition-colors">
                 {{ item.term }}
               </h4>
-              <span class="text-sm font-sans text-stone-300 font-medium italic">
+              <span class="text-xs sm:text-sm font-sans text-stone-300 font-medium italic">
                 ({{ item.vietnamese }})
               </span>
             </div>
-            <span class="px-2 py-0.5 rounded-full text-[10px] font-sans font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+            <span class="px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-sans font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
               {{ item.category }}
             </span>
           </div>
-          <p class="text-sm text-stone-400 font-sans leading-relaxed">
+          <p class="text-xs sm:text-sm text-stone-300 font-sans leading-relaxed">
             {{ item.definition }}
           </p>
         </div>
 
-        <div v-if="filteredTerms.length === 0" class="py-12 text-center text-stone-500 font-serif">
+        <div v-if="filteredTerms.length === 0" class="py-10 sm:py-12 text-center text-stone-500 font-serif text-xs sm:text-sm">
           Không tìm thấy thuật ngữ nào phù hợp với từ khóa "{{ searchQuery }}".
         </div>
       </div>
 
       <!-- Footer Info -->
-      <div class="p-4 bg-stone-950/80 border-t border-stone-800 text-xs text-stone-400 flex items-center justify-between">
-        <span class="italic">☸️ "Pháp nhãn thanh tịnh, thấu rõ vạn pháp duyên sinh"</span>
+      <div class="p-3 sm:p-4 bg-stone-950/80 border-t border-stone-800 text-[11px] sm:text-xs text-stone-400 flex items-center justify-between gap-2">
+        <span class="italic truncate">☸️ "Pháp nhãn thanh tịnh, thấu rõ vạn pháp"</span>
         <button
           @click="handleClose"
-          class="px-4 py-1.5 rounded-xl bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/40 text-xs font-serif font-bold transition-all"
+          class="px-3.5 sm:px-4 py-1.5 rounded-xl bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/40 text-xs font-serif font-bold transition-all shrink-0 cursor-pointer min-h-[36px]"
         >
           Đóng
         </button>
