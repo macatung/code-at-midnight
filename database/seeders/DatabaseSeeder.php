@@ -14,7 +14,6 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ContentAndAnalyticsSeeder::class,
             TheravadaContentSeeder::class,
-            TaskSeeder::class,
         ]);
     }
 }

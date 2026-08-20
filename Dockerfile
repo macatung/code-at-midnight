@@ -37,17 +37,18 @@ RUN composer dump-autoload --optimize --no-dev
 # ------------------------------------------------------------------------------
 FROM php:8.2-fpm-alpine AS runner
 
-# Install Nginx, Supervisor, SQLite and system utilities
+# Install Nginx, Supervisor, SQLite, PostgreSQL client and system utilities
 RUN apk add --no-cache \
     nginx \
     supervisor \
     sqlite \
+    postgresql-client \
     curl
 
 # Install required PHP extensions
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 RUN chmod +x /usr/local/bin/install-php-extensions && \
-    install-php-extensions pdo_sqlite pdo_mysql mbstring zip bcmath opcache intl xml ctype fileinfo gd
+    install-php-extensions pdo_sqlite pdo_mysql pdo_pgsql pgsql mbstring zip bcmath opcache intl xml ctype fileinfo gd
 
 # Set working directory
 WORKDIR /var/www/html
