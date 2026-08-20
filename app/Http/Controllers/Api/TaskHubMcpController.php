@@ -49,6 +49,7 @@ class TaskHubMcpController extends ApiAgentRunController
             ['name' => 'attach_verification_evidence', 'description' => 'Attach test/build/security evidence to an agent run.', 'inputSchema' => ['type' => 'object', 'properties' => ['run_id' => ['type' => 'integer'], 'evidence_type' => ['type' => 'string'], 'status' => ['type' => 'string'], 'command' => ['type' => 'string'], 'summary' => ['type' => 'string']], 'required' => ['run_id', 'evidence_type', 'status']]],
             ['name' => 'request_human_approval', 'description' => 'Request human approval after evidence is attached.', 'inputSchema' => ['type' => 'object', 'properties' => ['task_id' => ['type' => 'integer']], 'required' => ['task_id']]],
             ['name' => 'get_next_action', 'description' => 'Return the next smallest actionable task.', 'inputSchema' => ['type' => 'object', 'properties' => []]],
+            ['name' => 'get_project_state', 'description' => 'Read the current project state before planning more work: progress, sprints, blockers, agent runs, verification and GitHub snapshot.', 'inputSchema' => ['type' => 'object', 'properties' => ['project_id' => ['type' => 'integer']], 'required' => ['project_id']]],
             ['name' => 'preview_project_breakdown', 'description' => 'Generate and validate a project plan without writing to the database. Human approval is required before commit.', 'inputSchema' => ['type' => 'object', 'properties' => [
                 'prompt' => ['type' => 'string', 'description' => 'Project idea or requirement.'],
                 'project_title' => ['type' => 'string'], 'project_key' => ['type' => 'string'],
@@ -73,6 +74,7 @@ class TaskHubMcpController extends ApiAgentRunController
             'attach_verification_evidence' => $this->evidence(Request::create('/', 'POST', $args), AgentRun::findOrFail($args['run_id']))->getData(true),
             'request_human_approval' => $this->approve(Task::findOrFail($args['task_id']))->getData(true),
             'get_next_action' => ['success' => true, 'data' => Task::with('project')->where('status', '!=', 'done')->orderByRaw("CASE WHEN status = 'in_progress' THEN 1 WHEN priority = 'urgent' THEN 2 WHEN priority = 'high' THEN 3 ELSE 4 END")->orderBy('due_date')->first()],
+            'get_project_state' => ['success' => true, 'data' => $this->projectState((int) $args['project_id'])],
             'preview_project_breakdown' => $this->previewProjectBreakdown($args, $planningService),
             default => throw new \InvalidArgumentException('Unknown tool: ' . $name),
         };
@@ -91,8 +93,36 @@ class TaskHubMcpController extends ApiAgentRunController
             'sprint_duration_weeks' => $args['sprint_duration_weeks'] ?? null,
             'start_date' => $args['start_date'] ?? null,
         ], fn ($value) => $value !== null && $value !== '');
+        if (!empty($args['project_id'])) {
+            $state = $this->projectState((int) $args['project_id']);
+            $prompt .= "\n\nCURRENT PROJECT STATE (use this to plan only the next valuable work; do not repeat done items):\n" . json_encode($state, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        }
         $plan = $planningService->generatePlanWithProvider($prompt, $options);
         return ['success' => true, 'mode' => 'preview', 'provider' => $planningService->planningSettings()['provider'] ?? 'template', 'requires_human_approval' => true, 'data' => $plan];
+    }
+
+    private function projectState(int $projectId): array
+    {
+        $project = Project::findOrFail($projectId);
+        $tasks = Task::where('project_id', $projectId);
+        $taskRows = (clone $tasks)->with('sprint:id,name,status')->orderByRaw("CASE WHEN status = 'in_progress' THEN 1 WHEN status = 'review' THEN 2 WHEN priority = 'urgent' THEN 3 ELSE 4 END")->orderBy('due_date')->limit(100)->get();
+        $sprints = $project->sprints()->withCount(['tasks', 'tasks as completed_tasks_count' => fn ($query) => $query->where('status', 'done')])->orderByDesc('start_date')->get(['id', 'name', 'goal', 'start_date', 'end_date', 'status']);
+        $runs = AgentRun::whereHas('task', fn ($query) => $query->where('project_id', $projectId))->with('evidence')->latest()->limit(20)->get();
+
+        return [
+            'project' => [
+                'id' => $project->id, 'title' => $project->title, 'description' => $project->description,
+                'type' => $project->type, 'github_repository' => $project->github_repository,
+                'github_default_branch' => $project->github_default_branch, 'github_sync_status' => $project->github_sync_status,
+                'github_last_sync_at' => $project->github_last_sync_at?->toIso8601String(), 'github_snapshot' => $project->github_snapshot,
+            ],
+            'summary' => [
+                'total_tasks' => (clone $tasks)->count(), 'done' => (clone $tasks)->where('status', 'done')->count(),
+                'in_progress' => (clone $tasks)->where('status', 'in_progress')->count(), 'review' => (clone $tasks)->where('status', 'review')->count(),
+                'todo' => (clone $tasks)->where('status', 'todo')->count(), 'overdue' => (clone $tasks)->where('status', '!=', 'done')->whereDate('due_date', '<', now()->toDateString())->count(),
+            ],
+            'sprints' => $sprints, 'tasks' => $taskRows, 'agent_runs' => $runs,
+        ];
     }
 
     private function validProjectOrWorkspaceToken(Request $request, array $payload): bool

@@ -99,6 +99,11 @@ class TaskHubAgentWorkflowTest extends TestCase
         ])->assertOk()->assertJsonPath('result.content.0.type', 'text');
 
         $this->withHeaders($headers)->postJson('/api/tasks/mcp', [
+            'jsonrpc' => '2.0', 'id' => 4, 'method' => 'tools/call',
+            'params' => ['name' => 'get_project_state', 'arguments' => ['project_id' => $project->id]],
+        ])->assertOk()->assertJsonPath('result.content.0.type', 'text');
+
+        $this->withHeaders($headers)->postJson('/api/tasks/mcp', [
             'jsonrpc' => '2.0', 'id' => 3, 'method' => 'tools/call',
             'params' => ['name' => 'preview_project_breakdown', 'arguments' => [
                 'prompt' => 'Xây dựng dashboard quản lý repository GitHub cho nhóm indie',
