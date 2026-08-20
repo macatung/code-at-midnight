@@ -144,6 +144,19 @@ class TaskHubAgentWorkflowTest extends TestCase
             ->assertJsonPath('data.0.changes.1', 'Desktop cockpit');
     }
 
+    public function test_structured_handoff_creates_evidence_and_requests_review(): void
+    {
+        $task = Task::create(['title' => 'Finish agent handoff']);
+        $run = AgentRun::create(['task_id' => $task->id, 'provider' => 'codex', 'agent_session_id' => 'handoff-session', 'status' => 'running']);
+        $this->postJson('/api/tasks/agent-runs/' . $run->id . '/handoff', [
+            'summary' => 'Implemented the requested agent workspace.',
+            'changed_files' => ['desktop/src/components/AgentConsoleModal.vue'],
+            'tests' => [['command' => 'npm test', 'status' => 'passed', 'summary' => 'All tests passed.']],
+            'commit_sha' => str_repeat('a', 40), 'blockers' => null,
+        ])->assertOk()->assertJsonPath('data.status', 'needs_review');
+        $this->assertDatabaseHas('verification_evidence', ['agent_run_id' => $run->id, 'command' => 'npm test', 'status' => 'passed']);
+    }
+
     public function test_project_github_configuration_is_encrypted_and_syncs_snapshot(): void
     {
         $project = Project::create([

@@ -19,16 +19,17 @@ onUnmounted(() => removeListener?.());
 </script>
 
 <template>
-  <div v-if="state.status === 'checking' || state.status === 'available' || state.status === 'downloading' || state.status === 'downloaded' || state.status === 'error'" class="update-panel no-drag">
+  <div v-if="state.status === 'checking' || state.status === 'available' || state.status === 'downloading' || state.status === 'downloaded' || state.status === 'not-available' || state.status === 'error'" class="update-panel no-drag">
     <div class="flex items-center gap-2">
       <span v-if="state.status === 'downloading' || state.status === 'available'">⬇️</span>
       <span v-else-if="state.status === 'downloaded'">✅</span>
+      <span v-else-if="state.status === 'not-available'">ℹ️</span>
       <span v-else-if="state.status === 'error'">⚠️</span>
       <span v-else>🔄</span>
       <span class="flex-1">{{ state.message }}</span>
       <button v-if="state.status === 'downloaded'" class="update-button primary" @click="install">Khởi động lại và cập nhật</button>
       <button v-else-if="state.status === 'error'" class="update-button" @click="check">Thử lại</button>
-      <button v-if="state.status === 'downloaded' || state.status === 'error'" class="update-button" @click="dismiss">Để sau</button>
+      <button v-if="state.status === 'downloaded' || state.status === 'error' || state.status === 'not-available'" class="update-button" @click="dismiss">Đóng</button>
     </div>
     <div v-if="state.status === 'downloading'" class="mt-1 h-1 rounded bg-slate-800 overflow-hidden">
       <div class="h-full bg-emerald-400 transition-all" :style="{ width: `${state.percent || 0}%` }" />

@@ -61,6 +61,7 @@ Route::prefix('api/tasks')->group(function () {
     Route::patch('/agent-runs/{agentRun}', [ApiAgentRunController::class, 'update']);
     Route::post('/agent-runs/{agentRun}/events', [ApiAgentRunController::class, 'event']);
     Route::post('/agent-runs/{agentRun}/evidence', [ApiAgentRunController::class, 'evidence']);
+    Route::post('/agent-runs/{agentRun}/handoff', [ApiAgentRunController::class, 'handoff']);
     Route::get('/context-pack', [ApiAgentRunController::class, 'context']);
     Route::post('/work-items/{task}/approve', [ApiAgentRunController::class, 'approve']);
     Route::post('/work-items/{task}/reject', [ApiAgentRunController::class, 'reject']);

@@ -127,6 +127,49 @@ class ApiAgentRunController extends Controller
         return response()->json(['success' => true, 'data' => $evidence], 201);
     }
 
+    public function handoff(Request $request, AgentRun $agentRun)
+    {
+        $validated = $request->validate([
+            'summary' => 'required|string|max:10000',
+            'changed_files' => 'required|array|min:1',
+            'changed_files.*' => 'string|max:500',
+            'tests' => 'required|array|min:1',
+            'tests.*.command' => 'required|string|max:500',
+            'tests.*.status' => 'required|in:passed,failed,skipped',
+            'tests.*.summary' => 'nullable|string|max:10000',
+            'commit_sha' => 'nullable|string|max:80',
+            'pull_request_url' => 'nullable|url|max:500',
+            'blockers' => 'nullable|string|max:10000',
+        ]);
+
+        $run = DB::transaction(function () use ($agentRun, $validated) {
+            $metadata = array_merge($agentRun->metadata ?: [], [
+                'handoff' => [
+                    'changed_files' => array_values($validated['changed_files']),
+                    'blockers' => $validated['blockers'] ?? null,
+                    'submitted_at' => now()->toIso8601String(),
+                ],
+            ]);
+            $agentRun->update([
+                'status' => 'needs_review', 'summary' => $validated['summary'],
+                'commit_sha' => $validated['commit_sha'] ?? $agentRun->commit_sha,
+                'pull_request_url' => $validated['pull_request_url'] ?? $agentRun->pull_request_url,
+                'metadata' => $metadata,
+            ]);
+            foreach ($validated['tests'] as $test) {
+                $agentRun->evidence()->create([
+                    'task_id' => $agentRun->task_id, 'evidence_type' => 'test',
+                    'status' => $test['status'], 'command' => $test['command'],
+                    'summary' => $test['summary'] ?? null, 'commit_sha' => $validated['commit_sha'] ?? $agentRun->commit_sha,
+                    'metadata' => ['source' => 'desktop_handoff'],
+                ]);
+            }
+            $this->recordEvent($agentRun, 'handoff_completed', 'needs_review', ['changed_files' => $validated['changed_files'], 'test_count' => count($validated['tests'])]);
+            return $agentRun->fresh()->load(['evidence', 'events']);
+        });
+        return response()->json(['success' => true, 'data' => $run]);
+    }
+
     public function context(Request $request, TaskHubContextPackService $contextService)
     {
         $task = $request->filled('task_id') ? Task::findOrFail($request->integer('task_id')) : null;

@@ -3776,6 +3776,7 @@ onUnmounted(() => {
                   <span class="rounded-full border px-2 py-0.5 font-mono text-[10px]">{{ run.status }}</span>
                 </div>
                 <p v-if="run.branch || run.commit_sha" class="font-mono text-[10px] text-slate-500 truncate">{{ run.branch || 'no branch' }} · {{ run.commit_sha || 'no commit' }}</p>
+                <p v-if="run.summary" class="text-[11px] leading-relaxed text-slate-500">{{ run.summary }}</p>
                 <a v-if="run.pull_request_url" :href="run.pull_request_url" target="_blank" rel="noreferrer" class="text-[11px] text-blue-600 underline">Mở Pull Request</a>
                 <div v-if="run.evidence?.length" class="space-y-1">
                   <p v-for="item in run.evidence" :key="item.id" class="text-[10px]" :class="item.status === 'passed' ? 'text-emerald-600' : 'text-rose-600'">{{ item.status === 'passed' ? '✓' : '!' }} {{ item.evidence_type }}{{ item.command ? ` · ${item.command}` : '' }}</p>

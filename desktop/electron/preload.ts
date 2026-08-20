@@ -29,8 +29,13 @@ contextBridge.exposeInMainWorld('desktopApi', {
   },
   agent: {
     pickWorkspace: () => ipcRenderer.invoke('agent-pick-workspace'),
+    preflight: (provider: 'codex' | 'claude_code' | 'antigravity', cwd: string) => ipcRenderer.invoke('agent-preflight', { provider, cwd }),
+    createWorktree: (repository: string, issueKey: string) => ipcRenderer.invoke('agent-create-worktree', { repository, issueKey }),
+    openWorkspace: (cwd: string) => ipcRenderer.invoke('agent-open-workspace', cwd),
+    cleanupWorktree: (repository: string, worktree: string) => ipcRenderer.invoke('agent-cleanup-worktree', { repository, worktree }),
     configureMcp: (options: { cwd: string; provider: string; taskHubUrl: string; projectId: string; token: string }) => ipcRenderer.invoke('agent-configure-mcp', options),
     start: (provider: string, cwd: string, prompt?: string) => ipcRenderer.invoke('agent-start', { provider, cwd, prompt }),
+    startInteractive: (provider: string, cwd: string, prompt?: string) => ipcRenderer.invoke('agent-start-interactive', { provider, cwd, prompt }),
     send: (sessionId: string, input: string) => ipcRenderer.send('agent-input', { sessionId, input }),
     stop: (sessionId: string) => ipcRenderer.invoke('agent-stop', sessionId),
     onOutput: (callback: (event: { sessionId: string; stream: string; text: string }) => void) => {

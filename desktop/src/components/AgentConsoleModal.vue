@@ -1,201 +1,40 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 import type { TaskItem } from '../composables/useTaskSync';
-
-declare global {
-  interface Window {
-    desktopApi?: any;
-  }
-}
-
+declare global { interface Window { desktopApi?: any; } }
 const props = defineProps<{ tasks: TaskItem[]; initialTask?: TaskItem | null }>();
 const emit = defineEmits<{ (e: 'close'): void }>();
-
-type Phase = 'select_task' | 'pairing' | 'loading_context' | 'configuring' | 'ready' | 'running' | 'error';
-const phase = ref<Phase>('select_task');
-const provider = ref('codex');
-const workspace = ref('');
-const taskId = ref<number | null>(props.initialTask?.id || null);
-const taskSearch = ref('');
-const taskHubUrl = ref('https://tasks.macatung.dev');
-const pairingUrl = ref('');
-const pairingMessage = ref('');
-const errorMessage = ref('');
-const output = ref('');
-const contextPack = ref<any>(null);
-const credential = ref<{ token: string; projectId: string } | null>(null);
-const runId = ref<number | null>(null);
-const sessionId = ref<string | null>(null);
-let pollTimer: ReturnType<typeof setInterval> | undefined;
-let removeOutput: (() => void) | undefined;
-let removeExit: (() => void) | undefined;
-
-const selectedTask = computed(() => props.tasks.find(task => task.id === taskId.value) || null);
-const filteredTasks = computed(() => {
-  const query = taskSearch.value.trim().toLowerCase();
-  return props.tasks.filter(task => !query || [task.title, task.issue_key, task.project?.title].filter(Boolean).join(' ').toLowerCase().includes(query));
-});
-const busy = computed(() => ['pairing', 'loading_context', 'configuring', 'running'].includes(phase.value));
-
-const chooseWorkspace = async () => {
-  workspace.value = await window.desktopApi?.agent?.pickWorkspace() || workspace.value;
-};
-
-const mcpCall = (method: string, params: Record<string, any> = {}) => {
-  if (!credential.value) throw new Error('Task Hub chưa được xác thực.');
-  return window.desktopApi.taskHub.mcpCall(taskHubUrl.value, credential.value.token, credential.value.projectId, method, params);
-};
-
-const readMcpText = (response: any) => {
-  if (response?.error) throw new Error(response.error.message || 'MCP request failed.');
-  const text = response?.result?.content?.find((item: any) => item.type === 'text')?.text;
-  if (!text) throw new Error('MCP không trả về dữ liệu.');
-  return JSON.parse(text);
-};
-
-const stopPolling = () => {
-  if (pollTimer) clearInterval(pollTimer);
-  pollTimer = undefined;
-};
-
-const beginPairing = async () => {
-  errorMessage.value = '';
-  try {
-    if (!selectedTask.value) { errorMessage.value = 'Hãy chọn đúng một task.'; return; }
-    if (!selectedTask.value.project_id) { errorMessage.value = 'Task phải thuộc một project trước khi chạy agent.'; return; }
-    if (!workspace.value) await chooseWorkspace();
-    if (!workspace.value) { errorMessage.value = 'Hãy chọn workspace repository.'; return; }
-    phase.value = 'pairing';
-    const pairing = await window.desktopApi.taskHub.startPairing(taskHubUrl.value, selectedTask.value.project_id);
-    pairingUrl.value = pairing.approval_url;
-    pairingMessage.value = `Mã xác thực: ${pairing.code}. Đang chờ bạn approve trong browser...`;
-    await window.desktopApi.openExternal(pairing.approval_url);
-    const startedAt = Date.now();
-    pollTimer = setInterval(async () => {
-      try {
-      if (Date.now() - startedAt > 10 * 60 * 1000) { stopPolling(); throw new Error('Pairing đã hết hạn.'); }
-      const status = await window.desktopApi.taskHub.pollPairing(taskHubUrl.value, pairing.pairing_id, pairing.device_secret);
-      if (status.status === 'approved') {
-        stopPolling();
-        credential.value = { token: status.mcp_token, projectId: String(status.project_id) };
-        await loadContextAndPrepare();
-      } else if (['denied', 'expired', 'rejected'].includes(status.status)) {
-        stopPolling(); throw new Error(`Pairing ${status.status}.`);
-      }
-      } catch (error: any) {
-        stopPolling(); phase.value = 'error'; errorMessage.value = error?.message || 'Không thể xác thực Task Hub.';
-      }
-    }, 2000);
-  } catch (error: any) {
-    stopPolling(); phase.value = 'error'; errorMessage.value = error?.message || 'Không thể kết nối Task Hub.';
-  }
-};
-
-const loadContextAndPrepare = async () => {
-  if (!selectedTask.value || !credential.value) return;
-  phase.value = 'loading_context';
-  const response = await mcpCall('tools/call', { name: 'get_context_pack', arguments: { task_id: selectedTask.value.id } });
-  contextPack.value = readMcpText(response);
-  phase.value = 'configuring';
-  await window.desktopApi.agent.configureMcp({
-    cwd: workspace.value,
-    provider: provider.value,
-    taskHubUrl: taskHubUrl.value,
-    projectId: credential.value.projectId,
-    token: credential.value.token,
-  });
-  const session = `${provider.value}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-  const runResponse = await mcpCall('tools/call', { name: 'start_agent_run', arguments: {
-    task_id: selectedTask.value.id,
-    provider: provider.value,
-    agent_session_id: session,
-    repository: contextPack.value?.repository,
-    branch: contextPack.value?.branch,
-    context: contextPack.value,
-    instruction: { contract: 'Only implement the selected task. Update lifecycle and evidence through Task Hub MCP. Do not merge or deploy.' },
-  } });
-  const run = readMcpText(runResponse);
-  runId.value = run?.data?.id || run?.id || null;
-  phase.value = 'ready';
-  output.value = `Context đã nạp cho ${selectedTask.value.issue_key || `Task #${selectedTask.value.id}`}\nMCP đã cấu hình tại workspace.\nAgent run: ${runId.value || 'created'}\n`;
-};
-
-const buildPrompt = () => `You are working on exactly this Task Hub task. Do not switch tasks, merge, or deploy without human approval. Use the configured task-hub MCP server to update lifecycle and attach verification evidence. Finish in needs_review.
-
-TASK CONTEXT PACK:
-${JSON.stringify(contextPack.value, null, 2)}
-
-AGENT RUN ID: ${runId.value}
-WORKSPACE: ${workspace.value}`;
-
-const documentUrl = (document: any) => document.url || (document.repository_path && contextPack.value?.repository ? `https://github.com/${contextPack.value.repository}/blob/${contextPack.value.branch || 'main'}/${document.repository_path}` : '#');
-
-const startAgent = async () => {
-  if (!selectedTask.value || !contextPack.value || phase.value !== 'ready') return;
-  phase.value = 'running';
-  const result = await window.desktopApi.agent.start(provider.value, workspace.value, buildPrompt());
-  if (result?.mode === 'desktop') {
-    output.value += '\nAntigravity desktop đã mở. Prompt đã được copy vào clipboard.\n';
-  } else {
-    sessionId.value = result?.sessionId || null;
-    output.value += '\nAgent process đã khởi chạy.\n';
-  }
-};
-
-const updateRun = async (status: string, summary?: string) => {
-  if (!runId.value || !credential.value) return;
-  try { await mcpCall('tools/call', { name: 'update_agent_run', arguments: { run_id: runId.value, status, summary } }); } catch (error) { console.warn('Unable to update agent run:', error); }
-};
-
-const stopAgent = async () => {
-  if (sessionId.value) await window.desktopApi.agent.stop(sessionId.value);
-  await updateRun('cancelled', 'Agent stopped from desktop workspace.');
-  sessionId.value = null;
-  phase.value = 'ready';
-};
-
-const reopenPairing = () => { if (pairingUrl.value) window.desktopApi.openExternal(pairingUrl.value); };
-
-onMounted(() => {
-  removeOutput = window.desktopApi?.agent?.onOutput((event: any) => {
-    if (event.sessionId === sessionId.value) output.value += event.text;
-  });
-  removeExit = window.desktopApi?.agent?.onExit(async (event: any) => {
-    if (event.sessionId !== sessionId.value) return;
-    output.value += `\n[agent exited: ${event.code ?? 'unknown'}]\n`;
-    await updateRun(event.code === 0 ? 'needs_review' : 'failed', event.code === 0 ? 'Agent process completed; awaiting human review.' : `Agent exited with code ${event.code}.`);
-    sessionId.value = null;
-    phase.value = event.code === 0 ? 'ready' : 'error';
-  });
-});
-
-onUnmounted(() => { stopPolling(); removeOutput?.(); removeExit?.(); if (sessionId.value) window.desktopApi?.agent?.stop(sessionId.value); });
+type Phase = 'select' | 'preflight' | 'pairing' | 'context' | 'ready' | 'running' | 'handoff' | 'review' | 'error';
+const phase = ref<Phase>('select'); const provider = ref<'codex' | 'claude_code' | 'antigravity'>('codex');
+const sourceWorkspace = ref(localStorage.getItem('task_companion_agent_workspace') || ''); const worktree = ref(''); const taskId = ref<number | null>(props.initialTask?.id || null); const taskSearch = ref('');
+const taskHubUrl = ref('https://tasks.macatung.dev'); const credential = ref<{ token: string; projectId: string } | null>(null); const contextPack = ref<any>(null); const runId = ref<number | null>(null); const sessionId = ref<string | null>(null); const output = ref(''); const followUp = ref(''); const errorMessage = ref(''); const preflight = ref<any>(null); const timeline = ref<Array<{ label: string; detail: string; tone: string }>>([]);
+const handoff = ref({ summary: '', changedFiles: '', tests: 'npm test', testStatus: 'passed', testSummary: '', commitSha: '', pullRequestUrl: '', blockers: '' });
+let pollTimer: ReturnType<typeof setInterval> | undefined; let removeOutput: (() => void) | undefined; let removeExit: (() => void) | undefined;
+const selectedTask = computed(() => props.tasks.find(task => task.id === taskId.value) || null); const filteredTasks = computed(() => { const query = taskSearch.value.trim().toLowerCase(); return props.tasks.filter(task => !query || [task.title, task.issue_key, task.project?.title].filter(Boolean).join(' ').toLowerCase().includes(query)); }); const busy = computed(() => ['preflight', 'pairing', 'context'].includes(phase.value));
+const addTimeline = (label: string, detail: string, tone = 'muted') => timeline.value.push({ label, detail, tone });
+const chooseWorkspace = async () => { sourceWorkspace.value = await window.desktopApi?.agent?.pickWorkspace() || sourceWorkspace.value; if (sourceWorkspace.value) localStorage.setItem('task_companion_agent_workspace', sourceWorkspace.value); };
+const mcpCall = (method: string, params: Record<string, any> = {}) => { if (!credential.value) throw new Error('Task Hub chưa được xác thực.'); return window.desktopApi.taskHub.mcpCall(taskHubUrl.value, credential.value.token, credential.value.projectId, method, params); };
+const readMcpText = (response: any) => { if (response?.error) throw new Error(response.error.message || 'MCP request failed.'); const text = response?.result?.content?.find((item: any) => item.type === 'text')?.text; if (!text) throw new Error('MCP không trả về dữ liệu.'); return JSON.parse(text); };
+const stopPolling = () => { if (pollTimer) clearInterval(pollTimer); pollTimer = undefined; };
+const contract = () => `TASK HUB CONTRACT\nWork only on ${selectedTask.value?.issue_key || `task-${taskId.value}`}. Use Task Hub MCP for lifecycle/evidence. You may code and test only in this isolated worktree. Do not push, merge, deploy, access secrets, or make external changes without human approval. End with summary, changed files, tests, commit/PR and blockers.\n\nCONTEXT:\n${JSON.stringify(contextPack.value, null, 2)}`;
+const startPairing = async () => { if (!selectedTask.value) return; phase.value = 'pairing'; addTimeline('Pairing', 'Chờ phê duyệt Task Hub...', 'active'); const pairing = await window.desktopApi.taskHub.startPairing(taskHubUrl.value, selectedTask.value.project_id); await window.desktopApi.openExternal(pairing.approval_url); const started = Date.now(); pollTimer = setInterval(async () => { try { if (Date.now() - started > 600000) throw new Error('Pairing đã hết hạn.'); const status = await window.desktopApi.taskHub.pollPairing(taskHubUrl.value, pairing.pairing_id, pairing.device_secret); if (status.status === 'approved') { stopPolling(); credential.value = { token: status.mcp_token, projectId: String(status.project_id) }; addTimeline('Pairing', 'MCP authenticated.', 'ok'); await loadContext(); } else if (['denied', 'expired', 'rejected'].includes(status.status)) throw new Error(`Pairing ${status.status}.`); } catch (error: any) { stopPolling(); phase.value = 'error'; errorMessage.value = error.message; } }, 1800); };
+const runPreflight = async () => { errorMessage.value = ''; if (!selectedTask.value?.project_id) { errorMessage.value = 'Chọn task thuộc project trước.'; return; } if (!sourceWorkspace.value) await chooseWorkspace(); if (!sourceWorkspace.value) { errorMessage.value = 'Chọn Git repository trước.'; return; } phase.value = 'preflight'; addTimeline('Preflight', 'Đang kiểm tra provider và repository...', 'active'); try { preflight.value = await window.desktopApi.agent.preflight(provider.value, sourceWorkspace.value); preflight.value.checks.forEach((check: any) => addTimeline(check.id, check.message, check.status)); if (!preflight.value.ok) throw new Error('Preflight chưa đạt. Xử lý các mục lỗi rồi thử lại.'); const workspace = await window.desktopApi.agent.createWorktree(preflight.value.repository, selectedTask.value.issue_key || `task-${selectedTask.value.id}`); worktree.value = workspace.path; addTimeline('Worktree', `${workspace.branch} · ${workspace.reused ? 'reused' : 'created'}`, 'ok'); await startPairing(); } catch (error: any) { phase.value = 'error'; errorMessage.value = error.message || 'Preflight thất bại.'; } };
+const loadContext = async () => { if (!selectedTask.value || !credential.value) return; phase.value = 'context'; try { contextPack.value = readMcpText(await mcpCall('tools/call', { name: 'get_context_pack', arguments: { task_id: selectedTask.value.id } })); await window.desktopApi.agent.configureMcp({ cwd: worktree.value, provider: provider.value, taskHubUrl: taskHubUrl.value, projectId: credential.value.projectId, token: credential.value.token }); const session = `${provider.value}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`; const run = readMcpText(await mcpCall('tools/call', { name: 'start_agent_run', arguments: { task_id: selectedTask.value.id, provider: provider.value, agent_session_id: session, repository: contextPack.value.repository, branch: preflight.value?.branch || contextPack.value.branch, context: contextPack.value, instruction: { contract: 'supervised_task_execution' } } })); runId.value = run?.data?.id || run?.id || null; addTimeline('Context', 'Context pack + MCP configured.', 'ok'); phase.value = 'ready'; } catch (error: any) { phase.value = 'error'; errorMessage.value = error.message || 'Không thể chuẩn bị agent run.'; } };
+const updateRun = async (status: string, summary?: string) => { if (runId.value && credential.value) await mcpCall('tools/call', { name: 'update_agent_run', arguments: { run_id: runId.value, status, summary, metadata: { worktree_path: worktree.value, base_commit: preflight.value?.baseCommit, provider_capabilities: preflight.value?.capabilities } } }); };
+const startAgent = async () => { try { phase.value = 'running'; await updateRun('running'); const result = await window.desktopApi.agent.startInteractive(provider.value, worktree.value, contract()); sessionId.value = result.sessionId; addTimeline('Agent started', result.mode === 'external' ? 'Antigravity opened; prompt copied.' : `${provider.value} PTY started.`, 'ok'); output.value = result.mode === 'external' ? 'Antigravity is running externally. Submit handoff when done.' : ''; } catch (error: any) { phase.value = 'error'; errorMessage.value = error.message || 'Không thể khởi động agent.'; } };
+const sendFollowUp = () => { if (sessionId.value && followUp.value.trim()) { window.desktopApi.agent.send(sessionId.value, followUp.value); addTimeline('Follow-up', 'Đã gửi cho agent.', 'ok'); followUp.value = ''; } };
+const stopAgent = async () => { if (sessionId.value) await window.desktopApi.agent.stop(sessionId.value); await updateRun('cancelled', 'Agent stopped by user.'); phase.value = 'handoff'; };
+const completeExternalSession = async () => { await updateRun('waiting_input', 'External agent completed; structured handoff required.'); addTimeline('External session', 'Developer marked Antigravity ready for handoff.', 'ok'); phase.value = 'handoff'; };
+const submitHandoff = async () => { try { const data = readMcpText(await mcpCall('tools/call', { name: 'complete_agent_handoff', arguments: { run_id: runId.value, summary: handoff.value.summary, changed_files: handoff.value.changedFiles.split('\n').map(value => value.trim()).filter(Boolean), tests: [{ command: handoff.value.tests, status: handoff.value.testStatus, summary: handoff.value.testSummary }], commit_sha: handoff.value.commitSha || undefined, pull_request_url: handoff.value.pullRequestUrl || undefined, blockers: handoff.value.blockers || undefined } })); addTimeline('Handoff', `Submitted for review · run ${data?.data?.id || runId.value}`, 'ok'); phase.value = 'review'; } catch (error: any) { errorMessage.value = error.message || 'Không thể submit handoff.'; } };
+const copyHandoff = async () => { await navigator.clipboard?.writeText(`Summary\n${handoff.value.summary}\n\nChanged files\n${handoff.value.changedFiles}\n\nTests\n${handoff.value.tests}: ${handoff.value.testStatus} ${handoff.value.testSummary}\n\nCommit: ${handoff.value.commitSha || 'n/a'}\nPR: ${handoff.value.pullRequestUrl || 'n/a'}\nBlockers: ${handoff.value.blockers || 'None'}`); addTimeline('Handoff copied', 'Structured handoff copied to clipboard.', 'ok'); };
+const openWorktree = () => worktree.value && window.desktopApi.agent.openWorkspace(worktree.value);
+onMounted(() => { removeOutput = window.desktopApi?.agent?.onOutput((event: any) => { if (event.sessionId === sessionId.value) output.value += event.text; }); removeExit = window.desktopApi?.agent?.onExit(async (event: any) => { if (event.sessionId === sessionId.value) { sessionId.value = null; addTimeline('Process exited', `Exit code: ${event.code ?? 'unknown'}`, event.code === 0 ? 'ok' : 'error'); await updateRun(event.code === 0 ? 'waiting_input' : 'failed', event.code === 0 ? 'Handoff required.' : `Exited ${event.code}`); phase.value = 'handoff'; } }); }); onUnmounted(() => { stopPolling(); removeOutput?.(); removeExit?.(); if (sessionId.value) window.desktopApi?.agent?.stop(sessionId.value); });
 </script>
-
 <template>
-  <div class="agent-modal w-[min(66vw,560px)] max-w-[calc(100vw-180px)] h-[min(82vh,560px)] max-h-[calc(100vh-32px)] rounded-2xl border border-slate-700 bg-slate-950 text-slate-100 shadow-2xl p-4 flex flex-col gap-3 overflow-hidden" @mousedown.stop>
-    <div class="flex items-center justify-between"><div><h2 class="font-bold text-base">🤖 Agent Workspace</h2><p class="text-[10px] text-slate-400">Chọn task → nạp context → cấu hình MCP → chạy agent</p></div><button class="text-slate-400 hover:text-white px-2" @click="emit('close')">✕</button></div>
-
-    <div class="flex gap-2">
-      <select v-model="provider" class="bg-slate-900 border border-slate-700 rounded-lg px-2 py-2 text-xs" :disabled="busy"><option value="codex">Codex</option><option value="claude_code">Claude Code</option><option value="antigravity">Antigravity / agy</option></select>
-      <button class="flex-1 text-left truncate bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs" @click="chooseWorkspace">{{ workspace || 'Chọn thư mục project...' }}</button>
-    </div>
-
-    <input v-model="taskSearch" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs" placeholder="Tìm task theo key, tên hoặc project..." :disabled="busy" />
-    <div class="max-h-32 overflow-y-auto space-y-1 pr-1">
-      <button v-for="task in filteredTasks" :key="task.id" class="w-full text-left rounded-lg border px-3 py-2 text-xs" :class="task.id === taskId ? 'border-blue-400 bg-blue-950/50' : 'border-slate-800 bg-slate-900 hover:border-slate-600'" :disabled="busy" @click="taskId = task.id">
-        <div class="flex justify-between gap-2"><span class="font-semibold truncate">{{ task.issue_key || `#${task.id}` }} · {{ task.title }}</span><span class="shrink-0 text-slate-400">{{ task.status }}</span></div>
-        <div class="text-[10px] text-slate-500 mt-0.5">{{ task.project?.title || 'Không có project' }} · {{ task.priority }}</div>
-      </button>
-      <div v-if="filteredTasks.length === 0" class="text-xs text-slate-500 py-3 text-center">Không có task đủ điều kiện.</div>
-    </div>
-
-    <div v-if="selectedTask" class="rounded-lg border border-slate-800 bg-slate-900/70 p-3 text-[10px] text-slate-300 space-y-1"><div class="font-bold text-white">{{ selectedTask.issue_key || `Task #${selectedTask.id}` }} · {{ selectedTask.title }}</div><div>{{ selectedTask.description || 'Không có mô tả.' }}</div><div v-if="selectedTask.acceptance_criteria">Acceptance: {{ selectedTask.acceptance_criteria }}</div></div>
-    <div v-if="contextPack?.project_knowledge?.length" class="rounded-lg border border-cyan-900/70 bg-cyan-950/20 p-3 text-[10px] text-cyan-100"><div class="font-bold">📚 Project cockpit · references</div><a v-for="document in contextPack.project_knowledge" :key="document.id" :href="documentUrl(document)" target="_blank" rel="noreferrer" class="mt-1 block truncate underline" :class="document.required_for_task ? 'text-amber-200' : 'text-cyan-200'">{{ document.required_for_task ? 'Required · ' : '' }}{{ document.type }} · {{ document.title }}{{ document.is_stale ? ' · stale' : '' }}</a></div>
-    <div v-if="pairingMessage" class="rounded-lg border border-amber-800 bg-amber-950/30 p-2 text-[10px] text-amber-200">{{ pairingMessage }} <button v-if="pairingUrl" class="underline font-bold" @click="reopenPairing">Mở lại trang approve</button></div>
-    <div v-if="errorMessage" class="rounded-lg border border-red-800 bg-red-950/30 p-2 text-[10px] text-red-200">{{ errorMessage }}</div>
-
-    <pre class="flex-1 min-h-0 overflow-auto whitespace-pre-wrap bg-black/40 border border-slate-800 rounded-lg p-3 text-[11px] leading-relaxed text-slate-300">{{ output || 'Chọn một task để bắt đầu.' }}</pre>
-    <div class="flex gap-2"><button v-if="phase === 'select_task' || phase === 'error'" class="flex-1 bg-emerald-500 disabled:opacity-40 text-slate-950 rounded-lg px-3 py-2 text-xs font-bold" :disabled="!selectedTask || busy" @click="beginPairing">{{ phase === 'error' ? 'Thử lại kết nối' : 'Đăng nhập & kết nối Task Hub' }}</button><button v-if="phase === 'ready'" class="flex-1 bg-emerald-500 text-slate-950 rounded-lg px-3 py-2 text-xs font-bold" @click="startAgent">Mở phiên agent</button><button v-if="phase === 'running'" class="flex-1 bg-red-500 text-white rounded-lg px-3 py-2 text-xs font-bold" @click="stopAgent">Dừng agent</button><span v-if="busy && phase !== 'running'" class="flex-1 rounded-lg bg-slate-900 border border-slate-800 px-3 py-2 text-xs text-slate-400 text-center">{{ phase === 'pairing' ? 'Đang chờ approve...' : phase === 'loading_context' ? 'Đang nạp context...' : 'Đang cấu hình MCP...' }}</span></div>
+  <div class="agent-modal no-drag w-[min(88vw,960px)] max-w-[calc(100vw-24px)] h-[min(86vh,680px)] rounded-2xl border border-slate-700 bg-slate-950 text-slate-100 shadow-2xl p-4 flex flex-col gap-3 overflow-hidden" @mousedown.stop>
+    <header class="flex items-center justify-between"><div><h2 class="font-bold">🤖 Agent Run Workspace</h2><p class="text-[10px] text-slate-400">Preflight → worktree → supervised execution → handoff → review</p></div><button class="text-slate-400 hover:text-white" @click="emit('close')">✕</button></header>
+    <div class="grid min-h-0 flex-1 gap-3 md:grid-cols-[.78fr_1.22fr]"><aside class="space-y-3 overflow-auto rounded-xl border border-slate-800 bg-slate-900/50 p-3"><div class="flex gap-2"><select v-model="provider" class="min-w-0 flex-1 rounded-lg border border-slate-700 bg-slate-900 px-2 py-2 text-xs" :disabled="busy || phase === 'running'"><option value="codex">Codex</option><option value="claude_code">Claude Code</option><option value="antigravity">Antigravity</option></select><button class="rounded-lg border border-slate-700 px-2 text-xs" @click="chooseWorkspace">Repo</button></div><p class="truncate text-[10px] text-slate-400">{{ sourceWorkspace || 'Chưa chọn repository' }}</p><input v-model="taskSearch" class="w-full rounded-lg border border-slate-700 bg-slate-900 px-2 py-2 text-xs" placeholder="Tìm task..." :disabled="busy" /><div class="max-h-32 space-y-1 overflow-auto"><button v-for="task in filteredTasks" :key="task.id" class="w-full rounded-lg border p-2 text-left text-[10px]" :class="task.id === taskId ? 'border-blue-400 bg-blue-950/50' : 'border-slate-800 bg-slate-900'" @click="taskId = task.id"><b>{{ task.issue_key || `#${task.id}` }}</b> · {{ task.title }}</button></div><div v-if="selectedTask" class="rounded-lg border border-slate-800 p-2 text-[10px]"><b>{{ selectedTask.title }}</b><p class="mt-1 text-slate-400">{{ selectedTask.acceptance_criteria || 'No acceptance criteria.' }}</p></div><div class="border-t border-slate-800 pt-2"><p class="mb-2 text-[10px] font-bold uppercase text-slate-500">Timeline</p><div v-for="item in timeline" :key="`${item.label}-${item.detail}`" class="mb-2 text-[10px]"><b :class="item.tone === 'passed' || item.tone === 'ok' ? 'text-emerald-400' : item.tone === 'failed' || item.tone === 'error' ? 'text-rose-400' : 'text-slate-300'">{{ item.label }}</b><p class="text-slate-500">{{ item.detail }}</p></div></div></aside>
+      <main class="flex min-h-0 flex-col gap-3"><div v-if="['select','preflight','pairing','context','error'].includes(phase)" class="flex-1 rounded-xl border border-slate-800 bg-black/30 p-4 text-xs"><h3 class="font-bold">Preflight checklist</h3><p class="mt-2 text-slate-400">Desktop tạo worktree riêng, cấu hình MCP rồi mới khởi chạy agent.</p><div v-if="preflight?.checks" class="mt-4 space-y-2"><p v-for="check in preflight.checks" :key="check.id" :class="check.status === 'passed' ? 'text-emerald-300' : check.status === 'failed' ? 'text-rose-300' : 'text-amber-300'">{{ check.status === 'passed' ? '✓' : check.status === 'failed' ? '!' : '•' }} {{ check.message }}</p></div><p v-if="errorMessage" class="mt-4 text-rose-300">{{ errorMessage }}</p></div><div v-else-if="phase === 'ready'" class="flex-1 rounded-xl border border-slate-800 bg-black/30 p-4 text-xs"><h3 class="font-bold">Ready to run</h3><p class="mt-2 text-slate-400">Worktree: {{ worktree }}</p><div class="mt-4 rounded-lg border border-amber-900 bg-amber-950/20 p-3 text-amber-100">Supervised: code/test only. Push, merge and deploy need human approval.</div><p class="mt-3 text-slate-400">{{ contextPack?.project_knowledge?.length || 0 }} project references · {{ contextPack?.test_commands?.join(', ') }}</p></div><template v-else-if="phase === 'running'"><pre class="flex-1 min-h-0 overflow-auto rounded-xl border border-slate-800 bg-black/60 p-3 text-[11px] leading-relaxed text-slate-300">{{ output || 'Agent đang khởi động...' }}</pre><div v-if="provider !== 'antigravity'" class="flex gap-2"><input v-model="followUp" class="flex-1 rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs" placeholder="Gửi follow-up..." @keyup.enter="sendFollowUp" /><button class="rounded-lg border border-blue-700 px-3 text-xs" @click="sendFollowUp">Gửi</button></div></template><div v-else class="flex-1 overflow-auto rounded-xl border border-slate-800 bg-black/30 p-4 text-xs"><h3 class="font-bold">Structured handoff</h3><textarea v-model="handoff.summary" class="mt-3 w-full rounded-lg border border-slate-700 bg-slate-900 p-2" rows="3" placeholder="Tóm tắt kết quả..." /><textarea v-model="handoff.changedFiles" class="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 p-2" rows="3" placeholder="Changed files, mỗi dòng một file" /><div class="mt-2 grid grid-cols-2 gap-2"><input v-model="handoff.tests" class="rounded-lg border border-slate-700 bg-slate-900 p-2" placeholder="Test command" /><select v-model="handoff.testStatus" class="rounded-lg border border-slate-700 bg-slate-900 p-2"><option value="passed">passed</option><option value="failed">failed</option><option value="skipped">skipped</option></select></div><input v-model="handoff.testSummary" class="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 p-2" placeholder="Test result summary" /><div class="mt-2 grid grid-cols-2 gap-2"><input v-model="handoff.commitSha" class="rounded-lg border border-slate-700 bg-slate-900 p-2" placeholder="Commit SHA" /><input v-model="handoff.pullRequestUrl" class="rounded-lg border border-slate-700 bg-slate-900 p-2" placeholder="PR URL" /></div><textarea v-model="handoff.blockers" class="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 p-2" rows="2" placeholder="Blockers" /></div></main></div>
+    <footer class="flex gap-2 border-t border-slate-800 pt-3"><button v-if="phase === 'select' || phase === 'error'" class="rounded-lg bg-emerald-500 px-3 py-2 text-xs font-bold text-slate-950" :disabled="busy || !selectedTask" @click="runPreflight">{{ phase === 'error' ? 'Retry preflight' : 'Run preflight' }}</button><button v-if="phase === 'ready'" class="rounded-lg bg-emerald-500 px-3 py-2 text-xs font-bold text-slate-950" @click="startAgent">Start agent</button><button v-if="phase === 'running' && provider === 'antigravity'" class="rounded-lg bg-blue-600 px-3 py-2 text-xs font-bold" @click="completeExternalSession">External complete → handoff</button><button v-if="phase === 'running'" class="rounded-lg bg-rose-600 px-3 py-2 text-xs font-bold" @click="stopAgent">Stop → handoff</button><button v-if="phase === 'handoff'" class="rounded-lg bg-blue-600 px-3 py-2 text-xs font-bold disabled:opacity-40" :disabled="!handoff.summary || !handoff.changedFiles || !handoff.tests" @click="submitHandoff">Submit for review</button><button v-if="worktree" class="rounded-lg border border-slate-700 px-3 py-2 text-xs" @click="openWorktree">Open worktree</button><button v-if="phase === 'review'" class="rounded-lg border border-slate-700 px-3 py-2 text-xs" @click="copyHandoff">Copy handoff</button><span v-if="phase === 'review'" class="rounded-lg bg-emerald-950 px-3 py-2 text-xs text-emerald-300">✓ Handoff submitted · needs review</span></footer>
   </div>
 </template>

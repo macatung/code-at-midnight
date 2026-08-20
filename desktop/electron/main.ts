@@ -1,6 +1,7 @@
 import { app, BrowserWindow, ipcMain, Tray, Menu, nativeImage, screen, dialog, clipboard, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
-import { spawn, execFileSync, ChildProcessWithoutNullStreams } from 'node:child_process';
+import { spawn, execFileSync } from 'node:child_process';
+import { spawn as spawnPty, IPty } from 'node-pty';
 import path from 'node:path';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -24,14 +25,21 @@ process.env.VITE_PUBLIC = app.isPackaged ? process.env.DIST : path.join(process.
 
 let win: BrowserWindow | null = null;
 let tray: Tray | null = null;
-const agentProcesses = new Map<string, ChildProcessWithoutNullStreams>();
+type AgentProvider = 'codex' | 'claude_code' | 'antigravity';
+type AgentSession = { process?: IPty; provider: AgentProvider; cwd: string; mode: 'interactive' | 'external' };
+const agentProcesses = new Map<string, AgentSession>();
 type UpdateStatus = 'idle' | 'checking' | 'available' | 'downloading' | 'downloaded' | 'not-available' | 'error';
 let updateState: { status: UpdateStatus; version?: string; percent?: number; message?: string } = { status: 'idle' };
 let updateTimer: NodeJS.Timeout | undefined;
 
-const AGENT_COMMANDS: Record<string, { command: string; args: string[] }> = {
-  codex: { command: 'codex', args: [] },
-  claude_code: { command: 'claude', args: [] },
+const AGENT_COMMANDS: Record<Exclude<AgentProvider, 'antigravity'>, { command: string; args: string[]; capabilities: string[] }> = {
+  codex: { command: 'codex', args: [], capabilities: ['interactive', 'stream', 'resume', 'handoff'] },
+  claude_code: { command: 'claude', args: [], capabilities: ['interactive', 'stream', 'resume', 'handoff'] },
+};
+const PROVIDER_CAPABILITIES: Record<AgentProvider, string[]> = {
+  codex: AGENT_COMMANDS.codex.capabilities,
+  claude_code: AGENT_COMMANDS.claude_code.capabilities,
+  antigravity: ['external_session', 'handoff'],
 };
 
 function findAntigravityExecutable() {
@@ -79,6 +87,79 @@ function setUpdateState(next: { status: UpdateStatus; version?: string; percent?
   broadcastUpdateState();
 }
 
+function git(cwd: string, args: string[]): string {
+  return execFileSync('git', args, { cwd, encoding: 'utf8', windowsHide: true }).trim();
+}
+
+function safeIssueKey(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9._-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 70) || `task-${Date.now()}`;
+}
+
+function installGuardrailHooks(worktree: string) {
+  const hooks = path.join(worktree, '.task-companion', 'hooks');
+  fs.mkdirSync(hooks, { recursive: true });
+  const prePush = path.join(hooks, 'pre-push');
+  fs.writeFileSync(prePush, '#!/bin/sh\necho "Task Companion: push requires human approval outside the agent workspace." >&2\nexit 1\n', 'utf8');
+  try { fs.chmodSync(prePush, 0o755); } catch { /* Windows does not need an executable bit. */ }
+  git(worktree, ['config', 'core.hooksPath', hooks]);
+}
+
+function preflightAgent(provider: AgentProvider, cwd: string) {
+  const checks: Array<{ id: string; status: 'passed' | 'failed' | 'warning'; message: string }> = [];
+  const cli = provider === 'antigravity' ? (resolveCli('agy') || findAntigravityExecutable()) : resolveCli(AGENT_COMMANDS[provider].command);
+  checks.push({ id: 'provider', status: cli ? 'passed' : 'failed', message: cli ? `${provider} đã sẵn sàng.` : `Không tìm thấy ${provider}. Hãy cài CLI hoặc cấu hình đường dẫn.` });
+  if (!cwd || !fs.existsSync(cwd) || !fs.statSync(cwd).isDirectory()) return { ok: false, provider, capabilities: PROVIDER_CAPABILITIES[provider], checks: [...checks, { id: 'workspace', status: 'failed' as const, message: 'Chọn thư mục repository hợp lệ.' }] };
+  try {
+    const root = git(cwd, ['rev-parse', '--show-toplevel']);
+    const dirty = git(cwd, ['status', '--porcelain']);
+    checks.push({ id: 'repository', status: 'passed', message: `Git repository: ${root}` });
+    checks.push({ id: 'working_tree', status: dirty ? 'warning' : 'passed', message: dirty ? 'Workspace có thay đổi chưa commit; worktree riêng sẽ dùng base commit hiện tại.' : 'Workspace sạch.' });
+    return { ok: Boolean(cli), provider, capabilities: PROVIDER_CAPABILITIES[provider], repository: root, baseCommit: git(root, ['rev-parse', 'HEAD']), checks };
+  } catch {
+    checks.push({ id: 'repository', status: 'failed', message: 'Workspace phải là Git repository.' });
+    return { ok: false, provider, capabilities: PROVIDER_CAPABILITIES[provider], checks };
+  }
+}
+
+function createAgentWorktree(repository: string, issueKey: string) {
+  const root = git(repository, ['rev-parse', '--show-toplevel']);
+  const key = safeIssueKey(issueKey);
+  const branch = `codex/${key}`;
+  const target = path.join(path.dirname(root), '.task-companion-worktrees', key);
+  if (fs.existsSync(target)) return { path: target, branch, reused: true, baseCommit: git(target, ['rev-parse', 'HEAD']) };
+  fs.mkdirSync(path.dirname(target), { recursive: true });
+  try { git(root, ['worktree', 'add', '-b', branch, target, 'HEAD']); }
+  catch { git(root, ['worktree', 'add', target, branch]); }
+  installGuardrailHooks(target);
+  return { path: target, branch, reused: false, baseCommit: git(target, ['rev-parse', 'HEAD']) };
+}
+
+async function checkForUpdates(): Promise<typeof updateState> {
+  if (!app.isPackaged) {
+    setUpdateState({ status: 'not-available', message: 'Auto-update chỉ hoạt động ở bản Task Companion đã cài đặt.' });
+    return updateState;
+  }
+  if (updateState.status === 'checking' || updateState.status === 'downloading') return updateState;
+  setUpdateState({ status: 'checking', message: 'Đang kiểm tra cập nhật...' });
+  try {
+    await autoUpdater.checkForUpdates();
+  } catch (error: any) {
+    setUpdateState({ status: 'error', message: error?.message?.slice(0, 240) || 'Không thể kiểm tra cập nhật.' });
+  }
+  return updateState;
+}
+
+function installDownloadedUpdate(): typeof updateState {
+  if (!app.isPackaged) {
+    setUpdateState({ status: 'not-available', message: 'Hãy cài bản desktop release để dùng auto-update.' });
+  } else if (updateState.status !== 'downloaded') {
+    setUpdateState({ status: 'not-available', message: 'Chưa có bản cập nhật đã tải. Hãy chọn “Kiểm tra cập nhật” trước.' });
+  } else {
+    autoUpdater.quitAndInstall(false, true);
+  }
+  return updateState;
+}
+
 function setupAutoUpdater() {
   if (!app.isPackaged) return;
   autoUpdater.autoDownload = true;
@@ -90,7 +171,7 @@ function setupAutoUpdater() {
   autoUpdater.on('update-downloaded', (info) => setUpdateState({ status: 'downloaded', version: info.version, percent: 100, message: `Bản ${info.version} đã sẵn sàng cài đặt.` }));
   autoUpdater.on('error', (error) => setUpdateState({ status: 'error', message: error.message.slice(0, 240) || 'Không thể kiểm tra cập nhật.' }));
   updateTimer = setInterval(() => {
-    void autoUpdater.checkForUpdates().catch((error: Error) => setUpdateState({ status: 'error', message: error.message.slice(0, 240) || 'Không thể kiểm tra cập nhật.' }));
+    void checkForUpdates();
   }, 6 * 60 * 60 * 1000);
 }
 
@@ -220,21 +301,19 @@ function createWindow() {
 
   ipcMain.handle('updater-get-state', () => updateState);
   ipcMain.handle('updater-check', async () => {
-    if (!app.isPackaged) {
-      setUpdateState({ status: 'not-available', message: 'Auto-update chỉ hoạt động ở bản đã đóng gói.' });
-      return updateState;
-    }
-    try {
-      await autoUpdater.checkForUpdates();
-    } catch (error: any) {
-      setUpdateState({ status: 'error', message: error?.message?.slice(0, 240) || 'Không thể kiểm tra cập nhật.' });
-    }
-    return updateState;
+    return checkForUpdates();
   });
-  ipcMain.handle('updater-install', () => {
-    if (app.isPackaged && updateState.status === 'downloaded') autoUpdater.quitAndInstall(false, true);
-    return updateState;
+  ipcMain.handle('agent-preflight', (_event, { provider, cwd }: { provider: AgentProvider; cwd: string }) => preflightAgent(provider, cwd));
+  ipcMain.handle('agent-create-worktree', (_event, { repository, issueKey }: { repository: string; issueKey: string }) => createAgentWorktree(repository, issueKey));
+  ipcMain.handle('agent-open-workspace', async (_event, cwd: string) => shell.openPath(cwd));
+  ipcMain.handle('agent-cleanup-worktree', (_event, { repository, worktree }: { repository: string; worktree: string }) => {
+    const root = git(repository, ['rev-parse', '--show-toplevel']);
+    const allowedRoot = path.join(path.dirname(root), '.task-companion-worktrees') + path.sep;
+    if (!path.resolve(worktree).startsWith(path.resolve(allowedRoot))) throw new Error('Chỉ có thể dọn worktree do Task Companion tạo.');
+    git(root, ['worktree', 'remove', '--force', worktree]);
+    return true;
   });
+  ipcMain.handle('updater-install', () => installDownloadedUpdate());
   ipcMain.handle('updater-dismiss', () => {
     setUpdateState({ status: 'idle', message: undefined });
     return updateState;
@@ -286,22 +365,20 @@ function createWindow() {
     return { path: configPath, server: 'task-hub' };
   });
 
-  ipcMain.handle('agent-start', (_event, { provider, cwd, prompt }: { provider: string; cwd: string; prompt?: string }) => {
+  const startInteractiveAgent = (_event: Electron.IpcMainInvokeEvent, { provider, cwd, prompt }: { provider: AgentProvider; cwd: string; prompt?: string }) => {
     if (provider === 'antigravity') {
       const agy = resolveCli('agy');
       if (agy) {
         const sessionId = `antigravity-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-        const child = spawn(agy, [], { cwd, env: { ...process.env, FORCE_COLOR: '0' }, shell: true, windowsHide: true });
-        agentProcesses.set(sessionId, child);
-        child.stdout.on('data', (data) => win?.webContents.send('agent-output', { sessionId, stream: 'stdout', text: data.toString() }));
-        child.stderr.on('data', (data) => win?.webContents.send('agent-output', { sessionId, stream: 'stderr', text: data.toString() }));
-        child.on('error', (error) => win?.webContents.send('agent-output', { sessionId, stream: 'system', text: `Không thể khởi động agy: ${error.message}\n` }));
-        child.on('close', (code, signal) => {
+        const pty = spawnPty(agy, [], { cwd, name: 'xterm-256color', cols: 100, rows: 30, env: { ...process.env, FORCE_COLOR: '0' } as Record<string, string> });
+        agentProcesses.set(sessionId, { process: pty, provider, cwd, mode: 'interactive' });
+        pty.onData((text) => win?.webContents.send('agent-output', { sessionId, stream: 'stdout', text }));
+        pty.onExit(({ exitCode, signal }) => {
           agentProcesses.delete(sessionId);
-          win?.webContents.send('agent-exit', { sessionId, code, signal });
+          win?.webContents.send('agent-exit', { sessionId, code: exitCode, signal: String(signal) });
         });
-        if (prompt?.trim()) child.stdin.write(`${prompt.trim()}\n`);
-        return { mode: 'cli', sessionId, provider, cwd };
+        if (prompt?.trim()) pty.write(`${prompt.trim()}\r`);
+        return { mode: 'interactive', sessionId, provider, cwd, capabilities: PROVIDER_CAPABILITIES[provider] };
       }
       const executable = findAntigravityExecutable();
       if (!executable) throw new Error('Không tìm thấy Antigravity.exe. Hãy cài Antigravity hoặc đặt biến môi trường ANTIGRAVITY_PATH.');
@@ -310,7 +387,9 @@ function createWindow() {
       if (prompt?.trim()) {
         clipboard.writeText(prompt.trim());
       }
-      return { mode: 'desktop', provider, cwd, executable, promptCopied: Boolean(prompt?.trim()) };
+      const sessionId = `antigravity-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+      agentProcesses.set(sessionId, { provider, cwd, mode: 'external' });
+      return { mode: 'external', sessionId, provider, cwd, executable, promptCopied: Boolean(prompt?.trim()), capabilities: PROVIDER_CAPABILITIES[provider] };
     }
     const definition = AGENT_COMMANDS[provider];
     if (!definition) throw new Error('Agent không được hỗ trợ.');
@@ -318,33 +397,28 @@ function createWindow() {
 
     const sessionId = `${provider}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     const command = resolveCli(definition.command) || definition.command;
-    const child = spawn(command, definition.args, {
-      cwd,
-      env: { ...process.env, FORCE_COLOR: '0' },
-      shell: true,
-      windowsHide: true,
-    });
-    agentProcesses.set(sessionId, child);
-    child.stdout.on('data', (data) => win?.webContents.send('agent-output', { sessionId, stream: 'stdout', text: data.toString() }));
-    child.stderr.on('data', (data) => win?.webContents.send('agent-output', { sessionId, stream: 'stderr', text: data.toString() }));
-    child.on('error', (error) => win?.webContents.send('agent-output', { sessionId, stream: 'system', text: `Không thể khởi động ${provider}: ${error.message}\n` }));
-    child.on('close', (code, signal) => {
+    const pty = spawnPty(command, definition.args, { cwd, name: 'xterm-256color', cols: 100, rows: 30, env: { ...process.env, FORCE_COLOR: '0' } as Record<string, string> });
+    agentProcesses.set(sessionId, { process: pty, provider, cwd, mode: 'interactive' });
+    pty.onData((text) => win?.webContents.send('agent-output', { sessionId, stream: 'stdout', text }));
+    pty.onExit(({ exitCode, signal }) => {
       agentProcesses.delete(sessionId);
-      win?.webContents.send('agent-exit', { sessionId, code, signal });
+      win?.webContents.send('agent-exit', { sessionId, code: exitCode, signal: String(signal) });
     });
-    if (prompt?.trim()) child.stdin.write(`${prompt.trim()}\n`);
-    return { sessionId, provider, cwd };
-  });
+    if (prompt?.trim()) pty.write(`${prompt.trim()}\r`);
+    return { mode: 'interactive', sessionId, provider, cwd, capabilities: PROVIDER_CAPABILITIES[provider] };
+  };
+  ipcMain.handle('agent-start', startInteractiveAgent);
+  ipcMain.handle('agent-start-interactive', startInteractiveAgent);
 
   ipcMain.on('agent-input', (_event, { sessionId, input }: { sessionId: string; input: string }) => {
-    const child = agentProcesses.get(sessionId);
-    if (child && !child.killed) child.stdin.write(input.endsWith('\n') ? input : `${input}\n`);
+    const session = agentProcesses.get(sessionId);
+    if (session?.process) session.process.write(input.endsWith('\r') ? input : `${input}\r`);
   });
 
   ipcMain.handle('agent-stop', (_event, sessionId: string) => {
-    const child = agentProcesses.get(sessionId);
-    if (!child) return false;
-    child.kill();
+    const session = agentProcesses.get(sessionId);
+    if (!session) return false;
+    session.process?.kill();
     agentProcesses.delete(sessionId);
     return true;
   });
@@ -419,14 +493,15 @@ function createTray() {
     {
       label: '🔄 Kiểm tra cập nhật',
       click: () => {
-        if (win) { win.show(); win.webContents.send('tray-action', 'check-updates'); }
-        if (app.isPackaged) void autoUpdater.checkForUpdates().catch(() => undefined);
+        if (win) { win.show(); win.focus(); }
+        void checkForUpdates();
       },
     },
     {
       label: '⬆️ Khởi động lại để cập nhật',
       click: () => {
-        if (app.isPackaged && updateState.status === 'downloaded') autoUpdater.quitAndInstall(false, true);
+        if (win) { win.show(); win.focus(); }
+        installDownloadedUpdate();
       },
     },
     { type: 'separator' },
@@ -453,7 +528,7 @@ app.whenReady().then(() => {
   createTray();
   setupAutoUpdater();
   setTimeout(() => {
-    if (app.isPackaged) void autoUpdater.checkForUpdates().catch((error: Error) => setUpdateState({ status: 'error', message: error.message.slice(0, 240) }));
+    void checkForUpdates();
   }, 10_000);
 
   app.on('second-instance', () => {
@@ -479,6 +554,6 @@ app.on('window-all-closed', () => {
 
 app.on('before-quit', () => {
   if (updateTimer) clearInterval(updateTimer);
-  for (const child of agentProcesses.values()) child.kill();
+  for (const session of agentProcesses.values()) session.process?.kill();
   agentProcesses.clear();
 });
