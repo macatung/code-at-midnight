@@ -28,18 +28,25 @@ use App\Http\Controllers\Admin\AdminContactController;
 use App\Http\Controllers\SeoController;
 
 $baseDomain = config('app.base_domain', 'macatung.dev');
+$taskHubPublicUrl = rtrim((string) env('TASK_HUB_PUBLIC_URL', ''), '/');
 
 // 1. Tasks Productivity Subdomain Routes (tasks.macatung.dev)
-Route::domain('tasks.' . $baseDomain)->group(function () {
-    Route::get('/', [TaskController::class, 'index'])->name('tasks.domain.index');
-    Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('tasks.domain.sitemap');
-    Route::get('/robots.txt', [SeoController::class, 'robots'])->name('tasks.domain.robots');
-});
+if ($taskHubPublicUrl) {
+    Route::domain('tasks.' . $baseDomain)->get('/', fn () => redirect()->away($taskHubPublicUrl))->name('tasks.domain.index');
+    Route::get('/tasks', fn () => redirect()->away($taskHubPublicUrl))->name('tasks.index');
+} else {
+    Route::domain('tasks.' . $baseDomain)->group(function () {
+        Route::get('/', [TaskController::class, 'index'])->name('tasks.domain.index');
+        Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('tasks.domain.sitemap');
+        Route::get('/robots.txt', [SeoController::class, 'robots'])->name('tasks.domain.robots');
+    });
+
+    Route::prefix('tasks')->name('tasks.')->group(function () {
+        Route::get('/', [TaskController::class, 'index'])->name('index');
+    });
+}
 
 // 2. Tasks Path-based Route (Available on main domain /tasks & local testing)
-Route::prefix('tasks')->name('tasks.')->group(function () {
-    Route::get('/', [TaskController::class, 'index'])->name('index');
-});
 
 // 3. Tasks REST API Endpoints (For Web UI & Desktop Mascot Sync)
 Route::prefix('api/tasks')->group(function () {
