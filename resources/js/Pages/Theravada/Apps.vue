@@ -3,16 +3,25 @@ import { ref } from 'vue';
 import TheravadaLayout from '@/Layouts/TheravadaLayout.vue';
 import DhammapadaCardGenerator from '@/Components/theravada/DhammapadaCardGenerator.vue';
 import VipassanaTimer from '@/Components/theravada/VipassanaTimer.vue';
+import AnattaContemplationEngine from '@/Components/theravada/AnattaContemplationEngine.vue';
 
 defineProps<{
   title?: string;
 }>();
 
-const activeTab = ref<'card' | 'timer'>('card');
+const activeTab = ref<'anatta' | 'card' | 'timer'>('anatta');
 
 const appsJsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
+    {
+      '@type': 'WebApplication',
+      'name': 'Quán Chiếu Ngũ Uẩn Vô Ngã (Anattā Contemplation Engine)',
+      'description': 'Ứng dụng thiền quán phân ly 5 Uẩn (Sắc, Thọ, Tưởng, Hành, Thức), thể nhập Chân Không Tịch Tịnh và xuất thẻ tuệ giác Vô Ngã.',
+      'applicationCategory': 'LifestyleApplication',
+      'operatingSystem': 'Any',
+      'url': 'https://theravada.macatung.dev/ung-dung-tu-hoc'
+    },
     {
       '@type': 'WebApplication',
       'name': 'Trợ Niệm Pháp Cú — Xuất Thẻ Ảnh Chia Sẻ HD',
@@ -35,9 +44,9 @@ const appsJsonLd = {
 
 <template>
   <TheravadaLayout
-    :title="title || 'Ứng Dụng Pháp Bảo — Tạo Thẻ Pháp Cú & Tọa Thiền Vipassanā'"
-    description="Công cụ hỗ trợ tu học Phật giáo Theravāda: Tạo thẻ ảnh Kinh Pháp Cú HD chia sẻ đa nền tảng và Đồng hồ tọa thiền Vipassanā tích hợp chuông xoay 432Hz."
-    keywords="Tạo thẻ Pháp Cú, Dhammapada Card Generator, Đồng hồ tọa thiền, Vipassana Timer, Chuông xoay Tây Tạng, Phật giáo Theravada"
+    :title="title || 'Ứng Dụng Pháp Bảo — Quán Chiếu Vô Ngã, Thẻ Pháp Cú & Tọa Thiền'"
+    description="Công cụ hỗ trợ tu học Phật giáo Theravāda: Quán chiếu ngũ uẩn vô ngã, Tạo thẻ ảnh Kinh Pháp Cú HD và Đồng hồ tọa thiền Vipassanā tích hợp chuông xoay 432Hz."
+    keywords="Quán chiếu vô ngã, Anatta, Tạo thẻ Pháp Cú, Dhammapada Card Generator, Đồng hồ tọa thiền, Vipassana Timer, Phật giáo Theravada"
     canonical="https://theravada.macatung.dev/ung-dung-tu-hoc"
     :json-ld="appsJsonLd"
   >
@@ -52,42 +61,56 @@ const appsJsonLd = {
           Ứng Dụng Tu Học & Lan Tỏa Chánh Pháp
         </h1>
         <p class="text-xs sm:text-base text-stone-400 max-w-2xl mx-auto mt-2 sm:mt-3 leading-relaxed px-2">
-          Công cụ hỗ trợ hành giả tĩnh tâm, thực hành thiền định Vipassanā mỗi ngày và tạo thẻ ảnh trích dẫn lời Phật dạy để gieo duyên lành đến muôn người.
+          Quán chiếu ngũ uẩn vô ngã, thực hành thiền định Vipassanā mỗi ngày và tạo thẻ ảnh trích dẫn lời Phật dạy để gieo duyên lành đến muôn người.
         </p>
       </div>
 
-      <!-- Quick Tab Switcher -->
-      <div class="flex items-center justify-center gap-2 sm:gap-3 p-1 sm:p-1.5 bg-stone-900/90 rounded-2xl border border-stone-800 max-w-md mx-auto w-full">
+      <!-- Quick Tab Switcher (3 Tabs) -->
+      <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-3 p-1 sm:p-1.5 bg-stone-900/90 rounded-2xl border border-stone-800 max-w-lg mx-auto w-full">
+        <button
+          @click="activeTab = 'anatta'"
+          :class="[
+            'flex-1 py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl text-xs sm:text-sm font-serif font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 sm:gap-2 min-h-[42px] whitespace-nowrap',
+            activeTab === 'anatta'
+              ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-stone-950 shadow-md'
+              : 'text-stone-400 hover:text-white hover:bg-stone-800/60'
+          ]"
+        >
+          <span>☸️</span>
+          <span>Quán Chiếu Vô Ngã</span>
+        </button>
+
         <button
           @click="activeTab = 'card'"
           :class="[
-            'flex-1 py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl text-xs sm:text-sm font-serif font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 sm:gap-2 min-h-[42px]',
+            'flex-1 py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl text-xs sm:text-sm font-serif font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 sm:gap-2 min-h-[42px] whitespace-nowrap',
             activeTab === 'card'
               ? 'bg-amber-500 text-stone-950 shadow-md'
               : 'text-stone-400 hover:text-white hover:bg-stone-800/60'
           ]"
         >
           <span>📜</span>
-          <span class="truncate">Tạo Thẻ Pháp Cú</span>
+          <span>Tạo Thẻ Pháp Cú</span>
         </button>
 
         <button
           @click="activeTab = 'timer'"
           :class="[
-            'flex-1 py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl text-xs sm:text-sm font-serif font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 sm:gap-2 min-h-[42px]',
+            'flex-1 py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl text-xs sm:text-sm font-serif font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 sm:gap-2 min-h-[42px] whitespace-nowrap',
             activeTab === 'timer'
               ? 'bg-amber-500 text-stone-950 shadow-md'
               : 'text-stone-400 hover:text-white hover:bg-stone-800/60'
           ]"
         >
           <span>🧘</span>
-          <span class="truncate">Đồng Hồ Tọa Thiền</span>
+          <span>Đồng Hồ Tọa Thiền</span>
         </button>
       </div>
 
       <!-- Active Application Stage -->
       <div class="transition-all duration-300">
-        <DhammapadaCardGenerator v-if="activeTab === 'card'" />
+        <AnattaContemplationEngine v-if="activeTab === 'anatta'" @switch-to-timer="activeTab = 'timer'" />
+        <DhammapadaCardGenerator v-else-if="activeTab === 'card'" />
         <VipassanaTimer v-else />
       </div>
     </div>

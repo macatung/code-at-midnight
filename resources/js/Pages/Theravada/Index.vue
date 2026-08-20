@@ -6,6 +6,7 @@ import ZenMascot from '@/Components/mascot/ZenMascot.vue';
 import ZenTimeSlider from '@/Components/theravada/ZenTimeSlider.vue';
 import DhammapadaCardGenerator from '@/Components/theravada/DhammapadaCardGenerator.vue';
 import VipassanaTimer from '@/Components/theravada/VipassanaTimer.vue';
+import AnattaContemplationEngine from '@/Components/theravada/AnattaContemplationEngine.vue';
 import { mindfulBell } from '@/audio/mindfulBellAudio';
 import { useZenTimeCycle } from '@/composables/useZenTimeCycle';
 
@@ -23,7 +24,18 @@ const props = defineProps<{
 
 const { activeZenPhase } = useZenTimeCycle();
 const isChanting = ref(false);
-const activeAppTab = ref<'card' | 'timer'>('card');
+const activeAppTab = ref<'card' | 'timer' | 'anatta'>('card');
+
+const openAnattaContemplation = () => {
+  activeAppTab.value = 'anatta';
+  mindfulBell.ringBell(528, 6.0);
+  if (typeof document !== 'undefined') {
+    const el = document.getElementById('buddhist-apps');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+};
 
 const playChantBell = () => {
   isChanting.value = true;
@@ -90,13 +102,21 @@ const theravadaHomeJsonLd = {
         "Dù là Ma Cà Tưng lang thang trong bóng đêm vô minh, khi có duyên lành hạnh ngộ Chánh Pháp cũng buông bỏ vọng niệm để tọa thiền, nương tựa Tam Bảo tìm về sự an tịnh và giải thoát tối hậu."
       </p>
 
-      <!-- 3 CTA Action Buttons -->
-      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2.5 sm:gap-4 mb-4 w-full max-w-md sm:max-w-none px-2 sm:px-0">
+      <!-- 4 CTA Action Buttons -->
+      <div class="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3.5 mb-4 w-full max-w-2xl px-2 sm:px-0">
+        <button
+          type="button"
+          @click="openAnattaContemplation"
+          class="px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 text-stone-950 font-serif font-bold text-xs sm:text-sm hover:brightness-110 transition-all shadow-lg hover:scale-105 active:scale-95 text-center flex items-center justify-center gap-2 min-h-[44px] cursor-pointer"
+        >
+          <span>☸️</span>
+          <span>Thể Nghiệm Vô Ngã</span>
+        </button>
         <Link
           href="/theravada/danh-muc/phap-hoc"
-          class="px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl bg-amber-500 text-stone-950 font-serif font-bold text-xs sm:text-sm hover:bg-amber-400 transition-all shadow-lg hover:scale-105 active:scale-95 text-center flex items-center justify-center min-h-[44px]"
+          class="px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl bg-amber-500/20 border border-amber-500/50 text-amber-200 font-serif font-bold text-xs sm:text-sm hover:bg-amber-500/30 transition-all shadow-md hover:scale-105 active:scale-95 text-center flex items-center justify-center min-h-[44px]"
         >
-          Khảo Cứu Pháp Học (Pariyatti) ➔
+          Khảo Cứu Pháp Học ➔
         </Link>
         <Link
           href="/theravada/danh-muc/phap-hanh"
@@ -106,7 +126,7 @@ const theravadaHomeJsonLd = {
         </Link>
         <Link
           href="/theravada/ung-dung-tu-hoc"
-          class="px-4 sm:px-5 py-3 sm:py-3.5 rounded-2xl bg-amber-500/20 border border-amber-400/50 text-amber-200 hover:text-white font-serif text-xs sm:text-sm transition-all hover:bg-amber-500/30 text-center flex items-center justify-center min-h-[44px]"
+          class="px-4 sm:px-5 py-3 sm:py-3.5 rounded-2xl bg-stone-900/80 border border-stone-700 text-stone-300 hover:text-white font-serif text-xs sm:text-sm transition-all hover:bg-stone-800 text-center flex items-center justify-center min-h-[44px]"
         >
           ✨ Ứng Dụng Pháp Bảo
         </Link>
@@ -119,7 +139,7 @@ const theravadaHomeJsonLd = {
     </section>
 
     <!-- 3. Interactive Buddhist Applications Hub (Ứng Dụng Tu Học Trực Tiếp) -->
-    <section class="my-10 sm:my-14 space-y-6">
+    <section id="buddhist-apps" class="my-10 sm:my-14 space-y-6 scroll-mt-24">
       <div class="text-center max-w-2xl mx-auto px-3">
         <div class="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[11px] sm:text-xs font-bold mb-2">
           <span>✨</span>
@@ -129,41 +149,54 @@ const theravadaHomeJsonLd = {
           Ứng Dụng Pháp Bảo Tương Tác
         </h2>
         <p class="text-xs sm:text-sm text-stone-400 font-serif mt-1">
-          Trợ niệm với lời dạy Kinh Pháp Cú và thực hành thiền định Vipassanā theo nhịp thở chánh niệm
+          Quán chiếu ngũ uẩn vô ngã, trợ niệm lời dạy Kinh Pháp Cú và thực hành thiền định Vipassanā theo nhịp thở chánh niệm
         </p>
 
-        <!-- App Switcher Tabs -->
-        <div class="mt-4 flex items-center justify-center gap-2 p-1 bg-stone-900/90 rounded-2xl border border-stone-800 max-w-sm mx-auto w-full">
+        <!-- App Switcher Tabs (3 Tabs) -->
+        <div class="mt-4 flex flex-wrap items-center justify-center gap-2 p-1.5 bg-stone-900/90 rounded-2xl border border-stone-800 max-w-lg mx-auto w-full">
+          <button
+            @click="activeAppTab = 'anatta'"
+            :class="[
+              'flex-1 py-2.5 sm:py-2 px-2 sm:px-3 rounded-xl text-xs font-serif font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 min-h-[40px] whitespace-nowrap',
+              activeAppTab === 'anatta'
+                ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-stone-950 shadow-md'
+                : 'text-stone-400 hover:text-white'
+            ]"
+          >
+            <span>☸️</span>
+            <span>Quán Chiếu Vô Ngã</span>
+          </button>
           <button
             @click="activeAppTab = 'card'"
             :class="[
-              'flex-1 py-2.5 sm:py-2 px-2 sm:px-3 rounded-xl text-xs font-serif font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 min-h-[40px]',
+              'flex-1 py-2.5 sm:py-2 px-2 sm:px-3 rounded-xl text-xs font-serif font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 min-h-[40px] whitespace-nowrap',
               activeAppTab === 'card'
                 ? 'bg-amber-500 text-stone-950 shadow-md'
                 : 'text-stone-400 hover:text-white'
             ]"
           >
             <span>📜</span>
-            <span class="truncate">Tạo Thẻ Pháp Cú</span>
+            <span>Tạo Thẻ Pháp Cú</span>
           </button>
           <button
             @click="activeAppTab = 'timer'"
             :class="[
-              'flex-1 py-2.5 sm:py-2 px-2 sm:px-3 rounded-xl text-xs font-serif font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 min-h-[40px]',
+              'flex-1 py-2.5 sm:py-2 px-2 sm:px-3 rounded-xl text-xs font-serif font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 min-h-[40px] whitespace-nowrap',
               activeAppTab === 'timer'
                 ? 'bg-amber-500 text-stone-950 shadow-md'
                 : 'text-stone-400 hover:text-white'
             ]"
           >
             <span>🧘</span>
-            <span class="truncate">Đồng Hồ Tọa Thiền</span>
+            <span>Đồng Hồ Tọa Thiền</span>
           </button>
         </div>
       </div>
 
       <!-- App Canvas / Widget -->
       <div>
-        <DhammapadaCardGenerator v-if="activeAppTab === 'card'" />
+        <AnattaContemplationEngine v-if="activeAppTab === 'anatta'" @switch-to-timer="activeAppTab = 'timer'" />
+        <DhammapadaCardGenerator v-else-if="activeAppTab === 'card'" />
         <VipassanaTimer v-else />
       </div>
     </section>
