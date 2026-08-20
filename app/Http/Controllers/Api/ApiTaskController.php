@@ -78,6 +78,9 @@ class ApiTaskController extends Controller
             "start_date" => "nullable|date",
             "due_date" => "nullable|date",
             "notes" => "nullable|string",
+            "acceptance_criteria" => "nullable|string|max:10000",
+            "definition_of_done" => "nullable|string|max:10000",
+            "risk_level" => "nullable|in:low,medium,high,critical",
         ]);
 
         if (empty($validated["due_date"])) {
@@ -116,6 +119,9 @@ class ApiTaskController extends Controller
             "start_date" => "nullable|date",
             "due_date" => "nullable|date",
             "notes" => "nullable|string",
+            "acceptance_criteria" => "nullable|string|max:10000",
+            "definition_of_done" => "nullable|string|max:10000",
+            "risk_level" => "sometimes|in:low,medium,high,critical",
         ]);
 
         if (isset($validated["status"]) && $validated["status"] === "done" && $task->status !== "done") {

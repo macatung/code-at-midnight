@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, router } from '@inertiajs/vue3';
 import axios from 'axios';
-import confetti from 'canvas-confetti';
 import MiniMascotLogo from '@/Components/mascot/MiniMascotLogo.vue';
 import { sound } from '@/audio/soundEffects';
 
@@ -16,6 +15,10 @@ export interface ProjectItem {
   color?: string;
   description?: string | null;
   tasks_count?: number;
+  github_repository?: string | null;
+  github_default_branch?: string | null;
+  github_sync_status?: string | null;
+  github_last_sync_at?: string | null;
 }
 
 export interface SprintItem {
@@ -65,6 +68,23 @@ export interface TaskItem {
   subtasks?: SubtaskItem[];
   created_at?: string;
   updated_at?: string;
+  acceptance_criteria?: string | null;
+  definition_of_done?: string | null;
+  risk_level?: 'low' | 'medium' | 'high' | 'critical';
+}
+
+export interface AgentRunItem {
+  id: number;
+  provider: string;
+  agent_session_id?: string;
+  status: string;
+  branch?: string | null;
+  commit_sha?: string | null;
+  pull_request_url?: string | null;
+  summary?: string | null;
+  started_at?: string | null;
+  finished_at?: string | null;
+  evidence?: Array<{ id: number; evidence_type: string; status: string; command?: string; summary?: string }>;
 }
 
 export interface Stats {
@@ -101,6 +121,7 @@ const props = defineProps<{
   stats: Stats;
   selectedDate: string;
   selectedProjectId?: string | number;
+  auth?: { user?: { id: number; name: string; email: string; github_login?: string; github_avatar_url?: string } | null };
 }>();
 
 // Main Reactive State
@@ -471,6 +492,9 @@ const saveAiSettings = async () => {
 
 // Modals & Drawer State
 const selectedTask = ref<TaskItem | null>(null);
+const selectedAgentRuns = ref<AgentRunItem[]>([]);
+const isAgentRunsLoading = ref(false);
+const agentRunFeedback = ref('');
 const isEditingDescription = ref(false);
 const descriptionEditContent = ref('');
 const isDrawerExpanded = ref(false);
@@ -481,6 +505,30 @@ const showCompleteSprintModal = ref(false);
 const targetSprintForAction = ref<SprintItem | null>(null);
 const isSubmitting = ref(false);
 const newSubtaskText = ref('');
+
+const loadAgentRuns = async (taskId: number) => {
+  isAgentRunsLoading.value = true;
+  agentRunFeedback.value = '';
+  try {
+    const res = await axios.get('/api/tasks/agent-runs', { params: { task_id: taskId } });
+    selectedAgentRuns.value = res.data.data || [];
+  } catch (err) {
+    agentRunFeedback.value = 'Không thể tải lịch sử agent run.';
+  } finally {
+    isAgentRunsLoading.value = false;
+  }
+};
+
+const startAgentRun = async (provider: string) => {
+  if (!selectedTask.value) return;
+  try {
+    const res = await axios.post('/api/tasks/agent-runs', { task_id: selectedTask.value.id, provider });
+    selectedAgentRuns.value.unshift(res.data.data);
+    agentRunFeedback.value = `Đã tạo run cho ${provider}. Agent có thể lấy Context Pack từ Task Hub.`;
+  } catch (err: any) {
+    agentRunFeedback.value = err.response?.data?.message || 'Không thể tạo agent run.';
+  }
+};
 
 // Weekly Email Report Modal State
 const showReportModal = ref(false);
@@ -622,7 +670,20 @@ const projectForm = ref({
   type: 'work' as 'work' | 'personal',
   color: '#2563eb',
   description: '',
+  github_repository: '',
+  github_default_branch: 'main',
+  github_token: '',
+  github_webhook_secret: '',
+  task_hub_mcp_token: '',
+  clear_github_token: false,
+  clear_github_webhook_secret: false,
+  clear_task_hub_mcp_token: false,
 });
+const projectGithubStatus = ref<any>(null);
+const projectGithubFeedback = ref('');
+const isProjectGithubSyncing = ref(false);
+
+const logoutGithub = () => router.post('/auth/github/logout');
 
 // Sprint Form
 const sprintForm = ref({
@@ -853,13 +914,6 @@ const handleCommitAiPlan = async () => {
           });
         });
       }
-
-      // 4. Confetti Celebration
-      confetti({
-        particleCount: 80,
-        spread: 70,
-        origin: { y: 0.6 },
-      });
 
       sound.playSuccess();
       showAiGeneratorModal.value = false;
@@ -1376,7 +1430,17 @@ const openCreateProjectModal = (type: 'work' | 'personal' = 'work') => {
     type,
     color: type === 'work' ? '#2563eb' : '#f59e0b',
     description: '',
+    github_repository: '',
+    github_default_branch: 'main',
+    github_token: '',
+    github_webhook_secret: '',
+    task_hub_mcp_token: '',
+    clear_github_token: false,
+    clear_github_webhook_secret: false,
+    clear_task_hub_mcp_token: false,
   };
+  projectGithubStatus.value = null;
+  projectGithubFeedback.value = '';
   showProjectModal.value = true;
   activeProjectMenuId.value = null;
   sound.playClick();
@@ -1391,7 +1455,18 @@ const openEditProjectModal = (project: ProjectItem) => {
     type: project.type || 'work',
     color: project.color || '#2563eb',
     description: project.description || '',
+    github_repository: project.github_repository || '',
+    github_default_branch: project.github_default_branch || 'main',
+    github_token: '',
+    github_webhook_secret: '',
+    task_hub_mcp_token: '',
+    clear_github_token: false,
+    clear_github_webhook_secret: false,
+    clear_task_hub_mcp_token: false,
   };
+  projectGithubStatus.value = null;
+  projectGithubFeedback.value = '';
+  loadProjectGithubStatus(project.id);
   showProjectModal.value = true;
   activeProjectMenuId.value = null;
   sound.playClick();
@@ -1406,6 +1481,9 @@ const handleSaveProject = async () => {
       const res = await axios.post('/api/projects', projectForm.value);
       if (res.data.success) {
         const created: ProjectItem = res.data.data;
+        if (projectForm.value.github_repository.trim()) {
+          await axios.post(`/api/projects/${created.id}/github/connect`, projectForm.value);
+        }
         projectList.value.push(created);
         selectedProjectId.value = created.id;
         sound.playSuccess();
@@ -1422,6 +1500,12 @@ const handleSaveProject = async () => {
           if (t.project_id === updated.id) t.project = updated;
         });
 
+        if (projectForm.value.github_repository.trim()) {
+          const integration = await axios.post(`/api/projects/${updated.id}/github/connect`, projectForm.value);
+          Object.assign(updated, { ...integration.data.data, github_repository: projectForm.value.github_repository, github_default_branch: projectForm.value.github_default_branch });
+          projectGithubStatus.value = integration.data.data;
+        }
+
         sound.playSuccess();
         showProjectModal.value = false;
       }
@@ -1431,6 +1515,34 @@ const handleSaveProject = async () => {
     alert('Không thể lưu dự án. Vui lòng thử lại!');
   } finally {
     isProjectSubmitting.value = false;
+  }
+};
+
+const loadProjectGithubStatus = async (projectId: number) => {
+  try {
+    const res = await axios.get(`/api/projects/${projectId}/github`);
+    projectGithubStatus.value = res.data.data;
+    if (projectModalMode.value === 'edit') {
+      projectForm.value.github_repository = res.data.data.repository || projectForm.value.github_repository;
+      projectForm.value.github_default_branch = res.data.data.default_branch || projectForm.value.github_default_branch;
+    }
+  } catch (err) {
+    projectGithubFeedback.value = 'Không thể tải trạng thái GitHub.';
+  }
+};
+
+const syncProjectGithub = async () => {
+  if (!editingProjectId.value) return;
+  isProjectGithubSyncing.value = true;
+  projectGithubFeedback.value = '';
+  try {
+    const res = await axios.post(`/api/projects/${editingProjectId.value}/github/sync`);
+    projectGithubStatus.value = res.data.data;
+    projectGithubFeedback.value = '✓ Đã lấy repository, issue và pull request đang mở từ GitHub.';
+  } catch (err: any) {
+    projectGithubFeedback.value = err.response?.data?.message || 'Không thể đồng bộ GitHub.';
+  } finally {
+    isProjectGithubSyncing.value = false;
   }
 };
 
@@ -1534,6 +1646,8 @@ const handleQuickCreate = async (targetSprintId: number | null = null) => {
 
 const openTaskDrawer = (task: TaskItem) => {
   selectedTask.value = { ...task };
+  selectedAgentRuns.value = [];
+  loadAgentRuns(task.id);
   descriptionEditContent.value = task.description || '';
   isEditingDescription.value = false;
   sound.playClick();
@@ -1579,6 +1693,9 @@ const saveTaskDrawerChanges = async () => {
       start_date: task.start_date,
       due_date: task.due_date,
       notes: task.notes,
+      acceptance_criteria: task.acceptance_criteria,
+      definition_of_done: task.definition_of_done,
+      risk_level: task.risk_level,
     });
   } catch (err) {
     console.error('Failed to sync task drawer:', err);
@@ -1779,7 +1896,7 @@ onUnmounted(() => {
 
   <div
     :class="[
-      'min-h-screen font-sans flex flex-col transition-colors duration-150 selection:bg-blue-100 selection:text-blue-900',
+    'tasks-page min-h-screen font-sans flex flex-col transition-colors duration-150 selection:bg-blue-100 selection:text-blue-900',
       isDarkMode ? 'dark bg-[#080d1a] text-slate-100' : 'bg-[#f8fafc] text-slate-900'
     ]"
   >
@@ -1912,7 +2029,7 @@ onUnmounted(() => {
           <!-- AI Sprint & Task Generator Button -->
           <button
             @click="openAiGeneratorModal"
-            class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold text-xs shadow-md transition-all flex items-center gap-1.5 cursor-pointer animate-pulse hover:animate-none"
+            class="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm transition-colors flex items-center gap-1.5 cursor-pointer"
             title="Tự động phân rã yêu cầu dự án thành Sprints, Epics & Tasks bằng AI"
           >
             <span>✨</span>
@@ -1953,6 +2070,15 @@ onUnmounted(() => {
             <span class="text-sm font-black">+</span>
             <span>Tạo Task</span>
           </button>
+
+          <template v-if="props.auth?.user">
+            <span class="hidden xl:inline-flex items-center gap-1.5 rounded-xl border px-2.5 py-2 text-[10px] font-bold" :class="isDarkMode ? 'border-slate-700 text-slate-300' : 'border-slate-300 text-slate-700'">
+              <img v-if="props.auth.user.github_avatar_url" :src="props.auth.user.github_avatar_url" class="h-4 w-4 rounded-full" alt="GitHub avatar" />
+              @{{ props.auth.user.github_login || props.auth.user.name }}
+            </span>
+            <button @click="logoutGithub" class="rounded-xl border px-2.5 py-2 text-[10px] font-bold" :class="isDarkMode ? 'border-slate-700 text-slate-300 hover:bg-slate-800' : 'border-slate-300 text-slate-700 hover:bg-slate-100'">Đăng xuất</button>
+          </template>
+          <a v-else href="/auth/github" class="rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-800 hover:bg-slate-100">Đăng nhập GitHub</a>
 
           <!-- Lock Button -->
           <button
@@ -2228,7 +2354,7 @@ onUnmounted(() => {
           <!-- AI Sprint Plan Button in Sidebar -->
           <button
             @click="openAiGeneratorModal"
-            class="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold text-xs shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+            class="w-full py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
           >
             <span>✨</span>
             <span>AI Phân Rã Dự Án</span>
@@ -2652,13 +2778,13 @@ onUnmounted(() => {
 
             <!-- 2. IN PROGRESS -->
             <div
-              :class="['flex flex-col border rounded-2xl p-3.5 min-h-[480px] transition-colors', isDarkMode ? 'bg-slate-950/90 border-slate-800' : 'bg-amber-50/40 border-amber-200/80 shadow-inner']"
+              :class="['flex flex-col border rounded-2xl p-3.5 min-h-[480px] transition-colors', isDarkMode ? 'bg-slate-950/90 border-slate-800' : 'bg-slate-50 border-slate-200 shadow-inner']"
               @dragover="onDragOverColumn($event, 'in_progress')"
               @drop="onDropColumn('in_progress')"
             >
-              <div :class="['flex items-center justify-between pb-3 mb-3 border-b px-1', isDarkMode ? 'border-slate-800' : 'border-amber-200']">
-                <span class="flex items-center gap-2 font-mono text-xs font-black text-amber-950 dark:text-amber-300 uppercase tracking-wide">
-                  <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
+              <div :class="['flex items-center justify-between pb-3 mb-3 border-b px-1', isDarkMode ? 'border-slate-800' : 'border-slate-200']">
+                <span class="flex items-center gap-2 font-mono text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide">
+                  <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
                   <span>ĐANG LÀM</span>
                 </span>
                 <span :class="['font-mono text-xs px-2.5 py-0.5 rounded-lg font-bold border', isDarkMode ? 'bg-slate-900 text-amber-300 border-slate-700' : 'bg-white text-amber-950 border-amber-300 shadow-xs']">
@@ -2728,13 +2854,13 @@ onUnmounted(() => {
 
             <!-- 3. REVIEW -->
             <div
-              :class="['flex flex-col border rounded-2xl p-3.5 min-h-[480px] transition-colors', isDarkMode ? 'bg-slate-950/90 border-slate-800' : 'bg-purple-50/40 border-purple-200/80 shadow-inner']"
+              :class="['flex flex-col border rounded-2xl p-3.5 min-h-[480px] transition-colors', isDarkMode ? 'bg-slate-950/90 border-slate-800' : 'bg-slate-50 border-slate-200 shadow-inner']"
               @dragover="onDragOverColumn($event, 'review')"
               @drop="onDropColumn('review')"
             >
-              <div :class="['flex items-center justify-between pb-3 mb-3 border-b px-1', isDarkMode ? 'border-slate-800' : 'border-purple-200']">
-                <span class="flex items-center gap-2 font-mono text-xs font-black text-purple-950 dark:text-purple-300 uppercase tracking-wide">
-                  <span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span>
+              <div :class="['flex items-center justify-between pb-3 mb-3 border-b px-1', isDarkMode ? 'border-slate-800' : 'border-slate-200']">
+                <span class="flex items-center gap-2 font-mono text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide">
+                  <span class="w-2.5 h-2.5 rounded-full bg-slate-500"></span>
                   <span>KIỂM THỬ (REVIEW)</span>
                 </span>
                 <span :class="['font-mono text-xs px-2.5 py-0.5 rounded-lg font-bold border', isDarkMode ? 'bg-slate-900 text-purple-300 border-slate-700' : 'bg-white text-purple-950 border-purple-300 shadow-xs']">
@@ -2804,13 +2930,13 @@ onUnmounted(() => {
 
             <!-- 4. DONE -->
             <div
-              :class="['flex flex-col border rounded-2xl p-3.5 min-h-[480px] transition-colors', isDarkMode ? 'bg-slate-950/90 border-slate-800' : 'bg-emerald-50/40 border-emerald-200/80 shadow-inner']"
+              :class="['flex flex-col border rounded-2xl p-3.5 min-h-[480px] transition-colors', isDarkMode ? 'bg-slate-950/90 border-slate-800' : 'bg-slate-50 border-slate-200 shadow-inner']"
               @dragover="onDragOverColumn($event, 'done')"
               @drop="onDropColumn('done')"
             >
-              <div :class="['flex items-center justify-between pb-3 mb-3 border-b px-1', isDarkMode ? 'border-slate-800' : 'border-emerald-200']">
-                <span class="flex items-center gap-2 font-mono text-xs font-black text-emerald-950 dark:text-emerald-300 uppercase tracking-wide">
-                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+              <div :class="['flex items-center justify-between pb-3 mb-3 border-b px-1', isDarkMode ? 'border-slate-800' : 'border-slate-200']">
+                <span class="flex items-center gap-2 font-mono text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide">
+                  <span class="w-2.5 h-2.5 rounded-full bg-slate-600"></span>
                   <span>ĐÃ HOÀN TẤT</span>
                 </span>
                 <span :class="['font-mono text-xs px-2.5 py-0.5 rounded-lg font-bold border', isDarkMode ? 'bg-slate-900 text-emerald-300 border-slate-700' : 'bg-white text-emerald-950 border-emerald-300 shadow-xs']">
@@ -3125,7 +3251,7 @@ onUnmounted(() => {
     >
       <div
         :class="[
-          'w-full border-l h-full flex flex-col shadow-2xl animate-slideInRight transition-all duration-200',
+          'task-detail-drawer w-full border-l h-full flex flex-col shadow-2xl animate-slideInRight transition-all duration-200',
           isDrawerExpanded ? 'max-w-full' : 'max-w-4xl lg:max-w-5xl xl:max-w-6xl',
           isDarkMode ? 'bg-[#090d18] border-slate-800 text-slate-100' : 'bg-white border-slate-300 text-slate-900'
         ]"
@@ -3517,6 +3643,32 @@ onUnmounted(() => {
                 ]"
               />
             </div>
+
+            <!-- Agent execution and verification -->
+            <div :class="['space-y-3 pt-4 border-t', isDarkMode ? 'border-slate-800' : 'border-slate-200']">
+              <div class="flex items-center justify-between">
+                <label :class="['font-mono text-xs font-bold uppercase', isDarkMode ? 'text-slate-300' : 'text-slate-700']">Agent Run</label>
+                <span v-if="isAgentRunsLoading" class="text-[10px] text-slate-500">Đang tải…</span>
+              </div>
+              <div class="grid grid-cols-3 gap-1.5">
+                <button v-for="provider in ['codex', 'claude_code', 'antigravity']" :key="provider" @click="startAgentRun(provider)" class="rounded-lg border px-2 py-2 text-[10px] font-bold cursor-pointer hover:border-blue-500" :class="isDarkMode ? 'border-slate-700 bg-slate-900 text-slate-200' : 'border-slate-300 bg-white text-slate-800'">
+                  {{ provider === 'claude_code' ? 'Claude' : provider === 'antigravity' ? 'Antigravity' : 'Codex' }}
+                </button>
+              </div>
+              <p v-if="agentRunFeedback" class="text-[11px] leading-relaxed text-blue-600 dark:text-blue-300">{{ agentRunFeedback }}</p>
+              <div v-for="run in selectedAgentRuns" :key="run.id" :class="['rounded-xl border p-3 space-y-2', isDarkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-white']">
+                <div class="flex items-center justify-between gap-2 text-xs">
+                  <span class="font-bold">{{ run.provider }}</span>
+                  <span class="rounded-full border px-2 py-0.5 font-mono text-[10px]">{{ run.status }}</span>
+                </div>
+                <p v-if="run.branch || run.commit_sha" class="font-mono text-[10px] text-slate-500 truncate">{{ run.branch || 'no branch' }} · {{ run.commit_sha || 'no commit' }}</p>
+                <a v-if="run.pull_request_url" :href="run.pull_request_url" target="_blank" rel="noreferrer" class="text-[11px] text-blue-600 underline">Mở Pull Request</a>
+                <div v-if="run.evidence?.length" class="space-y-1">
+                  <p v-for="item in run.evidence" :key="item.id" class="text-[10px]" :class="item.status === 'passed' ? 'text-emerald-600' : 'text-rose-600'">{{ item.status === 'passed' ? '✓' : '!' }} {{ item.evidence_type }}{{ item.command ? ` · ${item.command}` : '' }}</p>
+                </div>
+              </div>
+              <p v-if="!selectedAgentRuns.length && !isAgentRunsLoading" class="text-[11px] text-slate-500">Chưa có agent run. Chọn provider để tạo một run có audit trail.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -3689,6 +3841,30 @@ onUnmounted(() => {
               <option value="work">💼 Công Việc (Work)</option>
               <option value="personal">👤 Cá Nhân (Personal)</option>
             </select>
+          </div>
+
+          <div :class="['pt-3 mt-3 border-t space-y-3', isDarkMode ? 'border-slate-800' : 'border-slate-200']">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="font-bold text-xs">Kết nối riêng cho Project</h4>
+                <p class="text-[10px] text-slate-500">Cấu hình này không dùng chung với project khác.</p>
+              </div>
+              <span v-if="projectGithubStatus?.connected" class="rounded-full border border-emerald-300 bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700">GitHub {{ projectGithubStatus.sync_status }}</span>
+            </div>
+            <input v-model="projectForm.github_repository" placeholder="GitHub repository: owner/repository" :class="['w-full p-2.5 rounded-xl border focus:outline-none focus:border-blue-500 font-mono text-xs', isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-100' : 'bg-slate-50 border-slate-300 text-slate-950']" />
+            <input v-model="projectForm.github_default_branch" placeholder="Default branch: main" :class="['w-full p-2.5 rounded-xl border focus:outline-none focus:border-blue-500 font-mono text-xs', isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-100' : 'bg-slate-50 border-slate-300 text-slate-950']" />
+            <input v-model="projectForm.github_webhook_secret" type="password" autocomplete="new-password" placeholder="Webhook secret riêng của repo này" :class="['w-full p-2.5 rounded-xl border focus:outline-none focus:border-blue-500 text-xs', isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-100' : 'bg-slate-50 border-slate-300 text-slate-950']" />
+            <input v-model="projectForm.task_hub_mcp_token" type="password" autocomplete="new-password" placeholder="MCP token riêng cho agent của project" :class="['w-full p-2.5 rounded-xl border focus:outline-none focus:border-blue-500 text-xs', isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-100' : 'bg-slate-50 border-slate-300 text-slate-950']" />
+            <div class="flex flex-wrap gap-3 text-[10px] text-slate-500">
+              <label class="flex items-center gap-1"><input v-model="projectForm.clear_github_token" type="checkbox" /> Xóa GitHub token</label>
+              <label class="flex items-center gap-1"><input v-model="projectForm.clear_github_webhook_secret" type="checkbox" /> Xóa webhook secret</label>
+              <label class="flex items-center gap-1"><input v-model="projectForm.clear_task_hub_mcp_token" type="checkbox" /> Xóa MCP token</label>
+            </div>
+            <div v-if="projectModalMode === 'edit'" class="flex items-center justify-between gap-2">
+              <span class="text-[10px] text-slate-500">{{ projectGithubStatus?.last_sync_at ? `Sync lần cuối: ${projectGithubStatus.last_sync_at}` : 'Chưa sync dữ liệu GitHub' }}</span>
+              <button @click="syncProjectGithub" :disabled="isProjectGithubSyncing || !projectForm.github_repository" class="rounded-lg border border-blue-300 px-2.5 py-1.5 text-[10px] font-bold text-blue-700 disabled:opacity-50">{{ isProjectGithubSyncing ? 'Đang sync…' : 'Sync GitHub' }}</button>
+            </div>
+            <p v-if="projectGithubFeedback" class="text-[10px] text-blue-600">{{ projectGithubFeedback }}</p>
           </div>
         </div>
 
@@ -4010,7 +4186,7 @@ onUnmounted(() => {
               v-if="aiGeneratorStep === 'input'"
               @click="handleAnalyzeAiPlan"
               :disabled="isAiAnalyzing || !aiForm.prompt.trim()"
-              class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold text-xs shadow-xs transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition-colors flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <span v-if="isAiAnalyzing" class="animate-spin">⏳</span>
               <span v-else>✨</span>
@@ -4467,6 +4643,76 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+/* Tasks is a work surface: neutral canvas, one functional accent, no visual noise. */
+.tasks-page [class*="bg-gradient"] {
+  background-image: none !important;
+  background-color: #2563eb !important;
+}
+
+.tasks-page [class*="animate-pulse"],
+.tasks-page [class*="animate-bounce"] {
+  animation: none !important;
+}
+
+.tasks-page [class*="bg-purple-50"],
+.tasks-page [class*="bg-indigo-50"],
+.tasks-page [class*="bg-cyan-50"],
+.tasks-page [class*="bg-amber-50"],
+.tasks-page [class*="bg-emerald-50"] {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+
+.tasks-page.dark [class*="bg-purple-950"],
+.tasks-page.dark [class*="bg-indigo-950"],
+.tasks-page.dark [class*="bg-cyan-950"],
+.tasks-page.dark [class*="bg-amber-950"],
+.tasks-page.dark [class*="bg-emerald-950"] {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+/* Explicit light-mode contrast for the task drawer. Some nested utility
+   combinations inherit muted/white text and become unreadable on white. */
+.tasks-page:not(.dark) .task-detail-drawer {
+  color: #0f172a !important;
+  background-color: #ffffff !important;
+}
+
+.tasks-page:not(.dark) .task-detail-drawer input,
+.tasks-page:not(.dark) .task-detail-drawer select,
+.tasks-page:not(.dark) .task-detail-drawer textarea {
+  color: #0f172a !important;
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  caret-color: #2563eb;
+}
+
+.tasks-page:not(.dark) .task-detail-drawer select option {
+  color: #0f172a !important;
+  background-color: #ffffff !important;
+}
+
+.tasks-page:not(.dark) .task-detail-drawer [class*="text-slate-400"],
+.tasks-page:not(.dark) .task-detail-drawer [class*="text-slate-500"] {
+  color: #475569 !important;
+}
+
+.tasks-page:not(.dark) .task-detail-drawer [class*="text-slate-100"] {
+  color: #0f172a !important;
+}
+
+.tasks-page:not(.dark) .task-detail-drawer [class*="bg-slate-950"],
+.tasks-page:not(.dark) .task-detail-drawer [class*="bg-slate-900"] {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+.tasks-page:not(.dark) .task-detail-drawer [class*="text-slate-300"] {
+  color: #334155 !important;
+}
+
 @keyframes slideInRight {
   from {
     transform: translateX(100%);

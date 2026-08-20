@@ -30,6 +30,9 @@ class Task extends Model
         'completed_at',
         'notes',
         'sort_order',
+        'acceptance_criteria',
+        'definition_of_done',
+        'risk_level',
     ];
 
     protected $casts = [
@@ -44,6 +47,11 @@ class Task extends Model
         'completed_pomodoros' => 'integer',
         'sort_order' => 'integer',
     ];
+
+    public function agentRuns()
+    {
+        return $this->hasMany(AgentRun::class);
+    }
 
     protected static function booted()
     {

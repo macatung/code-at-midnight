@@ -10,6 +10,9 @@ use App\Http\Controllers\Api\ApiTaskController;
 use App\Http\Controllers\Api\ApiProjectController;
 use App\Http\Controllers\Api\ApiSprintController;
 use App\Http\Controllers\Api\AnalyticsEventController;
+use App\Http\Controllers\Api\ApiAgentRunController;
+use App\Http\Controllers\Api\TaskHubMcpController;
+use App\Http\Controllers\GithubAuthController;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminAnalyticsController;
@@ -51,12 +54,31 @@ Route::prefix('api/tasks')->group(function () {
     Route::get('/next-action', [ApiTaskController::class, 'nextAction']);
     Route::get('/ai-settings', [ApiTaskController::class, 'getAiSettings']);
     Route::post('/ai-settings', [ApiTaskController::class, 'saveAiSettings']);
+    Route::get('/agent-runs', [ApiAgentRunController::class, 'index']);
+    Route::post('/agent-runs', [ApiAgentRunController::class, 'store']);
+    Route::get('/agent-runs/{agentRun}', [ApiAgentRunController::class, 'show']);
+    Route::patch('/agent-runs/{agentRun}', [ApiAgentRunController::class, 'update']);
+    Route::post('/agent-runs/{agentRun}/events', [ApiAgentRunController::class, 'event']);
+    Route::post('/agent-runs/{agentRun}/evidence', [ApiAgentRunController::class, 'evidence']);
+    Route::get('/context-pack', [ApiAgentRunController::class, 'context']);
+    Route::post('/work-items/{task}/approve', [ApiAgentRunController::class, 'approve']);
+    Route::post('/work-items/{task}/reject', [ApiAgentRunController::class, 'reject']);
+    Route::post('/github/webhook', [ApiAgentRunController::class, 'githubWebhook']);
+    Route::post('/mcp', [TaskHubMcpController::class, 'handle']);
 });
+
+// GitHub OAuth identity and repository authorization
+Route::get('/auth/github', [GithubAuthController::class, 'redirect'])->name('auth.github');
+Route::get('/auth/github/callback', [GithubAuthController::class, 'callback'])->name('auth.github.callback');
+Route::post('/auth/github/logout', [GithubAuthController::class, 'logout'])->name('auth.github.logout');
 
 // 3.1 Projects REST API Endpoints (For Projects Management)
 Route::prefix('api/projects')->group(function () {
     Route::get('/', [ApiProjectController::class, 'index']);
     Route::post('/', [ApiProjectController::class, 'store']);
+    Route::get('/{project}/github', [ApiProjectController::class, 'githubStatus']);
+    Route::post('/{project}/github/connect', [ApiProjectController::class, 'connectGithub'])->middleware('auth');
+    Route::post('/{project}/github/sync', [ApiProjectController::class, 'syncGithub'])->middleware('auth');
     Route::patch('/{id}', [ApiProjectController::class, 'update']);
     Route::delete('/{id}', [ApiProjectController::class, 'destroy']);
 });

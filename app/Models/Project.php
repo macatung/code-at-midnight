@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Project extends Model
 {
@@ -29,6 +30,19 @@ class Project extends Model
         'github_url',
         'featured',
         'order',
+        'github_repository',
+        'github_default_branch',
+        'github_connected_at',
+        'github_last_sync_at',
+        'github_sync_status',
+        'github_sync_error',
+        'github_snapshot',
+    ];
+
+    protected $hidden = [
+        'github_token',
+        'github_webhook_secret',
+        'task_hub_mcp_token',
     ];
 
     protected $casts = [
@@ -38,11 +52,19 @@ class Project extends Model
         'architecture_highlights' => 'array',
         'featured' => 'boolean',
         'order' => 'integer',
+        'github_snapshot' => 'array',
+        'github_connected_at' => 'datetime',
+        'github_last_sync_at' => 'datetime',
     ];
 
     public function tasks(): HasMany
     {
         return $this->hasMany(Task::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function sprints(): HasMany
