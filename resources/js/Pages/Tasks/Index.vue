@@ -3,6 +3,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { Head, router } from '@inertiajs/vue3';
 import axios from 'axios';
 import MiniMascotLogo from '@/Components/mascot/MiniMascotLogo.vue';
+import TasksEmptyState from '@/Components/tasks/TasksEmptyState.vue';
 import { sound } from '@/audio/soundEffects';
 
 export interface ProjectItem {
@@ -171,6 +172,7 @@ const toggleTheme = () => {
 const isSidebarOpen = ref(true);
 const selectedProjectId = ref<string | number>(props.selectedProjectId || 'all');
 const activeProjectMenuId = ref<number | null>(null);
+const keyboardSequence = ref('');
 
 // Top View Mode: Board (Kanban) | Backlog (Sprint Planning) | Roadmap (Gantt)
 const currentView = ref<'board' | 'backlog' | 'roadmap'>('board');
@@ -432,6 +434,10 @@ const dailyFocusTasks = computed(() => taskList.value
   .slice(0, 3));
 
 const nextActionTask = computed(() => dailyFocusTasks.value[0] || null);
+const completedRecentlyTasks = computed(() => taskList.value
+  .filter(task => task.status === 'done')
+  .sort((a, b) => String(b.completed_at || b.updated_at || '').localeCompare(String(a.completed_at || a.updated_at || '')))
+  .slice(0, 5));
 const showDailyReview = ref(false);
 const dailyReviewData = ref<{ completed_tasks: TaskItem[]; incompleted_tasks: TaskItem[]; total_pomodoros_done: number } | null>(null);
 const isDailyLoading = ref(false);
@@ -1881,7 +1887,20 @@ const handleGlobalKey = (e: KeyboardEvent) => {
 
   if (e.key === 'n' || e.key === 'N') {
     e.preventDefault();
-    quickInputRef.value?.focus();
+    openCreateTaskModal();
+  } else if (e.key === 'p' || e.key === 'P') {
+    e.preventDefault();
+    openCreateProjectModal('work');
+  } else if (e.key === 'g' || e.key === 'G') {
+    keyboardSequence.value = 'g';
+    window.setTimeout(() => { keyboardSequence.value = ''; }, 1200);
+  } else if ((e.key === 't' || e.key === 'T') && keyboardSequence.value === 'g') {
+    e.preventDefault();
+    keyboardSequence.value = '';
+    selectedProjectId.value = 'all';
+    currentView.value = 'board';
+    filterHealth.value = 'all';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   } else if (e.key === '/') {
     e.preventDefault();
     searchInputRef.value?.focus();
@@ -2647,7 +2666,36 @@ onUnmounted(() => {
               <p :class="['text-xs font-bold line-clamp-2', isDarkMode ? 'text-slate-100' : 'text-slate-900']">{{ task.title }}</p>
               <p class="mt-1 text-[10px] text-slate-500 truncate">{{ task.project?.title || 'Chung' }} · {{ task.due_date || 'Không hạn' }}</p>
             </button>
-            <div v-if="dailyFocusTasks.length === 0" :class="['p-4 rounded-2xl border text-xs font-medium', isDarkMode ? 'bg-slate-950/70 border-emerald-800 text-emerald-300' : 'bg-white border-emerald-200 text-emerald-800']">✓ Không còn task đang mở. Hãy tạo kế hoạch tiếp theo.</div>
+            <TasksEmptyState
+              v-if="dailyFocusTasks.length === 0"
+              :dark="isDarkMode"
+              icon="✓"
+              title="Không còn task đang mở"
+              description="Hãy tạo kế hoạch tiếp theo hoặc xem lại backlog."
+            />
+          </div>
+          <div class="mt-4 grid grid-cols-1 lg:grid-cols-3 gap-3">
+            <div :class="['rounded-xl border p-4', isDarkMode ? 'bg-slate-950/40 border-slate-800' : 'bg-white border-slate-200']">
+              <div class="flex items-center justify-between mb-3"><h3 class="text-xs font-bold">Cần chú ý</h3><span class="font-mono text-[10px] text-slate-500">{{ warningTasksCount }}</span></div>
+              <button v-for="task in taskList.filter(t => t.status !== 'done' && (getTaskDelayStatus(t).isOverdue || getTaskDelayStatus(t).isDelayed)).slice(0, 3)" :key="task.id" @click="openTaskDrawer(task)" class="w-full flex items-center gap-2 border-b py-2 text-left last:border-0 border-slate-200 dark:border-slate-800">
+                <span class="h-2 w-2 rounded-full bg-rose-500 shrink-0"></span><span class="truncate text-[11px] font-medium">{{ task.title }}</span>
+              </button>
+              <p v-if="!taskList.some(t => t.status !== 'done' && (getTaskDelayStatus(t).isOverdue || getTaskDelayStatus(t).isDelayed))" class="text-[11px] text-slate-500">Không có cảnh báo.</p>
+            </div>
+            <div :class="['rounded-xl border p-4', isDarkMode ? 'bg-slate-950/40 border-slate-800' : 'bg-white border-slate-200']">
+              <div class="flex items-center justify-between mb-3"><h3 class="text-xs font-bold">Sprint hiện tại</h3><span class="text-[10px] text-slate-500">{{ activeSprint?.end_date || 'Chưa đặt hạn' }}</span></div>
+              <p v-if="activeSprint" class="truncate text-[11px] font-medium">{{ activeSprint.name }}</p>
+              <div v-if="activeSprint" class="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800"><div class="h-full rounded-full bg-blue-600" :style="{ width: (activeSprint.total_tasks ? Math.round(((activeSprint.done_tasks || 0) / activeSprint.total_tasks) * 100) : 0) + '%' }"></div></div>
+              <p v-if="activeSprint" class="mt-2 text-[10px] text-slate-500">{{ activeSprint.done_tasks || 0 }}/{{ activeSprint.total_tasks || 0 }} task hoàn thành</p>
+              <p v-else class="text-[11px] text-slate-500">Chưa có sprint active.</p>
+            </div>
+            <div :class="['rounded-xl border p-4', isDarkMode ? 'bg-slate-950/40 border-slate-800' : 'bg-white border-slate-200']">
+              <div class="flex items-center justify-between mb-3"><h3 class="text-xs font-bold">Hoàn thành gần đây</h3><span class="text-[10px] text-slate-500">{{ completedRecentlyTasks.length }}</span></div>
+              <button v-for="task in completedRecentlyTasks.slice(0, 3)" :key="task.id" @click="openTaskDrawer(task)" class="w-full flex items-center gap-2 border-b py-2 text-left last:border-0 border-slate-200 dark:border-slate-800">
+                <span class="text-emerald-600">✓</span><span class="truncate text-[11px] font-medium">{{ task.title }}</span>
+              </button>
+              <p v-if="!completedRecentlyTasks.length" class="text-[11px] text-slate-500">Chưa có task hoàn thành gần đây.</p>
+            </div>
           </div>
         </section>
 
@@ -4703,10 +4751,78 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-/* Tasks is a work surface: neutral canvas, one functional accent, no visual noise. */
+/* Tasks design system: neutral work surface, one accent, restrained motion. */
+.tasks-page {
+  --tasks-accent: #2563eb;
+  --tasks-accent-hover: #1d4ed8;
+  --tasks-surface: #ffffff;
+  --tasks-surface-muted: #f8fafc;
+  --tasks-border: #e2e8f0;
+  --tasks-text: #0f172a;
+  --tasks-muted: #64748b;
+  --tasks-radius: 10px;
+}
+
+.tasks-page.dark {
+  --tasks-surface: #0f172a;
+  --tasks-surface-muted: #0b1220;
+  --tasks-border: #1e293b;
+  --tasks-text: #f8fafc;
+  --tasks-muted: #94a3b8;
+}
+
+.tasks-page button,
+.tasks-page input,
+.tasks-page select,
+.tasks-page textarea {
+  outline-offset: 2px;
+}
+
+.tasks-page button:focus-visible,
+.tasks-page input:focus-visible,
+.tasks-page select:focus-visible,
+.tasks-page textarea:focus-visible,
+.tasks-page a:focus-visible {
+  outline: 2px solid var(--tasks-accent);
+  outline-offset: 2px;
+}
+
+.tasks-page header {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+}
+
+.tasks-page [class*="rounded-3xl"],
+.tasks-page [class*="rounded-2xl"] {
+  border-radius: var(--tasks-radius) !important;
+}
+
+.tasks-page [class*="shadow-2xl"],
+.tasks-page [class*="shadow-xl"],
+.tasks-page [class*="shadow-lg"],
+.tasks-page [class*="shadow-md"] {
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08) !important;
+}
+
+.tasks-page.dark [class*="shadow-2xl"],
+.tasks-page.dark [class*="shadow-xl"],
+.tasks-page.dark [class*="shadow-lg"],
+.tasks-page.dark [class*="shadow-md"] {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.24) !important;
+}
+
+.tasks-page [class*="hover:-translate"],
+.tasks-page [class*="active:scale"] {
+  transform: none !important;
+}
+
 .tasks-page [class*="bg-gradient"] {
   background-image: none !important;
-  background-color: #2563eb !important;
+}
+
+.tasks-page [class*="bg-gradient"] {
+  background-color: var(--tasks-accent) !important;
 }
 
 .tasks-page [class*="animate-pulse"],
@@ -4730,6 +4846,32 @@ onUnmounted(() => {
 .tasks-page.dark [class*="bg-emerald-950"] {
   background-color: #0f172a !important;
   border-color: #334155 !important;
+}
+
+/* Daily cockpit: calm hierarchy and clear focus cards. */
+.tasks-page main > section {
+  background-color: var(--tasks-surface-muted) !important;
+}
+
+.tasks-page main > section:first-of-type {
+  border-color: var(--tasks-border) !important;
+}
+
+.tasks-page main > section:first-of-type button {
+  transition: border-color 120ms ease, background-color 120ms ease;
+}
+
+.tasks-page main > section:first-of-type button:hover {
+  transform: none !important;
+}
+
+/* Neutralize decorative semantic backgrounds while preserving text meaning. */
+.tasks-page:not(.dark) [class*="bg-indigo-50"],
+.tasks-page:not(.dark) [class*="bg-purple-50"],
+.tasks-page:not(.dark) [class*="bg-cyan-50"],
+.tasks-page:not(.dark) [class*="bg-amber-50"],
+.tasks-page:not(.dark) [class*="bg-emerald-50"] {
+  background-color: #ffffff !important;
 }
 
 /* Explicit light-mode contrast for the task drawer. Some nested utility
