@@ -1556,9 +1556,11 @@ const handleSaveProject = async () => {
         showProjectModal.value = false;
       }
     }
-  } catch (err) {
+  } catch (err: any) {
     console.error('Save project error:', err);
-    alert('Không thể lưu dự án. Vui lòng thử lại!');
+    const message = err.response?.data?.message || 'Không thể lưu dự án. Vui lòng thử lại!';
+    projectGithubFeedback.value = message;
+    alert(message);
   } finally {
     isProjectSubmitting.value = false;
   }
@@ -1968,7 +1970,7 @@ onUnmounted(() => {
         isDarkMode ? 'bg-[#0b101e]/90 border-slate-800/80 text-slate-100 shadow-sm' : 'bg-white/90 border-slate-200/90 text-slate-900 shadow-xs'
       ]"
     >
-      <div class="w-full px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+      <div class="w-full px-3 sm:px-6 min-h-16 py-2 lg:h-16 flex flex-wrap lg:flex-nowrap items-center justify-between gap-3">
         <!-- Left: Sidebar toggle + Logo + Breadcrumb -->
         <div class="flex items-center gap-3 min-w-0">
           <button
@@ -2070,7 +2072,7 @@ onUnmounted(() => {
         </div>
 
         <!-- Right Controls -->
-        <div class="flex items-center gap-2 shrink-0">
+        <div class="flex flex-wrap items-center justify-end gap-2 shrink-0 w-full lg:w-auto">
           <!-- Weekly Email Report Settings & Send Button -->
           <button
             @click="openReportModal"
@@ -2157,12 +2159,12 @@ onUnmounted(() => {
     <!-- ========================================================================= -->
     <!-- 2. MAIN LAYOUT (SIDEBAR + MAIN CANVAS)                                    -->
     <!-- ========================================================================= -->
-    <div class="flex-1 flex overflow-hidden">
+    <div class="flex-1 flex min-h-0 overflow-visible md:overflow-hidden">
       <!-- SIDEBAR: DỰ ÁN 2-LINE HIGH CONTRAST LAYOUT -->
       <aside
         v-if="isSidebarOpen"
         :class="[
-          'w-72 sm:w-80 border-r flex flex-col justify-between shrink-0 h-[calc(100vh-4rem)] select-none transition-colors',
+          'fixed md:relative left-0 top-16 md:top-auto bottom-0 md:bottom-auto z-30 w-[min(88vw,20rem)] md:w-72 border-r flex flex-col justify-between shrink-0 h-[calc(100vh-4rem)] select-none transition-colors shadow-xl md:shadow-none',
           isDarkMode ? 'bg-[#090d16] border-slate-800/80' : 'bg-white border-slate-200/90'
         ]"
       >
@@ -2432,8 +2434,14 @@ onUnmounted(() => {
         </div>
       </aside>
 
+      <div
+        v-if="isSidebarOpen"
+        class="fixed inset-0 top-16 z-20 bg-slate-950/30 md:hidden"
+        @click="isSidebarOpen = false"
+      ></div>
+
       <!-- MAIN WORKSPACE -->
-      <main :class="['flex-1 flex flex-col overflow-hidden', isDarkMode ? 'bg-[#070b14]' : 'bg-[#f8fafc]']">
+      <main :class="['min-w-0 flex-1 flex flex-col overflow-visible md:overflow-hidden', isDarkMode ? 'bg-[#070b14]' : 'bg-[#f8fafc]']">
         <!-- =================================================================== -->
         <!-- MODERN 2-TIER PROJECT SUB-HEADER & SMART FILTER BAR                 -->
         <!-- =================================================================== -->
@@ -4888,6 +4896,72 @@ onUnmounted(() => {
   background-color: #ffffff !important;
   border-color: #cbd5e1 !important;
   caret-color: #2563eb;
+}
+
+/* Mobile workspace: keep navigation reachable without shrinking the board
+   into an unreadable desktop layout. */
+@media (max-width: 767px) {
+  .tasks-page > header {
+    z-index: 50;
+  }
+
+  .tasks-page > header > div > div:first-child {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .tasks-page > header > div > div:first-child > a > div {
+    display: none;
+  }
+
+  .tasks-page > header > div > div:last-child {
+    flex: 1 0 100%;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 1px;
+    scrollbar-width: none;
+  }
+
+  .tasks-page > header > div > div:last-child::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tasks-page main > div:first-child {
+    padding: 1rem;
+  }
+
+  .tasks-page main > div:first-child > div:first-child {
+    align-items: flex-start;
+  }
+
+  .tasks-page main > div:first-child .relative.min-w-\[200px\] {
+    min-width: 100%;
+    max-width: none;
+  }
+
+  .tasks-page main > div:first-child select,
+  .tasks-page main > div:first-child button {
+    min-height: 2.5rem;
+  }
+
+  .tasks-page .task-detail-drawer {
+    max-width: 100vw !important;
+    border-left: 0 !important;
+  }
+
+  .tasks-page .task-detail-drawer > div:first-child {
+    padding: 0.75rem 1rem;
+  }
+
+  .tasks-page .task-detail-drawer > div:nth-child(2) {
+    padding: 1rem;
+    gap: 1.25rem;
+  }
+
+  .tasks-page [role="dialog"] {
+    max-height: calc(100dvh - 1rem);
+    overflow-y: auto;
+  }
 }
 
 .tasks-page:not(.dark) .task-detail-drawer select option {

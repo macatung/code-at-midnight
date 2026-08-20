@@ -112,7 +112,9 @@ class ApiProjectController extends Controller
         if ($project->user_id && $project->user_id !== $request->user()->id) {
             return response()->json(['success' => false, 'message' => 'Project này đã thuộc tài khoản GitHub khác.'], 403);
         }
-        if (!$request->user()->github_access_token) {
+        $userToken = $integration->secret($request->user()->github_access_token);
+        $projectToken = $integration->secret($project->github_token);
+        if (!$userToken && !$projectToken) {
             return response()->json(['success' => false, 'message' => 'Tài khoản GitHub chưa được cấp quyền. Hãy đăng nhập lại bằng GitHub.'], 422);
         }
         $validated = $request->validate([
