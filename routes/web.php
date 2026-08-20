@@ -39,6 +39,11 @@ Route::prefix('tasks')->name('tasks.')->group(function () {
 Route::prefix('api/tasks')->group(function () {
     Route::get('/', [ApiTaskController::class, 'index']);
     Route::post('/', [ApiTaskController::class, 'store']);
+    Route::post('/ai-preview', [ApiTaskController::class, 'aiPreview']);
+    Route::post('/ai-generate', [ApiTaskController::class, 'aiGenerate']);
+    Route::get('/report-settings', [ApiTaskController::class, 'getReportSettings']);
+    Route::post('/report-settings', [ApiTaskController::class, 'saveReportSettings']);
+    Route::post('/send-report-now', [ApiTaskController::class, 'sendReportNow']);
     Route::patch('/{id}', [ApiTaskController::class, 'update']);
     Route::delete('/{id}', [ApiTaskController::class, 'destroy']);
     Route::get('/daily-dispatch', [ApiTaskController::class, 'dailyDispatch']);

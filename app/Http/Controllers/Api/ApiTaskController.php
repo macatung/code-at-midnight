@@ -200,4 +200,97 @@ class ApiTaskController extends Controller
             "wisdom_quote" => "Chiến thắng vĩ đại nhất của bậc trượng phu là tự thắng sự lười biếng và giữ tâm bất động trước nghịch cảnh.",
         ]);
     }
+
+    /**
+     * AI / Smart Project Breakdown Preview
+     */
+    public function aiPreview(Request $request, \App\Services\SmartProjectBreakdownService $service)
+    {
+        $validated = $request->validate([
+            'prompt' => 'required|string|min:5',
+            'project_title' => 'nullable|string|max:255',
+            'project_key' => 'nullable|string|max:10',
+            'project_type' => 'nullable|in:work,personal',
+            'project_color' => 'nullable|string',
+            'sprint_count' => 'nullable|integer|min:1|max:5',
+            'sprint_duration_weeks' => 'nullable|integer|min:1|max:4',
+            'start_date' => 'nullable|date',
+        ]);
+
+        $plan = $service->generatePlan($validated['prompt'], $validated);
+
+        return response()->json($plan);
+    }
+
+    /**
+     * AI / Smart Project Breakdown Commit / Execute
+     */
+    public function aiGenerate(Request $request, \App\Services\SmartProjectBreakdownService $service)
+    {
+        $validated = $request->validate([
+            'prompt' => 'nullable|string',
+            'project_id' => 'nullable',
+            'plan' => 'required|array',
+            'plan.project' => 'required|array',
+            'plan.sprints' => 'required|array',
+        ]);
+
+        $result = $service->executePlan($validated['plan'], [
+            'project_id' => $validated['project_id'] ?? null,
+        ]);
+
+        return response()->json($result, 201);
+    }
+
+    /**
+     * Get Weekly Report Settings
+     */
+    public function getReportSettings(\App\Services\WeeklyTaskReportService $reportService)
+    {
+        $settings = $reportService->getSettings();
+        return response()->json([
+            'success' => true,
+            'data' => $settings,
+        ]);
+    }
+
+    /**
+     * Save Weekly Report Settings
+     */
+    public function saveReportSettings(Request $request, \App\Services\WeeklyTaskReportService $reportService)
+    {
+        $validated = $request->validate([
+            'is_enabled' => 'nullable|boolean',
+            'recipients' => 'nullable|string',
+            'day_of_week' => 'nullable|string|in:monday,tuesday,wednesday,thursday,friday,saturday,sunday',
+            'send_time' => 'nullable|string',
+            'report_title' => 'nullable|string|max:255',
+            'project_filter' => 'nullable|string',
+            'include_upcoming' => 'nullable|boolean',
+            'include_warnings' => 'nullable|boolean',
+        ]);
+
+        $settings = $reportService->saveSettings($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Đã lưu cấu hình gửi email báo cáo tuần thành công',
+            'data' => $settings,
+        ]);
+    }
+
+    /**
+     * Trigger sending weekly report immediately
+     */
+    public function sendReportNow(Request $request, \App\Services\WeeklyTaskReportService $reportService)
+    {
+        $validated = $request->validate([
+            'email' => 'nullable|string',
+            'project_id' => 'nullable|integer',
+        ]);
+
+        $result = $reportService->sendReport($validated['email'] ?? null, $validated['project_id'] ?? null);
+
+        return response()->json($result, $result['success'] ? 200 : 422);
+    }
 }

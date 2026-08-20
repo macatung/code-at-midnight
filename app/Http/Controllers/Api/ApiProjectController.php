@@ -35,6 +35,7 @@ class ApiProjectController extends Controller
         ]);
 
         $validated['slug'] = Str::slug($validated['title']) . '-' . Str::random(5);
+        $validated['tagline'] = $validated['tagline'] ?? (!empty($validated['description']) ? Str::limit($validated['description'], 100) : $validated['title']);
         $validated['category'] = $validated['type'] === 'work' ? 'web' : 'creative';
         $validated['color'] = $validated['color'] ?? ($validated['type'] === 'work' ? '#00f5a0' : '#ffd166');
 
