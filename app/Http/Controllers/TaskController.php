@@ -26,8 +26,8 @@ class TaskController extends Controller
             }
         }
 
-        $tasks = $query->orderByRaw("CASE WHEN status = \"in_progress\" THEN 1 WHEN status = \"todo\" THEN 2 WHEN status = \"review\" THEN 3 ELSE 4 END")
-            ->orderByRaw("CASE WHEN priority = \"urgent\" THEN 1 WHEN priority = \"high\" THEN 2 WHEN priority = \"medium\" THEN 3 ELSE 4 END")
+        $tasks = $query->orderByRaw("CASE WHEN status = 'in_progress' THEN 1 WHEN status = 'todo' THEN 2 WHEN status = 'review' THEN 3 ELSE 4 END")
+            ->orderByRaw("CASE WHEN priority = 'urgent' THEN 1 WHEN priority = 'high' THEN 2 WHEN priority = 'medium' THEN 3 ELSE 4 END")
             ->orderBy("created_at", "desc")
             ->get();
 
