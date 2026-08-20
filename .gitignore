@@ -21,6 +21,9 @@ yarn-error.log
 dist
 dist-ssr
 *.local
+*key.json
+*.key
+*.pem
 /database/*.sqlite
 /database/*.sqlite-journal
 *.stackdump
