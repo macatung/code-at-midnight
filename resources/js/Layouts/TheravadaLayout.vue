@@ -177,7 +177,23 @@ onUnmounted(() => {
 
       </div>
 
-      <!-- Zen Mobile Slide-Down Navigation Drawer -->
+      <!-- Dimmed Background Backdrop Overlay for Mobile Menu -->
+      <transition
+        enter-active-class="transition-opacity duration-300 ease-out"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="transition-opacity duration-200 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+      >
+        <div
+          v-if="isMobileMenuOpen"
+          class="fixed inset-0 top-[62px] sm:top-[70px] bg-black/80 backdrop-blur-sm z-30 lg:hidden"
+          @click="closeMobileMenu"
+        />
+      </transition>
+
+      <!-- Zen Mobile Slide-Down Navigation Drawer (100% Solid Opaque Dark Background) -->
       <transition
         enter-active-class="transition duration-250 ease-out"
         enter-from-class="opacity-0 -translate-y-4"
@@ -188,20 +204,21 @@ onUnmounted(() => {
       >
         <div
           v-if="isMobileMenuOpen"
-          class="lg:hidden border-t border-amber-500/25 bg-stone-950/98 backdrop-blur-2xl px-4 sm:px-6 py-5 space-y-3 absolute top-full left-0 w-full shadow-2xl z-50 text-left"
+          class="lg:hidden border-t border-b border-amber-500/30 bg-[#0c0a09] px-4 sm:px-6 py-5 space-y-3 absolute top-full left-0 w-full shadow-[0_25px_60px_rgba(0,0,0,0.95)] z-50 text-left max-h-[calc(100vh-75px)] overflow-y-auto"
+          style="background-color: #0c0a09;"
         >
-          <div class="grid grid-cols-1 gap-1.5">
+          <div class="grid grid-cols-1 gap-2">
             <Link
               v-for="item in navItems"
               :key="item.href"
               :href="item.href"
-              class="flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-serif font-semibold transition-all min-h-[46px]"
+              class="flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-serif font-semibold transition-all min-h-[46px] border"
               :class="[
                 item.isHighlight
-                  ? 'text-stone-950 bg-gradient-to-r from-amber-400 to-yellow-500 font-bold shadow-md'
+                  ? 'text-stone-950 bg-gradient-to-r from-amber-400 to-yellow-500 border-amber-400 font-bold shadow-md'
                   : isLinkActive(item.href)
-                    ? 'text-amber-300 bg-amber-500/15 font-bold border border-amber-500/40'
-                    : 'text-stone-200 hover:text-amber-300 hover:bg-stone-900/90'
+                    ? 'text-amber-300 bg-amber-500/20 font-bold border-amber-500/50'
+                    : 'text-stone-200 bg-stone-900/90 border-stone-800/80 hover:text-amber-300 hover:bg-stone-900 hover:border-amber-500/40'
               ]"
               @click="handleNavClick"
             >
@@ -216,7 +233,7 @@ onUnmounted(() => {
           <div class="pt-3 border-t border-stone-800/80 flex items-center justify-between gap-3">
             <Link
               href="/"
-              class="w-full py-3 px-4 rounded-2xl bg-stone-900/90 border border-stone-800 text-stone-300 hover:text-amber-300 hover:bg-stone-800 text-xs font-serif font-semibold text-center flex items-center justify-center gap-2 transition-all min-h-[44px]"
+              class="w-full py-3 px-4 rounded-2xl bg-stone-900 border border-stone-800 text-stone-300 hover:text-amber-300 hover:bg-stone-800 text-xs font-serif font-semibold text-center flex items-center justify-center gap-2 transition-all min-h-[44px]"
               @click="handleNavClick"
             >
               <span>🌐</span>

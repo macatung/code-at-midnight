@@ -176,7 +176,23 @@ onUnmounted(() => {
 
     </div>
 
-    <!-- Mobile Slide-down Navigation Drawer -->
+    <!-- Dimmed Background Backdrop Overlay for Mobile Menu -->
+    <transition
+      enter-active-class="transition-opacity duration-300 ease-out"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition-opacity duration-200 ease-in"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <div
+        v-if="isMobileDrawerOpen"
+        class="fixed inset-0 top-[62px] sm:top-[70px] bg-black/80 backdrop-blur-sm z-30 lg:hidden"
+        @click="isMobileDrawerOpen = false"
+      />
+    </transition>
+
+    <!-- Mobile Slide-down Navigation Drawer (Solid Opaque Dark Background) -->
     <transition
       enter-active-class="transition duration-200 ease-out"
       enter-from-class="opacity-0 -translate-y-4"
@@ -187,17 +203,18 @@ onUnmounted(() => {
     >
       <div
         v-if="isMobileDrawerOpen"
-        class="lg:hidden border-t border-white/10 bg-midnight-950/95 backdrop-blur-2xl px-6 py-6 space-y-3 absolute top-full left-0 w-full shadow-2xl z-50 text-left"
+        class="lg:hidden border-t border-b border-white/10 bg-midnight-950 px-5 sm:px-6 py-6 space-y-3 absolute top-full left-0 w-full shadow-[0_25px_60px_rgba(0,0,0,0.95)] z-50 text-left max-h-[calc(100vh-75px)] overflow-y-auto"
+        style="background-color: #030712;"
       >
-        <div class="grid grid-cols-1 gap-1">
+        <div class="grid grid-cols-1 gap-1.5">
           <Link
             v-for="item in navLinks"
             :key="item.href"
             :href="item.href"
-            class="flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-medium transition-all"
+            class="flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-medium transition-all border border-transparent"
             :class="isLinkActive(item.href)
-              ? 'text-phantom-mint bg-phantom-mint/10 font-bold border border-phantom-mint/20'
-              : 'text-slate-300 hover:text-white hover:bg-white/5'"
+              ? 'text-phantom-mint bg-phantom-mint/15 font-bold border-phantom-mint/30 shadow-glow-mint'
+              : 'text-slate-200 bg-midnight-900/90 border-white/5 hover:text-white hover:bg-white/10 hover:border-white/15'"
             @click="handleNavClick"
           >
             <div class="flex items-center gap-3">
@@ -207,7 +224,7 @@ onUnmounted(() => {
             <span
               v-if="item.badge"
               class="text-[10px] px-2 py-0.5 rounded-full font-mono font-bold"
-              :class="item.badge === 'HOT' ? 'bg-amber-500/20 text-talisman-gold' : 'bg-phantom-mint/20 text-phantom-mint'"
+              :class="item.badge === 'HOT' ? 'bg-amber-500/20 text-talisman-gold border border-talisman-gold/40' : item.badge === 'ZEN' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' : 'bg-phantom-mint/20 text-phantom-mint border border-phantom-mint/30'"
             >
               {{ item.badge }}
             </span>
