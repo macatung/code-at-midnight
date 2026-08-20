@@ -265,7 +265,8 @@ class ApiTaskController extends Controller
             'day_of_week' => 'nullable|string|in:monday,tuesday,wednesday,thursday,friday,saturday,sunday',
             'send_time' => 'nullable|string',
             'report_title' => 'nullable|string|max:255',
-            'project_filter' => 'nullable|string',
+            'selected_project_ids' => 'nullable',
+            'project_filter' => 'nullable',
             'include_upcoming' => 'nullable|boolean',
             'include_warnings' => 'nullable|boolean',
         ]);
@@ -274,7 +275,7 @@ class ApiTaskController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Đã lưu cấu hình gửi email báo cáo tuần thành công',
+            'message' => 'Settings successfully saved',
             'data' => $settings,
         ]);
     }
@@ -286,10 +287,12 @@ class ApiTaskController extends Controller
     {
         $validated = $request->validate([
             'email' => 'nullable|string',
-            'project_id' => 'nullable|integer',
+            'project_ids' => 'nullable',
+            'project_id' => 'nullable',
         ]);
 
-        $result = $reportService->sendReport($validated['email'] ?? null, $validated['project_id'] ?? null);
+        $projectIds = $validated['project_ids'] ?? $validated['project_id'] ?? null;
+        $result = $reportService->sendReport($validated['email'] ?? null, $projectIds);
 
         return response()->json($result, $result['success'] ? 200 : 422);
     }

@@ -413,12 +413,42 @@ const reportForm = ref({
   recipients: '',
   day_of_week: 'monday',
   send_time: '08:00',
-  report_title: 'Báo Cáo Tiến Độ Công Việc & Dự Án Hàng Tuần',
-  project_filter: 'all',
+  report_title: 'Weekly Executive Progress & Sprint Report',
+  selected_project_ids: ['all'] as (number | string)[],
   include_upcoming: true,
   include_warnings: true,
   last_sent_at: null as string | null,
 });
+
+const toggleReportProject = (id: number | string) => {
+  sound.playClick();
+  if (id === 'all') {
+    reportForm.value.selected_project_ids = ['all'];
+    return;
+  }
+
+  let current = reportForm.value.selected_project_ids.filter(x => x !== 'all');
+  const numId = Number(id);
+  if (current.includes(numId)) {
+    current = current.filter(x => x !== numId);
+    if (current.length === 0) {
+      current = ['all'];
+    }
+  } else {
+    current.push(numId);
+  }
+  reportForm.value.selected_project_ids = current;
+};
+
+const isReportProjectSelected = (id: number | string) => {
+  if (id === 'all') {
+    return reportForm.value.selected_project_ids.includes('all') || reportForm.value.selected_project_ids.length === 0;
+  }
+  if (reportForm.value.selected_project_ids.includes('all')) {
+    return false;
+  }
+  return reportForm.value.selected_project_ids.includes(Number(id));
+};
 
 const openReportModal = async () => {
   showReportModal.value = true;
@@ -429,7 +459,14 @@ const openReportModal = async () => {
   try {
     const res = await axios.get('/api/tasks/report-settings');
     if (res.data.success && res.data.data) {
-      reportForm.value = { ...reportForm.value, ...res.data.data };
+      const data = res.data.data;
+      if (data.selected_project_ids && Array.isArray(data.selected_project_ids)) {
+        reportForm.value = { ...reportForm.value, ...data };
+      } else if (data.project_filter && data.project_filter !== 'all') {
+        reportForm.value = { ...reportForm.value, ...data, selected_project_ids: [Number(data.project_filter)] };
+      } else {
+        reportForm.value = { ...reportForm.value, ...data, selected_project_ids: ['all'] };
+      }
     }
   } catch (err) {
     console.error('Failed to load report settings:', err);
@@ -446,13 +483,13 @@ const handleSaveReportSettings = async () => {
   try {
     const res = await axios.post('/api/tasks/report-settings', reportForm.value);
     if (res.data.success) {
-      reportFeedbackMsg.value = '✓ ' + (res.data.message || 'Đã lưu cấu hình thành công');
+      reportFeedbackMsg.value = '✓ ' + (res.data.message || 'Settings successfully saved');
       reportFeedbackType.value = 'success';
       sound.playSuccess();
     }
   } catch (err: any) {
     console.error('Save report settings error:', err);
-    reportFeedbackMsg.value = '✕ ' + (err.response?.data?.message || 'Lỗi khi lưu cấu hình');
+    reportFeedbackMsg.value = '✕ ' + (err.response?.data?.message || 'Error saving settings');
     reportFeedbackType.value = 'error';
   } finally {
     isReportSaving.value = false;
@@ -461,7 +498,7 @@ const handleSaveReportSettings = async () => {
 
 const handleSendReportNow = async () => {
   if (!reportForm.value.recipients.trim()) {
-    alert('Vui lòng nhập ít nhất 1 địa chỉ email người nhận trước khi gửi thử!');
+    alert('Please enter at least one recipient email address!');
     return;
   }
 
@@ -472,11 +509,11 @@ const handleSendReportNow = async () => {
   try {
     const res = await axios.post('/api/tasks/send-report-now', {
       email: reportForm.value.recipients,
-      project_id: reportForm.value.project_filter === 'all' ? null : Number(reportForm.value.project_filter),
+      project_ids: reportForm.value.selected_project_ids,
     });
 
     if (res.data.success) {
-      reportFeedbackMsg.value = '🚀 ' + (res.data.message || 'Đã gửi báo cáo thành công!');
+      reportFeedbackMsg.value = '🚀 ' + (res.data.message || 'Weekly report successfully dispatched!');
       reportFeedbackType.value = 'success';
       if (res.data.sent_at) {
         reportForm.value.last_sent_at = res.data.sent_at;
@@ -485,7 +522,7 @@ const handleSendReportNow = async () => {
     }
   } catch (err: any) {
     console.error('Send report error:', err);
-    reportFeedbackMsg.value = '✕ ' + (err.response?.data?.message || 'Lỗi khi gửi email báo cáo');
+    reportFeedbackMsg.value = '✕ ' + (err.response?.data?.message || 'Error dispatching report email');
     reportFeedbackType.value = 'error';
   } finally {
     isReportSending.value = false;
@@ -4051,33 +4088,58 @@ onUnmounted(() => {
           </div>
 
           <!-- 5. Scope & Content Options -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div class="space-y-3">
             <div>
-              <label class="block font-bold mb-1.5" :class="isDarkMode ? 'text-slate-300' : 'text-slate-700'">
-                Phạm vi dự án
-              </label>
-              <select
-                v-model="reportForm.project_filter"
-                :class="[
-                  'w-full border rounded-xl p-2.5 focus:outline-none focus:border-blue-500 font-semibold shadow-xs',
-                  isDarkMode ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-900'
-                ]"
-              >
-                <option value="all">📁 Tất Cả Dự Án & Nhiệm Vụ</option>
-                <option v-for="p in projectList" :key="p.id" :value="p.id">
-                  {{ p.type === 'work' ? '💼' : '👤' }} {{ p.title }}
-                </option>
-              </select>
+              <div class="flex items-center justify-between mb-2">
+                <label class="font-bold text-xs" :class="isDarkMode ? 'text-slate-300' : 'text-slate-700'">
+                  Phạm vi dự án (Chọn nhiều dự án gộp vào báo cáo)
+                </label>
+                <button
+                  type="button"
+                  @click="toggleReportProject('all')"
+                  :class="[
+                    'text-[11px] font-bold px-2.5 py-1 rounded-lg border transition-all cursor-pointer shadow-xs',
+                    isReportProjectSelected('all')
+                      ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
+                      : (isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-300 hover:bg-slate-800' : 'bg-slate-100 border-slate-300 text-slate-700 hover:bg-slate-200')
+                  ]"
+                >
+                  📁 Tất Cả Dự Án
+                </button>
+              </div>
+
+              <!-- Project Multi-Select Chips -->
+              <div class="flex flex-wrap gap-2 p-3 rounded-2xl border max-h-36 overflow-y-auto" :class="isDarkMode ? 'bg-slate-900/60 border-slate-800' : 'bg-slate-50 border-slate-200'">
+                <button
+                  v-for="p in projectList"
+                  :key="p.id"
+                  type="button"
+                  @click="toggleReportProject(p.id)"
+                  :class="[
+                    'px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer flex items-center gap-2 shadow-xs',
+                    isReportProjectSelected(p.id)
+                      ? (isDarkMode ? 'bg-blue-600 text-white border-blue-500 font-bold shadow-sm' : 'bg-blue-50 text-blue-900 border-blue-400 font-bold')
+                      : (isDarkMode ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-750' : 'bg-white border-slate-300 text-slate-700 hover:bg-slate-100')
+                  ]"
+                >
+                  <span class="w-2 h-2 rounded-full shrink-0" :style="{ backgroundColor: p.color || '#2563eb' }"></span>
+                  <span>{{ p.type === 'work' ? '💼' : '👤' }} {{ p.title }}</span>
+                  <span v-if="isReportProjectSelected(p.id)" class="text-[11px] font-bold">✓</span>
+                </button>
+              </div>
+              <p :class="['text-[11px] mt-1', isDarkMode ? 'text-slate-400' : 'text-slate-500']">
+                💡 Báo cáo sẽ tổng hợp các task hoàn thành, sprint và cảnh báo thuộc các dự án được chọn (hoặc toàn bộ dự án nếu chọn "Tất Cả").
+              </p>
             </div>
 
-            <div class="flex flex-col justify-end space-y-2 pt-2">
+            <div class="flex flex-wrap gap-4 pt-1">
               <label class="flex items-center gap-2 cursor-pointer select-none">
                 <input type="checkbox" v-model="reportForm.include_upcoming" class="w-4 h-4 rounded text-blue-600" />
-                <span :class="isDarkMode ? 'text-slate-300' : 'text-slate-700'">Bao gồm kế hoạch tuần tới</span>
+                <span :class="isDarkMode ? 'text-slate-300' : 'text-slate-700'">Bao gồm kế hoạch tuần tới (Next Week Focus)</span>
               </label>
               <label class="flex items-center gap-2 cursor-pointer select-none">
                 <input type="checkbox" v-model="reportForm.include_warnings" class="w-4 h-4 rounded text-blue-600" />
-                <span :class="isDarkMode ? 'text-slate-300' : 'text-slate-700'">Bao gồm cảnh báo task trễ hạn</span>
+                <span :class="isDarkMode ? 'text-slate-300' : 'text-slate-700'">Bao gồm cảnh báo task trễ hạn (Risk Alerts)</span>
               </label>
             </div>
           </div>

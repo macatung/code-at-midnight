@@ -21,7 +21,7 @@ class WeeklyTaskReportMail extends Mailable
     public function __construct(array $reportData, ?string $customSubject = null)
     {
         $this->reportData = $reportData;
-        $this->customSubject = $customSubject ?: 'Báo Cáo Tiến Độ Dự Án Hàng Tuần — ' . ($reportData['report_period']['generated_at'] ?? date('d/m/Y'));
+        $this->customSubject = $customSubject ?: 'Weekly Project & Sprint Progress Report — ' . ($reportData['report_period']['generated_at'] ?? date('d M Y'));
     }
 
     /**
@@ -30,7 +30,7 @@ class WeeklyTaskReportMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: $this->customSubject . ' [Tuần ' . ($this->reportData['report_period']['week_number'] ?? '') . ']',
+            subject: $this->customSubject . ' [Week ' . ($this->reportData['report_period']['week_number'] ?? '') . ']',
         );
     }
 
@@ -44,6 +44,7 @@ class WeeklyTaskReportMail extends Mailable
             with: [
                 'data' => $this->reportData,
                 'period' => $this->reportData['report_period'],
+                'scope' => $this->reportData['scope'] ?? [],
                 'kpis' => $this->reportData['kpis'],
                 'sprint' => $this->reportData['sprint_metrics'],
                 'completedTasks' => $this->reportData['completed_tasks'],

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Báo Cáo Tiến Độ Dự Án Hàng Tuần</title>
+  <title>Weekly Executive Project & Sprint Report</title>
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -51,6 +51,11 @@
     .header-subtitle {
       font-size: 13px;
       color: #94a3b8;
+      margin: 0 0 4px 0;
+    }
+    .header-scope {
+      font-size: 12px;
+      color: #cbd5e1;
       margin: 0;
     }
     .content {
@@ -90,7 +95,7 @@
       color: #64748b;
     }
     .section-title {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.8px;
@@ -98,9 +103,6 @@
       border-bottom: 2px solid #f1f5f9;
       padding-bottom: 8px;
       margin: 28px 0 16px 0;
-      display: flex;
-      align-items: center;
-      gap: 6px;
     }
     .task-table {
       width: 100%;
@@ -214,9 +216,12 @@
     <!-- Header Banner -->
     <div class="header">
       <div class="header-badge">👑 Tasks Hub — Executive Report</div>
-      <h1 class="header-title">Báo Cáo Tiến Độ Dự Án Hàng Tuần</h1>
+      <h1 class="header-title">Weekly Project & Sprint Progress Report</h1>
       <p class="header-subtitle">
-        Kỳ báo cáo: <strong>{{ $period['start_date'] }}</strong> — <strong>{{ $period['end_date'] }}</strong> (Tuần {{ $period['week_number'] }}/{{ $period['year'] }})
+        Period: <strong>{{ $period['start_date'] }}</strong> — <strong>{{ $period['end_date'] }}</strong> (Week {{ $period['week_number'] }}/{{ $period['year'] }})
+      </p>
+      <p class="header-scope">
+        Scope: <strong>{{ $scope['selected_projects_label'] ?? 'All Projects' }}</strong>
       </p>
     </div>
 
@@ -227,21 +232,21 @@
         <tr class="kpi-row">
           <td class="kpi-card">
             <div class="kpi-val" style="color: #2563eb;">{{ $kpis['completed_tasks_count'] }}</div>
-            <div class="kpi-lbl">Tasks Đã Xong</div>
+            <div class="kpi-lbl">Completed Tasks</div>
           </td>
           <td class="kpi-card">
             <div class="kpi-val" style="color: #7c3aed;">{{ $kpis['completed_story_points'] }}</div>
-            <div class="kpi-lbl">Story Points</div>
+            <div class="kpi-lbl">Points Delivered</div>
           </td>
           <td class="kpi-card">
             <div class="kpi-val" style="color: #10b981;">{{ $kpis['sprint_progress_percent'] }}%</div>
-            <div class="kpi-lbl">Tiến Độ Sprint</div>
+            <div class="kpi-lbl">Sprint Progress</div>
           </td>
           <td class="kpi-card" style="{{ $kpis['warning_tasks_count'] > 0 ? 'background-color: #fff1f2; border-color: #fecdd3;' : '' }}">
             <div class="kpi-val" style="color: {{ $kpis['warning_tasks_count'] > 0 ? '#e11d48' : '#64748b' }};">
               {{ $kpis['warning_tasks_count'] }}
             </div>
-            <div class="kpi-lbl">Cần Chú Ý</div>
+            <div class="kpi-lbl">Action Required</div>
           </td>
         </tr>
       </table>
@@ -259,7 +264,7 @@
               @endif
             </td>
             <td style="text-align: right; font-size: 12px; color: #64748b;">
-              Hạn chót: <strong style="color: #0f172a;">{{ $sprint['end_date'] ?? 'N/A' }}</strong>
+              Target Due: <strong style="color: #0f172a;">{{ $sprint['end_date'] ?? 'N/A' }}</strong>
             </td>
           </tr>
         </table>
@@ -268,7 +273,7 @@
           <div class="progress-bar-fill" style="width: {{ $sprint['progress_percent'] }}%;"></div>
         </div>
         <div style="display: flex; justify-content: space-between; font-size: 11px; color: #64748b; margin-top: 6px;">
-          <span>Đã hoàn tất: <strong>{{ $sprint['done_tasks'] }}/{{ $sprint['total_tasks'] }} tasks</strong> ({{ $sprint['done_points'] }}/{{ $sprint['total_points'] }} pts)</span>
+          <span>Delivered: <strong>{{ $sprint['done_tasks'] }}/{{ $sprint['total_tasks'] }} tasks</strong> ({{ $sprint['done_points'] }}/{{ $sprint['total_points'] }} pts)</span>
           <span style="font-weight: 700; color: #10b981;">{{ $sprint['progress_percent'] }}%</span>
         </div>
       </div>
@@ -276,18 +281,17 @@
 
       <!-- Completed Deliverables in Last 7 Days -->
       <div class="section-title">
-        <span>✅</span>
-        <span>Hạng Mục Đã Hoàn Tất Trong Tuần ({{ count($completedTasks) }})</span>
+        ✅ Deliverables Completed This Week ({{ count($completedTasks) }})
       </div>
 
       @if(count($completedTasks) > 0)
       <table class="task-table">
         <thead>
           <tr>
-            <th style="width: 85px;">Mã Issue</th>
-            <th>Tiêu đề công việc</th>
-            <th style="width: 100px;">Dự án</th>
-            <th style="width: 50px; text-align: right;">Điểm</th>
+            <th style="width: 85px;">Key</th>
+            <th>Deliverable / Task Title</th>
+            <th style="width: 120px;">Project</th>
+            <th style="width: 60px; text-align: right;">Points</th>
           </tr>
         </thead>
         <tbody>
@@ -297,7 +301,7 @@
             <td>
               <strong style="color: #1e293b;">{{ $t->title }}</strong>
             </td>
-            <td style="font-size: 12px; color: #64748b;">{{ $t->project?->title ?? 'Chung' }}</td>
+            <td style="font-size: 12px; color: #64748b;">{{ $t->project?->title ?? 'General' }}</td>
             <td style="text-align: right; font-weight: 700; color: #7c3aed;">{{ $t->story_points ? $t->story_points . ' pts' : '-' }}</td>
           </tr>
           @endforeach
@@ -305,24 +309,23 @@
       </table>
       @else
       <p style="font-size: 13px; color: #94a3b8; font-style: italic; text-align: center; padding: 16px;">
-        Chưa có nhiệm vụ nào được đánh dấu hoàn thành trong tuần này.
+        No completed tasks were recorded in this period.
       </p>
       @endif
 
       <!-- Upcoming Focus for Next Week -->
       <div class="section-title">
-        <span>🎯</span>
-        <span>Kế Hoạch & Trọng Tâm Tuần Tiếp Theo</span>
+        🎯 Key Focus & Priorities For Next Week
       </div>
 
       @if(count($upcomingTasks) > 0)
       <table class="task-table">
         <thead>
           <tr>
-            <th style="width: 85px;">Mã Issue</th>
-            <th>Nhiệm vụ trọng tâm</th>
-            <th style="width: 80px;">Ưu tiên</th>
-            <th style="width: 80px;">Hạn chót</th>
+            <th style="width: 85px;">Key</th>
+            <th>Priority Focus Item</th>
+            <th style="width: 80px;">Priority</th>
+            <th style="width: 90px;">Due Date</th>
           </tr>
         </thead>
         <tbody>
@@ -334,15 +337,15 @@
             </td>
             <td>
               @if($ut->priority === 'urgent')
-                <span class="badge-priority-urgent">Khẩn cấp</span>
+                <span class="badge-priority-urgent">Urgent</span>
               @elseif($ut->priority === 'high')
-                <span class="badge-priority-high">Ưu tiên</span>
+                <span class="badge-priority-high">High</span>
               @else
                 <span class="badge-priority-normal">{{ ucfirst($ut->priority) }}</span>
               @endif
             </td>
             <td style="font-size: 11px; color: #64748b;">
-              {{ $ut->due_date ? date('d/m/Y', strtotime($ut->due_date)) : 'Chưa đặt' }}
+              {{ $ut->due_date ? date('d M Y', strtotime($ut->due_date)) : 'TBD' }}
             </td>
           </tr>
           @endforeach
@@ -354,16 +357,16 @@
       @if(count($warningTasks) > 0)
       <div class="warning-box">
         <strong style="color: #be123c; font-size: 13px; display: block; margin-bottom: 8px;">
-          🚨 Cảnh báo tiến độ: Có {{ count($warningTasks) }} nhiệm vụ cần được chú ý / gia hạn:
+          🚨 Schedule Alerts: {{ count($warningTasks) }} item(s) require attention:
         </strong>
         <ul style="margin: 0; padding-left: 20px; font-size: 12px; color: #9f1239;">
           @foreach($warningTasks as $wt)
           <li style="margin-bottom: 4px;">
             <strong>{{ $wt['issue_key'] }}</strong>: {{ $wt['title'] }} — 
             @if($wt['is_overdue'])
-              <span style="font-weight: 700; color: #be123c;">Quá hạn {{ $wt['days_overdue'] }} ngày</span>
+              <span style="font-weight: 700; color: #be123c;">Overdue by {{ $wt['days_overdue'] }} day(s)</span>
             @else
-              <span>Đến hạn ngày {{ $wt['due_date'] }}</span>
+              <span>Target date: {{ $wt['due_date'] }}</span>
             @endif
           </li>
           @endforeach
@@ -374,7 +377,7 @@
       <!-- CTA Button -->
       <div class="cta-container">
         <a href="{{ url('/tasks') }}" class="cta-button" target="_blank">
-          🚀 Mở Bảng Quản Trị Tasks Hub →
+          🚀 Open Tasks Hub Workspace →
         </a>
       </div>
     </div>
@@ -382,10 +385,10 @@
     <!-- Footer -->
     <div class="footer">
       <p style="margin: 0 0 6px 0;">
-        Báo cáo được tổng hợp và gửi tự động từ hệ thống <strong>Tasks Hub — macatung.dev</strong>
+        Generated and dispatched automatically by <strong>Tasks Hub — macatung.dev</strong>
       </p>
       <p style="margin: 0; font-size: 11px; color: #94a3b8;">
-        Thời gian tạo: {{ $period['generated_at'] }} • Dành riêng cho Ban Quản Trị
+        Dispatched at: {{ $period['generated_at'] }} • Confidential — Executive & Management Review Only
       </p>
     </div>
   </div>
