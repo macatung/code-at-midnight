@@ -97,6 +97,14 @@ class TaskHubAgentWorkflowTest extends TestCase
             'jsonrpc' => '2.0', 'id' => 2, 'method' => 'tools/call',
             'params' => ['name' => 'get_context_pack', 'arguments' => ['task_id' => $task->id]],
         ])->assertOk()->assertJsonPath('result.content.0.type', 'text');
+
+        $this->withHeaders($headers)->postJson('/api/tasks/mcp', [
+            'jsonrpc' => '2.0', 'id' => 3, 'method' => 'tools/call',
+            'params' => ['name' => 'preview_project_breakdown', 'arguments' => [
+                'prompt' => 'Xây dựng dashboard quản lý repository GitHub cho nhóm indie',
+                'sprint_count' => 1,
+            ]],
+        ])->assertOk()->assertJsonPath('result.content.0.type', 'text');
     }
 
     public function test_project_github_configuration_is_encrypted_and_syncs_snapshot(): void

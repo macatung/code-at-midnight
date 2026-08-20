@@ -8,6 +8,7 @@ use App\Models\Task;
 use App\Services\TaskHubContextPackService;
 use Illuminate\Http\Request;
 use App\Services\GithubProjectIntegrationService;
+use App\Services\SmartProjectBreakdownService;
 
 class TaskHubMcpController extends ApiAgentRunController
 {
@@ -27,7 +28,7 @@ class TaskHubMcpController extends ApiAgentRunController
                 'initialize' => ['protocolVersion' => '2024-11-05', 'serverInfo' => ['name' => 'task-hub', 'version' => '1.0.0'], 'capabilities' => ['tools' => (object) []]],
                 'notifications/initialized' => null,
                 'tools/list' => ['tools' => $this->tools()],
-                'tools/call' => $this->callTool($params, $contextService),
+                'tools/call' => $this->callTool($params, $contextService, app(SmartProjectBreakdownService::class)),
                 default => throw new \InvalidArgumentException('Method not found: ' . $method),
             };
             $response = ['jsonrpc' => '2.0', 'id' => $id, 'result' => $result];
@@ -48,10 +49,19 @@ class TaskHubMcpController extends ApiAgentRunController
             ['name' => 'attach_verification_evidence', 'description' => 'Attach test/build/security evidence to an agent run.', 'inputSchema' => ['type' => 'object', 'properties' => ['run_id' => ['type' => 'integer'], 'evidence_type' => ['type' => 'string'], 'status' => ['type' => 'string'], 'command' => ['type' => 'string'], 'summary' => ['type' => 'string']], 'required' => ['run_id', 'evidence_type', 'status']]],
             ['name' => 'request_human_approval', 'description' => 'Request human approval after evidence is attached.', 'inputSchema' => ['type' => 'object', 'properties' => ['task_id' => ['type' => 'integer']], 'required' => ['task_id']]],
             ['name' => 'get_next_action', 'description' => 'Return the next smallest actionable task.', 'inputSchema' => ['type' => 'object', 'properties' => []]],
+            ['name' => 'preview_project_breakdown', 'description' => 'Generate and validate a project plan without writing to the database. Human approval is required before commit.', 'inputSchema' => ['type' => 'object', 'properties' => [
+                'prompt' => ['type' => 'string', 'description' => 'Project idea or requirement.'],
+                'project_title' => ['type' => 'string'], 'project_key' => ['type' => 'string'],
+                'project_type' => ['type' => 'string', 'enum' => ['work', 'personal']],
+                'sprint_count' => ['type' => 'integer', 'minimum' => 1, 'maximum' => 5],
+                'sprint_duration_weeks' => ['type' => 'integer', 'minimum' => 1, 'maximum' => 4],
+                'start_date' => ['type' => 'string', 'description' => 'ISO date, e.g. 2026-08-20'],
+                'project_id' => ['type' => 'integer'],
+            ], 'required' => ['prompt']]],
         ];
     }
 
-    private function callTool(array $params, TaskHubContextPackService $contextService): array
+    private function callTool(array $params, TaskHubContextPackService $contextService, SmartProjectBreakdownService $planningService): array
     {
         $name = $params['name'] ?? '';
         $args = $params['arguments'] ?? [];
@@ -63,9 +73,26 @@ class TaskHubMcpController extends ApiAgentRunController
             'attach_verification_evidence' => $this->evidence(Request::create('/', 'POST', $args), AgentRun::findOrFail($args['run_id']))->getData(true),
             'request_human_approval' => $this->approve(Task::findOrFail($args['task_id']))->getData(true),
             'get_next_action' => ['success' => true, 'data' => Task::with('project')->where('status', '!=', 'done')->orderByRaw("CASE WHEN status = 'in_progress' THEN 1 WHEN priority = 'urgent' THEN 2 WHEN priority = 'high' THEN 3 ELSE 4 END")->orderBy('due_date')->first()],
+            'preview_project_breakdown' => $this->previewProjectBreakdown($args, $planningService),
             default => throw new \InvalidArgumentException('Unknown tool: ' . $name),
         };
         return ['content' => [['type' => 'text', 'text' => json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)]]];
+    }
+
+    private function previewProjectBreakdown(array $args, SmartProjectBreakdownService $planningService): array
+    {
+        $prompt = trim((string) ($args['prompt'] ?? ''));
+        if (mb_strlen($prompt) < 5) throw new \InvalidArgumentException('prompt must contain at least 5 characters.');
+        $options = array_filter([
+            'project_title' => $args['project_title'] ?? null,
+            'project_key' => $args['project_key'] ?? null,
+            'project_type' => $args['project_type'] ?? null,
+            'sprint_count' => $args['sprint_count'] ?? null,
+            'sprint_duration_weeks' => $args['sprint_duration_weeks'] ?? null,
+            'start_date' => $args['start_date'] ?? null,
+        ], fn ($value) => $value !== null && $value !== '');
+        $plan = $planningService->generatePlanWithProvider($prompt, $options);
+        return ['success' => true, 'mode' => 'preview', 'provider' => $planningService->planningSettings()['provider'] ?? 'template', 'requires_human_approval' => true, 'data' => $plan];
     }
 
     private function validProjectOrWorkspaceToken(Request $request, array $payload): bool
