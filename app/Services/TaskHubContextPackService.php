@@ -10,7 +10,7 @@ class TaskHubContextPackService
 {
     public function build(?Task $task, array $options = []): array
     {
-        $task?->loadMissing(['project', 'sprint', 'epic', 'agentRuns.evidence']);
+        $task?->loadMissing(['project.documents', 'sprint', 'epic', 'agentRuns.evidence', 'documents']);
         $project = $task?->project;
 
         $pack = [
@@ -50,6 +50,7 @@ class TaskHubContextPackService
                 'commit_sha' => $run->commit_sha,
                 'finished_at' => $run->finished_at?->toIso8601String(),
             ])->values()->all() : [],
+            'project_knowledge' => $task && $project ? app(ProjectKnowledgeService::class)->documentsForTask($task) : [],
         ];
 
         $pack['context_hash'] = hash('sha256', json_encode($pack, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));

@@ -78,6 +78,16 @@ class Project extends Model
         return $this->hasMany(Task::class)->where('issue_type', 'epic');
     }
 
+    public function documents(): HasMany
+    {
+        return $this->hasMany(ProjectDocument::class);
+    }
+
+    public function releases(): HasMany
+    {
+        return $this->hasMany(ProjectRelease::class);
+    }
+
     public function getEffectiveKeyAttribute(): string
     {
         if (!empty($this->key)) {

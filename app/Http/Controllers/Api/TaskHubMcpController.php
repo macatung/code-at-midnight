@@ -44,6 +44,8 @@ class TaskHubMcpController extends ApiAgentRunController
         return [
             ['name' => 'get_work_item', 'description' => 'Read a Task Hub work item.', 'inputSchema' => ['type' => 'object', 'properties' => ['task_id' => ['type' => 'integer']], 'required' => ['task_id']]],
             ['name' => 'get_context_pack', 'description' => 'Build the current context pack for a task.', 'inputSchema' => ['type' => 'object', 'properties' => ['task_id' => ['type' => 'integer']], 'required' => ['task_id']]],
+            ['name' => 'list_project_documents', 'description' => 'Read the project document registry, including document freshness and gaps.', 'inputSchema' => ['type' => 'object', 'properties' => ['project_id' => ['type' => 'integer']], 'required' => ['project_id']]],
+            ['name' => 'get_task_references', 'description' => 'Read project documents relevant to one task; required references are flagged.', 'inputSchema' => ['type' => 'object', 'properties' => ['task_id' => ['type' => 'integer']], 'required' => ['task_id']]],
             ['name' => 'start_agent_run', 'description' => 'Create an auditable agent run for the selected task.', 'inputSchema' => ['type' => 'object', 'properties' => ['task_id' => ['type' => 'integer'], 'provider' => ['type' => 'string'], 'agent_session_id' => ['type' => 'string'], 'repository' => ['type' => 'string'], 'branch' => ['type' => 'string'], 'context' => ['type' => 'object'], 'instruction' => ['type' => 'object']], 'required' => ['task_id', 'provider']]],
             ['name' => 'update_agent_run', 'description' => 'Update agent lifecycle and repository references.', 'inputSchema' => ['type' => 'object', 'properties' => ['run_id' => ['type' => 'integer'], 'status' => ['type' => 'string'], 'summary' => ['type' => 'string']], 'required' => ['run_id']]],
             ['name' => 'attach_verification_evidence', 'description' => 'Attach test/build/security evidence to an agent run.', 'inputSchema' => ['type' => 'object', 'properties' => ['run_id' => ['type' => 'integer'], 'evidence_type' => ['type' => 'string'], 'status' => ['type' => 'string'], 'command' => ['type' => 'string'], 'summary' => ['type' => 'string']], 'required' => ['run_id', 'evidence_type', 'status']]],
@@ -71,6 +73,8 @@ class TaskHubMcpController extends ApiAgentRunController
         $data = match ($name) {
             'get_work_item' => Task::with(['project', 'sprint', 'agentRuns.evidence'])->findOrFail($args['task_id']),
             'get_context_pack' => $contextService->build(Task::findOrFail($args['task_id']), $args),
+            'list_project_documents' => ['success' => true, 'data' => app(\App\Services\ProjectKnowledgeService::class)->projectState(Project::findOrFail((int) $args['project_id']))],
+            'get_task_references' => ['success' => true, 'data' => app(\App\Services\ProjectKnowledgeService::class)->documentsForTask(Task::findOrFail((int) $args['task_id']))],
             'start_agent_run' => $this->store(Request::create('/', 'POST', [
                 'task_id' => $args['task_id'] ?? null,
                 'provider' => $args['provider'],
@@ -120,6 +124,7 @@ class TaskHubMcpController extends ApiAgentRunController
         $taskRows = (clone $tasks)->with('sprint:id,name,status')->orderByRaw("CASE WHEN status = 'in_progress' THEN 1 WHEN status = 'review' THEN 2 WHEN priority = 'urgent' THEN 3 ELSE 4 END")->orderBy('due_date')->limit(100)->get();
         $sprints = $project->sprints()->withCount(['tasks', 'tasks as completed_tasks_count' => fn ($query) => $query->where('status', 'done')])->orderByDesc('start_date')->get(['id', 'name', 'goal', 'start_date', 'end_date', 'status']);
         $runs = AgentRun::whereHas('task', fn ($query) => $query->where('project_id', $projectId))->with('evidence')->latest()->limit(20)->get();
+        $releases = $project->releases()->latest('deployed_at')->limit(20)->get();
 
         return [
             'project' => [
@@ -133,7 +138,8 @@ class TaskHubMcpController extends ApiAgentRunController
                 'in_progress' => (clone $tasks)->where('status', 'in_progress')->count(), 'review' => (clone $tasks)->where('status', 'review')->count(),
                 'todo' => (clone $tasks)->where('status', 'todo')->count(), 'overdue' => (clone $tasks)->where('status', '!=', 'done')->whereDate('due_date', '<', now()->toDateString())->count(),
             ],
-            'sprints' => $sprints, 'tasks' => $taskRows, 'agent_runs' => $runs,
+            'sprints' => $sprints, 'tasks' => $taskRows, 'agent_runs' => $runs, 'releases' => $releases,
+            'project_knowledge' => app(\App\Services\ProjectKnowledgeService::class)->projectState($project),
         ];
     }
 

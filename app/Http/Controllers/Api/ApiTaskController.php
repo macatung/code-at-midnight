@@ -15,7 +15,7 @@ class ApiTaskController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Task::with(['project', 'sprint', 'epic']);
+        $query = Task::with(['project', 'sprint', 'epic', 'documents']);
 
         if ($request->has("project_id") && $request->query("project_id") !== 'all') {
             if ($request->query("project_id") === 'unassigned') {
@@ -88,7 +88,7 @@ class ApiTaskController extends Controller
         }
 
         $task = Task::create($validated);
-        $task->load(['project', 'sprint', 'epic']);
+        $task->load(['project', 'sprint', 'epic', 'documents']);
         $this->track('task_created', 'task', $task->id);
 
         return response()->json([
@@ -131,7 +131,7 @@ class ApiTaskController extends Controller
         }
 
         $task->update($validated);
-        $task->load(['project', 'sprint', 'epic']);
+        $task->load(['project', 'sprint', 'epic', 'documents']);
         if (($validated['status'] ?? null) === 'done') {
             $this->track('task_completed', 'task', $task->id);
         }

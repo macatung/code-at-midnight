@@ -12,10 +12,11 @@ import AgentConsoleModal from './components/AgentConsoleModal.vue';
 import UpdateStatus from './components/UpdateStatus.vue';
 import { useTaskSync, TaskItem } from './composables/useTaskSync';
 import { sfx } from './audio/soundEffects';
+import { mindfulBell } from './audio/mindfulBellAudio';
 
 const { tasks, agentTasks, activeTask, isOnline, createTask, toggleTaskComplete, incrementPomodoro } = useTaskSync();
 const isHovered = ref(false);
-const activeCluster = ref<'tasks' | 'config' | null>(null);
+const zenMascotRef = ref<InstanceType<typeof ZenMascotStage> | null>(null);
 const TASK_HUB_URL = (import.meta as any).env?.VITE_TASK_HUB_URL || 'https://tasks.macatung.dev';
 type ActiveModal = 'palette' | 'dispatch' | 'review' | 'pomodoro' | 'duck' | 'notes' | 'agent' | null;
 const activeModal = ref<ActiveModal>(null);
@@ -26,17 +27,20 @@ const openWebAction = (path = '/tasks') => {
   else window.open(url, '_blank');
 };
 
-const closeAll = () => { activeModal.value = null; activeCluster.value = null; };
+const closeAll = () => { activeModal.value = null; };
 const openModal = (modal: ActiveModal) => {
   activeModal.value = activeModal.value === modal ? null : modal;
-  activeCluster.value = null;
   sfx.playClick();
 };
-const toggleCluster = (cluster: 'tasks' | 'config') => {
-  activeCluster.value = activeCluster.value === cluster ? null : cluster;
-  sfx.playClick();
+const handleMascotClick = () => {
+  mindfulBell.ringBell(432, 5.5);
+  zenMascotRef.value?.triggerChime?.();
+  if (!activeModal.value) {
+    openModal('dispatch');
+  } else {
+    closeAll();
+  }
 };
-const handleMascotClick = () => (!activeModal.value && !activeCluster.value ? openModal('dispatch') : closeAll());
 
 let isDragging = false;
 let startScreenX = 0;
@@ -98,32 +102,15 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeyDown));
     </div>
 
     <div class="mascot-shell no-drag relative flex flex-col items-center cursor-pointer active:scale-98 transition-transform z-20 shrink-0 mr-2 mb-2" @mouseenter="isHovered = true" @mouseleave="isHovered = false" @mousedown="onMascotMouseDown" title="Mở Tasks và kéo để di chuyển">
-      <div class="no-drag absolute -top-11 right-0 flex items-center gap-1 p-1 rounded-2xl bg-slate-950/98 border border-slate-800 shadow-2xl transition-all duration-300 backdrop-blur-xl z-30 ring-1 ring-white/10 whitespace-nowrap" :class="isHovered || activeCluster ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto' : 'opacity-0 translate-y-2 scale-90 pointer-events-none'" @click.stop @mousedown.stop>
-        <button @click="openModal('palette')" class="dock-button text-purple-400">⌘K</button>
-        <button @click="toggleCluster('tasks')" class="dock-button text-amber-400">🎯 Tasks</button>
-        <button @click="openWebAction('/tasks')" class="dock-button text-indigo-300">🌐 Hub</button>
-        <button @click="toggleCluster('config')" class="dock-button text-slate-400">⚙️</button>
-      </div>
+      <nav class="no-drag absolute -top-12 right-0 flex items-center gap-1 rounded-2xl border border-slate-700/80 bg-slate-950/98 p-1.5 shadow-2xl ring-1 ring-white/10 backdrop-blur-xl transition-all duration-200" :class="isHovered ? 'pointer-events-auto translate-y-0 opacity-100' : 'pointer-events-none translate-y-1 opacity-0'" aria-label="Task Companion actions" @click.stop @mousedown.stop>
+        <button class="dock-button text-violet-300" title="Command center (Ctrl+K)" @click="openModal('palette')">⌘</button>
+        <button class="dock-button text-blue-300" title="AI Agent" @click="openModal('agent')">🤖</button>
+        <button class="dock-button text-amber-300" title="Tasks hôm nay" @click="openModal('dispatch')">✓</button>
+        <button class="dock-button text-sky-300" title="Mở Task Hub" @click="openWebAction('/tasks')">↗</button>
+        <button class="dock-button text-slate-300" title="Ẩn mascot" @click="hideMascot">×</button>
+      </nav>
 
-      <div v-if="activeCluster" class="no-drag absolute -top-22 right-0 flex items-center gap-1.5 p-1.5 rounded-2xl bg-slate-950/98 border border-slate-700/80 shadow-2xl z-40 ring-1 ring-white/15 whitespace-nowrap" @click.stop @mousedown.stop>
-        <template v-if="activeCluster === 'tasks'">
-          <button @click="openModal('agent')" class="task-action text-blue-300">🤖 Agent</button>
-          <button @click="openModal('dispatch')" class="task-action text-amber-300">📋 Nhiệm vụ</button>
-          <button @click="openModal('pomodoro')" class="task-action text-emerald-300">🍅 Pomodoro</button>
-          <button @click="openModal('review')" class="task-action text-purple-300">🌙 Review</button>
-          <button @click="openModal('duck')" class="task-action text-yellow-300">🦆 Debug</button>
-          <button @click="openModal('notes')" class="task-action text-cyan-300">📝 Notes</button>
-          <button @click="openWebAction('/tasks?open=ai-plan')" class="task-action text-violet-300">✨ AI Plan</button>
-          <button @click="openWebAction('/tasks?open=email-report')" class="task-action text-sky-300">✉️ Report</button>
-        </template>
-        <template v-else>
-          <button @click="openWebAction('/tasks?open=ai-settings')" class="task-action text-violet-300">✨ AI Settings</button>
-          <button @click="openWebAction('/tasks')" class="task-action text-indigo-300">🌐 Tasks Hub</button>
-          <button @click="hideMascot" class="task-action text-slate-300">✕ Ẩn mascot</button>
-        </template>
-      </div>
-
-      <ZenMascotStage :is-hovered="isHovered" />
+      <ZenMascotStage ref="zenMascotRef" :is-hovered="isHovered" />
       <DailyFocusBar :tasks="tasks" />
     </div>
   </div>
@@ -131,8 +118,7 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeyDown));
 
 <style scoped>
 .no-drag { -webkit-app-region: no-drag; }
-.mascot-shell::before { content: ''; position: absolute; top: -3.5rem; left: -1.25rem; right: -1.25rem; height: 3.5rem; z-index: 0; }
-.dock-button { padding: .25rem .5rem; border-radius: .75rem; font-size: .75rem; font-weight: 700; transition: background-color .15s; cursor: pointer; }
-.dock-button:hover, .task-action:hover { background: rgb(15 23 42); }
-.task-action { padding: .25rem .625rem; border-radius: .75rem; font-size: 11px; font-weight: 700; transition: background-color .15s; cursor: pointer; }
+.mascot-shell::before { content: ''; position: absolute; top: -3.75rem; left: -1.25rem; right: -1.25rem; height: 3.75rem; z-index: 0; }
+.dock-button { width: 1.9rem; height: 1.9rem; display: grid; place-items: center; border-radius: .7rem; font-size: .85rem; font-weight: 700; transition: background-color .15s, transform .15s; cursor: pointer; }
+.dock-button:hover { background: rgb(30 41 59); transform: translateY(-1px); }
 </style>

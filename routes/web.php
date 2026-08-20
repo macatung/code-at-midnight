@@ -12,6 +12,8 @@ use App\Http\Controllers\Api\ApiSprintController;
 use App\Http\Controllers\Api\AnalyticsEventController;
 use App\Http\Controllers\Api\ApiAgentRunController;
 use App\Http\Controllers\Api\TaskHubMcpController;
+use App\Http\Controllers\Api\ApiProjectDocumentController;
+use App\Http\Controllers\Api\ApiProjectReleaseController;
 use App\Http\Controllers\GithubAuthController;
 use App\Http\Controllers\DesktopPairingController;
 use App\Http\Controllers\Admin\AdminAuthController;
@@ -95,7 +97,18 @@ Route::prefix('api/projects')->group(function () {
     Route::post('/{project}/github/sync', [ApiProjectController::class, 'syncGithub'])->middleware('auth');
     Route::patch('/{id}', [ApiProjectController::class, 'update']);
     Route::delete('/{id}', [ApiProjectController::class, 'destroy']);
+    Route::get('/{project}/documents', [ApiProjectDocumentController::class, 'index']);
+    Route::post('/{project}/documents', [ApiProjectDocumentController::class, 'store']);
+    Route::post('/{project}/documents/import-manifest', [ApiProjectDocumentController::class, 'importManifest']);
+    Route::get('/{project}/releases', [ApiProjectReleaseController::class, 'index']);
+    Route::post('/{project}/releases', [ApiProjectReleaseController::class, 'store']);
 });
+Route::get('/api/project-documents/manifest-template', [ApiProjectDocumentController::class, 'manifestTemplate']);
+Route::patch('/api/project-documents/{document}', [ApiProjectDocumentController::class, 'update']);
+Route::delete('/api/project-documents/{document}', [ApiProjectDocumentController::class, 'destroy']);
+Route::patch('/api/project-releases/{release}', [ApiProjectReleaseController::class, 'update']);
+Route::post('/api/tasks/{task}/documents', [ApiProjectDocumentController::class, 'attach']);
+Route::delete('/api/tasks/{task}/documents/{document}', [ApiProjectDocumentController::class, 'detach']);
 
 // 3.2 Sprints REST API Endpoints (For Scrum Sprint Management)
 Route::prefix('api/sprints')->group(function () {

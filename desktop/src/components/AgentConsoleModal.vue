@@ -128,6 +128,8 @@ ${JSON.stringify(contextPack.value, null, 2)}
 AGENT RUN ID: ${runId.value}
 WORKSPACE: ${workspace.value}`;
 
+const documentUrl = (document: any) => document.url || (document.repository_path && contextPack.value?.repository ? `https://github.com/${contextPack.value.repository}/blob/${contextPack.value.branch || 'main'}/${document.repository_path}` : '#');
+
 const startAgent = async () => {
   if (!selectedTask.value || !contextPack.value || phase.value !== 'ready') return;
   phase.value = 'running';
@@ -189,6 +191,7 @@ onUnmounted(() => { stopPolling(); removeOutput?.(); removeExit?.(); if (session
     </div>
 
     <div v-if="selectedTask" class="rounded-lg border border-slate-800 bg-slate-900/70 p-3 text-[10px] text-slate-300 space-y-1"><div class="font-bold text-white">{{ selectedTask.issue_key || `Task #${selectedTask.id}` }} · {{ selectedTask.title }}</div><div>{{ selectedTask.description || 'Không có mô tả.' }}</div><div v-if="selectedTask.acceptance_criteria">Acceptance: {{ selectedTask.acceptance_criteria }}</div></div>
+    <div v-if="contextPack?.project_knowledge?.length" class="rounded-lg border border-cyan-900/70 bg-cyan-950/20 p-3 text-[10px] text-cyan-100"><div class="font-bold">📚 Project cockpit · references</div><a v-for="document in contextPack.project_knowledge" :key="document.id" :href="documentUrl(document)" target="_blank" rel="noreferrer" class="mt-1 block truncate underline" :class="document.required_for_task ? 'text-amber-200' : 'text-cyan-200'">{{ document.required_for_task ? 'Required · ' : '' }}{{ document.type }} · {{ document.title }}{{ document.is_stale ? ' · stale' : '' }}</a></div>
     <div v-if="pairingMessage" class="rounded-lg border border-amber-800 bg-amber-950/30 p-2 text-[10px] text-amber-200">{{ pairingMessage }} <button v-if="pairingUrl" class="underline font-bold" @click="reopenPairing">Mở lại trang approve</button></div>
     <div v-if="errorMessage" class="rounded-lg border border-red-800 bg-red-950/30 p-2 text-[10px] text-red-200">{{ errorMessage }}</div>
 

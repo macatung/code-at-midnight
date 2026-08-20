@@ -4,6 +4,8 @@ import { Head, router } from '@inertiajs/vue3';
 import axios from 'axios';
 import MiniMascotLogo from '@/Components/mascot/MiniMascotLogo.vue';
 import TasksEmptyState from '@/Components/tasks/TasksEmptyState.vue';
+import ProjectDocumentsPanel from '@/Components/tasks/ProjectDocumentsPanel.vue';
+import ProjectReleaseLog from '@/Components/tasks/ProjectReleaseLog.vue';
 import { sound } from '@/audio/soundEffects';
 
 export interface ProjectItem {
@@ -84,6 +86,7 @@ export interface TaskItem {
   acceptance_criteria?: string | null;
   definition_of_done?: string | null;
   risk_level?: 'low' | 'medium' | 'high' | 'critical';
+  documents?: Array<{ id: number; title: string; document_type: string; url?: string | null; repository_path?: string | null; pivot?: { is_required: boolean; purpose?: string | null } }>;
 }
 
 export interface AgentRunItem {
@@ -2532,6 +2535,9 @@ onUnmounted(() => {
             </div>
           </div>
 
+          <ProjectDocumentsPanel :project-id="activeProjectObject?.id || null" :repository="activeProjectObject?.github_repository" :branch="activeProjectObject?.github_default_branch" :dark="isDarkMode" />
+          <ProjectReleaseLog :project-id="activeProjectObject?.id || null" :dark="isDarkMode" />
+
           <!-- TẦNG 2: SMART FILTER & QUICK ACTION BAR -->
           <div :class="['flex flex-wrap items-center justify-between gap-3 pt-3.5 border-t text-xs', isDarkMode ? 'border-slate-800/80' : 'border-slate-200']">
             <div class="flex flex-wrap items-center gap-2.5 flex-1 min-w-0">
@@ -3745,6 +3751,11 @@ onUnmounted(() => {
                   isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-100' : 'bg-white border-slate-300 text-slate-950'
                 ]"
               />
+            </div>
+
+            <div v-if="selectedTask.documents?.length" :class="['space-y-2 pt-4 border-t', isDarkMode ? 'border-slate-800' : 'border-slate-200']">
+              <label :class="['font-mono text-xs font-bold uppercase', isDarkMode ? 'text-slate-300' : 'text-slate-700']">📚 Task references</label>
+              <a v-for="document in selectedTask.documents" :key="document.id" :href="document.url || '#'" target="_blank" rel="noreferrer" class="block text-[11px] text-blue-600 underline">{{ document.pivot?.is_required ? 'Required · ' : '' }}{{ document.title }}</a>
             </div>
 
             <!-- Agent execution and verification -->

@@ -6,6 +6,7 @@ use App\Models\AgentRun;
 use App\Models\Task;
 use App\Models\Project;
 use App\Models\User;
+use App\Models\ProjectDocument;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Crypt;
@@ -110,6 +111,37 @@ class TaskHubAgentWorkflowTest extends TestCase
                 'sprint_count' => 1,
             ]],
         ])->assertOk()->assertJsonPath('result.content.0.type', 'text');
+    }
+
+    public function test_project_document_registry_is_imported_linked_and_delivered_to_agent_context(): void
+    {
+        $project = Project::create(['slug' => 'knowledge-project', 'title' => 'Knowledge Project', 'tagline' => 'Knowledge', 'description' => 'Project docs', 'type' => 'work', 'category' => 'tools']);
+        $manifest = "| type | title | path_or_url | owner | version | tags |\n| --- | --- | --- | --- | --- | --- |\n| brief | Project Brief | docs/BRIEF.md | PM | 2.0 | scope |\n| architecture | System Design | docs/ARCH.md | Tech Lead | 1.1 | api |";
+        $this->postJson('/api/projects/' . $project->id . '/documents/import-manifest', ['content' => $manifest])
+            ->assertOk()->assertJsonPath('data.imported', 2);
+        $brief = ProjectDocument::where('project_id', $project->id)->where('document_type', 'brief')->firstOrFail();
+        $task = Task::create(['project_id' => $project->id, 'title' => 'Use the specification']);
+        $this->postJson('/api/tasks/' . $task->id . '/documents', ['project_document_id' => $brief->id, 'is_required' => true, 'purpose' => 'Defines scope'])
+            ->assertOk();
+
+        $context = $this->getJson('/api/tasks/context-pack?task_id=' . $task->id)->assertOk();
+        $context->assertJsonPath('data.project_knowledge.0.type', 'brief')
+            ->assertJsonPath('data.project_knowledge.0.required_for_task', true);
+        $this->getJson('/api/projects/' . $project->id . '/documents')->assertOk()
+            ->assertJsonPath('data.summary.total', 2)
+            ->assertJsonPath('data.summary.missing_core.0', 'prd');
+    }
+
+    public function test_project_release_log_keeps_each_deployment(): void
+    {
+        $project = Project::create(['slug' => 'release-project', 'title' => 'Release Project', 'tagline' => 'Release', 'description' => 'Release history', 'type' => 'work', 'category' => 'tools']);
+        $this->postJson('/api/projects/' . $project->id . '/releases', [
+            'version' => 'v1.2.0', 'environment' => 'production', 'summary' => 'Knowledge layer deployed.',
+            'changes' => ['Document registry', 'Desktop cockpit'], 'commit_sha' => str_repeat('a', 40), 'deployed_by' => 'release-bot',
+        ])->assertCreated()->assertJsonPath('data.version', 'v1.2.0');
+        $this->getJson('/api/projects/' . $project->id . '/releases')->assertOk()
+            ->assertJsonPath('data.0.environment', 'production')
+            ->assertJsonPath('data.0.changes.1', 'Desktop cockpit');
     }
 
     public function test_project_github_configuration_is_encrypted_and_syncs_snapshot(): void

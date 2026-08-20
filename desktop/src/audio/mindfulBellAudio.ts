@@ -1,6 +1,6 @@
 /**
  * Mindful Bell Synthesizer (Tibetan Singing Bowl Web Audio API)
- * Zero external audio assets needed; generates pure, resonant harmonic acoustic bell.
+ * Pure, resonant acoustic harmonic synthesis without external audio files.
  */
 class MindfulBellAudio {
   private ctx: AudioContext | null = null;
@@ -19,30 +19,38 @@ class MindfulBellAudio {
 
   /**
    * Ring the resonant meditation bell with authentic harmonic overtones
-   * @param fundamentalFreq Fundamental frequency (default 432Hz for deep peace, or 528Hz for clarity)
-   * @param duration Sustain duration in seconds (default 5.5s)
+   * @param fundamentalFreq Fundamental frequency (default 432Hz for deep tranquility)
+   * @param duration Sustain duration in seconds (default 6.0s)
    */
-  public ringBell(fundamentalFreq: number = 432, duration: number = 5.5) {
+  public ringBell(fundamentalFreq: number = 432, duration: number = 6.0) {
     try {
       this.initContext();
       if (!this.ctx) return;
 
       const now = this.ctx.currentTime;
       const masterGain = this.ctx.createGain();
-      masterGain.gain.setValueAtTime(0.35, now);
+      masterGain.gain.setValueAtTime(0.4, now);
       masterGain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
-      masterGain.connect(this.ctx.destination);
 
-      // Tibetan Singing Bowl Harmonic Profile:
-      // 1. Fundamental Root (1.0x)
-      // 2. Minor Third / Octave Overtone (2.76x)
-      // 3. Perfect Fifth Overtone (5.4x)
-      // 4. High Shimmer Strike (8.9x)
+      // Lowpass filter for warm acoustic warmth
+      const filter = this.ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(4800, now);
+      filter.frequency.exponentialRampToValueAtTime(1200, now + duration);
+
+      masterGain.connect(filter);
+      filter.connect(this.ctx.destination);
+
+      // Tibetan Singing Bowl Harmonic Spectrum:
+      // 1. Fundamental Root (1.0x) - Deep meditative vibration
+      // 2. Harmonic Overtone 1 (2.76x) - Resonant singing wall
+      // 3. Harmonic Overtone 2 (5.40x) - Crystal overtone
+      // 4. Harmonic Overtone 3 (8.90x) - Subtle bronze shimmer
       const harmonics = [
-        { mult: 1.0, gainVal: 0.8, decayMult: 1.0 },
-        { mult: 2.76, gainVal: 0.45, decayMult: 0.85 },
-        { mult: 5.4, gainVal: 0.2, decayMult: 0.6 },
-        { mult: 8.9, gainVal: 0.08, decayMult: 0.3 },
+        { mult: 1.0, gainVal: 0.85, decayMult: 1.0 },
+        { mult: 2.76, gainVal: 0.48, decayMult: 0.88 },
+        { mult: 5.4, gainVal: 0.22, decayMult: 0.65 },
+        { mult: 8.9, gainVal: 0.09, decayMult: 0.35 },
       ];
 
       harmonics.forEach(({ mult, gainVal, decayMult }) => {
@@ -53,9 +61,9 @@ class MindfulBellAudio {
         osc.type = 'sine';
         osc.frequency.setValueAtTime(fundamentalFreq * mult, now);
 
-        // Gentle strike envelope
+        // Strike envelope with smooth attack and exponential decay
         oscGain.gain.setValueAtTime(0.001, now);
-        oscGain.gain.exponentialRampToValueAtTime(gainVal, now + 0.04);
+        oscGain.gain.exponentialRampToValueAtTime(gainVal, now + 0.035);
         oscGain.gain.exponentialRampToValueAtTime(0.0001, now + duration * decayMult);
 
         osc.connect(oscGain);

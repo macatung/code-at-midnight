@@ -16,7 +16,7 @@ class TaskController extends Controller
         $date = $request->query("date", Carbon::today()->toDateString());
         $projectId = $request->query("project_id");
         
-        $query = Task::with(['project', 'sprint', 'epic']);
+        $query = Task::with(['project', 'sprint', 'epic', 'documents']);
 
         if ($projectId && $projectId !== 'all') {
             if ($projectId === 'unassigned') {
@@ -31,7 +31,7 @@ class TaskController extends Controller
             ->orderBy("created_at", "desc")
             ->get();
 
-        $projects = Project::select('id', 'title', 'slug', 'key', 'category', 'type', 'color', 'description')
+        $projects = Project::select('id', 'title', 'slug', 'key', 'category', 'type', 'color', 'description', 'github_repository', 'github_default_branch')
             ->withCount('tasks')
             ->orderBy('title')
             ->get();
@@ -81,6 +81,8 @@ class TaskController extends Controller
             "stats" => $stats,
             "selectedDate" => $date,
             "selectedProjectId" => $projectId ?: 'all',
+            "projectKnowledge" => $projectId && $projectId !== 'all' && $projectId !== 'unassigned'
+                ? app(\App\Services\ProjectKnowledgeService::class)->projectState(Project::findOrFail($projectId)) : null,
         ]);
     }
 }

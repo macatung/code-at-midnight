@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use App\Models\User;
+use App\Services\ProjectKnowledgeService;
 
 class GithubProjectIntegrationService
 {
@@ -149,6 +150,8 @@ class GithubProjectIntegrationService
                 'issues' => array_map(fn ($issue) => $this->issueSummary($issue), is_array($issues) ? $issues : []),
                 'pull_requests' => array_map(fn ($pull) => $this->pullSummary($pull), is_array($pulls) ? $pulls : []),
             ];
+            $documentSync = $this->syncDocumentManifest($project, $request);
+            if ($documentSync) $snapshot['project_documents'] = $documentSync;
             $project->update([
                 'github_sync_status' => 'synced',
                 'github_last_sync_at' => now(),
@@ -161,6 +164,22 @@ class GithubProjectIntegrationService
             throw $e;
         }
         return $project->fresh();
+    }
+
+    private function syncDocumentManifest(Project $project, $request): ?array
+    {
+        $path = 'docs/PROJECT_DOCUMENTS.md';
+        try {
+            $response = $request->get('https://api.github.com/repos/' . $project->github_repository . '/contents/' . $path, ['ref' => $project->github_default_branch ?: 'main']);
+            if ($response->status() === 404) return ['manifest_path' => $path, 'status' => 'missing'];
+            $payload = $response->throw()->json();
+            $content = base64_decode((string) ($payload['content'] ?? ''), true);
+            if ($content === false) return ['manifest_path' => $path, 'status' => 'invalid'];
+            $result = app(ProjectKnowledgeService::class)->importManifest($project, $content, $payload['sha'] ?? null);
+            return ['manifest_path' => $path, 'status' => 'synced', 'sha' => $payload['sha'] ?? null, 'imported' => $result['imported']];
+        } catch (\Throwable $e) {
+            return ['manifest_path' => $path, 'status' => 'error', 'message' => Str::limit($e->getMessage(), 300)];
+        }
     }
 
     public function status(Project $project): array

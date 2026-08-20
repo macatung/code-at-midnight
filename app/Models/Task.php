@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Carbon\Carbon;
 
 class Task extends Model
@@ -51,6 +52,11 @@ class Task extends Model
     public function agentRuns()
     {
         return $this->hasMany(AgentRun::class);
+    }
+
+    public function documents(): BelongsToMany
+    {
+        return $this->belongsToMany(ProjectDocument::class, 'task_documents')->withPivot(['is_required', 'purpose'])->withTimestamps();
     }
 
     protected static function booted()
