@@ -21,6 +21,18 @@ export interface ProjectItem {
   github_last_sync_at?: string | null;
 }
 
+interface GithubRepositoryItem {
+  id: number;
+  name: string;
+  full_name: string;
+  owner?: string;
+  private: boolean;
+  description?: string | null;
+  html_url?: string;
+  default_branch?: string;
+  language?: string | null;
+}
+
 export interface SprintItem {
   id: number;
   project_id: number | null;
@@ -682,6 +694,14 @@ const projectForm = ref({
 const projectGithubStatus = ref<any>(null);
 const projectGithubFeedback = ref('');
 const isProjectGithubSyncing = ref(false);
+const githubRepositories = ref<GithubRepositoryItem[]>([]);
+const githubRepositorySearch = ref('');
+const selectedGithubRepository = ref<GithubRepositoryItem | null>(null);
+const isGithubRepositoriesLoading = ref(false);
+const filteredGithubRepositories = computed(() => githubRepositories.value.filter(repo => {
+  const query = githubRepositorySearch.value.toLowerCase().trim();
+  return !query || (repo.full_name + ' ' + (repo.description || '')).toLowerCase().includes(query);
+}));
 
 const logoutGithub = () => router.post('/auth/github/logout');
 
@@ -1442,6 +1462,9 @@ const openCreateProjectModal = (type: 'work' | 'personal' = 'work') => {
   projectGithubStatus.value = null;
   projectGithubFeedback.value = '';
   showProjectModal.value = true;
+  githubRepositorySearch.value = '';
+  selectedGithubRepository.value = null;
+  if (props.auth?.user) loadGithubRepositories();
   activeProjectMenuId.value = null;
   sound.playClick();
 };
@@ -1472,13 +1495,30 @@ const openEditProjectModal = (project: ProjectItem) => {
   sound.playClick();
 };
 
+const loadGithubRepositories = async () => {
+  isGithubRepositoriesLoading.value = true;
+  projectGithubFeedback.value = '';
+  try {
+    const res = await axios.get('/api/projects/github/repositories');
+    githubRepositories.value = res.data.data || [];
+  } catch (err: any) {
+    projectGithubFeedback.value = err.response?.data?.message || 'Không thể tải repository GitHub.';
+  } finally {
+    isGithubRepositoriesLoading.value = false;
+  }
+};
+
 const handleSaveProject = async () => {
-  if (!projectForm.value.title.trim()) return;
+  if (projectModalMode.value === 'create' && !selectedGithubRepository.value) {
+    projectGithubFeedback.value = 'Hãy chọn một repository GitHub trước khi tạo dự án.';
+    return;
+  }
+  if (projectModalMode.value === 'edit' && !projectForm.value.title.trim()) return;
   isProjectSubmitting.value = true;
 
   try {
     if (projectModalMode.value === 'create') {
-      const res = await axios.post('/api/projects', projectForm.value);
+      const res = await axios.post('/api/projects/from-github', { repository: selectedGithubRepository.value!.full_name, type: projectForm.value.type, color: projectForm.value.color });
       if (res.data.success) {
         const created: ProjectItem = res.data.data;
         if (projectForm.value.github_repository.trim()) {
@@ -3814,7 +3854,27 @@ onUnmounted(() => {
         </div>
 
         <div class="space-y-3 text-xs">
-          <div>
+          <div v-if="projectModalMode === 'create'" class="space-y-3">
+            <div v-if="!props.auth?.user" class="rounded-xl border border-blue-200 bg-blue-50 p-4 text-blue-900">
+              <p class="font-bold">Cần xác thực GitHub</p>
+              <p class="mt-1 text-[11px]">Đăng nhập GitHub để cấp quyền và chọn repository tạo dự án.</p>
+              <a href="/auth/github" class="mt-3 inline-block rounded-lg bg-slate-900 px-3 py-2 text-[11px] font-bold text-white">Đăng nhập GitHub</a>
+            </div>
+            <template v-else>
+              <input v-model="githubRepositorySearch" placeholder="Tìm repository GitHub..." :class="['w-full p-2.5 rounded-xl border focus:outline-none focus:border-blue-500', isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-100' : 'bg-slate-50 border-slate-300 text-slate-950']" />
+              <div v-if="isGithubRepositoriesLoading" class="rounded-xl border p-4 text-center text-slate-500">Đang tải repository…</div>
+              <div v-else class="max-h-56 space-y-2 overflow-y-auto pr-1">
+                <button v-for="repo in filteredGithubRepositories" :key="repo.id" type="button" @click="selectedGithubRepository = repo" :class="['w-full rounded-xl border p-3 text-left', selectedGithubRepository?.id === repo.id ? 'border-blue-500 bg-blue-50 text-blue-950' : (isDarkMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200 bg-white')]">
+                  <div class="flex items-center justify-between gap-2"><span class="font-bold">{{ repo.full_name }}</span><span class="text-[10px]">{{ repo.private ? 'Private' : 'Public' }}</span></div>
+                  <p class="mt-1 line-clamp-2 text-[11px] text-slate-500">{{ repo.description || 'Không có mô tả' }}</p>
+                  <span class="text-[10px] text-slate-500">{{ repo.default_branch || 'main' }} · {{ repo.language || 'Unknown' }}</span>
+                </button>
+                <p v-if="!filteredGithubRepositories.length" class="p-4 text-center text-slate-500">Không tìm thấy repository.</p>
+              </div>
+              <div v-if="selectedGithubRepository" class="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-emerald-900">Đã chọn <strong>{{ selectedGithubRepository.full_name }}</strong>.</div>
+            </template>
+          </div>
+          <div v-if="projectModalMode === 'edit'">
             <label :class="['font-mono text-[10px] font-bold uppercase block mb-1', isDarkMode ? 'text-slate-400' : 'text-slate-700']">Tên Dự Án *</label>
             <input
               v-model="projectForm.title"
@@ -3823,7 +3883,7 @@ onUnmounted(() => {
             />
           </div>
 
-          <div>
+          <div v-if="projectModalMode === 'edit'">
             <label :class="['font-mono text-[10px] font-bold uppercase block mb-1', isDarkMode ? 'text-slate-400' : 'text-slate-700']">Mã Key Dự Án (2-5 ký tự)</label>
             <input
               v-model="projectForm.key"
@@ -3843,7 +3903,7 @@ onUnmounted(() => {
             </select>
           </div>
 
-          <div :class="['pt-3 mt-3 border-t space-y-3', isDarkMode ? 'border-slate-800' : 'border-slate-200']">
+          <div v-if="projectModalMode === 'edit'" :class="['pt-3 mt-3 border-t space-y-3', isDarkMode ? 'border-slate-800' : 'border-slate-200']">
             <div class="flex items-center justify-between">
               <div>
                 <h4 class="font-bold text-xs">Kết nối riêng cho Project</h4>

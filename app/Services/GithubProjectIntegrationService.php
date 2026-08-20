@@ -6,9 +6,55 @@ use App\Models\Project;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use App\Models\User;
 
 class GithubProjectIntegrationService
 {
+    public function repositories(User $user): array
+    {
+        $token = $this->secret($user->github_access_token);
+        if (!$token) throw new \RuntimeException('Tài khoản GitHub chưa được cấp quyền.');
+        return Http::acceptJson()->withToken($token)->withHeaders(['User-Agent' => 'TaskHub/1.0'])->timeout(15)
+            ->get('https://api.github.com/user/repos', ['affiliation' => 'owner,collaborator,organization_member', 'sort' => 'updated', 'direction' => 'desc', 'per_page' => 100])
+            ->throw()->collect()->map(fn (array $repo) => [
+                'id' => $repo['id'] ?? null, 'name' => $repo['name'] ?? null, 'full_name' => $repo['full_name'] ?? null,
+                'owner' => data_get($repo, 'owner.login'), 'private' => (bool) ($repo['private'] ?? false),
+                'description' => $repo['description'] ?? null, 'html_url' => $repo['html_url'] ?? null,
+                'default_branch' => $repo['default_branch'] ?? 'main', 'language' => $repo['language'] ?? null,
+                'stargazers_count' => $repo['stargazers_count'] ?? 0, 'updated_at' => $repo['updated_at'] ?? null,
+            ])->values()->all();
+    }
+
+    public function createFromRepository(User $user, array $input): Project
+    {
+        $repository = trim($input['repository']);
+        $token = $this->secret($user->github_access_token);
+        if (!$token) throw new \RuntimeException('Tài khoản GitHub chưa được cấp quyền.');
+        $repo = Http::acceptJson()->withToken($token)->withHeaders(['User-Agent' => 'TaskHub/1.0'])->timeout(15)
+            ->get('https://api.github.com/repos/' . $repository)->throw()->json();
+        if (empty($repo['full_name'])) throw new \RuntimeException('Repository GitHub không hợp lệ.');
+        if (Project::where('user_id', $user->id)->where('github_repository', $repo['full_name'])->exists()) throw new \RuntimeException('Repository này đã được thêm vào Task Hub.');
+        return DB::transaction(function () use ($user, $repo, $input) {
+            $title = $repo['name'] ?? $repo['full_name'];
+            $slugBase = Str::slug($repo['full_name'] ?: $title) ?: Str::slug($title);
+            $slug = $slugBase; $suffix = 1;
+            while (Project::where('slug', $slug)->exists()) $slug = $slugBase . '-' . $suffix++;
+            $key = collect(preg_split('/[\s_-]+/', $title))->filter()->map(fn ($word) => Str::upper(Str::substr($word, 0, 1)))->join('');
+            return Project::create([
+                'user_id' => $user->id, 'slug' => $slug, 'key' => Str::substr($key ?: 'PRJ', 0, 5), 'title' => $title,
+                'tagline' => $repo['description'] ?: $repo['full_name'], 'description' => $repo['description'] ?: 'GitHub repository ' . $repo['full_name'],
+                'category' => 'tools', 'type' => $input['type'] ?? 'work', 'color' => $input['color'] ?? '#2563eb',
+                'github_url' => $repo['html_url'] ?? null, 'github_repository' => $repo['full_name'], 'github_default_branch' => $repo['default_branch'] ?? 'main',
+                'github_connected_at' => now(), 'github_sync_status' => 'connected', 'github_snapshot' => ['repository' => [
+                    'full_name' => $repo['full_name'], 'description' => $repo['description'] ?? null, 'default_branch' => $repo['default_branch'] ?? 'main',
+                    'private' => (bool) ($repo['private'] ?? false), 'html_url' => $repo['html_url'] ?? null, 'language' => $repo['language'] ?? null,
+                ]],
+            ]);
+        });
+    }
+
     public function connect(Project $project, array $input): Project
     {
         $repository = trim($input['github_repository']);

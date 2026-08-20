@@ -80,6 +80,8 @@ Route::prefix('api/tasks')->group(function () {
 Route::prefix('api/projects')->group(function () {
     Route::get('/', [ApiProjectController::class, 'index']);
     Route::post('/', [ApiProjectController::class, 'store']);
+    Route::get('/github/repositories', [ApiProjectController::class, 'githubRepositories'])->middleware('auth');
+    Route::post('/from-github', [ApiProjectController::class, 'storeFromGithub'])->middleware('auth');
     Route::get('/{project}/github', [ApiProjectController::class, 'githubStatus']);
     Route::post('/{project}/github/connect', [ApiProjectController::class, 'connectGithub'])->middleware('auth');
     Route::post('/{project}/github/sync', [ApiProjectController::class, 'syncGithub'])->middleware('auth');

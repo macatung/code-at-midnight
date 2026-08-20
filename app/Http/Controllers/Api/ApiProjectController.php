@@ -10,6 +10,21 @@ use App\Services\GithubProjectIntegrationService;
 
 class ApiProjectController extends Controller
 {
+    public function githubRepositories(Request $request, GithubProjectIntegrationService $integration)
+    {
+        try { return response()->json(['success' => true, 'data' => $integration->repositories($request->user())]); }
+        catch (\Throwable $e) { return response()->json(['success' => false, 'message' => $e->getMessage()], 422); }
+    }
+
+    public function storeFromGithub(Request $request, GithubProjectIntegrationService $integration)
+    {
+        $validated = $request->validate(['repository' => ['required', 'regex:/^[^\/\s]+\/[^\/\s]+$/', 'max:255'], 'type' => 'required|in:work,personal', 'color' => 'nullable|string|max:50']);
+        try {
+            $project = $integration->createFromRepository($request->user(), $validated);
+            return response()->json(['success' => true, 'message' => 'Dự án đã được tạo từ GitHub repository.', 'data' => $project->loadCount('tasks')], 201);
+        } catch (\Throwable $e) { return response()->json(['success' => false, 'message' => $e->getMessage()], 422); }
+    }
+
     public function index(Request $request)
     {
         $query = Project::withCount('tasks');
