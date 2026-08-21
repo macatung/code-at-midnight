@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import MidnightClock from '@/Components/mascot/MidnightClock.vue';
 import MiniMascotLogo from '@/Components/mascot/MiniMascotLogo.vue';
 import FloatingMascotCompanion from '@/Components/mascot/FloatingMascotCompanion.vue';
-import SoundToggle from '@/Components/layout/SoundToggle.vue';
 import Icons from '@/Components/ui/Icons.vue';
 import { sound } from '@/audio/soundEffects';
 import { useTimeCycle } from '@/composables/useTimeCycle';
+import { useI18n } from '@/composables/useI18n';
 
 const { activePhase } = useTimeCycle();
+const { locale, t, setLocale } = useI18n();
 const page = usePage();
 
 interface NavItem {
@@ -19,15 +20,15 @@ interface NavItem {
   iconName?: string;
 }
 
-const navLinks: NavItem[] = [
-  { label: 'Trang Chủ', href: '/', iconName: 'Home' },
-  { label: 'Dự Án', href: '/projects', iconName: 'Layers' },
-  { label: 'Desktop', href: '/desktop', badge: 'NEW', iconName: 'Monitor' },
-  { label: 'Blog', href: '/blog', badge: 'MỚI', iconName: 'BookOpen' },
-  { label: 'Game 🎮', href: '/game', badge: 'HOT', iconName: 'Gamepad' },
-  { label: 'Bùa Dev', href: '/talisman', iconName: 'Sparkles' },
-  { label: 'Tọa Thiền 🧘', href: '/theravada', badge: 'ZEN', iconName: 'Sparkles' },
-];
+const navLinks = computed<NavItem[]>(() => [
+  { label: t('nav.home'), href: '/', iconName: 'Home' },
+  { label: t('nav.projects'), href: '/projects', iconName: 'Layers' },
+  { label: t('nav.desktop'), href: '/desktop', badge: t('nav.new'), iconName: 'Monitor' },
+  { label: t('nav.blog'), href: '/blog', badge: t('nav.new'), iconName: 'BookOpen' },
+  { label: t('nav.game'), href: '/game', badge: t('nav.hot'), iconName: 'Gamepad' },
+  { label: t('nav.talisman'), href: '/talisman', iconName: 'Sparkles' },
+  { label: t('nav.theravada'), href: '/theravada', badge: t('nav.zen'), iconName: 'Sparkles' },
+]);
 
 const isScrolled = ref(false);
 const isMobileDrawerOpen = ref(false);
@@ -102,7 +103,7 @@ onUnmounted(() => {
       <Link
         href="/"
         class="flex items-center gap-3 select-none group focus:outline-none flex-shrink-0"
-        title="Về Trang Chủ Macatung"
+        :title="t('nav.home')"
         @click="sound.playHop(1.3)"
       >
         <!-- Animated Mini Vector Mascot Badge -->
@@ -119,7 +120,7 @@ onUnmounted(() => {
       </Link>
 
       <!-- Desktop Nav Items (100% Consistent Page Navigation Links) -->
-      <nav class="hidden lg:flex items-center gap-1 xl:gap-1.5 px-3 py-1.5 rounded-2xl glass-panel border border-white/5" aria-label="Main Navigation">
+      <nav class="hidden lg:flex items-center gap-1 xl:gap-1.5 px-3 py-1.5 rounded-2xl glass-panel border border-white/5" :aria-label="t('nav.home')">
         <Link
           v-for="item in navLinks"
           :key="item.href"
@@ -134,41 +135,30 @@ onUnmounted(() => {
           <span
             v-if="item.badge"
             class="text-[9px] px-1.5 py-0.2 rounded-full font-mono font-bold leading-tight"
-            :class="item.badge === 'HOT' ? 'bg-amber-500/20 text-talisman-gold border border-talisman-gold/40' : 'bg-phantom-mint/20 text-phantom-mint border border-phantom-mint/30'"
+            :class="item.badge === 'HOT' ? 'bg-amber-500/20 text-talisman-gold border border-talisman-gold/40' : item.badge === 'ZEN' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' : 'bg-phantom-mint/20 text-phantom-mint border border-phantom-mint/30'"
           >
             {{ item.badge }}
           </span>
         </Link>
       </nav>
 
-      <!-- Right Action Controls (Time Clock, Sound Toggle, CTA Button & Mobile Toggle) -->
+      <!-- Right Action Controls (Time Clock, Language Switch & Mobile Toggle) -->
       <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
         <!-- Dynamic Midnight Chronos Clock Pill -->
         <MidnightClock />
 
-        <!-- Web Audio Procedural Sound Toggle Button -->
-        <SoundToggle />
-
-        <!-- Desktop Direct CTA Page Link (Contact Summoning Altar) -->
-        <Link
-          href="/contact"
-          class="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-display font-bold text-midnight-950 transition-all hover:brightness-110 active:scale-95 shadow-md flex-shrink-0"
-          :style="{
-            backgroundColor: activePhase.accentHex,
-            boxShadow: `0 4px 16px -2px ${activePhase.accentGlow}`
-          }"
-          @click="sound.playTalisman()"
-        >
-          <span>Triệu Hồi</span>
-          <span>📜</span>
-        </Link>
+        <!-- Language Selector -->
+        <div class="hidden sm:flex items-center rounded-lg border border-white/10 bg-midnight-900/80 p-0.5 text-[10px] font-mono" role="group" aria-label="Language">
+          <button type="button" class="px-2 py-1 rounded-md transition-colors cursor-pointer" :class="locale === 'en' ? 'bg-phantom-mint text-midnight-950 font-bold' : 'text-slate-400 hover:text-white'" @click="setLocale('en')">EN</button>
+          <button type="button" class="px-2 py-1 rounded-md transition-colors cursor-pointer" :class="locale === 'vi' ? 'bg-phantom-mint text-midnight-950 font-bold' : 'text-slate-400 hover:text-white'" @click="setLocale('vi')">VI</button>
+        </div>
 
         <!-- Mobile Hamburger Toggle Button -->
         <button
           type="button"
-          class="lg:hidden p-2 rounded-xl bg-midnight-900 border border-white/10 text-slate-300 hover:text-white hover:border-white/20 transition-all min-h-[40px] min-w-[40px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-phantom-mint"
+          class="lg:hidden p-2 rounded-xl bg-midnight-900 border border-white/10 text-slate-300 hover:text-white hover:border-white/20 transition-all min-h-[40px] min-w-[40px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-phantom-mint cursor-pointer"
           :aria-expanded="isMobileDrawerOpen"
-          aria-label="Toggle Mobile Menu"
+          :aria-label="t('nav.menu')"
           @click="toggleMobileDrawer"
         >
           <Icons :name="isMobileDrawerOpen ? 'X' : 'Menu'" :size="20" />
@@ -212,7 +202,7 @@ onUnmounted(() => {
             v-for="item in navLinks"
             :key="item.href"
             :href="item.href"
-            class="flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-medium transition-all border border-transparent"
+            class="flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-medium transition-all border border-transparent cursor-pointer"
             :class="isLinkActive(item.href)
               ? 'text-phantom-mint bg-phantom-mint/15 font-bold border-phantom-mint/30 shadow-glow-mint'
               : 'text-slate-200 bg-midnight-900/90 border-white/5 hover:text-white hover:bg-white/10 hover:border-white/15'"
@@ -233,16 +223,23 @@ onUnmounted(() => {
         </div>
 
         <div class="pt-4 border-t border-white/10 flex flex-col gap-3">
+          <div class="flex items-center justify-between rounded-xl border border-white/10 bg-midnight-900/80 px-3 py-2">
+            <span class="text-xs font-mono text-slate-400">Language / Ngôn ngữ</span>
+            <div class="flex items-center gap-1 text-[10px] font-mono">
+              <button type="button" class="px-2 py-1 rounded-md cursor-pointer" :class="locale === 'en' ? 'bg-phantom-mint text-midnight-950 font-bold' : 'text-slate-400'" @click="setLocale('en')">EN</button>
+              <button type="button" class="px-2 py-1 rounded-md cursor-pointer" :class="locale === 'vi' ? 'bg-phantom-mint text-midnight-950 font-bold' : 'text-slate-400'" @click="setLocale('vi')">VI</button>
+            </div>
+          </div>
           <Link
             href="/contact"
-            class="w-full py-3.5 rounded-2xl font-display font-bold text-center text-midnight-950 transition-all flex items-center justify-center gap-2"
+            class="w-full py-3.5 rounded-2xl font-display font-bold text-center text-midnight-950 transition-all flex items-center justify-center gap-2 cursor-pointer"
             :style="{
               backgroundColor: activePhase.accentHex,
               boxShadow: `0 4px 16px -2px ${activePhase.accentGlow}`
             }"
             @click="handleNavClick(); sound.playTalisman()"
           >
-            <span>Triệu Hồi Lập Trình Viên</span>
+            <span>{{ t('nav.summonDeveloper') }}</span>
             <span>📜</span>
           </Link>
         </div>
@@ -250,6 +247,6 @@ onUnmounted(() => {
     </transition>
   </header>
 
-  <!-- Global Floating Interactive Screen Pet Companion -->
+  <!-- Global Floating Mascot Companion -->
   <FloatingMascotCompanion />
 </template>

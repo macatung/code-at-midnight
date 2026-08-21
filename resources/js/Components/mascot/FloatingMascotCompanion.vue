@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
+import { Link } from '@inertiajs/vue3';
 import { useTimeCycle } from '@/composables/useTimeCycle';
 import { useMascotReactor } from '@/composables/useMascotReactor';
 import TimeTravelerSlider from '@/Components/mascot/TimeTravelerSlider.vue';
+import { sound } from '@/audio/soundEffects';
 import confetti from 'canvas-confetti';
 
 const { activePhase, formattedTime } = useTimeCycle();
@@ -21,6 +23,11 @@ const isMinimized = ref(false);
 const showTimeTraveler = ref(false);
 const isHovered = ref(false);
 const isDragging = ref(false);
+const isSfxMuted = ref(false);
+
+const toggleSfx = () => {
+  isSfxMuted.value = sound.toggleMute();
+};
 
 // Draggable Position
 const posX = ref(0);
@@ -98,6 +105,7 @@ const handleAvatarClick = () => {
 
 onMounted(() => {
   try {
+    isSfxMuted.value = sound.isMuted();
     const savedMin = localStorage.getItem('macatung_companion_minimized');
     if (savedMin === 'true') isMinimized.value = true;
   } catch {}
@@ -262,15 +270,30 @@ const toggleMinimize = () => {
 
           <!-- Quick Pet Action Tools -->
           <div class="flex flex-col gap-1.5 border-l border-slate-800/80 pl-3">
-            <div class="flex items-center justify-between gap-2 text-[10px] font-mono text-slate-400">
+            <div class="flex items-center justify-between gap-1.5 text-[10px] font-mono text-slate-400">
               <span class="font-bold text-slate-300">Ma Cà Tưng Pet</span>
-              <button
-                @click="toggleMinimize"
-                class="text-slate-500 hover:text-slate-200 px-1 hover:bg-slate-800 rounded transition-colors"
-                title="Thu nhỏ thành icon"
-              >
-                ▼
-              </button>
+              <div class="flex items-center gap-1">
+                <!-- Sound SFX Toggle -->
+                <button
+                  @click="toggleSfx"
+                  class="flex items-center gap-1 px-1.5 py-0.5 rounded-md border text-[9px] font-mono transition-all cursor-pointer select-none"
+                  :class="!isSfxMuted
+                    ? 'border-phantom-mint/40 bg-phantom-mint/10 text-phantom-mint shadow-glow-mint'
+                    : 'border-slate-800 bg-slate-900 text-slate-500 hover:text-slate-300'"
+                  :title="isSfxMuted ? 'Bật hiệu ứng âm thanh SFX' : 'Tắt hiệu ứng âm thanh SFX'"
+                >
+                  <span>{{ isSfxMuted ? '🔇' : '🔊' }}</span>
+                  <span class="font-bold hidden min-[320px]:inline">{{ isSfxMuted ? 'OFF' : 'SFX' }}</span>
+                </button>
+
+                <button
+                  @click="toggleMinimize"
+                  class="text-slate-500 hover:text-slate-200 px-1 hover:bg-slate-800 rounded transition-colors cursor-pointer"
+                  title="Thu nhỏ thành icon"
+                >
+                  ▼
+                </button>
+              </div>
             </div>
 
             <!-- Quick Action Buttons -->
@@ -320,6 +343,17 @@ const toggleMinimize = () => {
                 <span>Tua giờ</span>
               </button>
             </div>
+
+            <!-- Quick Summon Action Link -->
+            <Link
+              href="/contact"
+              class="w-full mt-0.5 py-1 px-2 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 text-[10px] font-mono font-bold flex items-center justify-center gap-1.5 transition-all duration-150 active:scale-95 cursor-pointer"
+              title="Triệu Hồi Ma Cà Tưng / Liên Hệ Tư Vấn"
+              @click="sound.playTalisman()"
+            >
+              <span>📜</span>
+              <span>Triệu Hồi Ma Cà Tưng</span>
+            </Link>
           </div>
         </div>
       </div>
