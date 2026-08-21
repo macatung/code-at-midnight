@@ -10,7 +10,7 @@ export interface ProjectItem {
 
 export interface TaskItem {
   id: number;
-  project_id?: number | null;
+  project_id: number;
   project?: ProjectItem | null;
   title: string;
   description: string | null;
@@ -47,11 +47,14 @@ export interface DailyReviewData {
   wisdom_quote: string;
 }
 
-const API_BASE = `${(import.meta as any).env?.VITE_TASK_HUB_URL || 'https://tasks.macatung.dev'}/api/tasks`;
+export const TASK_HUB_URL = (import.meta as any).env?.VITE_TASK_HUB_URL || 'https://task-hub.macatung.dev';
+const API_BASE = `${TASK_HUB_URL}/api/tasks`;
+const PROJECTS_API = `${TASK_HUB_URL}/api/projects`;
 
 export function useTaskSync() {
   const tasks = ref<TaskItem[]>([]);
   const agentTasks = ref<TaskItem[]>([]);
+  const projects = ref<ProjectItem[]>([]);
   const activeTask = ref<TaskItem | null>(null);
   const isLoading = ref(false);
   const isOnline = ref(true);
@@ -73,6 +76,17 @@ export function useTaskSync() {
       localStorage.setItem('macatung_desktop_synced_tasks', JSON.stringify(tasks.value));
     } catch (e) {
       console.warn('Local task save error:', e);
+    }
+  };
+
+  const fetchProjects = async () => {
+    try {
+      const res = await fetch(PROJECTS_API);
+      if (!res.ok) return;
+      const json = await res.json();
+      if (json.success && Array.isArray(json.data)) projects.value = json.data;
+    } catch (e) {
+      console.warn('Cannot load Task Hub projects:', e);
     }
   };
 
@@ -114,11 +128,15 @@ export function useTaskSync() {
   };
 
   // Create task
-  const createTask = async (title: string, priority = 'high', category = 'backend', estimatedPomodoros = 2) => {
+  const createTask = async (title: string, priority = 'high', projectId?: number, category = 'backend', estimatedPomodoros = 2) => {
     if (!title.trim()) return null;
+    const selectedProjectId = projectId ?? projects.value[0]?.id;
+    if (!selectedProjectId) return null;
 
     const newTask: TaskItem = {
       id: Date.now(),
+      project_id: selectedProjectId,
+      project: projects.value.find(project => project.id === selectedProjectId) || null,
       title: title.trim(),
       description: null,
       status: 'todo',
@@ -145,13 +163,16 @@ export function useTaskSync() {
           const idx = tasks.value.findIndex(t => t.id === newTask.id);
           if (idx !== -1) tasks.value[idx] = json.data;
           saveLocalCache();
+          return json.data;
         }
       }
+      tasks.value = tasks.value.filter(task => task.id !== newTask.id);
+      return null;
     } catch (e) {
+      tasks.value = tasks.value.filter(task => task.id !== newTask.id);
       console.warn('Failed to sync created task to API:', e);
+      return null;
     }
-
-    return newTask;
   };
 
   // Toggle complete
@@ -189,17 +210,20 @@ export function useTaskSync() {
   };
 
   onMounted(() => {
+    fetchProjects();
     fetchTasks();
     fetchAgentTasks();
   });
 
   return {
     tasks,
+    projects,
     agentTasks,
     activeTask,
     isLoading,
     isOnline,
     fetchTasks,
+    fetchProjects,
     fetchAgentTasks,
     createTask,
     toggleTaskComplete,

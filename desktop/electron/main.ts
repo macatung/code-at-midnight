@@ -482,10 +482,10 @@ function createTray() {
       },
     },
     {
-      label: '🌐 Mở Tasks Hub (tasks.macatung.dev)',
+      label: '🌐 Open Task Hub (task-hub.macatung.dev)',
       click: () => {
         import('electron').then(({ shell }) => {
-          shell.openExternal(process.env.TASK_HUB_URL || 'https://tasks.macatung.dev/tasks');
+          shell.openExternal(process.env.TASK_HUB_URL || 'https://task-hub.macatung.dev/tasks');
         });
       },
     },

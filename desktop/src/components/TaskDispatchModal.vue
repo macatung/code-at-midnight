@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { TaskItem } from '../composables/useTaskSync';
+import { ref, watch } from 'vue';
+import { ProjectItem, TaskItem, TASK_HUB_URL } from '../composables/useTaskSync';
 import { mindfulBell } from '../audio/mindfulBellAudio';
 
 const props = defineProps<{
   tasks: TaskItem[];
+  projects: ProjectItem[];
   isOnline: boolean;
 }>();
 
@@ -12,15 +13,19 @@ const emit = defineEmits<{
   (e: 'close'): void;
   (e: 'start-pomodoro', task: TaskItem): void;
   (e: 'toggle-complete', task: TaskItem): void;
-  (e: 'create-task', title: string, priority: string): void;
+  (e: 'create-task', title: string, priority: string, projectId?: number): void;
 }>();
 
 const newTaskTitle = ref('');
 const selectedPriority = ref('high');
+const selectedProjectId = ref<number | undefined>(props.projects[0]?.id);
+watch(() => props.projects, (nextProjects) => {
+  if (!selectedProjectId.value && nextProjects.length) selectedProjectId.value = nextProjects[0].id;
+}, { immediate: true });
 
 const handleAddTask = () => {
   if (!newTaskTitle.value.trim()) return;
-  emit('create-task', newTaskTitle.value.trim(), selectedPriority.value);
+  emit('create-task', newTaskTitle.value.trim(), selectedPriority.value, selectedProjectId.value);
   mindfulBell.ringBell(528, 1.5);
   newTaskTitle.value = '';
 };
@@ -39,9 +44,9 @@ const handleSelectForPomodoro = (task: TaskItem) => {
 
 const openWebHub = () => {
   if ((window as any).electron?.shell?.openExternal) {
-    (window as any).desktopApi?.openExternal?.(`${(import.meta as any).env?.VITE_TASK_HUB_URL || 'https://tasks.macatung.dev'}/tasks`);
+    (window as any).desktopApi?.openExternal?.(`${TASK_HUB_URL}/tasks`);
   } else {
-    window.open(`${(import.meta as any).env?.VITE_TASK_HUB_URL || 'https://tasks.macatung.dev'}/tasks`, '_blank');
+    window.open(`${TASK_HUB_URL}/tasks`, '_blank');
   }
 };
 </script>
@@ -53,38 +58,44 @@ const openWebHub = () => {
       <div>
         <div class="flex items-center gap-1.5 text-xs font-bold text-slate-200">
           <span>🎯</span>
-          <span class="font-mono text-[11px] uppercase tracking-wider">NHIỆM VỤ HÔM NAY</span>
+          <span class="font-mono text-[11px] uppercase tracking-wider">TODAY'S TASKS</span>
         </div>
         <div class="text-[9px] font-mono text-slate-500 flex items-center gap-1 mt-0.5">
           <span class="w-1.5 h-1.5 rounded-full" :class="isOnline ? 'bg-emerald-400' : 'bg-amber-400'"></span>
-          <span>{{ isOnline ? 'Đồng bộ tasks.macatung.dev' : 'Offline Cache' }}</span>
+          <span>{{ isOnline ? 'Synced with task-hub.macatung.dev' : 'Offline cache' }}</span>
         </div>
       </div>
 
       <button
         @click="$emit('close')"
         class="p-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white cursor-pointer text-xs transition-colors"
-        title="Đóng"
+        title="Close"
       >
         ✕
       </button>
     </div>
 
     <!-- Quick Add Input -->
+    <p v-if="!projects.length" class="mb-2 rounded-lg border border-amber-900/60 bg-amber-950/30 px-2 py-1.5 text-[10px] text-amber-200">
+      Create a project in Task Hub before adding a task.
+    </p>
     <div class="flex gap-1.5 mb-2.5">
+      <select v-if="projects.length" v-model="selectedProjectId" class="w-28 rounded-xl bg-slate-900 border border-slate-800 px-2 py-1.5 text-[10px] text-slate-300 outline-none" aria-label="Project">
+        <option v-for="project in projects" :key="project.id" :value="project.id">{{ project.key || project.title }}</option>
+      </select>
       <input
         v-model="newTaskTitle"
         @keyup.enter="handleAddTask"
         type="text"
-        placeholder="+ Giao việc mới... (Enter)"
+        placeholder="+ Add task... (Enter)"
         class="flex-1 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 focus:border-slate-600 text-xs text-white placeholder-slate-500 outline-none font-sans transition-colors"
       />
       <button
         @click="handleAddTask"
-        :disabled="!newTaskTitle.trim()"
+        :disabled="!newTaskTitle.trim() || !projects.length"
         class="px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs cursor-pointer shadow-sm transition-all disabled:opacity-30 disabled:cursor-not-allowed"
       >
-        Thêm
+        Add
       </button>
     </div>
 
@@ -122,8 +133,8 @@ const openWebHub = () => {
             <!-- Metadata Info -->
             <div class="flex items-center gap-2 mt-1 text-[10px] text-slate-500 font-mono">
               <span>🍅 {{ task.completed_pomodoros }}/{{ task.estimated_pomodoros }}</span>
-              <span v-if="task.priority === 'urgent'" class="text-red-400 font-medium">Khẩn cấp</span>
-              <span v-else-if="task.priority === 'high'" class="text-amber-300 font-medium">Ưu tiên</span>
+              <span v-if="task.priority === 'urgent'" class="text-red-400 font-medium">Urgent</span>
+              <span v-else-if="task.priority === 'high'" class="text-amber-300 font-medium">High priority</span>
             </div>
           </div>
         </div>
@@ -133,28 +144,28 @@ const openWebHub = () => {
           v-if="task.status !== 'done'"
           @click="handleSelectForPomodoro(task)"
           class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-emerald-500 text-slate-300 hover:text-slate-950 font-medium text-[10px] shrink-0 transition-all cursor-pointer flex items-center gap-1"
-          title="Bật Pomodoro cho task này"
+          title="Start Pomodoro for this task"
         >
           <span>🍅 Focus</span>
         </button>
       </div>
 
       <div v-if="tasks.length === 0" class="text-center py-5 text-xs text-slate-500 italic">
-        Chưa có nhiệm vụ nào cho hôm nay.
+        No tasks for today.
       </div>
     </div>
 
     <!-- Bottom Actions & Web Hub Link -->
     <div class="pt-2 border-t border-slate-800 flex items-center justify-between text-xs">
       <span class="text-[10px] font-mono text-slate-500">
-        Đã hoàn tất: <strong class="text-emerald-400">{{ tasks.filter(t => t.status === 'done').length }}/{{ tasks.length }}</strong>
+        Completed: <strong class="text-emerald-400">{{ tasks.filter(t => t.status === 'done').length }}/{{ tasks.length }}</strong>
       </span>
 
       <button
         @click="openWebHub"
         class="text-[10px] font-mono text-slate-400 hover:text-white transition-colors cursor-pointer flex items-center gap-1"
       >
-        <span>Mở Bảng Kanban Web</span>
+        <span>Open Task Hub</span>
         <span>↗</span>
       </button>
     </div>

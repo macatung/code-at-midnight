@@ -10,14 +10,13 @@ import CommandPaletteModal from './components/CommandPaletteModal.vue';
 import DailyFocusBar from './components/DailyFocusBar.vue';
 import AgentConsoleModal from './components/AgentConsoleModal.vue';
 import UpdateStatus from './components/UpdateStatus.vue';
-import { useTaskSync, TaskItem } from './composables/useTaskSync';
+import { useTaskSync, TaskItem, TASK_HUB_URL } from './composables/useTaskSync';
 import { sfx } from './audio/soundEffects';
 import { mindfulBell } from './audio/mindfulBellAudio';
 
-const { tasks, agentTasks, activeTask, isOnline, createTask, toggleTaskComplete, incrementPomodoro } = useTaskSync();
+const { tasks, projects, agentTasks, activeTask, isOnline, createTask, toggleTaskComplete, incrementPomodoro } = useTaskSync();
 const isHovered = ref(false);
 const zenMascotRef = ref<InstanceType<typeof ZenMascotStage> | null>(null);
-const TASK_HUB_URL = (import.meta as any).env?.VITE_TASK_HUB_URL || 'https://tasks.macatung.dev';
 type ActiveModal = 'palette' | 'dispatch' | 'review' | 'pomodoro' | 'duck' | 'notes' | 'agent' | null;
 const activeModal = ref<ActiveModal>(null);
 
@@ -64,7 +63,7 @@ const onMascotMouseDown = (event: MouseEvent) => {
   window.addEventListener('mousemove', onMouseMove); window.addEventListener('mouseup', onMouseUp);
 };
 
-const handleCreateTask = (title: string, priority = 'high') => { createTask(title, priority); sfx.playSuccess(); };
+const handleCreateTask = (title: string, priority = 'high', projectId?: number) => { createTask(title, priority, projectId); sfx.playSuccess(); };
 const handleStartPomodoro = (task: TaskItem) => { activeTask.value = task; openModal('pomodoro'); };
 const handlePomodoroCompleted = (task: TaskItem) => { incrementPomodoro(task); sfx.playSuccess(); };
 const hideMascot = () => (window as any).desktopApi?.close?.();
@@ -93,7 +92,7 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeyDown));
     <div class="mr-3 mb-2 z-30 shrink-0">
       <UpdateStatus />
       <CommandPaletteModal v-if="activeModal === 'palette'" @close="activeModal = null" @create-task="handleCreateTask" @start-pomodoro="openModal('pomodoro')" @open-duck="openModal('duck')" @open-notes="openModal('notes')" @open-dispatch="openModal('dispatch')" @open-review="openModal('review')" @check-updates="checkForUpdates" @install-update="installUpdate" />
-      <TaskDispatchModal v-if="activeModal === 'dispatch'" :tasks="tasks" :is-online="isOnline" @close="activeModal = null" @start-pomodoro="handleStartPomodoro" @toggle-complete="toggleTaskComplete" @create-task="handleCreateTask" />
+      <TaskDispatchModal v-if="activeModal === 'dispatch'" :tasks="tasks" :projects="projects" :is-online="isOnline" @close="activeModal = null" @start-pomodoro="handleStartPomodoro" @toggle-complete="toggleTaskComplete" @create-task="handleCreateTask" />
       <AgentConsoleModal v-if="activeModal === 'agent'" :tasks="agentTasks" :initial-task="activeTask" @close="activeModal = null" />
       <PomodoroTimer v-if="activeModal === 'pomodoro'" :active-task="activeTask" @pomodoro-completed="handlePomodoroCompleted" @close="activeModal = null" />
       <EveningReviewModal v-if="activeModal === 'review'" :tasks="tasks" @close="activeModal = null" />
@@ -105,9 +104,9 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeyDown));
       <nav class="no-drag absolute -top-12 right-0 flex items-center gap-1 rounded-2xl border border-slate-700/80 bg-slate-950/98 p-1.5 shadow-2xl ring-1 ring-white/10 backdrop-blur-xl transition-all duration-200" :class="isHovered ? 'pointer-events-auto translate-y-0 opacity-100' : 'pointer-events-none translate-y-1 opacity-0'" aria-label="Task Companion actions" @click.stop @mousedown.stop>
         <button class="dock-button text-violet-300" title="Command center (Ctrl+K)" @click="openModal('palette')">⌘</button>
         <button class="dock-button text-blue-300" title="AI Agent" @click="openModal('agent')">🤖</button>
-        <button class="dock-button text-amber-300" title="Tasks hôm nay" @click="openModal('dispatch')">✓</button>
-        <button class="dock-button text-sky-300" title="Mở Task Hub" @click="openWebAction('/tasks')">↗</button>
-        <button class="dock-button text-slate-300" title="Ẩn mascot" @click="hideMascot">×</button>
+        <button class="dock-button text-amber-300" title="Today's tasks" @click="openModal('dispatch')">✓</button>
+        <button class="dock-button text-sky-300" title="Open Task Hub" @click="openWebAction('/tasks')">↗</button>
+        <button class="dock-button text-slate-300" title="Hide mascot" @click="hideMascot">×</button>
       </nav>
 
       <ZenMascotStage ref="zenMascotRef" :is-hovered="isHovered" />
