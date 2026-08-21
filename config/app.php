@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Facade;
 
 return [
 
-    'name' => env('APP_NAME', 'Macatung Portfolio'),
+    'name' => env('APP_NAME', 'MacaTung — Building AI Agents & Business Systems'),
 
     'env' => env('APP_ENV', 'production'),
 

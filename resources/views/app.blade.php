@@ -5,19 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     
-    <title inertia>{{ config('app.name', 'Ma Cà Tưng • Code at midnight | Full-Stack & Creative Engineering') }}</title>
-    <meta name="description" content="Portfolio & Creative Engineering Lab of macatung.dev — Full-Stack Developer crafting supernatural web apps, interactive 3D, and Theravāda Buddhist wisdom applications.">
+    <title inertia>{{ config('app.name', 'MacaTung — Building AI Agents & Business Systems') }}</title>
+    <meta name="description" content="MacaTung builds AI agents, automation systems and software products for real businesses — from architecture and workflows to production.">
     <meta name="author" content="Ma Cà Tưng (macatung.dev)">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="theme-color" content="#070b14">
+    <link rel="canonical" href="https://macatung.dev/">
 
     <!-- Open Graph / Facebook / Zalo -->
     <meta property="og:type" content="website">
-    <meta property="og:site_name" content="Ma Cà Tưng • macatung.dev">
+    <meta property="og:site_name" content="MacaTung • macatung.dev">
     <meta property="og:locale" content="vi_VN">
-    <meta property="og:title" content="Ma Cà Tưng • Code at midnight | Full-Stack & Creative Engineering">
-    <meta property="og:description" content="Khám phá các dự án công nghệ, ứng dụng web tương tác và kho tàng Phật học nguyên thủy Theravāda.">
-    <meta property="og:image" content="https://macatung.dev/favicon.ico">
+    <meta property="og:title" content="MacaTung — Building AI Agents & Business Systems">
+    <meta property="og:description" content="AI agents, automation systems and software products built from idea to production.">
+    <meta property="og:url" content="https://macatung.dev/">
 
     <!-- Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image">
@@ -32,10 +33,47 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "WebSite",
+                    "@id": "https://macatung.dev/#website",
+                    "url": "https://macatung.dev/",
+                    "name": "MacaTung — Building AI Agents & Business Systems",
+                    "publisher": { "@id": "https://macatung.dev/#person" }
+                },
+                {
+                    "@type": "Person",
+                    "@id": "https://macatung.dev/#person",
+                    "name": "MacaTung",
+                    "alternateName": "Ma Cà Tưng",
+                    "url": "https://macatung.dev/",
+                    "jobTitle": "Software Engineer & AI Builder",
+                    "sameAs": ["https://github.com/macatung"]
+                }
+            ]
+        }
+    </script>
+
     @vite(['resources/css/app.css', 'resources/js/app.ts'])
     @inertiaHead
 </head>
 <body class="bg-midnight-950 text-slate-100 font-sans antialiased selection:bg-phantom-mint selection:text-midnight-950 overflow-x-hidden">
     @inertia
+    <noscript>
+        <main>
+            <h1>MacaTung — Building AI Agents &amp; Business Systems</h1>
+            <p>I build AI agents, automation systems and software products that help real businesses operate better.</p>
+            <p>Explore software architecture, workflow automation, distributed systems and product engineering projects.</p>
+            <nav aria-label="Primary navigation">
+                <a href="/projects">Explore projects</a>
+                <a href="/about">About MacaTung</a>
+                <a href="/blog">Technical notes</a>
+                <a href="/contact">Contact</a>
+            </nav>
+        </main>
+    </noscript>
 </body>
 </html>

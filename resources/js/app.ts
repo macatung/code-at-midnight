@@ -3,7 +3,7 @@ import { createApp, h, DefineComponent } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 
-const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Macatung Portfolio';
+const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'MacaTung — Building AI Agents & Business Systems';
 
 createInertiaApp({
   title: (title) => `${title} — ${appName}`,

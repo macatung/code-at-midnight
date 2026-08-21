@@ -42,7 +42,7 @@ class HomeController extends Controller
         ];
 
         return Inertia::render('Home', [
-            'title' => $settings['site_title'] ?? 'Code at midnight — The Midnight Architect',
+            'title' => $settings['site_title'] ?? 'MacaTung — Building AI Agents & Business Systems',
             'projects' => $projects,
             'skills' => $skills,
             'experiences' => $experiences,

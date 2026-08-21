@@ -86,12 +86,12 @@ const handleCtaClick = (soundType: 'click' | 'talisman', eventName?: string) => 
 
         <!-- Headline Typography with Fluid Tracking & Gradient -->
         <h1 class="text-4xl sm:text-6xl xl:text-7xl font-display font-extrabold text-white tracking-tight leading-[1.08] mb-6">
-          Code at <span class="text-transparent bg-clip-text bg-gradient-to-r from-phantom-mint via-phantom-cyan to-talisman-gold">midnight.</span>
+          Building <span class="text-transparent bg-clip-text bg-gradient-to-r from-phantom-mint via-phantom-cyan to-talisman-gold">AI systems.</span>
         </h1>
 
         <!-- Authoritative Persona Subtitle -->
         <p class="text-base sm:text-lg text-slate-300 max-w-2xl font-sans font-normal leading-relaxed mb-8">
-          Senior Backend / Fullstack Developer & AI Agent Architect với 8+ năm thực chiến. Chuyên sâu kiến trúc Multi-Agent AI tự trị thay thế Customer Service 24/7, hạ tầng viễn thông GIS/NMS và hệ thống web phân tán tải cao.
+          I build AI agents, automation systems and software products that help real businesses operate better — from problem framing and architecture to production. Backend engineering, distributed systems and product thinking, with 8+ years of hands-on experience.
         </p>
 
         <!-- CTA Action Array (100% Consistent Page Navigation Links) -->
@@ -101,7 +101,7 @@ const handleCtaClick = (soundType: 'click' | 'talisman', eventName?: string) => 
             class="px-6 py-3.5 rounded-2xl bg-phantom-mint text-midnight-950 font-display font-bold text-sm sm:text-base hover:brightness-110 shadow-glow-mint transition-all flex items-center gap-2 min-h-[48px] whitespace-nowrap active:scale-95 cursor-pointer"
             @click="handleCtaClick('click', 'projects')"
           >
-            <span>Khám Phá Dự Án</span>
+            <span>Explore my work</span>
             <span>✨</span>
           </Link>
           <Link
@@ -109,7 +109,7 @@ const handleCtaClick = (soundType: 'click' | 'talisman', eventName?: string) => 
             class="px-5 py-3.5 rounded-2xl bg-midnight-900 border border-talisman-gold/40 text-talisman-gold hover:bg-talisman-gold/10 font-display font-bold text-xs sm:text-sm transition-all flex items-center gap-2 min-h-[48px] whitespace-nowrap active:scale-95 shadow-glow-talisman cursor-pointer"
             @click="handleCtaClick('talisman', 'summon')"
           >
-            <span>Triệu Hồi Ngay</span>
+            <span>Start a conversation</span>
             <span>📜</span>
           </Link>
           <Link

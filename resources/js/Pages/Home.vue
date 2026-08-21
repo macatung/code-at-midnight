@@ -44,8 +44,8 @@ const homeJsonLd = {
       '@type': 'WebSite',
       '@id': 'https://macatung.dev/#website',
       'url': 'https://macatung.dev',
-      'name': 'Ma Cà Tưng • Code at midnight',
-      'description': 'Portfolio of macatung.dev — Full-Stack Developer & Creative Engineer crafting supernatural web applications under the midnight moon.',
+      'name': 'MacaTung — Building AI Agents & Business Systems',
+      'description': 'MacaTung builds AI agents, automation systems and software products for real businesses.',
       'publisher': {
         '@id': 'https://macatung.dev/#person'
       },
@@ -55,9 +55,9 @@ const homeJsonLd = {
       '@type': 'Person',
       '@id': 'https://macatung.dev/#person',
       'name': 'Ma Cà Tưng',
-      'alternateName': ['macatung', 'Midnight Architect'],
+      'alternateName': ['macatung', 'Ma Cà Tưng'],
       'url': 'https://macatung.dev',
-      'jobTitle': 'Senior Full-Stack Engineer & Creative Coder',
+      'jobTitle': 'Software Engineer & AI Builder',
       'knowsAbout': ['Laravel', 'Vue.js', 'Inertia.js', 'Tailwind CSS', 'TypeScript', 'Docker', 'Google Cloud Platform', 'AI Multi-Agent Systems'],
       'sameAs': [
         'https://github.com/macatung'
@@ -69,9 +69,9 @@ const homeJsonLd = {
 
 <template>
   <SeoHead
-    :title="title || 'The Midnight Architect — Full-Stack, AI Systems & Triết Lý Vị Nhân Sinh'"
-    description="Khám phá Portfolio độc bản của Ma Cà Tưng (macatung.dev) — Lập trình viên Full-Stack & AI Systems Architect với triết lý kiến tạo phần mềm vị nhân sinh, hệ thống phân tán chịu tải cao và trải nghiệm tương tác kỳ ảo."
-    keywords="Ma Cà Tưng, macatung.dev, Triết lý xây dựng ứng dụng, Triết lý nhân sinh, Full-Stack Developer, AI Agent Architect, Laravel, Vue.js, Midnight Coder, Software Craftsmanship"
+    :title="title || 'MacaTung — Building AI Agents & Business Systems'"
+    description="MacaTung builds AI agents, automation systems and software products for real businesses — from architecture and workflows to production."
+    keywords="MacaTung, macatung.dev, AI agents, business systems, automation, software architecture, distributed systems, Laravel, Vue.js"
     canonical="https://macatung.dev"
     :json-ld="homeJsonLd"
   />
