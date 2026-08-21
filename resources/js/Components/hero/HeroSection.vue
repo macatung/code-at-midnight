@@ -7,15 +7,18 @@ import Icons from '@/Components/ui/Icons.vue';
 import { sound } from '@/audio/soundEffects';
 import { trackEvent } from '@/utils/analytics';
 import { useTimeCycle } from '@/composables/useTimeCycle';
+import { useI18n } from '@/composables/useI18n';
 
 const {
   activePhaseId,
   activePhase,
   isTimeTravelActive,
   TIME_PHASES,
+  localizePhase,
   setPhaseOverride,
   resetToRealTime
 } = useTimeCycle();
+const { t } = useI18n();
 
 const emit = defineEmits<{
   (e: 'hop', count: number): void;
@@ -65,7 +68,7 @@ const handleCtaClick = (soundType: 'click' | 'talisman', eventName?: string) => 
           </div>
 
           <span class="text-slate-100 font-bold uppercase tracking-wider">
-            SẴN SÀNG NHẬN QUEST 00:00 AM
+            {{ activePhase.statusBeacon }}
           </span>
           <span
             class="px-1.5 py-0.2 rounded text-[10px] font-bold uppercase"
@@ -74,7 +77,7 @@ const handleCtaClick = (soundType: 'click' | 'talisman', eventName?: string) => 
               color: activePhase.accentHex
             }"
           >
-            {{ activePhase.badgeText }}
+            {{ t('hero.badge') }}
           </span>
         </div>
 
@@ -86,12 +89,12 @@ const handleCtaClick = (soundType: 'click' | 'talisman', eventName?: string) => 
 
         <!-- Headline Typography with Fluid Tracking & Gradient -->
         <h1 class="text-4xl sm:text-6xl xl:text-7xl font-display font-extrabold text-white tracking-tight leading-[1.08] mb-6">
-          Building <span class="text-transparent bg-clip-text bg-gradient-to-r from-phantom-mint via-phantom-cyan to-talisman-gold">AI systems.</span>
+          {{ t('hero.headline') }} <span class="text-transparent bg-clip-text bg-gradient-to-r from-phantom-mint via-phantom-cyan to-talisman-gold">{{ t('hero.headlineAccent') }}</span>
         </h1>
 
         <!-- Authoritative Persona Subtitle -->
         <p class="text-base sm:text-lg text-slate-300 max-w-2xl font-sans font-normal leading-relaxed mb-8">
-          I build AI agents, automation systems and software products that help real businesses operate better — from problem framing and architecture to production. Backend engineering, distributed systems and product thinking, with 8+ years of hands-on experience.
+          {{ t('hero.description') }}
         </p>
 
         <!-- CTA Action Array (100% Consistent Page Navigation Links) -->
@@ -101,7 +104,7 @@ const handleCtaClick = (soundType: 'click' | 'talisman', eventName?: string) => 
             class="px-6 py-3.5 rounded-2xl bg-phantom-mint text-midnight-950 font-display font-bold text-sm sm:text-base hover:brightness-110 shadow-glow-mint transition-all flex items-center gap-2 min-h-[48px] whitespace-nowrap active:scale-95 cursor-pointer"
             @click="handleCtaClick('click', 'projects')"
           >
-            <span>Explore my work</span>
+            <span>{{ t('hero.explore') }}</span>
             <span>✨</span>
           </Link>
           <Link
@@ -109,7 +112,7 @@ const handleCtaClick = (soundType: 'click' | 'talisman', eventName?: string) => 
             class="px-5 py-3.5 rounded-2xl bg-midnight-900 border border-talisman-gold/40 text-talisman-gold hover:bg-talisman-gold/10 font-display font-bold text-xs sm:text-sm transition-all flex items-center gap-2 min-h-[48px] whitespace-nowrap active:scale-95 shadow-glow-talisman cursor-pointer"
             @click="handleCtaClick('talisman', 'summon')"
           >
-            <span>Start a conversation</span>
+            <span>{{ t('hero.conversation') }}</span>
             <span>📜</span>
           </Link>
           <Link
@@ -118,7 +121,7 @@ const handleCtaClick = (soundType: 'click' | 'talisman', eventName?: string) => 
             @click="handleCtaClick('click', 'game')"
           >
             <span>🎮</span>
-            <span>Chơi Dev Game</span>
+            <span>{{ t('hero.game') }}</span>
           </Link>
           <Link
             href="/about"
@@ -126,16 +129,16 @@ const handleCtaClick = (soundType: 'click' | 'talisman', eventName?: string) => 
             @click="handleCtaClick('click', 'about')"
           >
             <Icons name="Zap" :size="16" class="text-phantom-mint" />
-            <span>Kỹ Năng & Hồ Sơ</span>
+            <span>{{ t('hero.profile') }}</span>
           </Link>
           <Link
             href="/contact"
             class="px-4 py-3.5 rounded-2xl bg-white/5 border border-white/10 hover:border-talisman-gold/40 text-slate-300 hover:text-talisman-gold font-mono text-xs sm:text-sm transition-all flex items-center gap-2 min-h-[48px] whitespace-nowrap cursor-pointer"
-            title="Xem & Tải Hồ Sơ Năng Lực"
+            :title="t('hero.cvTitle')"
             @click="handleCtaClick('click', 'cv_download')"
           >
             <Icons name="FileText" :size="16" />
-            <span>Tải CV</span>
+            <span>{{ t('hero.cv') }}</span>
           </Link>
         </div>
 
@@ -143,7 +146,7 @@ const handleCtaClick = (soundType: 'click' | 'talisman', eventName?: string) => 
         <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-4 text-xs font-mono text-slate-300">
           <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-midnight-900/60 border border-white/5 whitespace-nowrap">
             <Icons name="Zap" :size="14" class="text-phantom-mint" />
-            <span>&gt; 8 Năm Thực Chiến</span>
+            <span>{{ t('hero.years') }}</span>
           </div>
           <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-midnight-900/60 border border-white/5 whitespace-nowrap">
             <Icons name="Activity" :size="14" class="text-phantom-mint" />
@@ -151,11 +154,11 @@ const handleCtaClick = (soundType: 'click' | 'talisman', eventName?: string) => 
           </div>
           <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-midnight-900/60 border border-white/5 whitespace-nowrap">
             <Icons name="Coffee" :size="14" class="text-amber-400" />
-            <span>100% Robusta Flow</span>
+            <span>{{ t('hero.robusta') }}</span>
           </div>
           <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-midnight-900/60 border border-white/5 whitespace-nowrap">
             <Icons name="Bug" :size="14" class="text-rose-400" />
-            <span>0 Bug In Production</span>
+            <span>{{ t('hero.zeroBugs') }}</span>
           </div>
         </div>
 
@@ -165,7 +168,7 @@ const handleCtaClick = (soundType: 'click' | 'talisman', eventName?: string) => 
             <span class="p-1 rounded-lg bg-white/5 border border-white/10">
               <Icons name="Compass" :size="14" :style="{ color: activePhase.accentHex }" />
             </span>
-            <span class="font-bold whitespace-nowrap">Phân Kỳ Nhịp Sống:</span>
+            <span class="font-bold whitespace-nowrap">{{ t('hero.phase') }}:</span>
           </div>
           
           <div class="flex flex-wrap items-center justify-center gap-1.5 w-full sm:w-auto">
@@ -185,17 +188,17 @@ const handleCtaClick = (soundType: 'click' | 'talisman', eventName?: string) => 
               } : {}"
             >
               <Icons :name="phase.icon" :size="12" />
-              <span>{{ phase.name }}</span>
+              <span>{{ localizePhase(phase).name }}</span>
             </button>
             <button
               v-if="isTimeTravelActive"
               type="button"
               @click="resetToRealTime"
               class="px-2.5 py-1.5 rounded-xl text-xs font-mono bg-phantom-mint/20 text-phantom-mint border border-phantom-mint/40 hover:bg-phantom-mint/30 transition-all cursor-pointer font-bold flex items-center gap-1"
-              title="Quay lại giờ thực tế của hệ thống"
+              :title="t('time.reset')"
             >
               <Icons name="RotateCcw" :size="11" />
-              <span>Giờ Thực</span>
+              <span>{{ t('hero.realTime') }}</span>
             </button>
           </div>
         </div>

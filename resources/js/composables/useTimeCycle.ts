@@ -1,5 +1,6 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { playCelestialChime } from '@/audio/soundEffects';
+import { useI18n } from '@/composables/useI18n';
 
 export type TimePhaseId = 'midnight' | 'dawn' | 'afternoon' | 'twilight';
 
@@ -153,6 +154,7 @@ if (typeof window !== 'undefined') {
 }
 
 export function useTimeCycle() {
+  const { locale, t } = useI18n();
   const pad = (n: number) => String(n).padStart(2, '0');
 
   const currentRealHour = computed(() => currentTime.value.getHours());
@@ -180,15 +182,29 @@ export function useTimeCycle() {
     return manualOverridePhase.value || realPhaseId.value;
   });
 
+  const localizePhase = (phase: TimePhaseConfig): TimePhaseConfig => {
+    const prefix = `phase.${phase.id}`;
+    return {
+      ...phase,
+      vietnameseName: t(`${prefix}.vietnameseName`, phase.vietnameseName),
+      greeting: t(`${prefix}.greeting`, phase.greeting),
+      statusBeacon: t(`${prefix}.status`, phase.statusBeacon),
+      tagline: t(`${prefix}.tagline`, phase.tagline),
+      themeDescription: t(`${prefix}.theme`, phase.themeDescription),
+    };
+  };
+
   const activePhase = computed<TimePhaseConfig>(() => {
-    return TIME_PHASES[activePhaseId.value];
+    // Read locale so all phase labels react immediately to the language switch.
+    void locale.value;
+    return localizePhase(TIME_PHASES[activePhaseId.value]);
   });
 
   const isTimeTravelActive = computed(() => manualOverridePhase.value !== null || simulatedHour.value !== null);
 
   // Trigger phase transition toast & celestial sound
   function triggerPhaseTransition(newPhaseId: TimePhaseId, isManual: boolean = false) {
-    const phase = TIME_PHASES[newPhaseId];
+    const phase = localizePhase(TIME_PHASES[newPhaseId]);
     
     try {
       playCelestialChime(newPhaseId);
@@ -301,6 +317,7 @@ export function useTimeCycle() {
     manualOverridePhase,
     transitionToast,
     TIME_PHASES,
+    localizePhase,
     setSimulatedHour,
     setPhaseOverride,
     resetToRealTime,

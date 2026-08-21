@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import Icons from '@/Components/ui/Icons.vue';
 import { sound } from '@/audio/soundEffects';
+import { useI18n } from '@/composables/useI18n';
 
 interface Pillar {
   id: string;
@@ -18,6 +19,7 @@ interface Pillar {
 }
 
 const activePillarId = ref<string>('empathy');
+const { locale } = useI18n();
 
 const pillars: Pillar[] = [
   {
@@ -74,6 +76,23 @@ const pillars: Pillar[] = [
   }
 ];
 
+const englishPillars: Record<string, Partial<Pillar>> = {
+  empathy: { title: 'Human-Centered Design', shortDesc: 'Code should understand and solve real user pain, not perform complexity.', philosophy: 'The best software serves people quietly and thoughtfully. Remove ego and over-engineering so every line remains clear for the people who inherit it.', technicalPractice: 'Turn complex logic into calm, intuitive experiences. Reject dark patterns and protect privacy, trust and time.', badge: 'Human-First UX' },
+  resilience: { title: 'Resilient Green Architecture', shortDesc: 'Services, APIs and data structures should work together as a resource-aware ecosystem.', philosophy: 'In distributed systems, a small data-layer change can ripple through the whole experience. Sustainable software is efficient, smooth and adaptable.', technicalPractice: 'Use decoupled microservices and event-driven design to reduce server consumption while keeping modules resilient to change.', badge: 'Resilient Ecology' },
+  craftsmanship: { title: 'Discipline & Absolute Quality', shortDesc: 'Technical debt and carelessness create anxiety; craft creates long-term trust.', philosophy: 'Every rushed, irresponsible line plants a future crisis. Software craftsmanship is an engineer’s measure of responsibility.', technicalPractice: 'Strict TypeScript, automated E2E and unit regression tests, zero-crash defense and layered security before production.', badge: 'Zero-Debt Flow' },
+  flourishing: { title: 'Human Empowerment', shortDesc: 'Real technology returns freedom, time and creativity to people.', philosophy: 'AI should carry repetitive work so people have more room for strategy, creativity and a meaningful life.', technicalPractice: 'Build autonomous multi-agent systems that automate complex workflows accurately and return thousands of manual hours.', badge: 'Human Flourishing' }
+};
+
+const displayPillars = computed(() => locale.value === 'en'
+  ? pillars.map((pillar) => ({ ...pillar, ...englishPillars[pillar.id] }))
+  : pillars);
+
+const copy = computed(() => locale.value === 'en' ? {
+  title: 'Humanistic Software Engineering', accent: 'Application Craft & Software Engineering', description: 'Software is more than cold binary commands; it reflects the mind of its maker. Building applications is a practice of service and craft, rooted in people and peace.', principle: '✨ Engineering Principle', principleText: 'Kind intent in code — applications that serve people', quote: 'Every line typed in the quiet of midnight carries responsibility. Write with awareness and compassion: reduce user pain, create clarity and return time to real life.', subline: 'Humanistic software engineering', detail: '● Viewing details', view: '○ View details', pillar: 'PILLAR', thinking: 'Builder Mindset & Reflection', practice: 'Craft & Technical Practice'
+} : {
+  title: 'Triết Lý Nhân Sinh Trong', accent: 'Kiến Tạo Ứng Dụng & Kỹ Nghệ Phần Mềm', description: 'Phần mềm không chỉ là những dòng lệnh nhị phân lạnh lùng, mà là sự phản chiếu của tư duy người lập trình. Kiến tạo ứng dụng là hành trình phụng sự và hoàn thiện kỹ nghệ, lấy con người và sự bình an làm gốc rễ.', principle: '✨ Tôn Chỉ Kỹ Nghệ', principleText: 'Code Khởi Tâm Thiện — Ứng Dụng Phụng Sự Nhân Sinh', quote: 'Mỗi dòng code gõ xuống trong tĩnh lặng của đêm đen (00:00 AM) đều mang theo một trách nhiệm. Viết code với sự tỉnh thức và lòng trắc ẩn để giải trừ nỗi đau của người dùng, mang lại sự giản đơn, minh bạch và giải phóng thời gian cho cuộc sống đích thực.', subline: 'Kỹ nghệ phần mềm vị nhân sinh', detail: '● Đang xem chi tiết', view: '○ Xem chi tiết', pillar: 'TRỤ CỘT', thinking: 'Tư Duy Kiến Tạo & Chiêm Nghiệm', practice: 'Kỹ Nghệ & Thực Hành Kỹ Thuật'
+});
+
 const selectPillar = (id: string) => {
   activePillarId.value = id;
   sound.playClick();
@@ -89,16 +108,16 @@ const selectPillar = (id: string) => {
     <div class="flex flex-col items-start mb-12 relative z-10">
       <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono mb-3 shadow-glow-mint select-none">
         <span class="text-phantom-mint">🌿</span>
-        <span class="text-slate-200 font-semibold tracking-wide">Humanistic Software Engineering Manifesto</span>
+        <span class="text-slate-200 font-semibold tracking-wide">{{ copy.title }} Manifesto</span>
       </div>
       <h2 class="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold text-white tracking-tight leading-tight">
-        Triết Lý Nhân Sinh Trong <br class="hidden sm:inline" />
+        {{ copy.title }} <br class="hidden sm:inline" />
         <span class="text-transparent bg-clip-text bg-gradient-to-r from-phantom-mint via-talisman-gold to-phantom-cyan">
-          Kiến Tạo Ứng Dụng & Kỹ Nghệ Phần Mềm
+          {{ copy.accent }}
         </span>
       </h2>
       <p class="text-sm sm:text-base text-slate-300 mt-3 max-w-3xl font-sans leading-relaxed">
-        Phần mềm không chỉ là những dòng lệnh nhị phân lạnh lùng, mà là sự phản chiếu của tư duy người lập trình. Kiến tạo ứng dụng là hành trình phụng sự và hoàn thiện kỹ nghệ, lấy con người và sự bình an làm gốc rễ.
+        {{ copy.description }}
       </p>
     </div>
 
@@ -107,19 +126,19 @@ const selectPillar = (id: string) => {
       <div class="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
         <div class="space-y-2 max-w-4xl">
           <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-talisman-gold/10 text-talisman-gold border border-talisman-gold/30 text-xs font-mono font-bold">
-            <span>✨ Tôn Chỉ Kỹ Nghệ</span>
+            <span>{{ copy.principle }}</span>
             <span>·</span>
-            <span>Code Khởi Tâm Thiện — Ứng Dụng Phụng Sự Nhân Sinh</span>
+            <span>{{ copy.principleText }}</span>
           </div>
           <blockquote class="text-base sm:text-lg lg:text-xl font-sans italic text-slate-100 leading-relaxed pt-1">
-            "Mỗi dòng code gõ xuống trong tĩnh lặng của đêm đen (00:00 AM) đều mang theo một trách nhiệm. Viết code với sự tỉnh thức và lòng trắc ẩn để giải trừ nỗi đau của người dùng, mang lại sự giản đơn, minh bạch và giải phóng thời gian cho cuộc sống đích thực."
+            "{{ copy.quote }}"
           </blockquote>
         </div>
 
         <div class="shrink-0 flex items-center gap-3 border-t lg:border-t-0 lg:border-l border-white/10 pt-4 lg:pt-0 lg:pl-6 text-xs font-mono text-slate-400">
           <div class="text-left">
             <p class="text-phantom-mint font-bold uppercase tracking-wider">The Midnight Architect</p>
-            <p class="text-slate-400 text-[11px] mt-0.5">Kỹ nghệ phần mềm vị nhân sinh</p>
+            <p class="text-slate-400 text-[11px] mt-0.5">{{ copy.subline }}</p>
           </div>
         </div>
       </div>
@@ -128,7 +147,7 @@ const selectPillar = (id: string) => {
     <!-- 4 Core Pillars Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-10 relative z-10">
       <div
-        v-for="pillar in pillars"
+        v-for="pillar in displayPillars"
         :key="pillar.id"
         class="rounded-3xl glass-panel p-6 border transition-all duration-300 flex flex-col justify-between cursor-pointer group hover:-translate-y-1 relative overflow-hidden"
         :class="activePillarId === pillar.id
@@ -189,7 +208,7 @@ const selectPillar = (id: string) => {
             class="text-[11px] font-bold transition-colors"
             :style="{ color: activePillarId === pillar.id ? pillar.accentColor : '#94a3b8' }"
           >
-            {{ activePillarId === pillar.id ? '● Đang xem chi tiết' : '○ Xem chi tiết' }}
+            {{ activePillarId === pillar.id ? copy.detail : copy.view }}
           </span>
           <span
             class="text-xs transition-transform group-hover:translate-x-1"
@@ -207,7 +226,7 @@ const selectPillar = (id: string) => {
       class="rounded-3xl glass-panel p-6 sm:p-8 border border-white/15 bg-gradient-to-b from-midnight-900/95 to-midnight-950 relative z-10 shadow-2xl transition-all duration-500"
     >
       <div
-        v-for="pillar in pillars"
+        v-for="pillar in displayPillars"
         :key="`detail-${pillar.id}`"
         v-show="activePillarId === pillar.id"
         class="space-y-6"
@@ -226,7 +245,7 @@ const selectPillar = (id: string) => {
             </div>
             <div>
               <div class="flex items-center gap-2">
-                <span class="text-xs font-mono font-bold text-slate-400">TRỤ CỘT {{ pillar.number }}</span>
+                <span class="text-xs font-mono font-bold text-slate-400">{{ copy.pillar }} {{ pillar.number }}</span>
                 <span class="text-xs font-mono text-talisman-gold">({{ pillar.subtitle }})</span>
               </div>
               <h4 class="text-xl sm:text-2xl font-display font-extrabold text-white">
@@ -252,7 +271,7 @@ const selectPillar = (id: string) => {
           <div class="p-5 rounded-2xl bg-white/[0.02] border border-white/5 space-y-2">
             <div class="flex items-center gap-2 text-xs font-mono text-slate-300 font-bold uppercase tracking-wider">
               <span class="text-base">💭</span>
-              <span>Tư Duy Kiến Tạo & Chiêm Nghiệm</span>
+              <span>{{ copy.thinking }}</span>
             </div>
             <p class="text-sm text-slate-200 font-sans leading-relaxed pt-1">
               {{ pillar.philosophy }}
@@ -263,7 +282,7 @@ const selectPillar = (id: string) => {
           <div class="p-5 rounded-2xl bg-white/[0.02] border border-white/5 space-y-2">
             <div class="flex items-center gap-2 text-xs font-mono text-phantom-mint font-bold uppercase tracking-wider">
               <span class="text-base">⚙️</span>
-              <span>Kỹ Nghệ & Thực Hành Kỹ Thuật</span>
+              <span>{{ copy.practice }}</span>
             </div>
             <p class="text-sm text-slate-300 font-sans leading-relaxed pt-1">
               {{ pillar.technicalPractice }}

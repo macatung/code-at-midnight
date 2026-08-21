@@ -4,6 +4,7 @@ import confetti from 'canvas-confetti';
 import { talismanPresets } from '@/data/talismanData';
 import type { TalismanPreset } from '@/types/portfolio';
 import { sound } from '@/audio/soundEffects';
+import { useI18n } from '@/composables/useI18n';
 
 const selectedPreset = ref<TalismanPreset>(talismanPresets[0]);
 const developerName = ref('');
@@ -12,6 +13,7 @@ const colorPalette = ref<'yellow' | 'crimson' | 'cyan' | 'purple'>(talismanPrese
 const isBlessed = ref(false);
 const isBlessingAnimation = ref(false);
 const copiedToast = ref(false);
+const { t } = useI18n();
 
 const palettes = [
   { id: 'yellow', label: 'Talisman Gold', border: 'border-talisman-yellow/80', glow: 'shadow-[0_0_35px_rgba(255,209,102,0.35)]', badge: 'bg-amber-950/80 text-talisman-yellow', dot: 'bg-talisman-yellow' },
@@ -61,7 +63,7 @@ const generateAsciiTalisman = (): string => {
   const name = displayName.value;
   const wish = displayWish.value;
   const title = selectedPreset.value.title;
-  const seal = isBlessed.value ? '[✓ ĐÃ KHAI QUANG]' : '[CHƯA KHAI QUANG]';
+  const seal = isBlessed.value ? `[${t('forge.blessed')}]` : t('forge.notBlessed');
 
   return `
 +------------------------------------------+
@@ -100,19 +102,19 @@ const copyAscii = async () => {
     <div class="lg:col-span-7 flex flex-col gap-6 text-left">
       <div>
         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-talisman-gold text-xs font-mono mb-3 whitespace-nowrap select-none shadow-glow-talisman">
-          ⚡ Developer Talisman Forge
+          ⚡ {{ t('talisman.title') }}
         </span>
         <h2 class="text-3xl sm:text-4xl font-display font-extrabold text-white tracking-tight">
-          Lò Luyện Bùa <span class="text-transparent bg-clip-text bg-gradient-to-r from-talisman-gold via-amber-400 to-rose-400">Lập Trình</span>
+          {{ t('forge.title') }} <span class="text-transparent bg-clip-text bg-gradient-to-r from-talisman-gold via-amber-400 to-rose-400">{{ t('forge.titleAccent') }}</span>
         </h2>
         <p class="text-sm sm:text-base text-slate-400 mt-2 font-sans">
-          Chọn thần chú hộ mệnh, điền tên và tâm nguyện, sau đó thực hiện nghi thức Khai Quang để nhận phúc khí 0-bug cho toàn bộ repository.
+          {{ t('forge.description') }}
         </p>
       </div>
 
       <!-- Preset Spells Grid -->
       <div>
-        <label class="block text-xs font-mono text-slate-400 uppercase tracking-wider mb-2 whitespace-nowrap">1. Chọn Thần Chú Bùa Chú</label>
+        <label class="block text-xs font-mono text-slate-400 uppercase tracking-wider mb-2 whitespace-nowrap">{{ t('forge.presets') }}</label>
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
           <button
             v-for="preset in talismanPresets"
@@ -133,7 +135,7 @@ const copyAscii = async () => {
       <!-- Custom Inputs -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label class="block text-xs font-mono text-slate-400 uppercase tracking-wider mb-1.5 whitespace-nowrap">2. Tên Kỹ Sư (Author)</label>
+          <label class="block text-xs font-mono text-slate-400 uppercase tracking-wider mb-1.5 whitespace-nowrap">{{ t('forge.author') }}</label>
           <input
             v-model="developerName"
             type="text"
@@ -142,7 +144,7 @@ const copyAscii = async () => {
           />
         </div>
         <div>
-          <label class="block text-xs font-mono text-slate-400 uppercase tracking-wider mb-1.5 whitespace-nowrap">3. Nguyện Ước / Lời Chúc</label>
+          <label class="block text-xs font-mono text-slate-400 uppercase tracking-wider mb-1.5 whitespace-nowrap">{{ t('forge.wish') }}</label>
           <input
             v-model="customWish"
             type="text"
@@ -154,7 +156,7 @@ const copyAscii = async () => {
 
       <!-- Palette Selector -->
       <div>
-        <label class="block text-xs font-mono text-slate-400 uppercase tracking-wider mb-2 whitespace-nowrap">4. Khí Sắc Bùa (Color Palette)</label>
+        <label class="block text-xs font-mono text-slate-400 uppercase tracking-wider mb-2 whitespace-nowrap">{{ t('forge.palette') }}</label>
         <div class="flex flex-wrap items-center gap-2 sm:gap-3">
           <button
             v-for="p in palettes"
@@ -181,7 +183,7 @@ const copyAscii = async () => {
           :disabled="isBlessingAnimation"
           @click="triggerKhaiQuang"
         >
-          <span>{{ isBlessingAnimation ? '⏳ Đang Niệm Chú Khai Quang...' : isBlessed ? '✨ Khai Quang Lại' : '🔥 Khai Quang Trì Chú' }}</span>
+          <span>{{ isBlessingAnimation ? t('forge.blessingProgress') : isBlessed ? t('forge.blessingAgain') : `🔥 ${t('forge.blessing')}` }}</span>
         </button>
 
         <button
@@ -189,7 +191,7 @@ const copyAscii = async () => {
           class="px-5 py-3.5 rounded-xl border border-white/10 hover:border-phantom-mint bg-midnight-900 text-slate-200 hover:text-white font-mono text-xs font-bold transition-all flex items-center gap-2 min-h-[48px] whitespace-nowrap"
           @click="copyAscii"
         >
-          <span>{{ copiedToast ? '✓ Đã Copy ASCII!' : '📋 Copy ASCII Card' }}</span>
+          <span>{{ copiedToast ? t('forge.copied') : t('forge.copy') }}</span>
         </button>
       </div>
     </div>
@@ -223,10 +225,10 @@ const copyAscii = async () => {
         <!-- Developer Inscriptions -->
         <div class="w-full border-t border-b border-white/10 py-3 mb-4 space-y-1.5 text-left text-xs font-mono">
           <div class="text-slate-400">
-            Kỹ Sư: <span class="text-white font-semibold">{{ displayName }}</span>
+            {{ t('forge.owner') }} <span class="text-white font-semibold">{{ displayName }}</span>
           </div>
           <div class="text-slate-400 leading-snug">
-            Nguyện: <span class="text-amber-200/90 font-sans">{{ displayWish }}</span>
+            {{ t('forge.wishValue') }} <span class="text-amber-200/90 font-sans">{{ displayWish }}</span>
           </div>
         </div>
 
@@ -236,13 +238,13 @@ const copyAscii = async () => {
             v-if="isBlessed"
             class="px-4 py-2 rounded-full border-2 border-emerald-400 text-emerald-400 font-mono font-extrabold text-xs tracking-wider shadow-glow-mint transform -rotate-6 transition-all duration-300 scale-105 flex items-center gap-1.5 whitespace-nowrap"
           >
-            <span>✓ ĐÃ KHAI QUANG</span>
+            <span>{{ t('forge.blessed') }}</span>
           </div>
           <div
             v-else
             class="px-4 py-1.5 rounded-full border border-dashed border-slate-600 text-slate-500 font-mono text-[11px] whitespace-nowrap"
           >
-            [CHƯA KHAI QUANG]
+            {{ t('forge.notBlessed') }}
           </div>
         </div>
       </div>

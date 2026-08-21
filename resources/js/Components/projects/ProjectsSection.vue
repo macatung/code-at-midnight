@@ -6,6 +6,7 @@ import type { Project } from '@/types/portfolio';
 import ProjectModal from './ProjectModal.vue';
 import { sound } from '@/audio/soundEffects';
 import Icons from '@/Components/ui/Icons.vue';
+import { useI18n } from '@/composables/useI18n';
 
 interface Props {
   projects?: Project[];
@@ -16,6 +17,7 @@ const props = withDefaults(defineProps<Props>(), {
   projects: () => [],
   featuredOnly: false,
 });
+const { t } = useI18n();
 
 type CategoryFilter = 'all' | 'fullstack' | 'creative' | 'ai-web3' | 'tools';
 
@@ -25,12 +27,14 @@ const selectedProject = ref<Project | null>(null);
 const isModalOpen = ref(false);
 
 const categories = [
-  { id: 'all', label: 'Tất Cả Dự Án' },
+  { id: 'all', label: 'All Projects' },
   { id: 'fullstack', label: 'Full-Stack' },
   { id: 'creative', label: 'Creative UI & Audio' },
   { id: 'ai-web3', label: 'AI & Microservices' },
   { id: 'tools', label: 'Developer Tools' }
 ] as const;
+
+const categoryLabel = (id: CategoryFilter) => id === 'all' ? t('projects.all') : categories.find((category) => category.id === id)?.label || id;
 
 const allProjects = computed(() => {
   return props.projects && props.projects.length > 0 ? props.projects : projectsData;
@@ -90,13 +94,13 @@ const closeModal = () => {
     <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
       <div class="flex flex-col items-start">
         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-phantom-mint text-xs font-mono mb-3 whitespace-nowrap select-none shadow-glow-mint">
-          📜 The Grimoire Portfolio
+          📜 Project Grimoire
         </span>
         <h2 class="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold text-white tracking-tight">
-          {{ featuredOnly ? 'Dự Án Kiến Trúc' : 'Tác Phẩm &' }} <span class="text-transparent bg-clip-text bg-gradient-to-r from-phantom-mint via-phantom-cyan to-talisman-gold">{{ featuredOnly ? 'Tiêu Biểu' : 'Thực Chiến' }}</span>
+          {{ featuredOnly ? t('projects.architecture') : t('projects.works') }} <span class="text-transparent bg-clip-text bg-gradient-to-r from-phantom-mint via-phantom-cyan to-talisman-gold">{{ featuredOnly ? t('projects.featured') : t('projects.worksAccent') }}</span>
         </h2>
         <p class="text-sm sm:text-base text-slate-400 mt-2 max-w-2xl font-sans">
-          Những hệ thống phân tán, web app tải cao và công cụ sáng tạo được kiến tạo trong những phiên lập trình tĩnh lặng.
+          {{ t('projects.description') }}
         </p>
       </div>
 
@@ -106,7 +110,7 @@ const closeModal = () => {
         <input
           v-model="searchQuery"
           type="text"
-          placeholder="Tìm kiếm công nghệ, tên..."
+          :placeholder="t('projects.search')"
           class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-midnight-900/90 border border-white/10 text-slate-200 placeholder-slate-500 text-xs sm:text-sm font-sans focus:outline-none focus:border-phantom-mint transition-colors"
         />
         <button
@@ -125,7 +129,7 @@ const closeModal = () => {
         href="/projects"
         class="px-5 py-3 rounded-2xl bg-white/5 hover:bg-phantom-mint text-slate-200 hover:text-midnight-950 font-display font-bold text-xs sm:text-sm transition-all flex items-center gap-2 border border-white/10 hover:border-phantom-mint shadow-sm hover:shadow-glow-mint whitespace-nowrap"
       >
-        <span>Xem Toàn Bộ 6+ Dự Án</span>
+        <span>{{ t('projects.viewAll') }}</span>
         <span>→</span>
       </Link>
     </div>
@@ -142,7 +146,7 @@ const closeModal = () => {
           : 'bg-midnight-900/80 text-slate-400 border-white/5 hover:border-white/20 hover:text-white'"
         @click="setCategory(cat.id as CategoryFilter)"
       >
-        <span>{{ cat.label }}</span>
+        <span>{{ categoryLabel(cat.id as CategoryFilter) }}</span>
         <span
           class="text-[10px] px-1.5 py-0.2 rounded-full font-bold"
           :class="activeCategory === cat.id ? 'bg-midnight-950/20 text-midnight-950' : 'bg-white/10 text-slate-400'"
@@ -158,8 +162,8 @@ const closeModal = () => {
       class="p-12 text-center rounded-2xl glass-panel border border-white/10 text-slate-400"
     >
       <div class="text-3xl mb-3">🔍</div>
-      <h3 class="text-white font-display font-bold text-lg mb-1">Không tìm thấy dự án phù hợp</h3>
-      <p class="text-xs sm:text-sm">Hãy thử tìm với từ khóa khác như "Laravel", "Vue", "Audio" hoặc chọn "Tất Cả Dự Án".</p>
+      <h3 class="text-white font-display font-bold text-lg mb-1">{{ t('projects.empty') }}</h3>
+      <p class="text-xs sm:text-sm">{{ t('projects.emptyHint') }}</p>
     </div>
 
     <!-- Project Cards Grid -->
@@ -180,7 +184,7 @@ const closeModal = () => {
             </span>
             <span v-if="project.featured" class="text-[11px] font-mono text-talisman-gold bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-talisman-gold/30 whitespace-nowrap flex items-center gap-1 font-bold">
               <span>★</span>
-              <span>Featured</span>
+              <span>{{ t('projects.featured') }}</span>
             </span>
           </div>
           <h3 class="font-display font-bold text-lg text-white group-hover:text-phantom-mint transition-colors relative z-10">
@@ -227,10 +231,10 @@ const closeModal = () => {
               class="flex-1 py-2.5 px-3 rounded-xl bg-white/5 hover:bg-phantom-mint text-slate-200 hover:text-midnight-950 font-display font-bold text-xs transition-all min-h-[40px] flex items-center justify-center gap-1.5 whitespace-nowrap border border-white/10 hover:border-phantom-mint shadow-sm hover:shadow-glow-mint cursor-pointer"
               @click="openProject(project)"
             >
-              <span>Xem Chi Tiết Kiến Trúc</span>
+              <span>{{ t('projects.details') }}</span>
               <span>→</span>
             </button>
-            <div class="px-2.5 py-1.5 rounded-lg bg-midnight-950 border border-white/5 text-[10px] font-mono text-slate-400 flex items-center gap-1 select-none" title="Dự án doanh nghiệp bảo mật NDA">
+            <div class="px-2.5 py-1.5 rounded-lg bg-midnight-950 border border-white/5 text-[10px] font-mono text-slate-400 flex items-center gap-1 select-none" :title="t('projects.enterprise')">
               <span>🔒</span>
               <span class="hidden sm:inline">NDA</span>
             </div>
@@ -245,16 +249,16 @@ const closeModal = () => {
       class="mt-12 p-6 sm:p-8 rounded-3xl glass-panel border border-phantom-mint/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 bg-gradient-to-r from-phantom-mint/5 via-midnight-900/50 to-talisman-gold/5 shadow-glow-mint"
     >
       <div>
-        <span class="text-xs font-mono text-phantom-mint font-bold uppercase tracking-wider">📜 Kho Lưu Trữ Kiến Trúc</span>
-        <h3 class="text-xl sm:text-2xl font-display font-extrabold text-white mt-1">Khám Phá Toàn Bộ 6+ Dự Án Chuyên Sâu</h3>
-        <p class="text-xs sm:text-sm text-slate-400 mt-1 font-sans">Xem chi tiết các hệ thống viễn thông GIS 500k điểm nút, giải pháp Multi-Agent AI tự trị và nền tảng xử lý dữ liệu lớn.</p>
+        <span class="text-xs font-mono text-phantom-mint font-bold uppercase tracking-wider">📜 {{ t('projects.archive') }}</span>
+        <h3 class="text-xl sm:text-2xl font-display font-extrabold text-white mt-1">{{ t('projects.exploreAll') }}</h3>
+        <p class="text-xs sm:text-sm text-slate-400 mt-1 font-sans">{{ t('projects.description') }}</p>
       </div>
       <Link
         href="/projects"
         class="px-6 py-3.5 rounded-2xl bg-phantom-mint text-midnight-950 font-display font-bold text-xs sm:text-sm hover:brightness-110 shadow-glow-mint transition-all whitespace-nowrap shrink-0 flex items-center gap-2 cursor-pointer"
         @click="sound.playClick()"
       >
-        <span>Vào Kho Grimoire Đầy Đủ</span>
+        <span>{{ t('projects.viewAll') }}</span>
         <span>→</span>
       </Link>
     </div>

@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { useZenTimeCycle } from '@/composables/useZenTimeCycle';
 import { mindfulBell } from '@/audio/mindfulBellAudio';
+import { useI18n } from '@/composables/useI18n';
+
+const { t, locale } = useI18n();
 
 const {
   currentHour,
@@ -46,14 +49,14 @@ const handleResetRealTime = () => {
           <div>
             <div class="flex items-center gap-2">
               <h4 class="text-sm sm:text-base font-bold text-amber-200">
-                {{ activeZenPhase.vietnameseName }}
+              {{ locale === 'en' ? activeZenPhase.paliName : activeZenPhase.vietnameseName }}
               </h4>
               <span class="px-2 py-0.5 rounded-full text-[10px] font-sans font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
                 {{ currentHour }}:00
               </span>
             </div>
             <p class="text-[11px] text-stone-400 italic">
-              Pāḷi: {{ activeZenPhase.paliName }} • Khung giờ: {{ activeZenPhase.timeRange }}
+              Pāḷi: {{ activeZenPhase.paliName }} • {{ locale === 'en' ? 'Time window' : 'Khung giờ' }}: {{ activeZenPhase.timeRange }}
             </p>
           </div>
         </div>
@@ -63,14 +66,14 @@ const handleResetRealTime = () => {
           v-if="!isRealTime"
           @click="handleResetRealTime"
           class="w-full sm:w-auto flex items-center justify-center gap-1.5 px-3 py-2 sm:py-1.5 rounded-xl bg-amber-500 text-stone-950 text-xs font-serif font-bold shadow-md hover:bg-amber-400 transition-all hover:scale-105 active:scale-95 cursor-pointer min-h-[38px]"
-          title="Đồng bộ lại theo giờ thực tế của thiết bị"
+          :title="t('time.reset')"
         >
           <span>⏱️</span>
-          <span>Đồng Bộ Giờ Thực</span>
+          <span>{{ t('time.reset') }}</span>
         </button>
         <span v-else class="text-xs font-sans text-amber-400/80 flex items-center gap-1.5 self-start sm:self-center">
           <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span>Đang theo Giờ Thực Tế</span>
+          <span>{{ t('time.live') }}</span>
         </span>
       </div>
 
@@ -78,12 +81,12 @@ const handleResetRealTime = () => {
       <div class="space-y-2">
         <div class="flex flex-col sm:flex-row items-center justify-between gap-1 text-[11px] font-mono text-stone-400 text-center sm:text-left">
           <span class="text-amber-300 font-bold font-serif text-xs order-1 sm:order-2">
-            ⏳ Tua Giờ Thiền Môn 24H
+            ⏳ {{ t('theravada.timeTraveler') }}
           </span>
           <div class="flex justify-between w-full sm:w-auto sm:gap-6 order-2 sm:order-1 text-[10px] sm:text-[11px]">
-            <span>00:00 (Khuya)</span>
+            <span>00:00 ({{ locale === 'en' ? 'Night' : 'Khuya' }})</span>
             <span class="sm:hidden text-amber-400/80 font-bold">{{ currentHour }}:00</span>
-            <span>23:00 (Tối)</span>
+            <span>23:00 ({{ locale === 'en' ? 'Evening' : 'Tối' }})</span>
           </div>
         </div>
 
@@ -112,7 +115,7 @@ const handleResetRealTime = () => {
           ]"
         >
           <span>🌌</span>
-          <span>Dạ Khuya (02h)</span>
+          <span>{{ locale === 'en' ? 'Deep Night' : 'Dạ Khuya' }} (02h)</span>
         </button>
 
         <button
@@ -125,7 +128,7 @@ const handleResetRealTime = () => {
           ]"
         >
           <span>🌅</span>
-          <span>Bình Minh (07h)</span>
+          <span>{{ locale === 'en' ? 'Dawn' : 'Bình Minh' }} (07h)</span>
         </button>
 
         <button
@@ -138,7 +141,7 @@ const handleResetRealTime = () => {
           ]"
         >
           <span>☀️</span>
-          <span>Quá Ngọ (14h)</span>
+          <span>{{ locale === 'en' ? 'Afternoon' : 'Quá Ngọ' }} (14h)</span>
         </button>
 
         <button
@@ -151,7 +154,7 @@ const handleResetRealTime = () => {
           ]"
         >
           <span>🕯️</span>
-          <span>Hoàng Hôn (20h)</span>
+          <span>{{ locale === 'en' ? 'Twilight' : 'Hoàng Hôn' }} (20h)</span>
         </button>
       </div>
 

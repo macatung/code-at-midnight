@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import TheravadaLayout from '@/Layouts/TheravadaLayout.vue';
+import { useI18n } from '@/composables/useI18n';
 
 const props = defineProps<{
   categorySlug: string;
@@ -9,6 +10,7 @@ const props = defineProps<{
   articles: any[];
   title?: string;
 }>();
+const { locale, t } = useI18n();
 
 const categoryJsonLd = computed(() => ({
   '@context': 'https://schema.org',
@@ -22,8 +24,8 @@ const categoryJsonLd = computed(() => ({
 
 <template>
   <TheravadaLayout
-    :title="`${categoryName} — Giáo Lý & Kinh Điển Pāḷi`"
-    :description="`Khám phá tuyển tập kinh điển và hướng dẫn tu học nguyên thủy thuộc chuyên mục ${categoryName}: Tứ Thánh Đế, Bát Chánh Đạo, Vipassanā.`"
+    :title="`${categoryName} — ${locale === 'en' ? 'Dhamma & Pāḷi Canon' : 'Giáo Lý & Kinh Điển Pāḷi'}`"
+    :description="`${locale === 'en' ? 'Explore canonical teachings and practice guides in' : 'Khám phá tuyển tập kinh điển và hướng dẫn tu học thuộc'} ${categoryName}.`"
     :keywords="`${categoryName}, Theravada, Pāḷi, Giáo lý Phật giáo nguyên thủy`"
     :canonical="`https://theravada.macatung.dev/danh-muc/${categorySlug}`"
     :json-ld="categoryJsonLd"
@@ -40,13 +42,13 @@ const categoryJsonLd = computed(() => ({
       <header class="mb-6 sm:mb-10 text-left border-b border-stone-800 pb-5 sm:pb-8">
         <div class="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[11px] sm:text-xs font-serif font-bold mb-2 sm:mb-3 shadow-sm">
           <span>{{ categorySlug === 'phap-hoc' ? '📖' : categorySlug === 'phap-hanh' ? '🧘' : categorySlug === 'kinh-tung' ? '📜' : '🏛️' }}</span>
-          <span>Chuyên Mục Theravāda</span>
+          <span>{{ locale === 'en' ? 'Theravāda Section' : 'Chuyên Mục Theravāda' }}</span>
         </div>
         <h1 class="text-2xl sm:text-4xl font-serif font-bold text-amber-100">
           {{ categoryName }}
         </h1>
         <p class="text-xs sm:text-sm text-stone-300 font-serif mt-1.5 sm:mt-2 leading-relaxed max-w-3xl">
-          Tuyển tập các kinh văn, giáo lý và hướng dẫn thực hành thuộc chuyên mục {{ categoryName }}.
+          {{ locale === 'en' ? `A collection of suttas, teachings and practice guides in ${categoryName}.` : `Tuyển tập các kinh văn, giáo lý và hướng dẫn thực hành thuộc chuyên mục ${categoryName}.` }}
         </p>
       </header>
 
@@ -63,9 +65,9 @@ const categoryJsonLd = computed(() => ({
           <div>
             <div class="flex items-center justify-between text-xs font-serif text-stone-300 mb-3">
               <span class="px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 font-serif font-bold">
-                {{ item.category === 'phap-hoc' ? 'Pháp Học' : item.category === 'phap-hanh' ? 'Pháp Hành' : item.category === 'kinh-tung' ? 'Kinh Tụng' : 'Lịch Sử' }}
+                {{ item.category === 'phap-hoc' ? (locale === 'en' ? 'Dhamma Study' : 'Pháp Học') : item.category === 'phap-hanh' ? (locale === 'en' ? 'Dhamma Practice' : 'Pháp Hành') : item.category === 'kinh-tung' ? t('theravada.chanting') : (locale === 'en' ? 'History' : 'Lịch Sử') }}
               </span>
-              <span class="text-stone-300 font-medium">⏱️ {{ item.reading_time_min }} phút đọc</span>
+              <span class="text-stone-300 font-medium">⏱️ {{ item.reading_time_min }} {{ t('theravada.minutes') }}</span>
             </div>
 
             <h3 class="text-lg font-serif font-bold text-stone-100 group-hover:text-amber-300 transition-colors leading-snug mb-2">
@@ -91,14 +93,14 @@ const categoryJsonLd = computed(() => ({
               :href="`/theravada/kinh/${item.slug}`"
               class="font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1 group-hover:translate-x-1 transition-transform"
             >
-              <span>Đọc kinh</span>
+              <span>{{ t('theravada.read') }}</span>
               <span>➔</span>
             </Link>
           </div>
         </article>
 
         <div v-if="articles.length === 0" class="col-span-full py-16 text-center text-stone-400 font-serif">
-          Chuyên mục đang được cập nhật kinh văn và giáo lý mới...
+          {{ locale === 'en' ? 'This section is being updated with new teachings and suttas...' : 'Chuyên mục đang được cập nhật kinh văn và giáo lý mới...' }}
         </div>
       </div>
     </div>

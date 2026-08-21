@@ -5,6 +5,7 @@ import TheravadaLayout from '@/Layouts/TheravadaLayout.vue';
 import { mindfulBell } from '@/audio/mindfulBellAudio';
 import { PALI_GLOSSARY, PaliGlossaryEntry } from '@/data/paliGlossary';
 import { useZenAtmosphere } from '@/composables/useZenAtmosphere';
+import { useI18n } from '@/composables/useI18n';
 import mermaid from 'mermaid';
 
 const props = defineProps<{
@@ -35,6 +36,12 @@ const isFocusModeOn = ref(false);
 const isPaperMode = ref(true); // Default to high-contrast paper background
 const copiedLink = ref(false);
 const { isLeavesEnabled, toggleLeaves } = useZenAtmosphere();
+const { t, locale } = useI18n();
+
+const categoryLabel = (category: string) => {
+  const key = category === 'phap-hoc' ? 'theravada.study' : category === 'phap-hanh' ? 'theravada.practice' : category === 'kinh-tung' ? 'theravada.chanting' : 'theravada.history';
+  return t(key);
+};
 
 // Social Share Methods
 const copyArticleLink = async () => {
@@ -54,7 +61,7 @@ const copyArticleLink = async () => {
 const handleNativeArticleShare = async () => {
   const url = typeof window !== 'undefined' ? window.location.href : `https://theravada.macatung.dev/kinh/${props.article.slug}`;
   const shareTitle = `${props.article.title} — Ma Tọa Thiền`;
-  const shareText = `Đọc bài kinh: ${props.article.title}\n${props.article.excerpt || ''}`;
+  const shareText = `${locale.value === 'en' ? 'Read this Dhamma article' : 'Đọc bài kinh'}: ${props.article.title}\n${props.article.excerpt || ''}`;
 
   if (navigator.share) {
     try {
@@ -626,13 +633,49 @@ const suttaJsonLd = computed(() => ({
       />
     </div>
 
+    <!-- Floating Pāḷi explanation for highlighted terms -->
+    <div
+      v-if="activeTooltip"
+      class="zen-pali-popover fixed w-[min(380px,calc(100vw-32px))] rounded-2xl border border-amber-500/70 p-4 text-left font-sans shadow-2xl"
+      :style="{
+        left: `${activeTooltip.x}px`,
+        top: `${activeTooltip.y}px`,
+        transform: activeTooltip.placement === 'top' ? 'translateY(-100%)' : 'none'
+      }"
+      role="dialog"
+      aria-live="polite"
+      @mouseenter="keepTooltipOpen"
+      @mouseleave="hideTooltipWithDelay"
+    >
+      <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0">
+          <div class="pali-title text-base font-serif font-bold truncate">{{ activeTooltip.term }}</div>
+          <div class="pali-vn text-xs mt-0.5">{{ activeTooltip.vietnamese }}</div>
+        </div>
+        <button
+          type="button"
+          class="shrink-0 rounded-lg px-2 py-1 text-stone-400 hover:bg-stone-800 hover:text-white"
+          :aria-label="locale === 'en' ? 'Close explanation' : 'Đóng giải thích'"
+          @click="closeTooltip"
+        >
+          ✕
+        </button>
+      </div>
+      <div class="pali-badge inline-flex mt-3 rounded-full border px-2 py-0.5 text-[10px] font-semibold">
+        {{ activeTooltip.category }}
+      </div>
+      <div class="pali-meaning mt-3 rounded-xl border p-3 text-xs leading-relaxed">
+        {{ activeTooltip.meaning }}
+      </div>
+    </div>
+
     <div class="max-w-4xl mx-auto py-6 sm:py-10 relative z-10">
       <!-- Breadcrumb Navigation -->
       <nav class="flex items-center gap-2 text-xs font-serif text-stone-400 mb-6" aria-label="Breadcrumb">
         <Link href="/theravada" class="hover:text-amber-300">Theravāda</Link>
         <span>/</span>
         <Link :href="`/theravada/danh-muc/${article.category}`" class="hover:text-amber-300">
-          {{ article.category === 'phap-hoc' ? 'Pháp Học' : article.category === 'phap-hanh' ? 'Pháp Hành' : article.category === 'kinh-tung' ? 'Kinh Tụng' : 'Lịch Sử Phật Giáo' }}
+          {{ categoryLabel(article.category) }}
         </Link>
         <span>/</span>
         <span class="text-amber-400 font-bold truncate max-w-[200px] sm:max-w-md">
@@ -644,10 +687,10 @@ const suttaJsonLd = computed(() => ({
       <header class="mb-8 text-left border-b border-stone-800 pb-6">
         <div class="flex flex-wrap items-center gap-2.5 mb-3">
           <span class="px-3 py-1 rounded-full text-xs font-serif font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30">
-            {{ article.category === 'phap-hoc' ? 'Pháp Học (Pariyatti)' : article.category === 'phap-hanh' ? 'Pháp Hành (Vipassanā)' : article.category === 'kinh-tung' ? 'Tam Tạng & Kinh Tụng' : 'Lịch Sử Phật Giáo (Itihāsa)' }}
+            {{ categoryLabel(article.category) }}
           </span>
           <span class="text-xs text-stone-400 font-serif">
-            {{ article.reading_time_min }} phút đọc
+            {{ article.reading_time_min }} {{ t('theravada.minutes') }}
           </span>
         </div>
 
@@ -660,7 +703,7 @@ const suttaJsonLd = computed(() => ({
         </p>
 
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 sm:pt-4 border-t border-stone-900 text-xs font-serif text-stone-400">
-          <span class="italic text-[11px] sm:text-xs">Tác giả / Nguồn: <strong class="text-stone-200 not-italic">{{ article.author || 'Pāḷi Tipiṭaka' }}</strong></span>
+          <span class="italic text-[11px] sm:text-xs">{{ locale === 'en' ? 'Author / Source' : 'Tác giả / Nguồn' }}: <strong class="text-stone-200 not-italic">{{ article.author || 'Pāḷi Tipiṭaka' }}</strong></span>
 
           <!-- Reader Controls: Minimalist Toolbar (Horizontally Scrollable Pill on Mobile) -->
           <div class="w-full sm:w-auto flex items-center gap-1.5 overflow-x-auto pb-1.5 pt-0.5 sm:flex-wrap no-scrollbar">
@@ -673,9 +716,9 @@ const suttaJsonLd = computed(() => ({
                   ? 'bg-amber-100 text-stone-900 border-amber-400 font-bold'
                   : 'bg-stone-900 text-stone-300 border-stone-800 hover:border-amber-500/40'
               ]"
-              :title="isPaperMode ? 'Chuyển sang nền đêm' : 'Chuyển sang nền giấy'"
+              :title="isPaperMode ? t('theravada.switchNight') : t('theravada.switchPaper')"
             >
-              <span>{{ isPaperMode ? '📜 Nền Giấy' : '🌙 Nền Đêm' }}</span>
+              <span>{{ isPaperMode ? `📜 ${t('theravada.paperMode')}` : `🌙 ${t('theravada.nightMode')}` }}</span>
             </button>
 
             <!-- Falling Leaves Toggle -->
@@ -687,9 +730,9 @@ const suttaJsonLd = computed(() => ({
                   ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
                   : 'bg-stone-900 text-stone-400 border-stone-800 hover:border-stone-700'
               ]"
-              title="Bật/tắt hiệu ứng lá rơi"
+              :title="t('theravada.toggleLeaves')"
             >
-              <span>🍃 Lá Rơi</span>
+              <span>🍃 {{ t('theravada.leaves') }}</span>
             </button>
 
             <!-- Candlelight Glow Toggle -->
@@ -701,9 +744,9 @@ const suttaJsonLd = computed(() => ({
                   ? 'bg-amber-500 text-stone-950 border-amber-400 font-bold'
                   : 'bg-stone-900 text-stone-300 border-stone-800 hover:border-amber-500/40'
               ]"
-              title="Chế độ đèn dầu thiền quán"
+              :title="t('theravada.toggleCandle')"
             >
-              <span>🕯️ Đèn Dầu</span>
+              <span>🕯️ {{ t('theravada.candle') }}</span>
             </button>
 
             <!-- Focus Paragraph Mode Toggle -->
@@ -715,9 +758,9 @@ const suttaJsonLd = computed(() => ({
                   ? 'bg-amber-500 text-stone-950 border-amber-400 font-bold'
                   : 'bg-stone-900 text-stone-300 border-stone-800 hover:border-amber-500/40'
               ]"
-              title="Chế độ đọc tập trung"
+              :title="t('theravada.toggleFocus')"
             >
-              <span>🎯 Tập Trung</span>
+              <span>🎯 {{ t('theravada.focus') }}</span>
             </button>
 
             <!-- Bell Trigger -->
@@ -725,18 +768,18 @@ const suttaJsonLd = computed(() => ({
               @click="ringBell"
               class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-amber-500/15 text-amber-300 hover:bg-amber-500/25 border border-amber-500/30 transition-all cursor-pointer font-medium text-[11px] sm:text-xs whitespace-nowrap shrink-0"
               :class="{ 'animate-pulse ring-2 ring-amber-400': isRinging }"
-              title="Thỉnh chuông chánh niệm"
+              :title="t('theravada.ringBell')"
             >
-              <span>🔔 Thỉnh Chuông</span>
+              <span>🔔 {{ t('theravada.bell') }}</span>
             </button>
 
             <!-- Share Article Trigger -->
             <button
               @click="handleNativeArticleShare"
               class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-stone-900 text-stone-300 hover:text-amber-200 hover:bg-stone-800 border border-stone-800 hover:border-amber-500/40 transition-all cursor-pointer font-medium text-[11px] sm:text-xs whitespace-nowrap shrink-0"
-              title="Chia sẻ bài kinh"
+              :title="t('theravada.shareArticle')"
             >
-              <span>{{ copiedLink ? '✅ Đã Chép' : '🔗 Chia Sẻ' }}</span>
+              <span>{{ copiedLink ? `✅ ${t('common.copied')}` : `🔗 ${t('common.share')}` }}</span>
             </button>
 
             <!-- Adjust Font Size -->
@@ -744,7 +787,7 @@ const suttaJsonLd = computed(() => ({
               <button
                 @click="fontSize = Math.max(15, fontSize - 1)"
                 class="px-2 py-1 hover:bg-stone-800 rounded-lg text-stone-300 font-bold"
-                title="Giảm cỡ chữ"
+                :title="t('theravada.decreaseFont')"
               >
                 A-
               </button>
@@ -752,7 +795,7 @@ const suttaJsonLd = computed(() => ({
               <button
                 @click="fontSize = Math.min(26, fontSize + 1)"
                 class="px-2 py-1 hover:bg-stone-800 rounded-lg text-stone-300 font-bold"
-                title="Tăng cỡ chữ"
+                :title="t('theravada.increaseFont')"
               >
                 A+
               </button>
@@ -782,7 +825,7 @@ const suttaJsonLd = computed(() => ({
         <div class="mb-7 flex items-center justify-between gap-3 text-xs sm:text-sm font-serif bg-stone-900 text-stone-200 border border-amber-500/40 px-4 py-3 rounded-xl shadow-md">
           <div class="flex items-center gap-2 text-left">
             <span class="text-amber-400 text-xs">✦</span>
-            <span><strong class="text-amber-300 font-semibold">Tra Cứu Pāḷi:</strong> Rê chuột hoặc nhấp vào các thuật ngữ có gạch chân nét đứt để xem chú giải chi tiết.</span>
+            <span><strong class="text-amber-300 font-semibold">{{ t('theravada.glossary') }}:</strong> {{ t('theravada.glossaryHint') }}</span>
           </div>
           <span class="text-[10px] font-mono text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-lg bg-stone-950 shrink-0 hidden sm:inline">Pāḷi Canon</span>
         </div>
@@ -797,7 +840,7 @@ const suttaJsonLd = computed(() => ({
       >
         <div class="text-amber-300 font-serif font-bold text-base mb-4 flex items-center gap-2">
           <span class="text-xs">✦</span>
-          <span>Chú Giải Thuật Ngữ Pāḷi Trong Bài</span>
+          <span>{{ t('theravada.inArticleGlossary') }}</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -818,10 +861,10 @@ const suttaJsonLd = computed(() => ({
           <div class="space-y-1">
             <div class="text-amber-300 font-serif font-bold text-sm sm:text-base flex items-center gap-2">
               <span class="text-xs">✦</span>
-              <span>Lan Tỏa Chánh Pháp Đến Muôn Người</span>
+              <span>{{ t('theravada.shareTitle') }}</span>
             </div>
             <p class="text-xs font-serif text-stone-300">
-              Chia sẻ bài kinh văn đến người thân và đạo hữu để gieo duyên lành giải thoát.
+              {{ t('theravada.shareDescription') }}
             </p>
           </div>
 
@@ -829,7 +872,7 @@ const suttaJsonLd = computed(() => ({
             <button
               @click="shareArticleToFacebook"
               class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#1877F2]/15 hover:bg-[#1877F2] text-[#4ea1ff] hover:text-white border border-[#1877F2]/40 transition-all font-sans text-xs font-semibold shadow-sm cursor-pointer"
-              title="Chia sẻ lên Facebook"
+              :title="'Share on Facebook'"
             >
               <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
@@ -840,7 +883,7 @@ const suttaJsonLd = computed(() => ({
             <button
               @click="shareArticleToZalo"
               class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#0068FF]/15 hover:bg-[#0068FF] text-[#5295ff] hover:text-white border border-[#0068FF]/40 transition-all font-sans text-xs font-semibold shadow-sm cursor-pointer"
-              title="Chia sẻ qua Zalo"
+              :title="'Share via Zalo'"
             >
               <span class="font-bold font-sans text-[11px] px-1 py-0.2 bg-blue-500/30 rounded text-white">Z</span>
               <span>Zalo</span>
@@ -849,7 +892,7 @@ const suttaJsonLd = computed(() => ({
             <button
               @click="shareArticleToTelegram"
               class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#24A1DE]/15 hover:bg-[#24A1DE] text-[#55c0f5] hover:text-white border border-[#24A1DE]/40 transition-all font-sans text-xs font-semibold shadow-sm cursor-pointer"
-              title="Gửi qua Telegram"
+              :title="'Send via Telegram'"
             >
               <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
@@ -860,7 +903,7 @@ const suttaJsonLd = computed(() => ({
             <button
               @click="shareArticleToX"
               class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-950 hover:bg-stone-900 text-stone-200 hover:text-white border border-stone-700 transition-all font-sans text-xs font-semibold shadow-sm cursor-pointer"
-              title="Đăng lên X"
+              :title="'Post on X'"
             >
               <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
                 <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
@@ -871,9 +914,9 @@ const suttaJsonLd = computed(() => ({
             <button
               @click="copyArticleLink"
               class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-stone-950 hover:bg-stone-900 text-amber-300 hover:text-amber-200 border border-amber-500/40 transition-all font-sans text-xs font-semibold shadow-sm cursor-pointer"
-              title="Sao chép liên kết"
+              :title="t('common.copyLink')"
             >
-              <span>{{ copiedLink ? 'Đã Sao Chép!' : 'Chép Link' }}</span>
+              <span>{{ copiedLink ? t('common.copied') : t('common.copyLink') }}</span>
             </button>
           </div>
         </div>
@@ -896,7 +939,7 @@ const suttaJsonLd = computed(() => ({
           href="/theravada"
           class="text-xs font-serif font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1.5"
         >
-          <span>← Quay lại trang chủ Theravāda</span>
+          <span>← {{ t('theravada.backHome') }}</span>
         </Link>
       </div>
     </div>

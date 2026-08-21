@@ -6,8 +6,10 @@ import { useMascotReactor } from '@/composables/useMascotReactor';
 import TimeTravelerSlider from '@/Components/mascot/TimeTravelerSlider.vue';
 import { sound } from '@/audio/soundEffects';
 import confetti from 'canvas-confetti';
+import { useI18n } from '@/composables/useI18n';
 
 const { activePhase, formattedTime } = useTimeCycle();
+const { t } = useI18n();
 const {
   currentReaction,
   isIdleSleeping,
@@ -44,7 +46,7 @@ const displayMessage = computed(() => {
     return currentReaction.value.message;
   }
   if (isIdleSleeping.value) {
-    return '😴 Zzz... Khò khò... (Lữ khách vắng mặt)...';
+    return t('mascot.sleeping');
   }
   return activePhase.value.tagline;
 });
@@ -137,7 +139,7 @@ const toggleMinimize = () => {
         v-if="isMinimized"
         class="group flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl bg-midnight-950/95 border border-slate-700/80 backdrop-blur-2xl shadow-2xl cursor-pointer hover:border-phantom-mint hover:scale-105 transition-all duration-200"
         @click="toggleMinimize"
-        title="Mở rộng Ma Cà Tưng Companion"
+        :title="t('mascot.expand')"
       >
         <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900 border border-slate-700 text-lg shadow-inner animate-bounce">
           🧛‍♂️
@@ -151,7 +153,7 @@ const toggleMinimize = () => {
         </div>
         <button
           class="text-slate-500 hover:text-white text-xs p-1"
-          aria-label="Mở rộng"
+            :aria-label="t('mascot.expand')"
         >
           ▲
         </button>
@@ -202,7 +204,7 @@ const toggleMinimize = () => {
           <div
             class="relative cursor-grab active:cursor-grabbing flex flex-col items-center justify-center group/avatar shrink-0"
             @click="handleAvatarClick"
-            :title="`Bấm để nhảy cùng Ma Cà Tưng! (Đã nhảy ${totalHops} bước)`"
+            :title="`${t('mascot.pet')} · ${totalHops} ${t('mascot.hops')}`"
           >
             <!-- Mascot Body SVG Animation -->
             <div class="w-16 h-20 flex items-center justify-center transition-transform duration-200 group-hover/avatar:scale-110 active:scale-95">
@@ -264,14 +266,14 @@ const toggleMinimize = () => {
 
             <!-- Hop Count Pill Badge -->
             <span class="absolute -bottom-1 px-1.5 py-0.5 rounded-full bg-slate-900 border border-slate-700 font-mono text-[9px] font-bold text-phantom-mint shadow">
-              {{ totalHops }} hops
+              {{ totalHops }} {{ t('mascot.hops') }}
             </span>
           </div>
 
           <!-- Quick Pet Action Tools -->
           <div class="flex flex-col gap-1.5 border-l border-slate-800/80 pl-3">
             <div class="flex items-center justify-between gap-1.5 text-[10px] font-mono text-slate-400">
-              <span class="font-bold text-slate-300">Ma Cà Tưng Pet</span>
+              <span class="font-bold text-slate-300">{{ t('mascot.pet') }}</span>
               <div class="flex items-center gap-1">
                 <!-- Sound SFX Toggle -->
                 <button
@@ -280,7 +282,7 @@ const toggleMinimize = () => {
                   :class="!isSfxMuted
                     ? 'border-phantom-mint/40 bg-phantom-mint/10 text-phantom-mint shadow-glow-mint'
                     : 'border-slate-800 bg-slate-900 text-slate-500 hover:text-slate-300'"
-                  :title="isSfxMuted ? 'Bật hiệu ứng âm thanh SFX' : 'Tắt hiệu ứng âm thanh SFX'"
+                  :title="isSfxMuted ? 'Enable SFX' : 'Disable SFX'"
                 >
                   <span>{{ isSfxMuted ? '🔇' : '🔊' }}</span>
                   <span class="font-bold hidden min-[320px]:inline">{{ isSfxMuted ? 'OFF' : 'SFX' }}</span>
@@ -289,7 +291,7 @@ const toggleMinimize = () => {
                 <button
                   @click="toggleMinimize"
                   class="text-slate-500 hover:text-slate-200 px-1 hover:bg-slate-800 rounded transition-colors cursor-pointer"
-                  title="Thu nhỏ thành icon"
+                  :title="t('mascot.collapse')"
                 >
                   ▼
                 </button>
@@ -302,30 +304,30 @@ const toggleMinimize = () => {
               <button
                 @click="feedCoffee"
                 class="flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg bg-slate-900/90 hover:bg-amber-950/40 border border-slate-800 hover:border-amber-500/50 text-[11px] font-medium text-slate-300 hover:text-amber-300 transition-all duration-150 active:scale-95 cursor-pointer"
-                title="Cho uống cà phê Robusta"
+                :title="t('mascot.coffeeTitle')"
               >
                 <span>☕</span>
-                <span>Cà phê</span>
+                <span>{{ t('mascot.coffee') }}</span>
               </button>
 
               <!-- 2. Apply Talisman Seal -->
               <button
                 @click="applyTalisman"
                 class="flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg bg-slate-900/90 hover:bg-emerald-950/40 border border-slate-800 hover:border-emerald-500/50 text-[11px] font-medium text-slate-300 hover:text-phantom-mint transition-all duration-150 active:scale-95 cursor-pointer"
-                title="Yểm bùa 0-Bug"
+                :title="t('mascot.talismanTitle')"
               >
                 <span>📜</span>
-                <span>Dán bùa</span>
+                <span>{{ t('mascot.talisman') }}</span>
               </button>
 
               <!-- 3. Pet / Headpat -->
               <button
                 @click="petMascot"
                 class="flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg bg-slate-900/90 hover:bg-pink-950/40 border border-slate-800 hover:border-pink-500/50 text-[11px] font-medium text-slate-300 hover:text-pink-300 transition-all duration-150 active:scale-95 cursor-pointer"
-                title="Xoa đầu Ma Cà Tưng"
+                :title="t('mascot.petTitle')"
               >
                 <span>💖</span>
-                <span>Xoa đầu</span>
+                <span>{{ t('mascot.petAction') }}</span>
               </button>
 
               <!-- 4. Toggle Time-Traveler Slider -->
@@ -337,10 +339,10 @@ const toggleMinimize = () => {
                     ? 'bg-amber-500/20 text-amber-300 border-amber-500/60 shadow-sm'
                     : 'bg-slate-900/90 hover:bg-cyan-950/40 border-slate-800 hover:border-cyan-500/50 text-slate-300 hover:text-cyan-300'
                 ]"
-                title="Bật/Tắt Cỗ Máy Thời Gian 24H"
+                :title="t('mascot.timeTitle')"
               >
                 <span>⏳</span>
-                <span>Tua giờ</span>
+                <span>{{ t('mascot.time') }}</span>
               </button>
             </div>
 
@@ -348,11 +350,11 @@ const toggleMinimize = () => {
             <Link
               href="/contact"
               class="w-full mt-0.5 py-1 px-2 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 text-[10px] font-mono font-bold flex items-center justify-center gap-1.5 transition-all duration-150 active:scale-95 cursor-pointer"
-              title="Triệu Hồi Ma Cà Tưng / Liên Hệ Tư Vấn"
+              :title="t('mascot.summonTitle')"
               @click="sound.playTalisman()"
             >
               <span>📜</span>
-              <span>Triệu Hồi Ma Cà Tưng</span>
+              <span>{{ t('mascot.summon') }}</span>
             </Link>
           </div>
         </div>

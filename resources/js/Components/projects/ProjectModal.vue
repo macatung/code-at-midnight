@@ -3,6 +3,7 @@ import { onMounted, onUnmounted, watch } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import type { Project } from '@/types/portfolio';
 import { sound } from '@/audio/soundEffects';
+import { useI18n } from '@/composables/useI18n';
 
 const props = defineProps<{
   isOpen: boolean;
@@ -12,20 +13,21 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'close'): void;
 }>();
+const { t } = useI18n();
 
 const getRelatedBlog = (title: string): { slug: string; label: string } | null => {
   const lower = title.toLowerCase();
   if (lower.includes('agent') || lower.includes('crm')) {
-    return { slug: 'kien-truc-multi-agent-ai-customer-service', label: 'Đọc Bài Phân Tích Kiến Trúc Multi-Agent AI' };
+    return { slug: 'kien-truc-multi-agent-ai-customer-service', label: t('projectModal.readArticle') };
   }
   if (lower.includes('financial') || lower.includes('chứng khoán') || lower.includes('cổ phiếu')) {
-    return { slug: 'toi-uu-dinh-gia-co-phieu-artisan-gemini-ai', label: 'Đọc Bài Tối Ưu 50+ Crawlers & Gemini AI' };
+    return { slug: 'toi-uu-dinh-gia-co-phieu-artisan-gemini-ai', label: t('projectModal.readArticle') };
   }
   if (lower.includes('gis') || lower.includes('cáp quang') || lower.includes('telecom')) {
-    return { slug: 'so-hoa-mang-cap-quang-toan-quoc-qgis-postgis', label: 'Đọc Bài Số Hóa 500k Điểm Nút QGIS & PostGIS' };
+    return { slug: 'so-hoa-mang-cap-quang-toan-quoc-qgis-postgis', label: t('projectModal.readArticle') };
   }
   if (lower.includes('sdh') || lower.includes('nms') || lower.includes('dwdm')) {
-    return { slug: 'giam-sat-ha-tang-truyen-dan-sdh-dwdm-nms-ml', label: 'Đọc Bài Giám Sát Truyền Dẫn SDH/DWDM & ML' };
+    return { slug: 'giam-sat-ha-tang-truyen-dan-sdh-dwdm-nms-ml', label: t('projectModal.readArticle') };
   }
   return null;
 };
@@ -97,7 +99,7 @@ onUnmounted(() => {
           <button
             type="button"
             class="absolute top-6 right-6 w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-phantom-mint"
-            aria-label="Đóng popup"
+            :aria-label="t('projectModal.closeAria')"
             @click="emit('close')"
           >
             ✕
@@ -109,11 +111,11 @@ onUnmounted(() => {
             </span>
             <span v-if="project.featured" class="px-3 py-1 rounded-full text-xs font-mono bg-talisman-gold/10 text-talisman-gold border border-talisman-gold/30 flex items-center gap-1 font-bold">
               <span>★</span>
-              <span>Featured Architecture</span>
+              <span>{{ t('projectModal.featured') }}</span>
             </span>
             <span class="px-3 py-1 rounded-full text-xs font-mono bg-rose-500/10 text-rose-300 border border-rose-500/30 flex items-center gap-1 font-bold">
               <span>🔒</span>
-              <span>Enterprise NDA</span>
+              <span>{{ t('projectModal.nda') }}</span>
             </span>
           </div>
 
@@ -127,7 +129,7 @@ onUnmounted(() => {
         <div class="p-6 sm:p-8 overflow-y-auto flex-1 space-y-6">
           <!-- Overview Description -->
           <div>
-            <h4 class="text-xs font-mono text-slate-400 uppercase tracking-wider mb-2">Tổng Quan Giải Pháp</h4>
+            <h4 class="text-xs font-mono text-slate-400 uppercase tracking-wider mb-2">{{ t('projectModal.overview') }}</h4>
             <p class="text-sm sm:text-base text-slate-300 leading-relaxed font-sans">
               {{ project.longDescription || project.description }}
             </p>
@@ -135,7 +137,7 @@ onUnmounted(() => {
 
           <!-- Impact Metrics Grid -->
           <div v-if="project.metrics && project.metrics.length > 0">
-            <h4 class="text-xs font-mono text-slate-400 uppercase tracking-wider mb-3">Hiệu Năng & Chỉ Số Thực Chiến</h4>
+            <h4 class="text-xs font-mono text-slate-400 uppercase tracking-wider mb-3">{{ t('projectModal.metrics') }}</h4>
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
               <div
                 v-for="metric in project.metrics"
@@ -152,7 +154,7 @@ onUnmounted(() => {
 
           <!-- Architecture & Highlights -->
           <div v-if="project.highlights && project.highlights.length > 0">
-            <h4 class="text-xs font-mono text-slate-400 uppercase tracking-wider mb-3">Kiến Trúc & Điểm Nhấn Kỹ Thuật</h4>
+            <h4 class="text-xs font-mono text-slate-400 uppercase tracking-wider mb-3">{{ t('projectModal.highlights') }}</h4>
             <ul class="space-y-2.5">
               <li
                 v-for="(highlight, i) in project.highlights"
@@ -184,10 +186,10 @@ onUnmounted(() => {
             <span class="text-xl shrink-0 text-amber-400">🛡️</span>
             <div class="text-xs font-sans text-slate-300 leading-relaxed">
               <div class="font-mono font-bold text-amber-300 uppercase tracking-wider mb-1">
-                Bảo Mật & Bản Quyền Doanh Nghiệp (Enterprise NDA)
+                {{ t('projectModal.security') }}
               </div>
               <p>
-                Đây là hệ thống chuyên dụng phục vụ hạ tầng và nghiệp vụ doanh nghiệp. Nhằm tuân thủ thỏa thuận bảo mật dữ liệu khách hàng (NDA), mã nguồn và môi trường live production không được công khai. Quý đối tác vui lòng liên hệ để trao đổi trực tiếp về sơ đồ kiến trúc và giải pháp kỹ thuật tương đương.
+                {{ t('projectModal.securityText') }}
               </p>
             </div>
           </div>
@@ -201,7 +203,7 @@ onUnmounted(() => {
               class="px-5 py-2.5 rounded-xl bg-phantom-mint text-midnight-950 font-display font-bold text-xs sm:text-sm hover:brightness-110 active:scale-95 transition-all flex items-center gap-2 min-h-[44px] shadow-glow-mint cursor-pointer"
               @click="handleSummonClick"
             >
-              <span>Triệu Hồi Tư Vấn Giải Pháp</span>
+              <span>{{ t('projectModal.summon') }}</span>
               <span>📜</span>
             </button>
 
@@ -212,7 +214,7 @@ onUnmounted(() => {
               class="px-4 py-2.5 rounded-xl bg-midnight-900 border border-talisman-gold/40 text-talisman-gold hover:bg-talisman-gold hover:text-midnight-950 font-display font-bold text-xs sm:text-sm transition-all flex items-center gap-1.5 min-h-[44px] shadow-sm"
               @click="emit('close'); sound.playClick()"
             >
-              <span>📖 Đọc Bài Viết Kiến Trúc</span>
+              <span>📖 {{ t('projectModal.readArticle') }}</span>
               <span>→</span>
             </Link>
           </div>
@@ -222,7 +224,7 @@ onUnmounted(() => {
             class="px-4 py-2 rounded-xl text-slate-400 hover:text-white font-mono text-xs min-h-[44px] focus:outline-none cursor-pointer"
             @click="emit('close')"
           >
-            Đóng [ESC]
+            {{ t('projectModal.close') }}
           </button>
         </div>
       </div>

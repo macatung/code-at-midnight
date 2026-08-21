@@ -86,7 +86,7 @@ const triggerHeartEasterEgg = (e: MouseEvent) => {
           <li><a href="/projects" class="hover:text-phantom-mint transition-colors">{{ t('footer.projectVault') }}</a></li>
           <li><a href="/game" class="hover:text-phantom-mint transition-colors">{{ t('footer.arcade') }}</a></li>
           <li><a href="/talisman" class="hover:text-phantom-mint transition-colors">{{ t('footer.forge') }}</a></li>
-          <li><a href="/theravada" class="hover:text-amber-300 transition-colors flex items-center gap-1"><span>Ma Tọa Thiền (Theravāda)</span> <span>🧘</span></a></li>
+          <li><a href="/theravada" class="hover:text-amber-300 transition-colors flex items-center gap-1"><span>{{ t('nav.theravada') }}</span> <span>🧘</span></a></li>
         </ul>
       </div>
 

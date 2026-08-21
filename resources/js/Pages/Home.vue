@@ -49,7 +49,7 @@ const homeJsonLd = {
       'publisher': {
         '@id': 'https://macatung.dev/#person'
       },
-      'inLanguage': 'vi'
+      'inLanguage': 'en'
     },
     {
       '@type': 'Person',
@@ -194,7 +194,7 @@ const homeJsonLd = {
           >
             <div>
               <div class="flex items-center justify-between text-xs font-mono text-slate-400 mb-4 pb-3 border-b border-white/5">
-                <span class="text-phantom-mint font-bold">⏱ {{ article.reading_time_min }} phút đọc</span>
+                <span class="text-phantom-mint font-bold">⏱ {{ article.reading_time_min }} {{ t('common.minutes') }}</span>
                 <div class="flex flex-wrap gap-1.5">
                   <span v-for="tag in (article.tags || []).slice(0, 2)" :key="tag" class="px-2 py-0.5 rounded bg-white/5 text-[10px] text-slate-300">
                     #{{ tag }}
@@ -232,7 +232,7 @@ const homeJsonLd = {
 
               <div>
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-talisman-gold/10 border border-talisman-gold/30 text-talisman-gold text-xs font-mono mb-2 shadow-glow-talisman">
-                  🎮 Dev Arcade Chamber
+                  🎮 {{ t('home.arcadeBadge') }}
                 </span>
                 <h3 class="text-2xl sm:text-3xl font-display font-extrabold text-white">
                   {{ t('home.gameTitle') }}
@@ -243,9 +243,9 @@ const homeJsonLd = {
 
                 <!-- Mini Stats Pill -->
                 <div class="flex flex-wrap items-center justify-center sm:justify-start gap-3 mt-4 text-xs font-mono text-slate-400">
-                  <span class="flex items-center gap-1">⚡ 150+ Thần Chú</span>
+                  <span class="flex items-center gap-1">⚡ {{ t('hero.statsSpells') }}</span>
                   <span>·</span>
-                  <span class="flex items-center gap-1">🏆 Bảng Phong Thần</span>
+                  <span class="flex items-center gap-1">🏆 {{ t('hero.statsLeaderboard') }}</span>
                   <span>·</span>
                   <span class="flex items-center gap-1">🔊 Web Audio SFX</span>
                 </div>
@@ -273,7 +273,7 @@ const homeJsonLd = {
               <span class="text-4xl">📜</span>
               <div>
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-phantom-mint/10 border border-phantom-mint/30 text-phantom-mint text-xs font-mono mb-2">
-                  ✨ Developer Artifacts
+                  ✨ {{ t('home.artifactsBadge') }}
                 </span>
                 <h3 class="text-2xl sm:text-3xl font-display font-extrabold text-white">
                   {{ t('home.talismanTitle') }}
@@ -300,10 +300,10 @@ const homeJsonLd = {
       <section id="terminal" class="scroll-mt-24 w-full py-16 sm:py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-left">
         <div class="flex flex-col items-start mb-8">
           <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-phantom-mint/10 border border-phantom-mint/30 text-phantom-mint text-xs font-mono mb-3 shadow-glow-mint">
-            ⚡ Interactive REPL Shell
+            ⚡ {{ t('terminal.badge') }}
           </span>
           <h2 class="text-3xl sm:text-5xl font-display font-extrabold text-white tracking-tight">
-            Midnight <span class="text-transparent bg-clip-text bg-gradient-to-r from-phantom-mint via-phantom-cyan to-talisman-gold">Terminal CLI</span>
+            {{ t('terminal.title') }} <span class="text-transparent bg-clip-text bg-gradient-to-r from-phantom-mint via-phantom-cyan to-talisman-gold">{{ t('terminal.titleAccent') }}</span>
           </h2>
           <p class="text-sm sm:text-base text-slate-400 mt-2 max-w-2xl font-sans">
             {{ t('home.terminalDescription') }}

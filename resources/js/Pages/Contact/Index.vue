@@ -29,8 +29,8 @@ const contactJsonLd = {
 
 <template>
   <SeoHead
-    title="Triệu Hồi & Liên Hệ Tư Vấn — The Midnight Architect"
-    description="Gửi tin nhắn triệu hồi hoặc liên hệ hợp tác phát triển phần mềm, tư vấn kiến trúc giải pháp Full-Stack cùng Ma Cà Tưng."
+    :title="t('page.contactTitle')"
+    :description="t('page.contactDescription')"
     keywords="Liên hệ Lập trình viên, Hire Full-Stack Developer, Freelance Engineer Vietnam, Tư vấn Phần Mềm"
     canonical="https://macatung.dev/contact"
     :json-ld="contactJsonLd"

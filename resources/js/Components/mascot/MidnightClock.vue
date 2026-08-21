@@ -2,6 +2,7 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import Icons from '@/Components/ui/Icons.vue';
 import { useTimeCycle, TimePhaseId } from '@/composables/useTimeCycle';
+import { useI18n } from '@/composables/useI18n';
 
 const {
   formattedTime,
@@ -9,9 +10,11 @@ const {
   activePhase,
   isTimeTravelActive,
   TIME_PHASES,
+  localizePhase,
   setPhaseOverride,
   resetToRealTime
 } = useTimeCycle();
+const { t } = useI18n();
 
 const isMenuOpen = ref(false);
 const pingMs = ref(14);
@@ -72,7 +75,7 @@ onUnmounted(() => {
         borderColor: activePhase.accentBorder,
         boxShadow: `0 0 16px -4px ${activePhase.accentGlow}`
       }"
-      :title="`Nhấp để mở Time Travel Preview | ${activePhase.name} (${activePhase.vietnameseName})`"
+      :title="`${t('time.travel')} | ${activePhase.name} (${activePhase.vietnameseName})`"
     >
       <!-- Phase Indicator Dot -->
       <span
@@ -94,7 +97,7 @@ onUnmounted(() => {
         v-if="isTimeTravelActive"
         class="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/30 animate-pulse"
       >
-        Travel
+        {{ t('time.travel') }}
       </span>
 
       <!-- Mode Label (Medium to Large Screens) -->
@@ -150,10 +153,10 @@ onUnmounted(() => {
             </div>
             <div>
               <h4 class="text-xs font-bold text-slate-100 uppercase tracking-wider">
-                Time Travel & Phân Kỳ Nhịp Sống
+                {{ t('time.travel') }} & {{ t('hero.phase') }}
               </h4>
               <p class="text-[10px] text-slate-400">
-                Trải nghiệm 4 khung giờ trong ngày của Developer
+                {{ t('time.travelDescription') }}
               </p>
             </div>
           </div>
@@ -209,11 +212,11 @@ onUnmounted(() => {
                   }"
                 >
                   <Icons name="Check" :size="10" />
-                  Active
+                  {{ t('time.active') }}
                 </span>
               </div>
               <p class="text-[11px] text-slate-300 font-medium truncate mt-0.5">
-                {{ phase.vietnameseName }} — {{ phase.tagline }}
+                  {{ localizePhase(phase).vietnameseName }} — {{ localizePhase(phase).tagline }}
               </p>
               <div class="flex items-center gap-3 text-[10px] text-slate-400 mt-1 font-mono">
                 <span class="flex items-center gap-1">
@@ -221,7 +224,7 @@ onUnmounted(() => {
                   {{ phase.caffeineLevel }}% Cafe
                 </span>
                 <span class="truncate">
-                  {{ phase.mascotAccessory === 'coffee' ? '☕ Ly cafe sáng' : phase.mascotAccessory === 'sunglasses' ? '🕶️ Kính râm' : '📜 Bùa chú' }}
+                  {{ phase.mascotAccessory === 'coffee' ? `☕ ${t('time.coffee')}` : phase.mascotAccessory === 'sunglasses' ? `🕶️ ${t('time.sunglasses')}` : `📜 ${t('time.talisman')}` }}
                 </span>
               </div>
             </div>
@@ -236,7 +239,7 @@ onUnmounted(() => {
               :class="isTimeTravelActive ? 'bg-purple-400 animate-ping' : 'bg-emerald-400'"
             />
             <span class="text-slate-400 font-mono text-[10px]">
-              {{ isTimeTravelActive ? 'Chế độ: Time Travel Preview' : 'Chế độ: Đồng bộ thời gian thực' }}
+              {{ isTimeTravelActive ? `${t('time.travel')}: Preview` : t('time.live') }}
             </span>
           </div>
 
@@ -248,7 +251,7 @@ onUnmounted(() => {
             class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/25 transition-all"
           >
             <Icons name="RotateCcw" :size="11" />
-            Giờ Thực
+            {{ t('time.live') }}
           </button>
         </div>
       </div>

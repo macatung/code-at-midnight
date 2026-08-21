@@ -36,8 +36,8 @@ const aboutJsonLd = {
 
 <template>
   <SeoHead
-    title="Kỹ Năng & Hồ Sơ Chuyên Môn — The Midnight Architect"
-    description="Tìm hiểu hành trình phát triển phần mềm, bộ kỹ năng kỹ thuật, kinh nghiệm thực chiến và tuyên ngôn kiến trúc của Ma Cà Tưng."
+    :title="t('page.aboutTitle')"
+    :description="t('page.aboutDescription')"
     keywords="Kỹ năng Lập trình, Hồ sơ Lập trình viên, Full-Stack Developer Profile, Laravel, Vue.js, System Architecture"
     canonical="https://macatung.dev/about"
     :json-ld="aboutJsonLd"
@@ -68,7 +68,7 @@ const aboutJsonLd = {
             Midnight <span class="text-transparent bg-clip-text bg-gradient-to-r from-phantom-mint via-phantom-cyan to-talisman-gold">Terminal CLI</span>
           </h2>
           <p class="text-sm sm:text-base text-slate-400 mt-2 max-w-2xl font-sans">
-            Môi trường dòng lệnh ảo mô phỏng zsh shell với 11 câu lệnh ma thuật, lịch sử điều hướng phím mũi tên và âm thanh gõ phím cơ học.
+            {{ t('page.terminalDescription') }}
           </p>
         </div>
         <MidnightTerminal />

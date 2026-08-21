@@ -33,7 +33,7 @@ const navItems = computed(() => [
   { label: locale.value === 'en' ? 'Vipassanā Practice' : 'Pháp Hành (Vipassanā)', href: '/theravada/danh-muc/phap-hanh', icon: 'Sparkles' },
   { label: locale.value === 'en' ? 'Chanting' : 'Kinh Tụng', href: '/theravada/danh-muc/kinh-tung', icon: 'Scroll' },
   { label: locale.value === 'en' ? 'History' : 'Lịch Sử', href: '/theravada/danh-muc/lich-su', icon: 'Landmark' },
-  { label: locale.value === 'en' ? 'Pāḷi Glossary' : 'Từ Điển Pāḷi', href: '/theravada/tu-dien-pali', icon: 'Compass' },
+  { label: t('theravada.glossary'), href: '/theravada/tu-dien-pali', icon: 'Compass' },
 ]);
 
 const isLinkActive = (href: string): boolean => {
@@ -121,14 +121,14 @@ onUnmounted(() => {
           <div class="flex flex-col text-left justify-center min-w-0">
             <div class="flex items-center gap-1.5 sm:gap-2">
               <span class="text-base sm:text-xl lg:text-2xl font-serif font-bold text-amber-100 tracking-tight sm:tracking-wide truncate">
-                Ma Tọa Thiền
+                {{ t('theravada.brand') }}
               </span>
               <span class="inline-block text-[10px] sm:text-[11px] font-sans px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500/20 to-yellow-500/20 text-amber-300 border border-amber-500/40 font-semibold shrink-0 shadow-sm">
                 Theravāda
               </span>
             </div>
             <span class="text-[10px] sm:text-xs font-serif text-stone-400 italic truncate">
-              Chánh Niệm Từng Giây • Theravāda
+              {{ t('theravada.tagline') }}
             </span>
           </div>
         </Link>
@@ -234,7 +234,7 @@ onUnmounted(() => {
               @click="handleNavClick"
             >
               <span>🌐</span>
-              <span>Về Trang Chủ Macatung.dev</span>
+              <span>{{ t('theravada.home') }}</span>
             </Link>
           </div>
         </div>
@@ -261,22 +261,22 @@ onUnmounted(() => {
         <p class="italic text-stone-200 max-w-2xl leading-relaxed text-xs sm:text-base px-2">
           "Sabbapāpassa akaraṇaṃ, kusalassa upasampadā; Sacittapariyodapanaṃ, etaṃ buddhāna sāsanaṃ."<br />
           <span class="text-amber-300 text-[11px] sm:text-sm not-italic mt-1.5 block font-semibold leading-normal">
-            (Không làm mọi điều ác, Thành tựu các hạnh lành, Giữ tâm ý trong sạch, Đó lời chư Phật dạy — Kinh Pháp Cú 183)
+            (Avoid all evil, cultivate the good, purify the mind — the teaching of the Buddhas, Dhammapada 183)
           </span>
         </p>
 
         <div class="flex flex-wrap items-center justify-center gap-2.5 sm:gap-4 text-xs sm:text-sm text-stone-300 pt-4 border-t border-stone-900 w-full font-serif leading-loose">
           <span class="w-full sm:w-auto font-medium">© 2026 Ma Tọa Thiền • Theravāda Dhamma • macatung.dev</span>
           <span class="hidden sm:inline">•</span>
-          <Link href="/theravada/danh-muc/phap-hoc" class="hover:text-amber-300 font-semibold px-1">Pháp Học</Link>
+          <Link href="/theravada/danh-muc/phap-hoc" class="hover:text-amber-300 font-semibold px-1">{{ locale === 'en' ? 'Dhamma Study' : 'Pháp Học' }}</Link>
           <span>•</span>
-          <Link href="/theravada/danh-muc/phap-hanh" class="hover:text-amber-300 font-semibold px-1">Thiền Vipassanā</Link>
+          <Link href="/theravada/danh-muc/phap-hanh" class="hover:text-amber-300 font-semibold px-1">{{ locale === 'en' ? 'Vipassanā Practice' : 'Thiền Vipassanā' }}</Link>
           <span>•</span>
-          <Link href="/theravada/danh-muc/kinh-tung" class="hover:text-amber-300 font-semibold px-1">Kinh Tụng</Link>
+          <Link href="/theravada/danh-muc/kinh-tung" class="hover:text-amber-300 font-semibold px-1">{{ locale === 'en' ? 'Chanting' : 'Kinh Tụng' }}</Link>
           <span>•</span>
-          <Link href="/theravada/danh-muc/lich-su" class="hover:text-amber-300 font-semibold px-1">Lịch Sử Phật Giáo</Link>
+          <Link href="/theravada/danh-muc/lich-su" class="hover:text-amber-300 font-semibold px-1">{{ locale === 'en' ? 'Buddhist History' : 'Lịch Sử Phật Giáo' }}</Link>
           <span>•</span>
-          <Link href="/theravada/tu-dien-pali" class="hover:text-amber-300 font-semibold px-1">Từ Điển Pāḷi</Link>
+          <Link href="/theravada/tu-dien-pali" class="hover:text-amber-300 font-semibold px-1">{{ t('theravada.glossary') }}</Link>
           <span>•</span>
           <Link href="/" class="hover:text-amber-300 font-sans font-semibold px-1">macatung.dev</Link>
         </div>

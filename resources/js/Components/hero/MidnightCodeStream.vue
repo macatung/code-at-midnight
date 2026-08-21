@@ -2,8 +2,10 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useTimeCycle } from '@/composables/useTimeCycle';
 import Icons from '@/Components/ui/Icons.vue';
+import { useI18n } from '@/composables/useI18n';
 
 const { activePhase } = useTimeCycle();
+const { t } = useI18n();
 
 const codeLinesByPhase = computed(() => {
   switch (activePhase.value.id) {
@@ -11,7 +13,7 @@ const codeLinesByPhase = computed(() => {
       return [
         { num: 1, tokens: [{ text: 'import', color: '#c084fc' }, { text: ' { brewRobusta, reviewPR } ', color: '#e2e8f0' }, { text: 'from', color: '#c084fc' }, { text: " '@macatung/dawn';", color: '#ffd166' }] },
         { num: 2, tokens: [] },
-        { num: 3, tokens: [{ text: '// 🌅 Golden Dawn: Nạp cafe sáng & Daily Standup', color: '#64748b' }] },
+        { num: 3, tokens: [{ text: '// 🌅 Golden Dawn: Morning coffee & daily standup', color: '#64748b' }] },
         { num: 4, tokens: [{ text: 'export async function', color: '#38bdf8' }, { text: ' startMorningRoutine() {', color: '#e2e8f0' }] },
         { num: 5, tokens: [{ text: '  const', color: '#c084fc' }, { text: ' coffee = ', color: '#e2e8f0' }, { text: 'await', color: '#c084fc' }, { text: ' brewRobusta({ sugar: 0 });', color: '#38bdf8' }] },
         { num: 6, tokens: [{ text: '  return', color: '#c084fc' }, { text: ' reviewPR({ zeroBug: true, quality: 100 });', color: '#00f5a0' }] },
@@ -21,7 +23,7 @@ const codeLinesByPhase = computed(() => {
       return [
         { num: 1, tokens: [{ text: 'import', color: '#c084fc' }, { text: ' { shipFeature, scaleCluster } ', color: '#e2e8f0' }, { text: 'from', color: '#c084fc' }, { text: " '@macatung/deployer';", color: '#00d2ff' }] },
         { num: 2, tokens: [] },
-        { num: 3, tokens: [{ text: '// ☀️ High-Noon Forge: Tốc độ ánh sáng & Zero Downtime', color: '#64748b' }] },
+        { num: 3, tokens: [{ text: '// ☀️ High-Noon Forge: Light speed & zero downtime', color: '#64748b' }] },
         { num: 4, tokens: [{ text: 'export async function', color: '#38bdf8' }, { text: ' shipToProduction() {', color: '#e2e8f0' }] },
         { num: 5, tokens: [{ text: '  await', color: '#c084fc' }, { text: ' scaleCluster({ pods: 32, latencyMs: 14 });', color: '#00d2ff' }] },
         { num: 6, tokens: [{ text: '  return', color: '#c084fc' }, { text: " shipFeature('RELEASE_V2.0', { status: 'LIVE' });", color: '#00f5a0' }] },
@@ -31,7 +33,7 @@ const codeLinesByPhase = computed(() => {
       return [
         { num: 1, tokens: [{ text: 'import', color: '#c084fc' }, { text: ' { refactorCodebase, cleanseRepo } ', color: '#e2e8f0' }, { text: 'from', color: '#c084fc' }, { text: " '@macatung/alchemist';", color: '#c084fc' }] },
         { num: 2, tokens: [] },
-        { num: 3, tokens: [{ text: '// 🌆 Twilight Dusk: Dọn dẹp code & Khởi động ca đêm', color: '#64748b' }] },
+        { num: 3, tokens: [{ text: '// 🌆 Twilight Dusk: Clean code & start the night shift', color: '#64748b' }] },
         { num: 4, tokens: [{ text: 'export function', color: '#38bdf8' }, { text: ' warmUpForNightShift() {', color: '#e2e8f0' }] },
         { num: 5, tokens: [{ text: '  const', color: '#c084fc' }, { text: ' clean = ', color: '#e2e8f0' }, { text: 'cleanseRepo({ techDebt: 0 });', color: '#c084fc' }] },
         { num: 6, tokens: [{ text: '  return', color: '#c084fc' }, { text: ' refactorCodebase({ aesthetics: 100 });', color: '#00f5a0' }] },
@@ -42,7 +44,7 @@ const codeLinesByPhase = computed(() => {
       return [
         { num: 1, tokens: [{ text: 'import', color: '#c084fc' }, { text: ' { exorciseBugs, invokeSorcery } ', color: '#e2e8f0' }, { text: 'from', color: '#c084fc' }, { text: " '@macatung/midnight';", color: '#00f5a0' }] },
         { num: 2, tokens: [] },
-        { num: 3, tokens: [{ text: '// 🌙 Midnight Void: Code lúc nửa đêm — Vạn vật say ngủ', color: '#64748b' }] },
+        { num: 3, tokens: [{ text: '// 🌙 Midnight Void: Code at midnight — the world sleeps', color: '#64748b' }] },
         { num: 4, tokens: [{ text: 'export async function', color: '#38bdf8' }, { text: ' codeAtMidnight(): ', color: '#e2e8f0' }, { text: 'Promise', color: '#ffd166' }, { text: '<Uptime> {', color: '#e2e8f0' }] },
         { num: 5, tokens: [{ text: '  await', color: '#c084fc' }, { text: ' exorciseBugs({ target: ', color: '#e2e8f0' }, { text: "'production'", color: '#00f5a0' }, { text: ', bugs: 0 });', color: '#e2e8f0' }] },
         { num: 6, tokens: [{ text: '  return', color: '#c084fc' }, { text: ' invokeSorcery({ focus: 100, flowState: ', color: '#e2e8f0' }, { text: 'true', color: '#ffd166' }, { text: ' });', color: '#e2e8f0' }] },
@@ -95,10 +97,10 @@ function copyCode() {
         type="button"
         @click="copyCode"
         class="text-slate-400 hover:text-slate-200 transition-colors p-1 rounded-md hover:bg-white/5 flex items-center gap-1 text-[10px]"
-        title="Sao chép code"
+        :title="t('common.copy')"
       >
         <Icons :name="isCopied ? 'Check' : 'Copy'" :size="12" :class="isCopied ? 'text-emerald-400' : ''" />
-        <span>{{ isCopied ? 'Đã chép' : 'Chép' }}</span>
+        <span>{{ isCopied ? t('common.copied') : t('common.copy') }}</span>
       </button>
     </div>
 

@@ -7,6 +7,9 @@ import { sound } from '@/audio/soundEffects';
 import MiniMascotLogo from '@/Components/mascot/MiniMascotLogo.vue';
 import MacatungMascot from '@/Components/mascot/MacatungMascot.vue';
 import Icons from '@/Components/ui/Icons.vue';
+import { useI18n } from '@/composables/useI18n';
+
+const { t } = useI18n();
 
 // Game Configuration & State
 const selectedMode = ref<GameMode>('beginner');
@@ -65,10 +68,10 @@ const comboMultiplier = computed(() => {
 });
 
 const titleBadgeEarned = computed(() => {
-  if (stats.score >= 3500) return '🧙‍♂️ Thần Phím Đại Tông Sư (Master Exorcist)';
-  if (stats.score >= 2000) return '⚡ Pháp Sư Trảm Bug (Bug Slayer)';
-  if (stats.score >= 1000) return '🌙 Đạo Sĩ Luyện Code (Rune Coder)';
-  return '🌱 Tập Sự 0 Bug (Apprentice)';
+  if (stats.score >= 3500) return t('game.rankMaster');
+  if (stats.score >= 2000) return t('game.rankSlayer');
+  if (stats.score >= 1000) return t('game.rankCoder');
+  return t('game.rankApprentice');
 });
 
 const saveCurrentScore = () => {
@@ -625,7 +628,7 @@ onUnmounted(() => {
           Ma Cà Tưng: <span class="text-transparent bg-clip-text bg-gradient-to-r from-talisman-gold via-phantom-mint to-phantom-cyan">Rune Typer</span>
         </h2>
         <p class="text-sm sm:text-base text-slate-400 mt-2 max-w-2xl font-sans">
-          Gõ code thần chú rơi từ bầu trời đêm để trấn yểm Bug và rèn luyện phản xạ bàn phím cơ.
+          {{ t('game.description') }}
         </p>
       </div>
 
@@ -641,7 +644,7 @@ onUnmounted(() => {
           @click="selectedMode = 'beginner'"
         >
           <span>🟢</span>
-          <span>Tập Sự 0 Bug (30s)</span>
+          <span>{{ t('game.beginner') }}</span>
         </button>
 
         <button
@@ -654,7 +657,7 @@ onUnmounted(() => {
           @click="selectedMode = 'normal'"
         >
           <span>🟡</span>
-          <span>Ma Đạo 00:00 AM (60s)</span>
+          <span>{{ t('game.normal') }}</span>
         </button>
 
         <button
@@ -667,7 +670,7 @@ onUnmounted(() => {
           @click="selectedMode = 'boss_survival'"
         >
           <span>🔴</span>
-          <span>Sinh Tồn Boss Bug (5 ❤️)</span>
+          <span>{{ t('game.boss') }}</span>
         </button>
       </div>
     </div>
@@ -682,7 +685,7 @@ onUnmounted(() => {
         <!-- Score & Multiplier -->
         <div class="flex items-center gap-4 sm:gap-6 text-left">
           <div>
-            <div class="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Điểm Số</div>
+            <div class="text-[10px] font-mono text-slate-400 uppercase tracking-wider">{{ t('game.score') }}</div>
             <div class="text-lg sm:text-xl font-display font-extrabold text-talisman-gold flex items-center gap-1.5">
               <span>{{ stats.score.toLocaleString() }}</span>
               <span
@@ -697,7 +700,7 @@ onUnmounted(() => {
           <!-- Timer / Lives -->
           <div>
             <div class="text-[10px] font-mono text-slate-400 uppercase tracking-wider">
-              {{ selectedMode === 'boss_survival' ? 'Mạng Sống' : 'Thời Gian' }}
+              {{ selectedMode === 'boss_survival' ? t('game.lives') : t('game.time') }}
             </div>
             <div class="text-base sm:text-lg font-mono font-bold text-phantom-mint">
               <span v-if="selectedMode === 'boss_survival'">
@@ -709,12 +712,12 @@ onUnmounted(() => {
 
           <!-- WPM & Accuracy -->
           <div class="hidden sm:block">
-            <div class="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Tốc Độ</div>
+            <div class="text-[10px] font-mono text-slate-400 uppercase tracking-wider">{{ t('game.speed') }}</div>
             <div class="text-base font-mono font-bold text-slate-200">{{ stats.wpm }} WPM</div>
           </div>
 
           <div class="hidden sm:block">
-            <div class="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Chính Xác</div>
+            <div class="text-[10px] font-mono text-slate-400 uppercase tracking-wider">{{ t('game.accuracy') }}</div>
             <div class="text-base font-mono font-bold text-phantom-cyan">{{ stats.accuracy }}%</div>
           </div>
         </div>
@@ -727,13 +730,13 @@ onUnmounted(() => {
             @click="showLeaderboard = true"
           >
             <span>🏆</span>
-            <span class="hidden sm:inline">Kỷ Lục</span>
+            <span class="hidden sm:inline">{{ t('game.best') }}</span>
           </button>
 
           <button
             type="button"
             class="p-2.5 rounded-xl bg-midnight-900 border border-white/10 hover:border-white/30 text-slate-300 hover:text-white transition-all text-xs min-h-[38px] cursor-pointer"
-            :title="isMuted ? 'Bật Âm Thanh' : 'Tắt Âm Thanh'"
+          :title="isMuted ? t('game.mute') : t('game.unmute')"
             @click="toggleAudio"
           >
             <span>{{ isMuted ? '🔇' : '🔊' }}</span>
@@ -742,7 +745,7 @@ onUnmounted(() => {
           <button
             type="button"
             class="p-2.5 rounded-xl bg-midnight-900 border border-white/10 hover:border-white/30 text-slate-300 hover:text-white transition-all text-xs min-h-[38px] cursor-pointer"
-            title="Toàn Màn Hình"
+          :title="t('game.fullscreen')"
             @click="toggleFullscreenMode"
           >
             <span>⛶</span>
@@ -754,7 +757,7 @@ onUnmounted(() => {
             class="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-mono text-slate-300 hover:text-white transition-all min-h-[38px] cursor-pointer"
             @click="pauseGame"
           >
-            {{ stats.isPaused ? '▶ Tiếp Tục' : '⏸ Tạm Dừng' }}
+          {{ stats.isPaused ? `▶ ${t('game.resume')}` : `⏸ ${t('game.pause')}` }}
           </button>
         </div>
       </div>
@@ -785,10 +788,10 @@ onUnmounted(() => {
           </div>
 
           <h3 class="text-2xl sm:text-3xl font-display font-extrabold text-white mb-2">
-            Rune Typer: Niệm Chú Trừ Tà
+            Rune Typer: Exorcist Typing
           </h3>
           <p class="text-sm text-slate-300 max-w-md mb-6 font-sans">
-            Gõ phím theo các dòng code thần chú bay xuống từ bầu trời đêm để diệt Bug và tích lũy điểm kinh nghiệm.
+            {{ t('game.description') }}
           </p>
 
           <div class="flex flex-wrap items-center justify-center gap-3">
@@ -797,11 +800,11 @@ onUnmounted(() => {
               class="px-8 py-3.5 rounded-2xl bg-phantom-mint text-midnight-950 font-display font-bold text-sm sm:text-base hover:brightness-110 shadow-glow-mint transition-all flex items-center gap-2 cursor-pointer active:scale-95"
               @click="startGame(selectedMode)"
             >
-              <span>Vào Chơi Ngay (Start)</span>
+              <span>{{ t('game.start') }}</span>
               <span>⚡</span>
             </button>
           </div>
-          <p class="text-xs font-mono text-slate-500 mt-4">Nhấn phím bất kỳ hoặc click để bắt đầu gõ</p>
+          <p class="text-xs font-mono text-slate-500 mt-4">{{ t('game.startHint') }}</p>
         </div>
 
         <!-- Pause Screen Overlay -->
@@ -809,14 +812,14 @@ onUnmounted(() => {
           v-if="stats.isPaused"
           class="absolute inset-0 z-20 flex flex-col items-center justify-center p-6 text-center bg-midnight-950/80 backdrop-blur-md"
         >
-          <h3 class="text-2xl font-display font-bold text-talisman-gold mb-2">⏸ Đang Tạm Dừng</h3>
-          <p class="text-xs font-mono text-slate-400 mb-6">Nghỉ tay uống ngụm cà phê Robusta</p>
+          <h3 class="text-2xl font-display font-bold text-talisman-gold mb-2">⏸ {{ t('game.paused') }}</h3>
+          <p class="text-xs font-mono text-slate-400 mb-6">{{ t('game.pauseHint') }}</p>
           <button
             type="button"
             class="px-5 py-2.5 rounded-xl bg-phantom-mint text-midnight-950 font-display font-bold text-sm hover:brightness-110 shadow-glow-mint transition-all cursor-pointer"
             @click="pauseGame"
           >
-            Tiếp Tục [ESC]
+            {{ t('game.resume') }} [ESC]
           </button>
         </div>
 
@@ -829,20 +832,20 @@ onUnmounted(() => {
             {{ titleBadgeEarned }}
           </div>
           <h3 class="text-3xl sm:text-4xl font-display font-extrabold text-white mb-2">
-            Kết Thúc Phiên Trừ Tà!
+            {{ t('game.end') }}
           </h3>
 
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 my-6 max-w-lg w-full">
             <div class="p-3 rounded-xl bg-midnight-900 border border-white/10">
-              <div class="text-[10px] font-mono text-slate-400">Tổng Điểm</div>
+              <div class="text-[10px] font-mono text-slate-400">{{ t('game.totalScore') }}</div>
               <div class="text-lg sm:text-xl font-bold text-talisman-gold">{{ stats.score.toLocaleString() }}</div>
             </div>
             <div class="p-3 rounded-xl bg-midnight-900 border border-white/10">
-              <div class="text-[10px] font-mono text-slate-400">Tốc Độ Gõ</div>
+              <div class="text-[10px] font-mono text-slate-400">{{ t('game.wpm') }}</div>
               <div class="text-lg sm:text-xl font-bold text-phantom-mint">{{ stats.wpm }} WPM</div>
             </div>
             <div class="p-3 rounded-xl bg-midnight-900 border border-white/10">
-              <div class="text-[10px] font-mono text-slate-400">Chính Xác</div>
+              <div class="text-[10px] font-mono text-slate-400">{{ t('game.accuracy') }}</div>
               <div class="text-lg sm:text-xl font-bold text-phantom-cyan">{{ stats.accuracy }}%</div>
             </div>
             <div class="p-3 rounded-xl bg-midnight-900 border border-white/10">
@@ -857,14 +860,14 @@ onUnmounted(() => {
               class="px-6 py-3 rounded-xl bg-phantom-mint text-midnight-950 font-display font-bold text-sm hover:brightness-110 shadow-glow-mint transition-all cursor-pointer"
               @click="startGame(selectedMode)"
             >
-              Chơi Lại 🔄
+              {{ t('game.replay') }} 🔄
             </button>
             <button
               type="button"
               class="px-4 py-3 rounded-xl bg-midnight-900 border border-white/10 hover:border-white/30 text-white font-mono text-xs transition-all cursor-pointer"
               @click="showLeaderboard = true"
             >
-              Xem Kỷ Lục 🏆
+              {{ t('game.leaderboard') }} 🏆
             </button>
           </div>
         </div>
@@ -921,7 +924,7 @@ onUnmounted(() => {
             }"
           >
             <span v-if="mascotReaction === 'hop'">⚡ Hop!</span>
-            <span v-else-if="mascotReaction === 'cast'">✨ Trảm Bug!</span>
+            <span v-else-if="mascotReaction === 'cast'">{{ t('game.cast') }}</span>
             <span v-else-if="mascotReaction === 'hurt'">💦 Miss!</span>
             <span v-else>🌙 Ready</span>
           </div>
@@ -952,7 +955,7 @@ onUnmounted(() => {
         <div class="flex items-center justify-between mb-6">
           <div class="flex items-center gap-2">
             <span class="text-2xl">🏆</span>
-            <h3 class="text-xl font-display font-extrabold text-white">Bảng Phong Thần Rune Typer</h3>
+          <h3 class="text-xl font-display font-extrabold text-white">Rune Typer Leaderboard</h3>
           </div>
           <button
             type="button"
@@ -964,7 +967,7 @@ onUnmounted(() => {
         </div>
 
         <div v-if="highScores.length === 0" class="text-center py-8 text-slate-400 text-xs font-mono">
-          Chưa có kỷ lục nào. Hãy là người đầu tiên ghi danh!
+          {{ t('game.noScores') }}
         </div>
 
         <div v-else class="space-y-2.5 max-h-80 overflow-y-auto pr-1">

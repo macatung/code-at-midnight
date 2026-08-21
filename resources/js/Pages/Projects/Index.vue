@@ -6,6 +6,7 @@ import TalismanCanvas from '@/Components/mascot/TalismanCanvas.vue';
 import ProjectsSection from '@/Components/projects/ProjectsSection.vue';
 import NextStepsHub from '@/Components/layout/NextStepsHub.vue';
 import { useI18n } from '@/composables/useI18n';
+import { Link } from '@inertiajs/vue3';
 
 defineProps<{
   projects?: any[];
@@ -29,8 +30,8 @@ const projectsJsonLd = {
 
 <template>
   <SeoHead
-    title="Kho Grimoire Dự Án Thực Chiến — Sản Phẩm Sáng Tạo"
-    description="Khám phá các sản phẩm phần mềm, kiến trúc hệ thống, ứng dụng tương tác kỳ ảo và thư viện mã nguồn mở thực chiến của Ma Cà Tưng."
+    :title="t('page.projectsTitle')"
+    :description="t('page.projectsDescription')"
     keywords="Dự án Web, Laravel Projects, Vue.js Projects, Creative Coding, Full-Stack Portfolio, Web Applications"
     canonical="https://macatung.dev/projects"
     :json-ld="projectsJsonLd"

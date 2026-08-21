@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { useTimeCycle, TimePhaseId } from '@/composables/useTimeCycle';
 import { sound } from '@/audio/soundEffects';
+import { useI18n } from '@/composables/useI18n';
 
 const {
   currentDisplayHour,
@@ -14,6 +15,7 @@ const {
   setPhaseOverride,
   resetToRealTime
 } = useTimeCycle();
+const { t } = useI18n();
 
 const sliderHour = computed({
   get: () => currentDisplayHour.value,
@@ -23,10 +25,10 @@ const sliderHour = computed({
 });
 
 const phasePresets: { id: TimePhaseId; hour: number; label: string; icon: string; color: string }[] = [
-  { id: 'midnight', hour: 0, label: '00:00 Nửa Đêm', icon: '🌙', color: '#00f5a0' },
-  { id: 'dawn', hour: 6, label: '06:00 Rạng Đông', icon: '🌅', color: '#ffd166' },
-  { id: 'afternoon', hour: 12, label: '12:00 Chính Ngọ', icon: '☀️', color: '#00d2ff' },
-  { id: 'twilight', hour: 18, label: '18:00 Hoàng Hôn', icon: '🔮', color: '#c084fc' },
+  { id: 'midnight', hour: 0, label: '00:00 Midnight', icon: '🌙', color: '#00f5a0' },
+  { id: 'dawn', hour: 6, label: '06:00 Dawn', icon: '🌅', color: '#ffd166' },
+  { id: 'afternoon', hour: 12, label: '12:00 Noon', icon: '☀️', color: '#00d2ff' },
+  { id: 'twilight', hour: 18, label: '18:00 Twilight', icon: '🔮', color: '#c084fc' },
 ];
 
 const handleSliderChange = (e: Event) => {
@@ -63,18 +65,18 @@ const handleReset = () => {
         </span>
         <div>
           <div class="flex items-center gap-2">
-            <h4 class="text-xs font-mono tracking-wider text-slate-400 uppercase">Cỗ Máy Thời Gian 24H</h4>
+            <h4 class="text-xs font-mono tracking-wider text-slate-400 uppercase">{{ t('time.travel') }} 24H</h4>
             <span
               v-if="isTimeTravelActive"
               class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-mono font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse"
             >
-              ⚡ Du Hành Thời Gian
+              ⚡ {{ t('time.travel') }}
             </span>
             <span
               v-else
               class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-mono font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
             >
-              ● Giờ Thực Tế
+              ● {{ t('time.live') }}
             </span>
           </div>
           <p class="text-sm font-bold text-white tracking-tight flex items-center gap-2 mt-0.5">
@@ -93,9 +95,9 @@ const handleReset = () => {
           v-if="isTimeTravelActive"
           @click="handleReset"
           class="group flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 border border-emerald-500/40 text-xs font-mono font-semibold transition-all duration-200 hover:scale-105 active:scale-95 shadow-sm"
-          title="Quay về giờ thực"
+          :title="t('time.reset')"
         >
-          <span>↺ Giờ Thực</span>
+          <span>↺ {{ t('time.live') }}</span>
         </button>
       </div>
     </div>
@@ -103,10 +105,10 @@ const handleReset = () => {
     <!-- 24H Range Slider -->
     <div class="relative py-2 px-1">
       <div class="flex justify-between items-center text-[11px] font-mono font-semibold text-slate-500 mb-1.5">
-        <span :class="{ 'text-emerald-400 font-bold': activePhaseId === 'midnight' }">00:00 Đêm</span>
-        <span :class="{ 'text-amber-400 font-bold': activePhaseId === 'dawn' }">06:00 Sáng</span>
-        <span :class="{ 'text-cyan-400 font-bold': activePhaseId === 'afternoon' }">12:00 Trưa</span>
-        <span :class="{ 'text-purple-400 font-bold': activePhaseId === 'twilight' }">18:00 Tối</span>
+        <span :class="{ 'text-emerald-400 font-bold': activePhaseId === 'midnight' }">00:00 Midnight</span>
+        <span :class="{ 'text-amber-400 font-bold': activePhaseId === 'dawn' }">06:00 Dawn</span>
+        <span :class="{ 'text-cyan-400 font-bold': activePhaseId === 'afternoon' }">12:00 Noon</span>
+        <span :class="{ 'text-purple-400 font-bold': activePhaseId === 'twilight' }">18:00 Twilight</span>
         <span class="text-slate-600">23:59</span>
       </div>
 

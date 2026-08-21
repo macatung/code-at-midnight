@@ -32,8 +32,8 @@ const gameJsonLd = {
 
 <template>
   <SeoHead
-    title="Rune Typer Arcade Chamber — Sàn Đấu Trừ Tà Nửa Đêm"
-    description="Thử thách tốc độ gõ phím trừ tà, hóa giải thuật toán bóng tối với game tương tác Rune Typer phong cách retro arcade."
+    title="Rune Typer Arcade Chamber — Midnight Typing Arena"
+    description="Challenge your typing speed, banish dark algorithms and play Rune Typer in a retro arcade world."
     keywords="Rune Typer, Web Game, Typing Game, Arcade Game, Creative Coding, Mini Game Lập Trình"
     canonical="https://macatung.dev/game"
     :json-ld="gameJsonLd"
@@ -83,7 +83,7 @@ const gameJsonLd = {
           <span class="text-2xl">📖</span>
           <div>
             <h3 class="font-display font-bold text-lg sm:text-xl text-white">{{ t('game.spellbook') }}</h3>
-            <p class="text-xs font-mono text-slate-400">Các câu lệnh và bùa chú được nạp sẵn vào máy Arcade để bạn luyện tay trước khi vào trận</p>
+            <p class="text-xs font-mono text-slate-400">Spell commands are loaded into the arcade so you can warm up before the match.</p>
           </div>
         </div>
 
@@ -92,7 +92,7 @@ const gameJsonLd = {
           <div class="p-4 rounded-2xl bg-midnight-950/80 border border-white/5">
             <div class="text-xs font-mono font-bold text-phantom-mint mb-3 flex items-center gap-1.5">
               <span>🟢</span>
-              <span>Tập Sự 0 Bug (Keywords)</span>
+              <span>0-Bug Apprentice (Keywords)</span>
             </div>
             <div class="flex flex-wrap gap-1.5">
               <span
@@ -109,7 +109,7 @@ const gameJsonLd = {
           <div class="p-4 rounded-2xl bg-midnight-950/80 border border-white/5">
             <div class="text-xs font-mono font-bold text-talisman-gold mb-3 flex items-center gap-1.5">
               <span>🟡</span>
-              <span>Ma Đạo 00:00 AM (Code Spells)</span>
+              <span>Midnight Mage (Code Spells)</span>
             </div>
             <div class="flex flex-wrap gap-1.5">
               <span
@@ -126,7 +126,7 @@ const gameJsonLd = {
           <div class="p-4 rounded-2xl bg-midnight-950/80 border border-rose-500/20">
             <div class="text-xs font-mono font-bold text-rose-400 mb-3 flex items-center gap-1.5">
               <span>🔴</span>
-              <span>Boss Bug Phục Kích (3 HP)</span>
+              <span>Boss Bug Ambush (3 HP)</span>
             </div>
             <div class="space-y-2">
               <div

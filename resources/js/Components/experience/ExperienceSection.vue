@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue';
 import { experienceData } from '@/data/experienceData';
 import { sound } from '@/audio/soundEffects';
+import { useI18n } from '@/composables/useI18n';
 
 interface ExperienceRecord {
   id: number | string;
@@ -23,15 +24,18 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   experiences: () => [],
 });
+const { t } = useI18n();
 
 const activeType = ref<string>('all');
 
 const types = [
-  { id: 'all', label: 'Tất Cả Mốc Thời Gian' },
+  { id: 'all', label: 'All milestones' },
   { id: 'Full-time', label: 'Full-Time' },
   { id: 'Contract', label: 'Contract & Creative' },
   { id: 'Open Source', label: 'Indie & Open Source' },
 ];
+
+const typeLabel = (id: string) => ({ all: t('experience.all'), Contract: t('experience.contract'), 'Open Source': t('experience.openSource') }[id] || id);
 
 const allExperiences = computed(() => {
   if (props.experiences && props.experiences.length > 0) {
@@ -57,13 +61,13 @@ const setType = (typeId: string) => {
     <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
       <div class="flex flex-col items-start">
         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-phantom-mint text-xs font-mono mb-3 whitespace-nowrap select-none shadow-glow-mint">
-          📜 The Career Chronicles
+          📜 {{ t('experience.badge') }}
         </span>
         <h2 class="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold text-white tracking-tight">
-          Kinh Nghiệm & <span class="text-transparent bg-clip-text bg-gradient-to-r from-phantom-mint via-phantom-cyan to-talisman-gold">Biên Niên Sử</span>
+          {{ t('experience.title') }} <span class="text-transparent bg-clip-text bg-gradient-to-r from-phantom-mint via-phantom-cyan to-talisman-gold">{{ t('experience.titleAccent') }}</span>
         </h2>
         <p class="text-sm sm:text-base text-slate-400 mt-2 max-w-2xl font-sans">
-          Dấu chân qua các dự án thực chiến tải cao, hành trình phát triển từ Indie Hacker sang Lead Systems Architect.
+          {{ t('experience.description') }}
         </p>
       </div>
 
@@ -79,7 +83,7 @@ const setType = (typeId: string) => {
             : 'bg-midnight-900/80 text-slate-400 border-white/5 hover:border-white/20 hover:text-white'"
           @click="setType(t.id)"
         >
-          {{ t.label }}
+          {{ typeLabel(t.id) }}
         </button>
       </div>
     </div>
@@ -148,7 +152,7 @@ const setType = (typeId: string) => {
           >
             <span class="text-base shrink-0">🌙</span>
             <div>
-              <span class="font-mono text-[10px] text-talisman-gold font-bold uppercase tracking-wider block mb-0.5">Midnight Quest</span>
+              <span class="font-mono text-[10px] text-talisman-gold font-bold uppercase tracking-wider block mb-0.5">{{ t('experience.quest') }}</span>
               <p class="leading-relaxed">{{ item.midnightQuest }}</p>
             </div>
           </div>

@@ -31,8 +31,8 @@ const talismanJsonLd = {
 
 <template>
   <SeoHead
-    title="Lò Rèn Bùa Dev (Talisman Forge) — The Midnight Architect"
-    description="Tùy biến và thỉnh các đạo bùa trừ Bug, bảo trợ deploy lúc 00:00 AM và xuất file ảnh chất lượng cao để dán laptop hoặc chia sẻ lên mạng xã hội."
+    title="Developer Talisman Forge — The Midnight Architect"
+    description="Customize bug-banishing charms, protect midnight deployments and export high-quality artwork for your laptop or social posts."
     keywords="Bùa Lập Trình, Dev Talisman, Bùa Trừ Bug, No Bug Charm, Creative Tool, Canvas Exporter"
     canonical="https://macatung.dev/talisman"
     :json-ld="talismanJsonLd"

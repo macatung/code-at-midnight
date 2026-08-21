@@ -67,8 +67,8 @@ const blogIndexJsonLd = {
 
 <template>
   <SeoHead
-    title="Midnight Tech Chronicle — Ghi Chép Kiến Trúc & Kỹ Thuật Đêm"
-    description="Kho bài viết chuyên sâu về kỹ thuật phần mềm, Laravel, Vue.js, Cloud Architecture, tối ưu hiệu năng và những trải nghiệm lập trình kỳ thú đêm khuya."
+    :title="t('blog.title')"
+    :description="t('blog.description')"
     keywords="Blog Lập Trình, Laravel Architecture, Vue 3, Inertia.js, Full-Stack Tips, Cloud Run Deployment, Kỹ Thuật Phần Mềm"
     canonical="https://macatung.dev/blog"
     :json-ld="blogIndexJsonLd"

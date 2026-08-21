@@ -21,8 +21,8 @@ const handleToggle = () => {
     :class="!isMuted
       ? 'border-phantom-mint/40 bg-phantom-mint/10 text-phantom-mint hover:bg-phantom-mint/20 shadow-glow-mint'
       : 'border-white/10 bg-midnight-900/80 text-slate-400 hover:text-slate-200 hover:border-white/20'"
-    :aria-label="isMuted ? 'Bật âm thanh' : 'Tắt âm thanh'"
-    :title="isMuted ? 'Bật hiệu ứng âm thanh' : 'Tắt hiệu ứng âm thanh'"
+    :aria-label="isMuted ? 'Enable sound' : 'Disable sound'"
+    :title="isMuted ? 'Enable sound effects' : 'Disable sound effects'"
     @click="handleToggle"
   >
     <!-- Equalizer animation when audio is active -->
@@ -35,6 +35,6 @@ const handleToggle = () => {
     <!-- Muted icon when audio is disabled -->
     <Icons v-else name="VolumeX" :size="15" class="text-slate-400" />
 
-    <span class="font-bold hidden sm:inline">{{ isMuted ? 'SFX: TẮT' : 'SFX: BẬT' }}</span>
+    <span class="font-bold hidden sm:inline">{{ isMuted ? 'SFX: OFF' : 'SFX: ON' }}</span>
   </button>
 </template>

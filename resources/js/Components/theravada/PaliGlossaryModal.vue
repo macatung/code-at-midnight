@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { mindfulBell } from '@/audio/mindfulBellAudio';
+import { useI18n } from '@/composables/useI18n';
+
+const { locale } = useI18n();
 
 export interface PaliTermItem {
   term: string;
@@ -85,10 +88,10 @@ const handleTermClick = () => {
           </span>
           <div class="min-w-0">
             <h3 class="text-base sm:text-lg font-serif font-bold text-amber-200 tracking-tight truncate">
-              Từ Điển Thuật Ngữ Pāḷi
+              {{ locale === 'en' ? 'Pāḷi Glossary' : 'Từ Điển Thuật Ngữ Pāḷi' }}
             </h3>
             <p class="text-[10px] sm:text-xs text-stone-400 font-sans truncate">
-              Tra cứu nhanh 20+ thuật ngữ Pāḷi cốt lõi trong Tam Tạng & Vipassanā
+              {{ locale === 'en' ? 'Explore 20+ core Pāḷi terms from the Tipiṭaka & Vipassanā' : 'Tra cứu nhanh 20+ thuật ngữ Pāḷi cốt lõi trong Tam Tạng & Vipassanā' }}
             </p>
           </div>
         </div>
@@ -96,7 +99,7 @@ const handleTermClick = () => {
         <button
           @click="handleClose"
           class="text-stone-400 hover:text-white p-2 rounded-xl hover:bg-stone-800 transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center cursor-pointer shrink-0"
-          aria-label="Đóng"
+          :aria-label="locale === 'en' ? 'Close' : 'Đóng'"
         >
           ✕
         </button>
@@ -108,7 +111,7 @@ const handleTermClick = () => {
           <input
             v-model="searchQuery"
             type="text"
-            placeholder="Tìm theo thuật ngữ Pāḷi, tiếng Việt hoặc ý nghĩa..."
+            :placeholder="locale === 'en' ? 'Search by Pāḷi term, Vietnamese translation or meaning...' : 'Tìm theo thuật ngữ Pāḷi, tiếng Việt hoặc ý nghĩa...'"
             class="w-full pl-9 pr-4 py-2.5 rounded-xl bg-stone-950/80 border border-stone-700 text-xs sm:text-sm text-stone-100 placeholder-stone-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
           />
           <span class="absolute left-3 top-2.5 text-stone-500 text-xs sm:text-sm">🔍</span>
@@ -126,7 +129,7 @@ const handleTermClick = () => {
                 : 'bg-stone-800 text-stone-300 hover:bg-stone-700'
             ]"
           >
-            {{ cat === 'all' ? 'Tất Cả' : cat }}
+            {{ cat === 'all' ? (locale === 'en' ? 'All' : 'Tất Cả') : cat }}
           </button>
         </div>
       </div>
@@ -158,7 +161,7 @@ const handleTermClick = () => {
         </div>
 
         <div v-if="filteredTerms.length === 0" class="py-10 sm:py-12 text-center text-stone-500 font-serif text-xs sm:text-sm">
-          Không tìm thấy thuật ngữ nào phù hợp với từ khóa "{{ searchQuery }}".
+          {{ locale === 'en' ? 'No glossary term matches' : 'Không tìm thấy thuật ngữ nào phù hợp với từ khóa' }} "{{ searchQuery }}".
         </div>
       </div>
 
@@ -169,7 +172,7 @@ const handleTermClick = () => {
           @click="handleClose"
           class="px-3.5 sm:px-4 py-1.5 rounded-xl bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/40 text-xs font-serif font-bold transition-all shrink-0 cursor-pointer min-h-[36px]"
         >
-          Đóng
+          {{ locale === 'en' ? 'Close' : 'Đóng' }}
         </button>
       </div>
     </div>

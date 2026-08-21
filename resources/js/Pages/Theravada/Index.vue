@@ -6,6 +6,7 @@ import ZenMascot from '@/Components/mascot/ZenMascot.vue';
 import ZenTimeSlider from '@/Components/theravada/ZenTimeSlider.vue';
 import { mindfulBell } from '@/audio/mindfulBellAudio';
 import { useZenTimeCycle } from '@/composables/useZenTimeCycle';
+import { useI18n } from '@/composables/useI18n';
 
 const props = defineProps<{
   articles: any[];
@@ -20,6 +21,7 @@ const props = defineProps<{
 }>();
 
 const { activeZenPhase } = useZenTimeCycle();
+const { locale, t } = useI18n();
 const isChanting = ref(false);
 
 const playChantBell = () => {
@@ -54,8 +56,8 @@ const theravadaHomeJsonLd = {
 
 <template>
   <TheravadaLayout
-    :title="title || 'Chánh Niệm Từng Giây • Tam Tạng Kinh Điển Theravāda'"
-    description="Hệ thống tu học và bảo tồn kinh điển Phật giáo nguyên thủy Theravāda: Tứ Thánh Đế, Bát Chánh Đạo, Thiền Minh Sát Vipassanā và Từ điển Pāḷi thuần khiết."
+    :title="title || `${t('theravada.tagline')} • Tipiṭaka`"
+    :description="locale === 'en' ? 'A Theravāda learning system preserving the Tipiṭaka, the Four Noble Truths, the Noble Eightfold Path, Vipassanā and the Pāḷi Glossary.' : 'Hệ thống tu học và bảo tồn kinh điển Phật giáo nguyên thủy Theravāda.'"
     keywords="Ma Tọa Thiền, Theravada, Phật giáo nguyên thủy, Tam Tạng Pāḷi, Kinh Pháp Cú, Dhammapada, Thiền Vipassana, Tứ Niệm Xứ, Bát Chánh Đạo, Chánh Niệm"
     canonical="https://theravada.macatung.dev"
     :json-ld="theravadaHomeJsonLd"
@@ -66,7 +68,7 @@ const theravadaHomeJsonLd = {
       <!-- Top Tag Badge -->
       <div class="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[11px] sm:text-xs font-serif mb-3 sm:mb-4 shadow-sm max-w-[92vw] text-center">
         <span>☸️</span>
-        <span class="font-bold tracking-wide sm:tracking-wider truncate">EHIPASSIKO — HÃY ĐẾN ĐỂ THẤY & THỂ NGHIỆM</span>
+        <span class="font-bold tracking-wide sm:tracking-wider truncate">{{ t('theravada.ehipassiko') }}</span>
       </div>
 
       <!-- Mascot Ma Cà Tưng Tọa Thiền Stage (~160-220px balanced height) -->
@@ -76,15 +78,15 @@ const theravadaHomeJsonLd = {
 
       <!-- Main Headline / Slogan Trau Chuốt -->
       <h1 class="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-amber-100 tracking-tight leading-snug sm:leading-tight mb-3 sm:mb-4 px-2">
-        Vượt Khỏi Đêm Đen Vô Minh <br class="hidden sm:inline" />
+        {{ t('theravada.heroTitle') }} <br class="hidden sm:inline" />
         <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-200 to-amber-500">
-          Hướng Về Ánh Sáng Chánh Tri Kiến
+          {{ t('theravada.heroAccent') }}
         </span>
       </h1>
 
       <!-- Triết Lý Đại Ý "Dù Là Ma Cũng Giác Ngộ Phật Giáo" -->
       <p class="text-xs sm:text-sm md:text-base text-stone-300 font-serif leading-relaxed max-w-2xl mx-auto mb-6 sm:mb-8 text-center px-3 sm:px-4">
-        "Dù là Ma Cà Tưng lang thang trong bóng đêm vô minh, khi có duyên lành hạnh ngộ Chánh Pháp cũng buông bỏ vọng niệm để tọa thiền, nương tựa Tam Bảo tìm về sự an tịnh và giải thoát tối hậu."
+        "{{ t('theravada.heroQuote') }}"
       </p>
 
       <!-- CTA Action Buttons -->
@@ -94,31 +96,31 @@ const theravadaHomeJsonLd = {
           class="px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 text-stone-950 font-serif font-bold text-xs sm:text-sm hover:brightness-110 transition-all shadow-lg hover:scale-105 active:scale-95 text-center flex items-center justify-center gap-2 min-h-[44px]"
         >
           <span>📖</span>
-          <span>Khảo Cứu Pháp Học ➔</span>
+          <span>{{ t('theravada.study') }} ➔</span>
         </Link>
         <Link
           href="/theravada/danh-muc/phap-hanh"
           class="px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl bg-stone-900 border border-amber-500/40 text-amber-300 font-serif font-bold text-xs sm:text-sm hover:bg-stone-800 transition-all hover:scale-105 active:scale-95 text-center flex items-center justify-center min-h-[44px]"
         >
-          Thực Hành Thiền Vipassanā 🧘
+          {{ t('theravada.practice') }} 🧘
         </Link>
         <Link
           href="/theravada/danh-muc/kinh-tung"
           class="px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl bg-stone-900 border border-stone-700 text-stone-300 hover:text-white font-serif text-xs sm:text-sm transition-all hover:bg-stone-800 text-center flex items-center justify-center min-h-[44px]"
         >
-          Kinh Tụng Pāḷi 📜
+          {{ t('theravada.chanting') }} 📜
         </Link>
         <Link
           href="/theravada/danh-muc/lich-su"
           class="px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl bg-stone-900 border border-amber-500/40 text-amber-300 font-serif font-bold text-xs sm:text-sm hover:bg-stone-800 transition-all hover:scale-105 active:scale-95 text-center flex items-center justify-center min-h-[44px]"
         >
-          Lịch Sử Phật Giáo 🏛️
+          {{ t('theravada.history') }} 🏛️
         </Link>
         <Link
           href="/theravada/tu-dien-pali"
           class="px-4 sm:px-5 py-3 sm:py-3.5 rounded-2xl bg-stone-900/80 border border-stone-700 text-stone-300 hover:text-white font-serif text-xs sm:text-sm transition-all hover:bg-stone-800 text-center flex items-center justify-center min-h-[44px]"
         >
-          Từ Điển Pāḷi ☸️
+          {{ t('theravada.glossary') }} ☸️
         </Link>
       </div>
     </section>
@@ -138,7 +140,7 @@ const theravadaHomeJsonLd = {
         <div class="flex-1 space-y-3 text-left">
           <div class="flex flex-wrap items-center gap-2">
             <span class="px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 text-xs font-serif font-bold border border-amber-500/30">
-              Kinh Pháp Cú (Dhammapada) — Kệ số {{ dailyVerse.verse_number }}
+              {{ t('theravada.verse') }} {{ dailyVerse.verse_number }}
             </span>
             <span class="text-xs font-serif text-stone-400 italic">
               {{ dailyVerse.chapter }}
@@ -161,7 +163,7 @@ const theravadaHomeJsonLd = {
           class="w-full md:w-auto shrink-0 flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 font-serif text-xs font-bold transition-all hover:scale-105 active:scale-95 shadow-md cursor-pointer min-h-[44px]"
         >
           <span>🔔</span>
-          <span>Lắng Lòng Chiêm Nghiệm</span>
+          <span>{{ t('theravada.reflect') }}</span>
         </button>
       </div>
     </section>
@@ -170,10 +172,10 @@ const theravadaHomeJsonLd = {
     <section class="my-14">
       <div class="text-center mb-10">
         <h2 class="text-2xl sm:text-3xl font-serif font-bold text-amber-100 tracking-tight">
-          Tứ Đại Trụ Cột Hoằng Dương Theravāda
+          {{ t('theravada.pillars') }}
         </h2>
         <p class="text-sm text-stone-400 font-serif mt-2">
-          Học hiểu tường tận giáo pháp, lịch sử truyền thừa và thể nghiệm chân lý trong từng khoảnh khắc
+          {{ t('theravada.pillarsDesc') }}
         </p>
       </div>
 
@@ -193,7 +195,7 @@ const theravadaHomeJsonLd = {
                 {{ cat.slug === 'phap-hoc' ? '📖' : cat.slug === 'phap-hanh' ? '🧘' : cat.slug === 'kinh-tung' ? '📜' : '🏛️' }}
               </span>
               <span class="text-xs font-serif text-amber-300 font-bold bg-stone-950 px-3 py-1 rounded-full border border-stone-800 shadow-sm">
-                {{ cat.count }} Bài viết
+                {{ cat.count }} {{ t('theravada.articles') }}
               </span>
             </div>
 
@@ -210,7 +212,7 @@ const theravadaHomeJsonLd = {
           </div>
 
           <div class="mt-6 pt-4 border-t border-stone-800 flex items-center justify-between text-xs font-serif font-bold text-amber-400 group-hover:text-amber-300">
-            <span>Khám phá chuyên mục</span>
+            <span>{{ t('theravada.explore') }}</span>
             <span class="group-hover:translate-x-1.5 transition-transform">➔</span>
           </div>
         </Link>
@@ -222,10 +224,10 @@ const theravadaHomeJsonLd = {
       <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 text-left">
         <div>
           <span class="text-xs font-serif font-bold text-amber-400 uppercase tracking-wider">
-            Thánh Điển & Giáo Lý Cốt Lõi
+            {{ t('theravada.core') }}
           </span>
           <h2 class="text-2xl sm:text-3xl font-serif font-bold text-amber-100 tracking-tight mt-1">
-            Kinh Văn & Bài Học Gần Đây
+            {{ t('theravada.recent') }}
           </h2>
         </div>
       </div>
@@ -242,9 +244,9 @@ const theravadaHomeJsonLd = {
           <div>
             <div class="flex items-center justify-between gap-2 text-xs font-serif text-stone-300 mb-3">
               <span class="px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 font-serif font-bold">
-                {{ item.category === 'phap-hoc' ? 'Pháp Học' : item.category === 'phap-hanh' ? 'Pháp Hành' : item.category === 'kinh-tung' ? 'Kinh Tụng' : 'Lịch Sử' }}
+                {{ item.category === 'phap-hoc' ? (locale === 'en' ? 'Dhamma Study' : 'Pháp Học') : item.category === 'phap-hanh' ? (locale === 'en' ? 'Dhamma Practice' : 'Pháp Hành') : item.category === 'kinh-tung' ? t('theravada.chanting') : (locale === 'en' ? 'History' : 'Lịch Sử') }}
               </span>
-              <span class="text-stone-300 font-medium">⏱️ {{ item.reading_time_min }} phút đọc</span>
+              <span class="text-stone-300 font-medium">⏱️ {{ item.reading_time_min }} {{ t('theravada.minutes') }}</span>
             </div>
 
             <h3 class="text-lg font-serif font-bold text-stone-100 group-hover:text-amber-300 transition-colors leading-snug line-clamp-2 mb-2">
@@ -270,7 +272,7 @@ const theravadaHomeJsonLd = {
               :href="`/theravada/kinh/${item.slug}`"
               class="font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1 group-hover:translate-x-1 transition-transform"
             >
-              <span>Đọc bài</span>
+              <span>{{ t('theravada.read') }}</span>
               <span>➔</span>
             </Link>
           </div>

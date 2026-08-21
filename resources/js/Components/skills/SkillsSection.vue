@@ -3,6 +3,7 @@ import { ref, computed } from 'vue';
 import { skillsData } from '@/data/skillsData';
 import Icons from '@/Components/ui/Icons.vue';
 import { sound } from '@/audio/soundEffects';
+import { useI18n } from '@/composables/useI18n';
 
 interface SkillRecord {
   id: number;
@@ -21,6 +22,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   skills: () => [],
 });
+const { t } = useI18n();
 
 const hoveredSkill = ref<string | null>(null);
 const skillSearch = ref('');
@@ -41,28 +43,28 @@ const displayCategories = computed(() => {
     const categoryMap: Record<string, { title: string; subtitle: string; iconName: string; badge: string; skills: any[] }> = {
       frontend: {
         title: 'Frontend & Creative Sorcery',
-        subtitle: 'Giao diện mượt mà & âm thanh tương tác',
+        subtitle: 'Fluid interfaces & interactive sound',
         iconName: 'Layout',
         badge: 'Core UI',
         skills: [],
       },
       backend: {
         title: 'Backend & High-Load Architecture',
-        subtitle: 'Kiến trúc phân tán, cache & queue xử lý tải cao',
+        subtitle: 'Distributed architecture, caching & high-throughput queues',
         iconName: 'Database',
         badge: 'Architecture',
         skills: [],
       },
       cloud: {
         title: 'Cloud, Infra & DevOps',
-        subtitle: 'Triển khai tự động hóa & hạ tầng bền bỉ',
+        subtitle: 'Automated delivery & resilient infrastructure',
         iconName: 'Terminal',
         badge: 'Infra & CI/CD',
         skills: [],
       },
       ai: {
         title: 'AI, Automation & Microservices',
-        subtitle: 'Tích hợp mô hình ngôn ngữ lớn & bot tự động',
+        subtitle: 'Large language models & autonomous bots',
         iconName: 'Sparkles',
         badge: 'Automation',
         skills: [],
@@ -107,13 +109,13 @@ const displayCategories = computed(() => {
     <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
       <div class="flex flex-col items-start">
         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-phantom-mint text-xs font-mono mb-3 select-none shadow-glow-mint">
-          ⚡ Technical Arsenal
+          ⚡ {{ t('skills.badge') }}
         </span>
         <h2 class="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold text-white tracking-tight">
-          Kỹ Năng & <span class="text-transparent bg-clip-text bg-gradient-to-r from-phantom-mint via-phantom-cyan to-talisman-gold">Công Nghệ</span>
+          {{ t('skills.title') }} <span class="text-transparent bg-clip-text bg-gradient-to-r from-phantom-mint via-phantom-cyan to-talisman-gold">{{ t('skills.titleAccent') }}</span>
         </h2>
         <p class="text-sm sm:text-base text-slate-400 mt-2 max-w-2xl font-sans">
-          18 kỹ năng cốt lõi được tôi luyện qua các hệ thống phân tán, web app tải cao và giao diện sáng tạo.
+          {{ t('skills.description') }}
         </p>
       </div>
 
@@ -123,7 +125,7 @@ const displayCategories = computed(() => {
         <input
           v-model="skillSearch"
           type="text"
-          placeholder="Lọc kỹ năng (Vue, Go, Redis)..."
+          :placeholder="t('skills.search')"
           class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-midnight-900/90 border border-white/10 text-slate-200 placeholder-slate-500 text-xs sm:text-sm font-sans focus:outline-none focus:border-phantom-mint transition-colors"
         />
         <button
@@ -200,9 +202,9 @@ const displayCategories = computed(() => {
       <div class="flex items-center gap-3.5">
         <span class="text-3xl select-none">🛡️</span>
         <div>
-          <h4 class="text-white font-display font-bold text-sm sm:text-base">100% Tested, Type-Safe & Zero Runtime Crash</h4>
+          <h4 class="text-white font-display font-bold text-sm sm:text-base">{{ t('skills.guarantee') }}</h4>
           <p class="text-slate-400 text-xs mt-0.5 font-sans">
-            Mọi module đều được kiểm thử tự động (466 E2E tests pass 100%), tuân thủ SOLID và tối ưu hóa latency cực thấp.
+            {{ t('skills.guaranteeDescription') }}
           </p>
         </div>
       </div>

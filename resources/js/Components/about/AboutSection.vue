@@ -3,6 +3,7 @@ import { ref, computed } from 'vue';
 import { developerStats } from '@/data/experienceData';
 import Icons from '@/Components/ui/Icons.vue';
 import { sound } from '@/audio/soundEffects';
+import { useI18n } from '@/composables/useI18n';
 
 interface Props {
   stats?: {
@@ -17,6 +18,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   stats: () => ({}),
 });
+const { t } = useI18n();
 
 type ManifestoTabId = 'flow' | 'concurrency' | 'agents' | 'fullstack';
 
@@ -25,33 +27,37 @@ const activeTab = ref<ManifestoTabId>('flow');
 const tabs = [
   {
     id: 'flow',
-    title: 'Trạng Thái 00:00 AM',
-    subtitle: 'Ultra-Flow State giữa đêm sâu — không phân tâm, tối ưu tư duy giải thuật.',
-    content: 'Khi cả thành phố chìm vào giấc ngủ, không còn họp hành hay tin nhắn ngắt quãng. Đêm sâu là không gian tĩnh tại tuyệt đối để giải quyết các bài toán kiến trúc hóc búa, đưa tư duy vào trạng thái Ultra-Flow thuần khiết.',
+    key: 'Flow',
+    title: 'Midnight 00:00 State',
+    subtitle: 'Ultra-Flow state in the deep night — zero distraction, pure algorithmic focus.',
+    content: 'When the city sleeps, there are no meetings or interruptions. Deep night becomes a quiet space to solve hard architecture problems and enter a pure Ultra-Flow state.',
     icon: 'Moon',
     badge: 'Ultra-Flow'
   },
   {
     id: 'concurrency',
-    title: 'Kiến Trúc Tải Cao',
-    subtitle: '8+ năm thực chiến hệ thống phân tán, xử lý hàng triệu requests với latency < 18ms.',
-    content: 'Chuyên sâu tối ưu hóa cơ sở dữ liệu lớn (GIS/NMS), caching đa tầng (Redis/In-Memory), hệ thống hàng đợi bất đồng bộ (Queue/PubSub) và cam kết SLA 99.9% Uptime cho các nền tảng doanh nghiệp.',
+    key: 'Scale',
+    title: 'High-Scale Architecture',
+    subtitle: '8+ years shipping distributed systems and millions of requests under 18ms latency.',
+    content: 'Deep expertise in large databases, multi-layer caching, asynchronous queues and 99.9% uptime SLAs for enterprise platforms.',
     icon: 'Zap',
     badge: 'High-Scale'
   },
   {
     id: 'agents',
-    title: 'Multi-Agent AI Tự Trị',
-    subtitle: 'Tiên phong tích hợp AI Agents thế hệ mới phục vụ tự động hóa quy trình nghiệp vụ.',
-    content: 'Thiết kế các Agent thông minh sở hữu năng lực Tool Calling, Semantic Search (RAG) và kết nối MCP (Model Context Protocol), giải phóng sức lao động con người với độ chính xác và an toàn dữ liệu cao.',
+    key: 'Agents',
+    title: 'Autonomous Multi-Agent AI',
+    subtitle: 'Next-generation AI agents for practical business automation.',
+    content: 'Design intelligent agents with tool calling, semantic search and MCP integrations that amplify human work with accuracy and data safety.',
     icon: 'Sparkles',
     badge: 'AI Systems'
   },
   {
     id: 'fullstack',
-    title: 'Kỹ Nghệ Toàn Diện',
-    subtitle: 'Làm chủ từ giao diện tương tác kỳ ảo đến hạ tầng đám mây kiên cố.',
-    content: 'Kết hợp hài hòa giữa Frontend tương tác mượt mà (Vue 3, TypeScript, Web Audio, Canvas) và Backend vững chắc (Laravel 11, Docker, GCP Cloud Run/Compute Engine), tuân thủ nghiêm ngặt chuẩn bảo mật OWASP.',
+    key: 'Fullstack',
+    title: 'Full-Stack Craft',
+    subtitle: 'From magical interactive interfaces to resilient cloud infrastructure.',
+    content: 'A balanced blend of Vue, TypeScript, Web Audio and Canvas with Laravel, Docker and GCP, guided by OWASP security standards.',
     icon: 'Shield',
     badge: 'Full-Stack'
   }
@@ -63,7 +69,13 @@ const setTab = (id: ManifestoTabId) => {
 };
 
 const activeTabContent = computed(() => {
-  return tabs.find((t) => t.id === activeTab.value) || tabs[0];
+  const tab = tabs.find((item) => item.id === activeTab.value) || tabs[0];
+  return {
+    ...tab,
+    title: t(`about.tab${tab.key}`),
+    subtitle: t(`about.tab${tab.key}Subtitle`),
+    content: t(`about.tab${tab.key}Content`),
+  };
 });
 
 const handleTabKeydown = (e: KeyboardEvent) => {
@@ -90,52 +102,57 @@ const displayStats = computed(() => {
     return [
       {
         value: `${(props.stats.total_pageviews || 0).toLocaleString('vi-VN')}+`,
-        label: 'Tổng Lượt Truy Cập Live',
+        label: t('about.statsViews'),
         iconName: 'Eye',
         unit: 'Views',
-        description: 'Pageviews ghi nhận bởi Analytics',
+        description: t('about.statsViewsDesc'),
       },
       {
         value: `${props.stats.total_projects || 6}`,
-        label: 'Dự Án Đang Chạy',
+        label: t('about.statsProjects'),
         iconName: 'Layers',
         unit: 'Active',
-        description: 'Sản phẩm kỹ thuật trong CMS',
+        description: t('about.statsProjectsDesc'),
       },
       {
         value: `${props.stats.total_hops || 0}`,
-        label: 'Lượt Nhảy Linh Vật',
+        label: t('about.statsHops'),
         iconName: 'Zap',
         unit: 'Hops',
-        description: 'Tương tác vật lý Ma Cà Tưng',
+        description: t('about.statsHopsDesc'),
       },
       {
         value: '99.9%',
-        label: 'Tỷ Lệ Sẵn Sàng 00:00 AM',
+        label: t('about.statsReady'),
         iconName: 'Shield',
         unit: 'SLA',
-        description: 'Zero Downtime Architecture',
+        description: t('about.statsReadyDesc'),
       },
     ];
   }
-  return developerStats;
+  return [
+    { ...developerStats[0], label: t('about.fallbackExperience'), description: t('about.fallbackExperienceDesc') },
+    { ...developerStats[1], label: t('about.fallbackAutomation'), description: t('about.fallbackAutomationDesc') },
+    { ...developerStats[2], label: t('about.fallbackInfra'), description: t('about.fallbackInfraDesc') },
+    { ...developerStats[3], label: t('about.fallbackUptime'), description: t('about.fallbackUptimeDesc') },
+  ];
 });
 
 const pillars = [
   {
     icon: 'Activity',
-    title: 'Tối Ưu Độ Trễ (<18ms)',
-    desc: 'Bộ nhớ đệm đa tầng, index cơ sở dữ liệu chuyên sâu và truy vấn bất đồng bộ non-blocking.',
+    title: t('about.pillarLatency'),
+    desc: t('about.pillarLatencyDesc'),
   },
   {
     icon: 'Layers',
-    title: 'Co Giãn Linh Hoạt (Elastic)',
-    desc: 'Kiến trúc container hóa, microservices và hàng đợi xử lý sẵn sàng mở rộng khi lưu lượng tăng đột biến.',
+    title: t('about.pillarElastic'),
+    desc: t('about.pillarElasticDesc'),
   },
   {
     icon: 'Shield',
-    title: 'Chất Lượng Phòng Vệ (Zero-Crash)',
-    desc: '100% Strict TypeScript, tự động hóa CI/CD, unit testing bao phủ và bảo mật đa tầng.',
+    title: t('about.pillarQuality'),
+    desc: t('about.pillarQualityDesc'),
   },
 ];
 </script>
@@ -145,13 +162,13 @@ const pillars = [
     <!-- Header -->
     <div class="flex flex-col items-start mb-10">
       <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-phantom-mint text-xs font-mono mb-3 whitespace-nowrap select-none shadow-glow-mint">
-        🌙 Developer Origin & Principles
+        🌙 {{ t('about.badge') }}
       </span>
       <h2 class="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold text-white tracking-tight">
-        Triết Lý & <span class="text-transparent bg-clip-text bg-gradient-to-r from-phantom-mint via-phantom-cyan to-talisman-gold">Bản Lĩnh Đêm</span>
+        {{ t('about.sectionTitle') }} <span class="text-transparent bg-clip-text bg-gradient-to-r from-phantom-mint via-phantom-cyan to-talisman-gold">{{ t('about.sectionAccent') }}</span>
       </h2>
       <p class="text-sm sm:text-base text-slate-400 mt-2 max-w-2xl font-sans">
-        Những con số thực chiến và nguyên tắc kỹ thuật được tôi luyện qua hàng ngàn đêm đối mặt với màn hình đen.
+        {{ t('about.sectionDescription') }}
       </p>
     </div>
 
@@ -233,21 +250,21 @@ const pillars = [
       <div class="about-bio-card glass-panel lg:col-span-5 p-6 sm:p-7 rounded-2xl border border-white/10 flex flex-col justify-between relative overflow-hidden bg-gradient-to-b from-midnight-900/90 to-midnight-950">
         <div class="relative z-10">
           <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-talisman-gold/10 text-talisman-gold border border-talisman-gold/30 text-xs font-mono mb-4 font-bold">
-            ⚡ The Midnight Architect
+            ⚡ {{ t('about.badge') }}
           </div>
           <h3 class="font-display font-bold text-white text-xl mb-1">
-            Senior Fullstack & AI Agent Architect
+            {{ t('about.origin') }}
           </h3>
           <p class="text-xs font-mono text-phantom-mint mb-3">
-            🏆 Giải Quốc Gia Tin Học · 8+ Năm Thực Chiến Hệ Thống Tải Cao
+            🏆 {{ t('about.award') }}
           </p>
           <p class="text-slate-300 text-sm leading-relaxed font-sans mb-4">
-            Chuyên sâu kiến trúc hệ thống phân tán chịu tải cao, nền tảng viễn thông GIS/NMS và thiết kế các hệ sinh thái <strong>Multi-Agent AI tự trị</strong> giải phóng sức lao động con người, phụng sự cuộc sống với độ chính xác > 92%.
+            {{ t('about.description') }}
           </p>
         </div>
         <div class="pt-4 border-t border-white/5 flex items-center justify-between text-xs font-mono text-slate-400 relative z-10">
-          <span>📍 Ho Chi Minh City / Remote</span>
-          <span class="text-phantom-mint font-bold">🌿 Kỹ Nghệ Vị Nhân Sinh</span>
+          <span>📍 {{ t('about.location') }}</span>
+          <span class="text-phantom-mint font-bold">{{ t('about.principle') }}</span>
         </div>
       </div>
 
