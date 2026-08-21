@@ -3,10 +3,12 @@ import SeoHead from '@/Components/common/SeoHead.vue';
 import Navbar from '@/Components/layout/Navbar.vue';
 import Footer from '@/Components/layout/Footer.vue';
 import TalismanCanvas from '@/Components/mascot/TalismanCanvas.vue';
-import { Link } from '@inertiajs/vue3';
+import { useI18n } from '@/composables/useI18n';
+const { t } = useI18n();
 
 const downloadUrl = 'https://github.com/macatung/code-at-midnight/releases/latest/download/Task-Companion-Setup.exe';
 const releaseUrl = 'https://github.com/macatung/code-at-midnight/releases/latest';
+const taskHubUrl = (import.meta as any).env?.VITE_TASK_HUB_URL || 'https://tasks.macatung.dev';
 
 const productJsonLd = {
   '@context': 'https://schema.org',
@@ -39,23 +41,23 @@ const productJsonLd = {
         <div class="grid lg:grid-cols-[1.15fr_.85fr] gap-12 items-center">
           <div>
             <div class="inline-flex items-center gap-2 rounded-full border border-phantom-mint/30 bg-phantom-mint/10 px-3 py-1 text-xs font-mono text-phantom-mint">
-              <span class="h-2 w-2 rounded-full bg-phantom-mint shadow-glow-mint" /> WINDOWS DESKTOP COMPANION
+              <span class="h-2 w-2 rounded-full bg-phantom-mint shadow-glow-mint" /> {{ t('desktop.badge') }}
             </div>
             <h1 class="mt-6 text-4xl sm:text-6xl font-display font-black tracking-tight text-white">
-              Giải quyết task nhanh hơn,<br /><span class="text-phantom-mint">ngay trên desktop.</span>
+              {{ t('desktop.title') }}<br /><span class="text-phantom-mint">{{ t('desktop.titleAccent') }}</span>
             </h1>
             <p class="mt-6 max-w-2xl text-base sm:text-lg leading-8 text-slate-300">
-              Task Companion là mascot desktop kết nối trực tiếp với Task Hub. Chọn một task, mở đúng workspace và giao context pack cho Codex, Antigravity hoặc Claude Code.
+              {{ t('desktop.description') }}
             </p>
             <div class="mt-8 flex flex-wrap gap-3">
               <a :href="downloadUrl" class="inline-flex items-center gap-2 rounded-xl bg-phantom-mint px-5 py-3 font-bold text-midnight-950 shadow-glow-mint transition hover:-translate-y-0.5">
-                ⬇ Tải cho Windows
+                ⬇ {{ t('desktop.download') }}
               </a>
-              <Link href="/tasks" class="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-5 py-3 font-bold text-white transition hover:border-phantom-mint/50 hover:bg-white/10">
-                Mở Task Hub →
-              </Link>
+              <a :href="`${taskHubUrl}/tasks`" class="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-5 py-3 font-bold text-white transition hover:border-phantom-mint/50 hover:bg-white/10">
+                {{ t('desktop.openHub') }} →
+              </a>
             </div>
-            <p class="mt-4 text-xs text-slate-500">Windows 10/11 · Miễn phí · Cập nhật tự động qua GitHub Releases</p>
+            <p class="mt-4 text-xs text-slate-500">{{ t('desktop.free') }}</p>
           </div>
 
           <div class="relative rounded-3xl border border-phantom-mint/20 bg-slate-900/70 p-5 shadow-2xl shadow-black/40 backdrop-blur-xl">
@@ -86,11 +88,11 @@ const productJsonLd = {
       </section>
 
       <section class="max-w-5xl mx-auto px-4 py-20 sm:px-6 lg:px-8">
-        <div class="text-center"><p class="font-mono text-xs uppercase tracking-[.25em] text-phantom-mint">Workflow</p><h2 class="mt-3 text-3xl font-display font-bold text-white">Từ task đến kết quả review</h2></div>
+        <div class="text-center"><p class="font-mono text-xs uppercase tracking-[.25em] text-phantom-mint">Workflow</p><h2 class="mt-3 text-3xl font-display font-bold text-white">{{ t('desktop.workflow') }}</h2></div>
         <div class="mt-10 grid gap-4 md:grid-cols-4">
           <div v-for="(step, index) in ['Chọn task chưa hoàn tất', 'Approve project bằng GitHub', 'Agent nhận context + MCP', 'Chạy test và gửi review']" :key="step" class="relative rounded-2xl border border-white/10 p-5"><span class="font-mono text-phantom-mint">0{{ index + 1 }}</span><p class="mt-4 text-sm leading-6 text-slate-300">{{ step }}</p></div>
         </div>
-        <div class="mt-10 text-center"><a :href="releaseUrl" class="text-sm text-slate-400 underline decoration-phantom-mint/50 underline-offset-4 hover:text-phantom-mint">Xem changelog và các bản phát hành trên GitHub →</a></div>
+        <div class="mt-10 text-center"><a :href="releaseUrl" class="text-sm text-slate-400 underline decoration-phantom-mint/50 underline-offset-4 hover:text-phantom-mint">{{ t('desktop.changelog') }}</a></div>
       </section>
     </main>
     <Footer />

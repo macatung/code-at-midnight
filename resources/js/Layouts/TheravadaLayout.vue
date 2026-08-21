@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import SeoHead from '@/Components/common/SeoHead.vue';
 import ZenMascotLogo from '@/Components/theravada/ZenMascotLogo.vue';
@@ -8,6 +8,7 @@ import PaliGlossaryModal from '@/Components/theravada/PaliGlossaryModal.vue';
 import Icons from '@/Components/ui/Icons.vue';
 import { mindfulBell } from '@/audio/mindfulBellAudio';
 import { useZenTimeCycle } from '@/composables/useZenTimeCycle';
+import { useI18n } from '@/composables/useI18n';
 
 defineProps<{
   title?: string;
@@ -24,14 +25,16 @@ const page = usePage();
 const isGlossaryOpen = ref(false);
 const isMobileMenuOpen = ref(false);
 const { activeZenPhase } = useZenTimeCycle();
+const { locale, t, setLocale } = useI18n();
 
-const navItems = [
-  { label: 'Trang Chủ', href: '/theravada', icon: 'Home' },
-  { label: 'Pháp Học', href: '/theravada/danh-muc/phap-hoc', icon: 'BookOpen' },
-  { label: 'Pháp Hành (Vipassanā)', href: '/theravada/danh-muc/phap-hanh', icon: 'Sparkles' },
-  { label: 'Kinh Tụng', href: '/theravada/danh-muc/kinh-tung', icon: 'Scroll' },
-  { label: 'Từ Điển Pāḷi', href: '/theravada/tu-dien-pali', icon: 'Compass' },
-];
+const navItems = computed(() => [
+  { label: t('nav.home'), href: '/theravada', icon: 'Home' },
+  { label: locale.value === 'en' ? 'Dhamma Study' : 'Pháp Học', href: '/theravada/danh-muc/phap-hoc', icon: 'BookOpen' },
+  { label: locale.value === 'en' ? 'Vipassanā Practice' : 'Pháp Hành (Vipassanā)', href: '/theravada/danh-muc/phap-hanh', icon: 'Sparkles' },
+  { label: locale.value === 'en' ? 'Chanting' : 'Kinh Tụng', href: '/theravada/danh-muc/kinh-tung', icon: 'Scroll' },
+  { label: locale.value === 'en' ? 'History' : 'Lịch Sử', href: '/theravada/danh-muc/lich-su', icon: 'Landmark' },
+  { label: locale.value === 'en' ? 'Pāḷi Glossary' : 'Từ Điển Pāḷi', href: '/theravada/tu-dien-pali', icon: 'Compass' },
+]);
 
 const isLinkActive = (href: string): boolean => {
   const currentUrl = page.url;
@@ -130,13 +133,13 @@ onUnmounted(() => {
           </div>
         </Link>
 
-        <!-- Desktop Navigation Links (hidden on < lg: 1024px) -->
-        <nav class="hidden lg:flex items-center gap-1 xl:gap-2 shrink-0" aria-label="Zen Desktop Navigation">
+        <!-- Desktop Navigation Links (visible on md: 768px and up) -->
+        <nav class="hidden md:flex items-center gap-1 lg:gap-1.5 xl:gap-2 shrink-0" aria-label="Zen Desktop Navigation">
           <Link
             v-for="item in navItems"
             :key="item.href"
             :href="item.href"
-            class="px-3 xl:px-4 py-2 rounded-2xl text-xs xl:text-sm font-serif transition-all font-semibold whitespace-nowrap shrink-0 focus:outline-none"
+            class="px-2.5 lg:px-3.5 xl:px-4 py-1.5 lg:py-2 rounded-2xl text-xs xl:text-sm font-serif transition-all font-semibold whitespace-nowrap shrink-0 focus:outline-none"
             :class="[
               item.isHighlight
                 ? 'text-amber-300 hover:text-amber-100 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 font-bold shadow-sm'
@@ -150,8 +153,13 @@ onUnmounted(() => {
           </Link>
         </nav>
 
-        <!-- Mobile & Tablet Action Controls -->
-        <div class="flex items-center gap-2 lg:hidden shrink-0">
+        <div class="hidden md:flex items-center rounded-lg border border-amber-500/30 bg-stone-900/80 p-0.5 text-[10px] font-sans" role="group" aria-label="Language">
+          <button type="button" class="px-2 py-1 rounded-md" :class="locale === 'en' ? 'bg-amber-400 text-stone-950 font-bold' : 'text-stone-400'" @click="setLocale('en')">EN</button>
+          <button type="button" class="px-2 py-1 rounded-md" :class="locale === 'vi' ? 'bg-amber-400 text-stone-950 font-bold' : 'text-stone-400'" @click="setLocale('vi')">VI</button>
+        </div>
+
+        <!-- Mobile Action Controls (visible only on < md: 768px) -->
+        <div class="flex items-center gap-2 md:hidden shrink-0">
           <!-- Mobile Hamburger Drawer Toggle Button -->
           <button
             type="button"
@@ -177,7 +185,7 @@ onUnmounted(() => {
       >
         <div
           v-if="isMobileMenuOpen"
-          class="fixed inset-0 top-[62px] sm:top-[70px] bg-black/80 backdrop-blur-sm z-30 lg:hidden"
+          class="fixed inset-0 top-[62px] sm:top-[70px] bg-black/80 backdrop-blur-sm z-30 md:hidden"
           @click="closeMobileMenu"
         />
       </transition>
@@ -193,7 +201,7 @@ onUnmounted(() => {
       >
         <div
           v-if="isMobileMenuOpen"
-          class="lg:hidden border-t border-b border-amber-500/30 bg-[#0c0a09] px-4 sm:px-6 py-5 space-y-3 absolute top-full left-0 w-full shadow-[0_25px_60px_rgba(0,0,0,0.95)] z-50 text-left max-h-[calc(100vh-75px)] overflow-y-auto"
+          class="md:hidden border-t border-b border-amber-500/30 bg-[#0c0a09] px-4 sm:px-6 py-5 space-y-3 absolute top-full left-0 w-full shadow-[0_25px_60px_rgba(0,0,0,0.95)] z-50 text-left max-h-[calc(100vh-75px)] overflow-y-auto"
           style="background-color: #0c0a09;"
         >
           <div class="grid grid-cols-1 gap-2">
@@ -212,7 +220,7 @@ onUnmounted(() => {
               @click="handleNavClick"
             >
               <div class="flex items-center gap-3">
-                <span class="text-base">{{ item.isHighlight ? '✨' : item.icon === 'Home' ? '🏠' : item.icon === 'BookOpen' ? '📖' : item.icon === 'Sparkles' ? '🧘' : item.icon === 'Scroll' ? '📜' : '☸️' }}</span>
+                <span class="text-base">{{ item.isHighlight ? '✨' : item.icon === 'Home' ? '🏠' : item.icon === 'BookOpen' ? '📖' : item.icon === 'Sparkles' ? '🧘' : item.icon === 'Scroll' ? '📜' : item.icon === 'Landmark' ? '🏛️' : '☸️' }}</span>
                 <span>{{ item.label }}</span>
               </div>
               <span class="text-xs opacity-60 font-mono">➔</span>
@@ -265,6 +273,8 @@ onUnmounted(() => {
           <Link href="/theravada/danh-muc/phap-hanh" class="hover:text-amber-300 font-semibold px-1">Thiền Vipassanā</Link>
           <span>•</span>
           <Link href="/theravada/danh-muc/kinh-tung" class="hover:text-amber-300 font-semibold px-1">Kinh Tụng</Link>
+          <span>•</span>
+          <Link href="/theravada/danh-muc/lich-su" class="hover:text-amber-300 font-semibold px-1">Lịch Sử Phật Giáo</Link>
           <span>•</span>
           <Link href="/theravada/tu-dien-pali" class="hover:text-amber-300 font-semibold px-1">Từ Điển Pāḷi</Link>
           <span>•</span>

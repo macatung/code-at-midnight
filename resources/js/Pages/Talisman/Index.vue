@@ -5,10 +5,13 @@ import Footer from '@/Components/layout/Footer.vue';
 import TalismanCanvas from '@/Components/mascot/TalismanCanvas.vue';
 import TalismanGenerator from '@/Components/talisman/TalismanGenerator.vue';
 import NextStepsHub from '@/Components/layout/NextStepsHub.vue';
+import { Link } from '@inertiajs/vue3';
+import { useI18n } from '@/composables/useI18n';
 
 defineProps<{
   settings?: Record<string, string>;
 }>();
+const { t } = useI18n();
 
 const talismanJsonLd = {
   '@context': 'https://schema.org',
@@ -42,20 +45,20 @@ const talismanJsonLd = {
     <main class="relative z-10 flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 text-left">
       <!-- Breadcrumb -->
       <nav class="flex items-center gap-2 text-xs font-mono text-slate-400 mb-6" aria-label="Breadcrumb">
-        <Link href="/" class="hover:text-phantom-mint transition-colors">Trang Chủ</Link>
+        <Link href="/" class="hover:text-phantom-mint transition-colors">{{ t('nav.home') }}</Link>
         <span>/</span>
-        <span class="text-talisman-gold font-bold">Lò Rèn Bùa Hộ Mệnh</span>
+        <span class="text-talisman-gold font-bold">{{ t('talisman.breadcrumb') }}</span>
       </nav>
 
       <div class="flex flex-col items-start mb-8">
         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-talisman-gold/10 border border-talisman-gold/30 text-talisman-gold text-xs font-mono mb-3 shadow-glow-talisman">
-          📜 Dev Artifact Creator
+          📜 {{ t('talisman.badge') }}
         </span>
         <h1 class="text-3xl sm:text-5xl font-display font-extrabold text-white tracking-tight">
-          Lò Rèn <span class="text-transparent bg-clip-text bg-gradient-to-r from-talisman-gold via-phantom-mint to-phantom-cyan">Bùa Hộ Mệnh</span>
+          {{ t('talisman.title') }}
         </h1>
         <p class="text-sm sm:text-base text-slate-400 mt-2 max-w-2xl font-sans">
-          Tùy biến và thỉnh các đạo bùa trừ Bug, bảo trợ deploy lúc 00:00 AM và xuất file ảnh chất lượng cao để dán laptop hoặc chia sẻ lên mạng xã hội.
+          {{ t('talisman.description') }}
         </p>
       </div>
 

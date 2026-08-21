@@ -39,7 +39,7 @@ const categoryJsonLd = computed(() => ({
       <!-- Header -->
       <header class="mb-6 sm:mb-10 text-left border-b border-stone-800 pb-5 sm:pb-8">
         <div class="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[11px] sm:text-xs font-serif font-bold mb-2 sm:mb-3 shadow-sm">
-          <span>{{ categorySlug === 'phap-hoc' ? '📖' : categorySlug === 'phap-hanh' ? '🧘' : '📜' }}</span>
+          <span>{{ categorySlug === 'phap-hoc' ? '📖' : categorySlug === 'phap-hanh' ? '🧘' : categorySlug === 'kinh-tung' ? '📜' : '🏛️' }}</span>
           <span>Chuyên Mục Theravāda</span>
         </div>
         <h1 class="text-2xl sm:text-4xl font-serif font-bold text-amber-100">
@@ -63,7 +63,7 @@ const categoryJsonLd = computed(() => ({
           <div>
             <div class="flex items-center justify-between text-xs font-serif text-stone-300 mb-3">
               <span class="px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 font-serif font-bold">
-                {{ categorySlug === 'phap-hoc' ? 'Pháp Học' : categorySlug === 'phap-hanh' ? 'Pháp Hành' : 'Kinh Tụng' }}
+                {{ item.category === 'phap-hoc' ? 'Pháp Học' : item.category === 'phap-hanh' ? 'Pháp Hành' : item.category === 'kinh-tung' ? 'Kinh Tụng' : 'Lịch Sử' }}
               </span>
               <span class="text-stone-300 font-medium">⏱️ {{ item.reading_time_min }} phút đọc</span>
             </div>

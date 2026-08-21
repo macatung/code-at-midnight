@@ -4,8 +4,10 @@ import confetti from 'canvas-confetti';
 import { sound } from '@/audio/soundEffects';
 import Icons from '@/Components/ui/Icons.vue';
 import MiniMascotLogo from '@/Components/mascot/MiniMascotLogo.vue';
+import { useI18n } from '@/composables/useI18n';
 
 const heartClicks = ref(0);
+const { t } = useI18n();
 
 const scrollToTop = () => {
   sound.playHop(1.2);
@@ -59,7 +61,7 @@ const triggerHeartEasterEgg = (e: MouseEvent) => {
         class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-midnight-900 border border-white/10 text-slate-300 hover:text-phantom-mint hover:border-phantom-mint/40 transition-all text-xs font-mono group min-h-[44px]"
         @click="scrollToTop"
       >
-        <span>Về Đầu Trang</span>
+        <span>{{ t('footer.backToTop') }}</span>
         <Icons name="ChevronUp" :size="16" class="group-hover:-translate-y-1 transition-transform" />
       </button>
     </div>
@@ -68,39 +70,39 @@ const triggerHeartEasterEgg = (e: MouseEvent) => {
     <div class="grid grid-cols-2 md:grid-cols-4 gap-8 py-10 border-b border-white/5 text-xs font-sans">
       <!-- Col 1: Grimoire & Lore -->
       <div>
-        <h4 class="font-mono text-slate-400 uppercase tracking-wider mb-3 text-[11px]">Grimoire & Lore</h4>
+        <h4 class="font-mono text-slate-400 uppercase tracking-wider mb-3 text-[11px]">{{ t('footer.lore') }}</h4>
         <ul class="space-y-2 text-slate-400">
-          <li><a href="#hero" class="hover:text-phantom-mint transition-colors">Vương Quốc Đêm</a></li>
-          <li><a href="#philosophy" class="hover:text-phantom-mint transition-colors">Triết Lý Vị Nhân Sinh</a></li>
-          <li><a href="#about" class="hover:text-phantom-mint transition-colors">Bản Lĩnh Đêm & Manifesto</a></li>
-          <li><a href="#projects" class="hover:text-phantom-mint transition-colors">Hệ Thống Grimoire</a></li>
+          <li><a href="#hero" class="hover:text-phantom-mint transition-colors">{{ t('footer.night') }}</a></li>
+          <li><a href="#philosophy" class="hover:text-phantom-mint transition-colors">{{ t('footer.philosophy') }}</a></li>
+          <li><a href="#about" class="hover:text-phantom-mint transition-colors">{{ t('footer.manifesto') }}</a></li>
+          <li><a href="#projects" class="hover:text-phantom-mint transition-colors">{{ t('footer.systems') }}</a></li>
         </ul>
       </div>
 
       <!-- Col 2: Interactive Labs -->
       <div>
-        <h4 class="font-mono text-slate-400 uppercase tracking-wider mb-3 text-[11px]">Thí Nghiệm & Pháp Bảo</h4>
+        <h4 class="font-mono text-slate-400 uppercase tracking-wider mb-3 text-[11px]">{{ t('footer.labs') }}</h4>
         <ul class="space-y-2 text-slate-400">
-          <li><a href="/projects" class="hover:text-phantom-mint transition-colors">Kho Dự Án Grimoire</a></li>
-          <li><a href="/game" class="hover:text-phantom-mint transition-colors">Phòng Máy Rune Typer</a></li>
-          <li><a href="/talisman" class="hover:text-phantom-mint transition-colors">Lò Luyện Bùa Chú</a></li>
+          <li><a href="/projects" class="hover:text-phantom-mint transition-colors">{{ t('footer.projectVault') }}</a></li>
+          <li><a href="/game" class="hover:text-phantom-mint transition-colors">{{ t('footer.arcade') }}</a></li>
+          <li><a href="/talisman" class="hover:text-phantom-mint transition-colors">{{ t('footer.forge') }}</a></li>
           <li><a href="/theravada" class="hover:text-amber-300 transition-colors flex items-center gap-1"><span>Ma Tọa Thiền (Theravāda)</span> <span>🧘</span></a></li>
         </ul>
       </div>
 
       <!-- Col 3: Terminal & Altar -->
       <div>
-        <h4 class="font-mono text-slate-400 uppercase tracking-wider mb-3 text-[11px]">Công Cụ & Tương Tác</h4>
+        <h4 class="font-mono text-slate-400 uppercase tracking-wider mb-3 text-[11px]">{{ t('footer.tools') }}</h4>
         <ul class="space-y-2 text-slate-400">
           <li><a href="#terminal" class="hover:text-phantom-mint transition-colors">Midnight Terminal CLI</a></li>
-          <li><a href="#contact" class="hover:text-phantom-mint transition-colors">Bàn Thờ Triệu Hồi</a></li>
+          <li><a href="#contact" class="hover:text-phantom-mint transition-colors">{{ t('footer.altar') }}</a></li>
           <li><a href="https://github.com/macatung" target="_blank" rel="noopener noreferrer" class="hover:text-phantom-mint transition-colors">GitHub Repository</a></li>
         </ul>
       </div>
 
       <!-- Col 4: Status -->
       <div>
-        <h4 class="font-mono text-slate-400 uppercase tracking-wider mb-3 text-[11px]">Trạng Thái Hệ Thống</h4>
+        <h4 class="font-mono text-slate-400 uppercase tracking-wider mb-3 text-[11px]">{{ t('footer.status') }}</h4>
         <div class="space-y-1.5 text-slate-400 font-mono text-[11px]">
           <div class="flex items-center gap-1.5 text-phantom-mint">
             <span class="w-1.5 h-1.5 rounded-full bg-phantom-mint animate-pulse" />
@@ -110,7 +112,7 @@ const triggerHeartEasterEgg = (e: MouseEvent) => {
           <div>Framework: Vue 3 + Laravel 11</div>
           <div class="pt-1">
             <a href="/admin" class="text-slate-400 hover:text-phantom-mint transition-colors flex items-center gap-1">
-              <span>⚙️ Quản Trị CMS</span>
+              <span>⚙️ {{ t('footer.admin') }}</span>
               <span>→</span>
             </a>
           </div>
@@ -130,7 +132,7 @@ const triggerHeartEasterEgg = (e: MouseEvent) => {
         <button
           type="button"
           class="text-rose-400 hover:scale-125 active:scale-95 transition-transform cursor-pointer p-1 min-h-[32px] min-w-[32px] flex items-center justify-center focus:outline-none"
-          title="Bấm để kích hoạt Midnight Love Easter Egg"
+        :title="t('footer.heartTitle')"
           @click="triggerHeartEasterEgg"
         >
           ❤️

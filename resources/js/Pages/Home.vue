@@ -17,6 +17,7 @@ import MiniMascotLogo from '@/Components/mascot/MiniMascotLogo.vue';
 import Icons from '@/Components/ui/Icons.vue';
 import { sound } from '@/audio/soundEffects';
 import { useTimeCycle } from '@/composables/useTimeCycle';
+import { useI18n } from '@/composables/useI18n';
 
 defineProps<{
   title?: string;
@@ -29,6 +30,7 @@ defineProps<{
 }>();
 
 const { activePhase, transitionToast } = useTimeCycle();
+const { t } = useI18n();
 const globalHopCount = ref(0);
 
 const handleHop = (count: number) => {
@@ -167,10 +169,10 @@ const homeJsonLd = {
               📜 Midnight Tech Chronicle
             </span>
             <h2 class="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold text-white tracking-tight">
-              Ghi Chép <span class="text-transparent bg-clip-text bg-gradient-to-r from-phantom-mint via-phantom-cyan to-talisman-gold">Kiến Trúc & Blog</span>
+              {{ t('home.blogTitle') }}
             </h2>
             <p class="text-sm sm:text-base text-slate-400 mt-2 max-w-2xl font-sans">
-              Các bài phân tích chuyên sâu về hệ sinh thái Multi-Agent AI tự trị, giải thuật định tuyến GIS và kỹ thuật chịu tải cao.
+              {{ t('home.blogDescription') }}
             </p>
           </div>
 
@@ -179,7 +181,7 @@ const homeJsonLd = {
             class="px-5 py-3 rounded-2xl bg-white/5 hover:bg-phantom-mint text-slate-200 hover:text-midnight-950 font-display font-bold text-xs sm:text-sm transition-all flex items-center gap-2 border border-white/10 hover:border-phantom-mint shadow-sm hover:shadow-glow-mint whitespace-nowrap"
             @click="sound.playClick()"
           >
-            <span>Đọc Toàn Bộ Blog</span>
+            <span>{{ t('home.readAllBlog') }}</span>
             <span>→</span>
           </Link>
         </div>
@@ -210,7 +212,7 @@ const homeJsonLd = {
               class="text-xs font-mono text-phantom-mint flex items-center gap-1.5 group-hover:translate-x-1 transition-transform font-bold pt-4 border-t border-white/5"
               @click="sound.playClick()"
             >
-              <span>Xem chi tiết bài viết</span>
+              <span>{{ t('home.viewDetails') }}</span>
               <span>→</span>
             </Link>
           </article>
@@ -233,10 +235,10 @@ const homeJsonLd = {
                   🎮 Dev Arcade Chamber
                 </span>
                 <h3 class="text-2xl sm:text-3xl font-display font-extrabold text-white">
-                  Rune Typer: <span class="text-transparent bg-clip-text bg-gradient-to-r from-talisman-gold via-phantom-mint to-phantom-cyan">Thần Phím Trừ Tà</span>
+                  {{ t('home.gameTitle') }}
                 </h3>
                 <p class="text-xs sm:text-sm text-slate-300 mt-2 max-w-xl font-sans leading-relaxed">
-                  Gõ phím diệt Bug, cảm nhận âm thanh phím cơ thock chân thực, chuỗi combo x5 và săn lùng Boss Bug trong phòng máy chơi game chuyên biệt.
+                  {{ t('home.gameDescription') }}
                 </p>
 
                 <!-- Mini Stats Pill -->
@@ -256,7 +258,7 @@ const homeJsonLd = {
               class="px-8 py-4 rounded-2xl bg-talisman-gold text-midnight-950 font-display font-bold text-sm sm:text-base hover:brightness-110 shadow-glow-talisman transition-all flex items-center gap-2.5 whitespace-nowrap shrink-0 hover:scale-105 active:scale-95"
               @click="sound.playTalisman()"
             >
-              <span>Vào Chơi Rune Typer</span>
+              <span>{{ t('home.playGame') }}</span>
               <span>⚡</span>
             </Link>
           </div>
@@ -274,10 +276,10 @@ const homeJsonLd = {
                   ✨ Developer Artifacts
                 </span>
                 <h3 class="text-2xl sm:text-3xl font-display font-extrabold text-white">
-                  Lò Rèn Bùa Hộ Mệnh Lập Trình Viên
+                  {{ t('home.talismanTitle') }}
                 </h3>
                 <p class="text-xs sm:text-sm text-slate-300 mt-2 max-w-xl font-sans leading-relaxed">
-                  Tạo các đạo bùa hộ mệnh dev (Bùa Trừ Bug, Bùa Tăng Lương, Bùa Xuyên Đêm 00:00 AM) và tải file ảnh HD canvas để dán laptop hoặc chia sẻ.
+                  {{ t('home.talismanDescription') }}
                 </p>
               </div>
             </div>
@@ -287,7 +289,7 @@ const homeJsonLd = {
               class="px-8 py-4 rounded-2xl bg-phantom-mint text-midnight-950 font-display font-bold text-sm sm:text-base hover:brightness-110 shadow-glow-mint transition-all flex items-center gap-2.5 whitespace-nowrap shrink-0 hover:scale-105 active:scale-95"
               @click="sound.playClick()"
             >
-              <span>Mở Lò Rèn Bùa Dev</span>
+              <span>{{ t('home.openForge') }}</span>
               <span>→</span>
             </Link>
           </div>
@@ -304,7 +306,7 @@ const homeJsonLd = {
             Midnight <span class="text-transparent bg-clip-text bg-gradient-to-r from-phantom-mint via-phantom-cyan to-talisman-gold">Terminal CLI</span>
           </h2>
           <p class="text-sm sm:text-base text-slate-400 mt-2 max-w-2xl font-sans">
-            Môi trường dòng lệnh ảo mô phỏng zsh shell với 11 câu lệnh ma thuật, lịch sử điều hướng phím mũi tên và âm thanh gõ phím cơ học.
+            {{ t('home.terminalDescription') }}
           </p>
         </div>
         <MidnightTerminal />

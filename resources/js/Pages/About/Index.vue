@@ -8,6 +8,8 @@ import ExperienceSection from '@/Components/experience/ExperienceSection.vue';
 import AboutSection from '@/Components/about/AboutSection.vue';
 import MidnightTerminal from '@/Components/terminal/MidnightTerminal.vue';
 import NextStepsHub from '@/Components/layout/NextStepsHub.vue';
+import { Link } from '@inertiajs/vue3';
+import { useI18n } from '@/composables/useI18n';
 
 defineProps<{
   skills?: any[];
@@ -15,6 +17,7 @@ defineProps<{
   stats?: Record<string, any>;
   settings?: Record<string, string>;
 }>();
+const { t } = useI18n();
 
 const aboutJsonLd = {
   '@context': 'https://schema.org',
@@ -47,9 +50,9 @@ const aboutJsonLd = {
     <main class="relative z-10 flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 text-left">
       <!-- Breadcrumb -->
       <nav class="flex items-center gap-2 text-xs font-mono text-slate-400 mb-6" aria-label="Breadcrumb">
-        <Link href="/" class="hover:text-phantom-mint transition-colors">Trang Chủ</Link>
+        <Link href="/" class="hover:text-phantom-mint transition-colors">{{ t('nav.home') }}</Link>
         <span>/</span>
-        <span class="text-phantom-mint font-bold">Triết Lý & Tuyên Ngôn (Manifesto)</span>
+        <span class="text-phantom-mint font-bold">{{ t('about.breadcrumb') }}</span>
       </nav>
 
       <!-- 1. Developer Manifesto & Stats -->

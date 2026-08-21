@@ -47,8 +47,6 @@ class HandleInertiaRequests extends Middleware
                     'id' => $request->user()->id,
                     'name' => $request->user()->name,
                     'email' => $request->user()->email,
-                    'github_login' => $request->user()->github_login,
-                    'github_avatar_url' => $request->user()->github_avatar_url,
                 ] : null,
             ],
         ]);

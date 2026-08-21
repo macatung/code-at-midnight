@@ -6,10 +6,13 @@ import TalismanCanvas from '@/Components/mascot/TalismanCanvas.vue';
 import RuneTyperGame from '@/Components/game/RuneTyperGame.vue';
 import NextStepsHub from '@/Components/layout/NextStepsHub.vue';
 import { beginnerSpells, normalSpells, bossSpells } from '@/data/spellsData';
+import { Link } from '@inertiajs/vue3';
+import { useI18n } from '@/composables/useI18n';
 
 defineProps<{
   settings?: Record<string, string>;
 }>();
+const { t } = useI18n();
 
 const gameJsonLd = {
   '@context': 'https://schema.org',
@@ -45,12 +48,12 @@ const gameJsonLd = {
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
           <nav class="flex items-center gap-2 text-xs font-mono text-slate-400 mb-2" aria-label="Breadcrumb">
-            <Link href="/" class="hover:text-phantom-mint transition-colors">Trang Chủ</Link>
+            <Link href="/" class="hover:text-phantom-mint transition-colors">{{ t('nav.home') }}</Link>
             <span>/</span>
-            <span class="text-talisman-gold font-bold">Phòng Máy Arcade</span>
+            <span class="text-talisman-gold font-bold">{{ t('game.breadcrumb') }}</span>
           </nav>
           <h1 class="text-3xl sm:text-4xl font-display font-extrabold text-white">
-            Phòng Máy Arcade: <span class="text-transparent bg-clip-text bg-gradient-to-r from-talisman-gold via-phantom-mint to-phantom-cyan">Rune Typer</span>
+            {{ t('game.title') }}<span class="text-transparent bg-clip-text bg-gradient-to-r from-talisman-gold via-phantom-mint to-phantom-cyan">Rune Typer</span>
           </h1>
         </div>
 
@@ -59,13 +62,13 @@ const gameJsonLd = {
             href="/#terminal"
             class="px-4 py-2.5 rounded-xl bg-midnight-900 border border-white/10 hover:border-white/30 text-slate-300 text-xs font-mono transition-all flex items-center gap-1.5"
           >
-            <span>>_ Mở Terminal</span>
+            <span>>_ {{ t('game.openTerminal') }}</span>
           </Link>
           <Link
             href="/projects"
             class="px-4 py-2.5 rounded-xl bg-phantom-mint text-midnight-950 font-display font-bold text-xs hover:brightness-110 shadow-glow-mint transition-all flex items-center gap-1.5"
           >
-            <span>Xem Dự Án</span>
+            <span>{{ t('game.viewProjects') }}</span>
             <span>→</span>
           </Link>
         </div>
@@ -79,7 +82,7 @@ const gameJsonLd = {
         <div class="flex items-center gap-2 mb-6">
           <span class="text-2xl">📖</span>
           <div>
-            <h3 class="font-display font-bold text-lg sm:text-xl text-white">Bí Kíp Thần Chú (Spellbook Reference)</h3>
+            <h3 class="font-display font-bold text-lg sm:text-xl text-white">{{ t('game.spellbook') }}</h3>
             <p class="text-xs font-mono text-slate-400">Các câu lệnh và bùa chú được nạp sẵn vào máy Arcade để bạn luyện tay trước khi vào trận</p>
           </div>
         </div>

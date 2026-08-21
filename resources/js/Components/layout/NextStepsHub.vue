@@ -1,58 +1,63 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import { sound } from '@/audio/soundEffects';
+import { useI18n } from '@/composables/useI18n';
 
 interface Props {
   currentPath: string;
 }
 
 const props = defineProps<Props>();
+const { t, locale } = useI18n();
 
-const allPortals = [
+const portalCopy = {
+  en: {
+    projects: ['Project Grimoire', '6+ production projects, AI agents & GIS telecom.', 'ENTERPRISE'], blog: ['Midnight Tech Chronicle', 'Deep notes on Multi-Agent architecture & systems optimization.', 'TECH NOTES'], game: ['Rune Typer Arcade', 'Exorcist typing arena with mechanical thock & Boss Bugs.', 'ARCADE'], talisman: ['Developer Talisman Forge', 'Customize developer charms and export crisp artwork.', 'DEV FORGE'], contact: ['Summoning Altar', 'Request technical consulting and connect with the architect.', 'CONSULTING'],
+  },
+  vi: {
+    projects: ['Kho Grimoire Dự Án', '6+ dự án thực chiến, AI Agent & viễn thông GIS.', 'ENTERPRISE'], blog: ['Midnight Tech Chronicle', 'Ghi chép về kiến trúc Multi-Agent & tối ưu hệ thống.', 'TECH NOTES'], game: ['Phòng Máy Rune Typer', 'Sàn đấu gõ phím trừ tà, âm thanh thock & Boss Bug.', 'ARCADE'], talisman: ['Lò Rèn Bùa Hộ Mệnh', 'Tùy biến bùa hộ mệnh và xuất file ảnh sắc nét.', 'DEV FORGE'], contact: ['Điện Thờ Triệu Hồi', 'Gửi yêu cầu tư vấn kỹ thuật và kết nối kiến trúc sư.', 'CONSULTING'],
+  },
+};
+
+const allPortals = computed(() => {
+  const copy = portalCopy[locale.value];
+  return [
   {
     path: '/projects',
-    title: 'Kho Grimoire Dự Án',
-    desc: '6+ Dự án thực chiến chịu tải cao, AI Agent & viễn thông GIS.',
+    title: copy.projects[0], desc: copy.projects[1], badge: copy.projects[2],
     icon: '💼',
-    badge: 'ENTERPRISE',
     color: 'border-phantom-mint/30 hover:border-phantom-mint text-phantom-mint',
   },
   {
     path: '/blog',
-    title: 'Midnight Tech Chronicle',
-    desc: 'Ghi chép chuyên sâu về kiến trúc Multi-Agent & tối ưu hóa hệ thống.',
+    title: copy.blog[0], desc: copy.blog[1], badge: copy.blog[2],
     icon: '📜',
-    badge: 'TECH NOTES',
     color: 'border-talisman-gold/30 hover:border-talisman-gold text-talisman-gold',
   },
   {
     path: '/game',
-    title: 'Phòng Máy Rune Typer',
-    desc: 'Sàn đấu gõ phím trừ tà, âm thanh phím cơ thock & săn Boss Bug.',
+    title: copy.game[0], desc: copy.game[1], badge: copy.game[2],
     icon: '🎮',
-    badge: 'ARCADE',
     color: 'border-amber-400/30 hover:border-amber-400 text-amber-400',
   },
   {
     path: '/talisman',
-    title: 'Lò Rèn Bùa Hộ Mệnh',
-    desc: 'Tùy biến bùa hộ mệnh nhà phát triển và xuất file ảnh sắc nét.',
+    title: copy.talisman[0], desc: copy.talisman[1], badge: copy.talisman[2],
     icon: '✨',
-    badge: 'DEV FORGE',
     color: 'border-emerald-400/30 hover:border-emerald-400 text-emerald-400',
   },
   {
     path: '/contact',
-    title: 'Điện Thờ Triệu Hồi',
-    desc: 'Gửi yêu cầu tư vấn giải pháp kỹ thuật, kết nối cùng kiến trúc sư.',
+    title: copy.contact[0], desc: copy.contact[1], badge: copy.contact[2],
     icon: '📜',
-    badge: 'CONSULTING',
     color: 'border-purple-400/30 hover:border-purple-400 text-purple-400',
   },
-];
+  ];
+});
 
 // Filter out current page and take 3 items
-const portals = allPortals.filter(p => !props.currentPath.startsWith(p.path)).slice(0, 3);
+const portals = computed(() => allPortals.value.filter(p => !props.currentPath.startsWith(p.path)).slice(0, 3));
 </script>
 
 <template>
@@ -61,10 +66,10 @@ const portals = allPortals.filter(p => !props.currentPath.startsWith(p.path)).sl
       <div>
         <span class="text-xs font-mono text-slate-400 flex items-center gap-1.5 uppercase tracking-wider mb-1">
           <span>🔮</span>
-          <span>Khám Phá Các Cõi Tiếp Theo</span>
+          <span>{{ t('common.nextRealms') }}</span>
         </span>
         <h3 class="text-2xl sm:text-3xl font-display font-bold text-white">
-          Tiếp Tục Hành Trình
+          {{ t('common.continue') }}
         </h3>
       </div>
       <Link
@@ -72,7 +77,7 @@ const portals = allPortals.filter(p => !props.currentPath.startsWith(p.path)).sl
         class="text-xs font-mono text-phantom-mint hover:underline flex items-center gap-1"
         @click="sound.playTalisman()"
       >
-        <span>Hoặc triệu hồi tư vấn giải pháp ngay</span>
+        <span>{{ t('common.consult') }}</span>
         <span>→</span>
       </Link>
     </div>
@@ -104,7 +109,7 @@ const portals = allPortals.filter(p => !props.currentPath.startsWith(p.path)).sl
         </div>
 
         <div class="text-xs font-mono mt-6 flex items-center gap-1.5 font-bold group-hover:translate-x-1 transition-transform">
-          <span>Bước vào cõi này</span>
+          <span>{{ t('common.enter') }}</span>
           <span>→</span>
         </div>
       </Link>

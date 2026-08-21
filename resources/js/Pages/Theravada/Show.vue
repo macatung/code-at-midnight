@@ -504,6 +504,9 @@ const renderedMarkdown = computed(() => {
     md = md.replace(/\*\*(.*?)\*\*/gim, '<strong class="font-bold text-amber-950">$1</strong>');
     md = md.replace(/\*(.*?)\*/gim, '<em class="italic text-stone-800 font-serif">$1</em>');
 
+    // 6.5 Markdown Images (With responsive wrapper and caption)
+    md = md.replace(/!\[(.*?)\]\((.*?)\)/gim, '<figure class="my-6 text-center max-w-2xl mx-auto"><img src="$2" alt="$1" class="rounded-2xl max-w-full h-auto mx-auto shadow-md border border-amber-300/40 object-cover" loading="lazy" /><figcaption class="text-xs font-serif text-stone-600 mt-2 italic">$1</figcaption></figure>');
+
     // 7. Markdown Links (Internal & External)
     md = md.replace(/\[(.*?)\]\((.*?)\)/gim, '<a href="$2" class="zen-internal-link text-amber-800 hover:text-amber-950 font-semibold underline decoration-amber-400 decoration-1 hover:decoration-2 transition-all inline-flex items-center gap-0.5">$1</a>');
 
@@ -515,7 +518,7 @@ const renderedMarkdown = computed(() => {
     const paragraphs = md.split(/\n\n+/);
     parsedHtml = paragraphs.map(p => {
       p = p.trim();
-      if (p.startsWith('<div') || p.startsWith('<blockquote') || p.startsWith('<h') || p.startsWith('<li') || p.startsWith('<table')) {
+      if (p.startsWith('<div') || p.startsWith('<blockquote') || p.startsWith('<h') || p.startsWith('<li') || p.startsWith('<table') || p.startsWith('<figure')) {
         return p;
       }
       return `<p class="my-4 text-[#1c1917] font-serif leading-[1.95] text-base sm:text-lg text-justify font-normal">${p.replace(/\n/g, '<br/>')}</p>`;
@@ -539,6 +542,9 @@ const renderedMarkdown = computed(() => {
     md = md.replace(/\*\*(.*?)\*\*/gim, '<strong class="font-bold text-amber-300">$1</strong>');
     md = md.replace(/\*(.*?)\*/gim, '<em class="italic text-stone-200 font-serif">$1</em>');
 
+    // 6.5 Markdown Images (With responsive wrapper and caption)
+    md = md.replace(/!\[(.*?)\]\((.*?)\)/gim, '<figure class="my-6 text-center max-w-2xl mx-auto"><img src="$2" alt="$1" class="rounded-2xl max-w-full h-auto mx-auto shadow-md border border-amber-500/30 object-cover" loading="lazy" /><figcaption class="text-xs font-serif text-stone-400 mt-2 italic">$1</figcaption></figure>');
+
     // 7. Markdown Links (Internal & External)
     md = md.replace(/\[(.*?)\]\((.*?)\)/gim, '<a href="$2" class="zen-internal-link text-amber-400 hover:text-amber-200 font-semibold underline decoration-amber-500/60 decoration-1 hover:decoration-2 transition-all inline-flex items-center gap-0.5">$1</a>');
 
@@ -550,7 +556,7 @@ const renderedMarkdown = computed(() => {
     const paragraphs = md.split(/\n\n+/);
     parsedHtml = paragraphs.map(p => {
       p = p.trim();
-      if (p.startsWith('<div') || p.startsWith('<blockquote') || p.startsWith('<h') || p.startsWith('<li') || p.startsWith('<table')) {
+      if (p.startsWith('<div') || p.startsWith('<blockquote') || p.startsWith('<h') || p.startsWith('<li') || p.startsWith('<table') || p.startsWith('<figure')) {
         return p;
       }
       return `<p class="my-4 text-stone-100 font-serif leading-[1.95] text-base sm:text-lg text-justify font-normal">${p.replace(/\n/g, '<br/>')}</p>`;
@@ -626,7 +632,7 @@ const suttaJsonLd = computed(() => ({
         <Link href="/theravada" class="hover:text-amber-300">Theravāda</Link>
         <span>/</span>
         <Link :href="`/theravada/danh-muc/${article.category}`" class="hover:text-amber-300">
-          {{ article.category === 'phap-hoc' ? 'Pháp Học' : article.category === 'phap-hanh' ? 'Pháp Hành' : 'Kinh Tụng' }}
+          {{ article.category === 'phap-hoc' ? 'Pháp Học' : article.category === 'phap-hanh' ? 'Pháp Hành' : article.category === 'kinh-tung' ? 'Kinh Tụng' : 'Lịch Sử Phật Giáo' }}
         </Link>
         <span>/</span>
         <span class="text-amber-400 font-bold truncate max-w-[200px] sm:max-w-md">
@@ -638,7 +644,7 @@ const suttaJsonLd = computed(() => ({
       <header class="mb-8 text-left border-b border-stone-800 pb-6">
         <div class="flex flex-wrap items-center gap-2.5 mb-3">
           <span class="px-3 py-1 rounded-full text-xs font-serif font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30">
-            {{ article.category === 'phap-hoc' ? 'Pháp Học (Pariyatti)' : article.category === 'phap-hanh' ? 'Pháp Hành (Vipassanā)' : 'Tam Tạng & Kinh Tụng' }}
+            {{ article.category === 'phap-hoc' ? 'Pháp Học (Pariyatti)' : article.category === 'phap-hanh' ? 'Pháp Hành (Vipassanā)' : article.category === 'kinh-tung' ? 'Tam Tạng & Kinh Tụng' : 'Lịch Sử Phật Giáo (Itihāsa)' }}
           </span>
           <span class="text-xs text-stone-400 font-serif">
             {{ article.reading_time_min }} phút đọc

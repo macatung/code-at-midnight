@@ -5,17 +5,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Theravada\TheravadaController;
-use App\Http\Controllers\TaskController;
-use App\Http\Controllers\Api\ApiTaskController;
-use App\Http\Controllers\Api\ApiProjectController;
-use App\Http\Controllers\Api\ApiSprintController;
 use App\Http\Controllers\Api\AnalyticsEventController;
-use App\Http\Controllers\Api\ApiAgentRunController;
-use App\Http\Controllers\Api\TaskHubMcpController;
-use App\Http\Controllers\Api\ApiProjectDocumentController;
-use App\Http\Controllers\Api\ApiProjectReleaseController;
-use App\Http\Controllers\GithubAuthController;
-use App\Http\Controllers\DesktopPairingController;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminAnalyticsController;
@@ -28,108 +18,7 @@ use App\Http\Controllers\Admin\AdminContactController;
 use App\Http\Controllers\SeoController;
 
 $baseDomain = config('app.base_domain', 'macatung.dev');
-$taskHubPublicUrl = rtrim((string) env('TASK_HUB_PUBLIC_URL', ''), '/');
-
-// 1. Tasks Productivity Subdomain Routes (tasks.macatung.dev)
-if ($taskHubPublicUrl) {
-    Route::domain('tasks.' . $baseDomain)->get('/', fn () => redirect()->away($taskHubPublicUrl))->name('tasks.domain.index');
-    Route::get('/tasks', fn () => redirect()->away($taskHubPublicUrl))->name('tasks.index');
-} else {
-    Route::domain('tasks.' . $baseDomain)->group(function () {
-        Route::get('/', [TaskController::class, 'index'])->name('tasks.domain.index');
-        Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('tasks.domain.sitemap');
-        Route::get('/robots.txt', [SeoController::class, 'robots'])->name('tasks.domain.robots');
-    });
-
-    Route::prefix('tasks')->name('tasks.')->group(function () {
-        Route::get('/', [TaskController::class, 'index'])->name('index');
-    });
-}
-
-// 2. Tasks Path-based Route (Available on main domain /tasks & local testing)
-
-// 3. Tasks REST API Endpoints (For Web UI & Desktop Mascot Sync)
-Route::prefix('api/tasks')->group(function () {
-    Route::get('/', [ApiTaskController::class, 'index']);
-    Route::post('/', [ApiTaskController::class, 'store']);
-    Route::post('/ai-preview', [ApiTaskController::class, 'aiPreview']);
-    Route::post('/ai-generate', [ApiTaskController::class, 'aiGenerate']);
-    Route::get('/report-settings', [ApiTaskController::class, 'getReportSettings']);
-    Route::post('/report-settings', [ApiTaskController::class, 'saveReportSettings']);
-    Route::post('/send-report-now', [ApiTaskController::class, 'sendReportNow']);
-    Route::get('/daily-dispatch', [ApiTaskController::class, 'dailyDispatch']);
-    Route::get('/daily-review', [ApiTaskController::class, 'dailyReview']);
-    Route::get('/next-action', [ApiTaskController::class, 'nextAction']);
-    Route::get('/ai-settings', [ApiTaskController::class, 'getAiSettings']);
-    Route::post('/ai-settings', [ApiTaskController::class, 'saveAiSettings']);
-    Route::get('/agent-runs', [ApiAgentRunController::class, 'index']);
-    Route::post('/agent-runs', [ApiAgentRunController::class, 'store']);
-    Route::get('/agent-runs/{agentRun}', [ApiAgentRunController::class, 'show']);
-    Route::patch('/agent-runs/{agentRun}', [ApiAgentRunController::class, 'update']);
-    Route::post('/agent-runs/{agentRun}/events', [ApiAgentRunController::class, 'event']);
-    Route::post('/agent-runs/{agentRun}/evidence', [ApiAgentRunController::class, 'evidence']);
-    Route::post('/agent-runs/{agentRun}/handoff', [ApiAgentRunController::class, 'handoff']);
-    Route::get('/context-pack', [ApiAgentRunController::class, 'context']);
-    Route::post('/work-items/{task}/approve', [ApiAgentRunController::class, 'approve']);
-    Route::post('/work-items/{task}/reject', [ApiAgentRunController::class, 'reject']);
-    Route::post('/github/webhook', [ApiAgentRunController::class, 'githubWebhook']);
-    Route::post('/mcp', [TaskHubMcpController::class, 'handle']);
-});
-
-// GitHub OAuth identity and repository authorization
-Route::get('/auth/github', [GithubAuthController::class, 'redirect'])->name('auth.github');
-Route::get('/auth/github/callback', [GithubAuthController::class, 'callback'])->name('auth.github.callback');
-Route::post('/auth/github/logout', [GithubAuthController::class, 'logout'])->name('auth.github.logout');
-
-// Keep dynamic task routes after all named API endpoints.
-Route::prefix('api/tasks')->group(function () {
-    Route::patch('/{id}', [ApiTaskController::class, 'update']);
-    Route::delete('/{id}', [ApiTaskController::class, 'destroy']);
-});
-
-// Desktop Agent Workspace device pairing and one-time MCP grant.
-Route::post('/api/desktop/pairing/start', [DesktopPairingController::class, 'start']);
-Route::get('/api/desktop/pairing/{pairingId}/status', [DesktopPairingController::class, 'status']);
-Route::get('/desktop/pairing/{pairingId}/approve', [DesktopPairingController::class, 'approveForm']);
-Route::post('/desktop/pairing/{pairingId}/approve', [DesktopPairingController::class, 'approve']);
-Route::post('/desktop/pairing/{pairingId}/deny', [DesktopPairingController::class, 'deny']);
-
-// 3.1 Projects REST API Endpoints (For Projects Management)
-Route::prefix('api/projects')->group(function () {
-    Route::get('/', [ApiProjectController::class, 'index']);
-    Route::post('/', [ApiProjectController::class, 'store']);
-    Route::get('/github/repositories', [ApiProjectController::class, 'githubRepositories'])->middleware('auth');
-    Route::post('/from-github', [ApiProjectController::class, 'storeFromGithub'])->middleware('auth');
-    Route::get('/{project}/github', [ApiProjectController::class, 'githubStatus']);
-    Route::post('/{project}/github/connect', [ApiProjectController::class, 'connectGithub'])->middleware('auth');
-    Route::post('/{project}/github/sync', [ApiProjectController::class, 'syncGithub'])->middleware('auth');
-    Route::patch('/{id}', [ApiProjectController::class, 'update']);
-    Route::delete('/{id}', [ApiProjectController::class, 'destroy']);
-    Route::get('/{project}/documents', [ApiProjectDocumentController::class, 'index']);
-    Route::post('/{project}/documents', [ApiProjectDocumentController::class, 'store']);
-    Route::post('/{project}/documents/import-manifest', [ApiProjectDocumentController::class, 'importManifest']);
-    Route::get('/{project}/releases', [ApiProjectReleaseController::class, 'index']);
-    Route::post('/{project}/releases', [ApiProjectReleaseController::class, 'store']);
-});
-Route::get('/api/project-documents/manifest-template', [ApiProjectDocumentController::class, 'manifestTemplate']);
-Route::patch('/api/project-documents/{document}', [ApiProjectDocumentController::class, 'update']);
-Route::delete('/api/project-documents/{document}', [ApiProjectDocumentController::class, 'destroy']);
-Route::patch('/api/project-releases/{release}', [ApiProjectReleaseController::class, 'update']);
-Route::post('/api/tasks/{task}/documents', [ApiProjectDocumentController::class, 'attach']);
-Route::delete('/api/tasks/{task}/documents/{document}', [ApiProjectDocumentController::class, 'detach']);
-
-// 3.2 Sprints REST API Endpoints (For Scrum Sprint Management)
-Route::prefix('api/sprints')->group(function () {
-    Route::get('/', [ApiSprintController::class, 'index']);
-    Route::post('/', [ApiSprintController::class, 'store']);
-    Route::patch('/{sprint}', [ApiSprintController::class, 'update']);
-    Route::delete('/{sprint}', [ApiSprintController::class, 'destroy']);
-    Route::post('/{sprint}/start', [ApiSprintController::class, 'start']);
-    Route::post('/{sprint}/complete', [ApiSprintController::class, 'complete']);
-    Route::post('/move-tasks', [ApiSprintController::class, 'moveTasks']);
-});
-
-// 4. Theravāda Subdomain Routes (e.g. theravada.macatung.dev / theravada.localhost)
+// Theravāda Subdomain Routes (e.g. theravada.macatung.dev / theravada.localhost)
 Route::domain('theravada.' . $baseDomain)->group(function () {
     Route::get('/', [TheravadaController::class, 'index'])->name('theravada.domain.index');
     Route::get('/kinh/{slug}', [TheravadaController::class, 'show'])->name('theravada.domain.show');

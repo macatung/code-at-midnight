@@ -6,6 +6,9 @@ import TalismanCanvas from '@/Components/mascot/TalismanCanvas.vue';
 import NextStepsHub from '@/Components/layout/NextStepsHub.vue';
 import Icons from '@/Components/ui/Icons.vue';
 import { sound } from '@/audio/soundEffects';
+import { useI18n } from '@/composables/useI18n';
+import { ref } from 'vue';
+import { Link, router } from '@inertiajs/vue3';
 
 interface ArticleItem {
   id: number;
@@ -29,6 +32,7 @@ const props = defineProps<{
 
 const searchQuery = ref(props.currentSearch || '');
 const activeTag = ref(props.currentTag || '');
+const { t } = useI18n();
 
 const handleTagClick = (tag: string) => {
   activeTag.value = activeTag.value === tag ? '' : tag;
@@ -77,7 +81,7 @@ const blogIndexJsonLd = {
     <main class="relative z-10 flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 text-left">
       <!-- Breadcrumb -->
       <nav class="flex items-center gap-2 text-xs font-mono text-slate-400 mb-6" aria-label="Breadcrumb">
-        <Link href="/" class="hover:text-phantom-mint transition-colors">Trang Chủ</Link>
+        <Link href="/" class="hover:text-phantom-mint transition-colors">{{ t('nav.home') }}</Link>
         <span>/</span>
         <span class="text-phantom-mint font-bold">Midnight Tech Chronicle</span>
       </nav>
@@ -88,11 +92,11 @@ const blogIndexJsonLd = {
           <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-phantom-mint/10 border border-phantom-mint/30 text-phantom-mint text-xs font-mono mb-3 shadow-glow-mint">
             📜 Midnight Tech Chronicle
           </span>
-          <h1 class="text-3xl sm:text-5xl font-display font-extrabold text-white tracking-tight">
-            Ghi Chép Kiến Trúc & <span class="text-transparent bg-clip-text bg-gradient-to-r from-phantom-mint via-phantom-cyan to-talisman-gold">Kỹ Thuật Đêm</span>
+        <h1 class="text-3xl sm:text-5xl font-display font-extrabold text-white tracking-tight">
+            {{ t('blog.title') }}
           </h1>
           <p class="text-sm sm:text-base text-slate-400 mt-2 max-w-2xl font-sans leading-relaxed">
-            Các bài viết chuyên sâu về Multi-Agent AI tự trị, tối ưu backend chịu tải hàng triệu requests, giải thuật địa lý GIS và kinh nghiệm thiết kế hệ thống thực chiến.
+            {{ t('blog.description') }}
           </p>
         </div>
 
@@ -102,7 +106,7 @@ const blogIndexJsonLd = {
           <input
             v-model="searchQuery"
             type="text"
-            placeholder="Tìm kiếm bài viết, công nghệ..."
+            :placeholder="t('blog.search')"
             class="w-full pl-10 pr-10 py-3 rounded-2xl bg-midnight-900/90 border border-white/10 text-slate-200 placeholder-slate-500 text-xs sm:text-sm font-sans focus:outline-none focus:border-phantom-mint transition-colors shadow-lg"
             @keyup.enter="handleSearch"
           />
@@ -127,7 +131,7 @@ const blogIndexJsonLd = {
             : 'bg-midnight-900/80 text-slate-400 border-white/5 hover:border-white/20 hover:text-white'"
           @click="handleTagClick('')"
         >
-          Tất Cả Chủ Đề (All)
+          {{ t('blog.all') }}
         </button>
 
         <button
@@ -151,8 +155,8 @@ const blogIndexJsonLd = {
         class="p-16 text-center rounded-3xl glass-panel border border-white/10 text-slate-400"
       >
         <div class="text-4xl mb-3">🕯️</div>
-        <h3 class="text-white font-display font-bold text-xl mb-1">Chưa có bài viết phù hợp</h3>
-        <p class="text-xs sm:text-sm">Hãy thử tìm với từ khóa khác như "AI", "Laravel", "GIS" hoặc chọn "Tất Cả Chủ Đề".</p>
+        <h3 class="text-white font-display font-bold text-xl mb-1">{{ t('blog.empty') }}</h3>
+        <p class="text-xs sm:text-sm">{{ t('blog.emptyHint') }}</p>
       </div>
 
       <!-- Articles Grid -->
@@ -167,7 +171,7 @@ const blogIndexJsonLd = {
             <div class="flex items-center justify-between gap-4 text-xs font-mono text-slate-400 mb-4 pb-3 border-b border-white/5">
               <span class="flex items-center gap-1.5 text-phantom-mint">
                 <span>⏱</span>
-                <span>{{ article.reading_time_min }} phút đọc</span>
+                <span>{{ article.reading_time_min }} {{ t('common.minutes') }}</span>
               </span>
               <span class="text-slate-400">{{ article.published_at }}</span>
             </div>
@@ -199,7 +203,7 @@ const blogIndexJsonLd = {
           <div class="px-6 sm:px-8 py-4 bg-midnight-950/80 border-t border-white/5 flex items-center justify-between">
             <span class="text-xs font-mono text-slate-400 flex items-center gap-1.5">
               <span>👁</span>
-              <span>{{ article.views_count.toLocaleString() }} lượt đọc</span>
+              <span>{{ article.views_count.toLocaleString() }} {{ t('common.views') }}</span>
             </span>
 
             <Link
@@ -207,7 +211,7 @@ const blogIndexJsonLd = {
               class="px-4 py-2 rounded-xl bg-white/5 hover:bg-phantom-mint text-slate-200 hover:text-midnight-950 font-display font-bold text-xs transition-all flex items-center gap-1.5 border border-white/10 hover:border-phantom-mint shadow-sm"
               @click="sound.playClick()"
             >
-              <span>Đọc Bài Viết</span>
+              <span>{{ t('blog.read') }}</span>
               <span>→</span>
             </Link>
           </div>

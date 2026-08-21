@@ -109,6 +109,12 @@ const theravadaHomeJsonLd = {
           Kinh Tụng Pāḷi 📜
         </Link>
         <Link
+          href="/theravada/danh-muc/lich-su"
+          class="px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl bg-stone-900 border border-amber-500/40 text-amber-300 font-serif font-bold text-xs sm:text-sm hover:bg-stone-800 transition-all hover:scale-105 active:scale-95 text-center flex items-center justify-center min-h-[44px]"
+        >
+          Lịch Sử Phật Giáo 🏛️
+        </Link>
+        <Link
           href="/theravada/tu-dien-pali"
           class="px-4 sm:px-5 py-3 sm:py-3.5 rounded-2xl bg-stone-900/80 border border-stone-700 text-stone-300 hover:text-white font-serif text-xs sm:text-sm transition-all hover:bg-stone-800 text-center flex items-center justify-center min-h-[44px]"
         >
@@ -160,23 +166,23 @@ const theravadaHomeJsonLd = {
       </div>
     </section>
 
-    <!-- 4. Category Portals (3 Trụ Cột Tu Tập) -->
+    <!-- 4. Category Portals (4 Trụ Cột Tu Tập & Lịch Sử) -->
     <section class="my-14">
       <div class="text-center mb-10">
         <h2 class="text-2xl sm:text-3xl font-serif font-bold text-amber-100 tracking-tight">
-          Tam Đại Trụ Cột Tu Tập Theravāda
+          Tứ Đại Trụ Cột Hoằng Dương Theravāda
         </h2>
         <p class="text-sm text-stone-400 font-serif mt-2">
-          Học hiểu tường tận giáo pháp và thể nghiệm chân lý trong từng khoảnh khắc hiện tại
+          Học hiểu tường tận giáo pháp, lịch sử truyền thừa và thể nghiệm chân lý trong từng khoảnh khắc
         </p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Link
           v-for="cat in categories"
           :key="cat.slug"
           :href="`/theravada/danh-muc/${cat.slug}`"
-          class="group relative overflow-hidden flex flex-col justify-between p-6 sm:p-7 rounded-3xl bg-stone-900/90 border border-stone-800 hover:border-amber-500/60 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_-10px_rgba(245,158,11,0.3)] text-left backdrop-blur-md"
+          class="group relative overflow-hidden flex flex-col justify-between p-6 rounded-3xl bg-stone-900/90 border border-stone-800 hover:border-amber-500/60 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_-10px_rgba(245,158,11,0.3)] text-left backdrop-blur-md"
         >
           <!-- Shimmering Golden Rim Highlight -->
           <div class="absolute inset-0 bg-gradient-to-r from-transparent via-amber-400/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 pointer-events-none" />
@@ -184,21 +190,21 @@ const theravadaHomeJsonLd = {
           <div>
             <div class="flex items-center justify-between mb-4">
               <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/15 border border-amber-500/30 text-2xl text-amber-300 group-hover:scale-110 transition-transform shadow-inner">
-                {{ cat.slug === 'phap-hoc' ? '📖' : cat.slug === 'phap-hanh' ? '🧘' : '📜' }}
+                {{ cat.slug === 'phap-hoc' ? '📖' : cat.slug === 'phap-hanh' ? '🧘' : cat.slug === 'kinh-tung' ? '📜' : '🏛️' }}
               </span>
               <span class="text-xs font-serif text-amber-300 font-bold bg-stone-950 px-3 py-1 rounded-full border border-stone-800 shadow-sm">
                 {{ cat.count }} Bài viết
               </span>
             </div>
 
-            <h3 class="text-xl font-serif font-bold text-amber-100 group-hover:text-amber-300 transition-colors">
+            <h3 class="text-lg font-serif font-bold text-amber-100 group-hover:text-amber-300 transition-colors">
               {{ cat.name }}
             </h3>
             <p class="text-xs font-serif text-amber-400/90 italic font-medium mb-3">
               {{ cat.pali }}
             </p>
 
-            <p class="text-xs sm:text-sm text-stone-300 font-serif leading-relaxed">
+            <p class="text-xs text-stone-300 font-serif leading-relaxed line-clamp-3">
               {{ cat.description }}
             </p>
           </div>
@@ -236,7 +242,7 @@ const theravadaHomeJsonLd = {
           <div>
             <div class="flex items-center justify-between gap-2 text-xs font-serif text-stone-300 mb-3">
               <span class="px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 font-serif font-bold">
-                {{ item.category === 'phap-hoc' ? 'Pháp Học' : item.category === 'phap-hanh' ? 'Pháp Hành' : 'Kinh Tụng' }}
+                {{ item.category === 'phap-hoc' ? 'Pháp Học' : item.category === 'phap-hanh' ? 'Pháp Hành' : item.category === 'kinh-tung' ? 'Kinh Tụng' : 'Lịch Sử' }}
               </span>
               <span class="text-stone-300 font-medium">⏱️ {{ item.reading_time_min }} phút đọc</span>
             </div>

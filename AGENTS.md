@@ -1,6 +1,6 @@
-# Task Hub agent contract
+# Macatung repository agent contract
 
-This repository is coordinated through Task Hub. Treat the assigned work item as the source of intent and GitHub as the source of code state.
+This repository contains the macatung.dev portfolio and public web experience. Treat the assigned work item as the source of intent and GitHub as the source of code state.
 
 ## Before changing code
 
@@ -12,8 +12,6 @@ This repository is coordinated through Task Hub. Treat the assigned work item as
 ## After changing code
 
 - Run the smallest relevant test first, then `npm test` and `npm run build` when applicable.
-- Report branch, commit SHA, changed files, commands and results to Task Hub.
+- Report branch, commit SHA, changed files, commands and results in the handoff.
 - Attach verification evidence before requesting review.
 - Leave the task in `needs_review` until a human approves it.
-
-The detailed context is provided per run by the Task Hub Context Pack.

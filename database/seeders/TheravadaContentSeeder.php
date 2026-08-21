@@ -2491,6 +2491,523 @@ EOF
                 'is_published' => true,
                 'published_at' => Carbon::now()->subDays(0),
             ],
+
+            // =========================================================================
+            // 📜 CHUYÊN MỤC: LỊCH SỬ PHẬT GIÁO (SĀSANA ITIHĀSA) — 6 BÀI VIẾT CHUYÊN SÂU
+            // =========================================================================
+
+            // 26. Cuộc Đời Đức Phật Thích Ca Mầu Ni (Gotama Buddha)
+            [
+                'site_domain' => 'theravada',
+                'title' => 'Cuộc Đời Đức Phật Thích Ca Mầu Ni (Gotama Buddha) — Từ Bồ Tát Siddhattha Đến Đấng Toàn Giác Vô Thượng',
+                'pali_title' => 'Tathāgata Gotama Buddhassa Cariya',
+                'slug' => 'cuoc-doi-duc-phat-gotama-tu-dan-sanh-den-nhap-niet-ban',
+                'category' => 'lich-su',
+                'excerpt' => 'Toàn cảnh biên niên sử cuộc đời Đức Phật Gotama: từ sự kiện đản sanh tại Lumbinī, xuất gia tầm đạo, thành tựu Vô Thượng Chánh Đẳng Giác dưới cội Bồ-đề, 45 năm hoằng hóa đến lúc nhập Đại Bát Niết-bàn tại Kusinārā.',
+                'author' => 'Đại Tạng Kinh Pāḷi & Biên Niên Sử Phật Giáo (Buddhavaṃsa)',
+                'content' => <<<EOF
+![Đại Tháp Giác Ngộ Mahabodhi tại Bồ Đề Đạo Tràng](https://images.unsplash.com/photo-1599707367072-cd6ada2bc375?auto=format&fit=crop&w=1200&q=80)
+
+Cuộc đời Đức Phật Thích Ca Mầu Ni (*Gotama Buddha*) là thiên anh hùng ca vĩ đại nhất trong lịch sử tư tưởng nhân loại. Ngài không phải là một vị thần linh ban phước giáng họa, mà là một con người bằng xương bằng thịt, bằng ý chí phi thường, trí tuệ siêu việt và lòng từ bi vô lượng đã tự mình khám phá ra chân lý tối hậu của vũ trụ, đoạn tận mọi khổ đau phiền não và chỉ dạy con đường giải thoát cho chư thiên và nhân loại.
+
+---
+
+## 1. Dòng Dõi Thích Ca & Sự Đản Sanh Lịch Sử (Lumbinī)
+
+Vào ngày trăng tròn tháng Vesākha (khoảng năm 624 TCN theo truyền thống Phật giáo Nam truyền), tại vườn Lâm-tỳ-ni (*Lumbinī*, nay thuộc Nepal), Hoàng hậu Māyā trên đường hồi hương đã hạ sanh Thái tử Siddhattha (Tất-đạt-đa). Thân phụ của Ngài là Vua Suddhodana (Tịnh Phạn), thuộc thị tộc Thích Ca (*Sākya*) trị vì vương quốc Kapilavatthu (Ca-tỳ-la-vệ).
+
+Khi chào đời, vị đại đạo sĩ Asita (A-tư-đà) đã tiên tri: *"Bậc vĩ nhân này nếu ở đời sẽ làm Chuyển Luân Thánh Vương thống nhất thiên hạ; nếu xuất gia sẽ chứng đắc quả vị Phật Toàn Giác cứu độ muôn loài."* Thái tử lớn lên trong cung vàng điện ngọc, hưởng trọn mọi vinh hoa phú quý và tinh thông mọi học thuật, võ nghệ đương thời.
+
+```mermaid
+timeline
+    title Niên Biểu Cuộc Đời Đức Phật Thích Ca Mầu Ni (80 Năm Trụ Thế)
+    624 TCN : Đản sanh tại Lâm-tỳ-ni (Lumbinī) : Thái tử Siddhattha chào đời
+    595 TCN : Đại Xuất Gia (29 tuổi) : Từ bỏ hoàng cung, vượt sông Anomā tầm đạo
+    589 TCN : Thành Đạo tại Bồ Đề Đạo Tràng (35 tuổi) : Chứng Vô Thượng Chánh Đẳng Chánh Giác
+    589 TCN : Chuyển Pháp Luân tại Vườn Nai : Khai thị Tứ Thánh Đế, thành lập Tăng đoàn
+    544 TCN : Đại Bát Niết Bàn tại Kusinārā (80 tuổi) : Để lại Pháp & Luật làm Thầy chỉ đường
+```
+
+---
+
+## 2. Bốn Điềm Báo & Cuộc Xuất Gia Vĩ Đại (Mahābhinikkhamana)
+
+Dù sống trong ba tòa lâu đài nguy nga thích hợp cho ba mùa, tâm thức của Thái tử luôn trăn trở về bản chất của kiếp nhân sinh. Trong những chuyến du ngoạn qua bốn cổng thành, Ngài lần lượt chứng kiến bốn hình ảnh định mệnh (*Catur-nimitta*):
+1. **Người già còm cõi, lưng còng**: Sự tàn phá khốc liệt của thời gian.
+2. **Người bệnh tật đau đớn, rên xiết**: Nỗi thống khổ thể xác không ai tránh khỏi.
+3. **Xác chết thối rữa, thân nhân khóc lóc**: Sự chia lìa tuyệt đối của cái chết.
+4. **Vị Sa-môn thanh tịnh, tự tại**: Biểu tượng của con đường tìm kiếm sự bất tử.
+
+Nhận thấy mọi lạc thú trần gian chỉ là ảo ảnh vô thường (*Anicca*), vào năm 29 tuổi, ngay trong đêm phu nhân Yasodharā vừa hạ sanh thế tử Rāhula, Thái tử đã quyết định thực hiện cuộc **Đại Xuất Gia (*Mahābhinikkhamana*)**. Ngài cùng người hầu Channa cỡi ngựa Kanthaka vượt sông Anomā trong đêm, tự tay cắt tóc, khoác áo hoại sắc của người du tăng, chính thức dấn thân vào đại ngàn tầm cầu chân lý tối hậu.
+
+---
+
+## 3. Sáu Năm Khổ Hạnh & Đêm Thành Đạo Rực Rỡ Dưới Cội Bồ-Đề (Bodh Gayā)
+
+Thoạt đầu, Bồ Tát Siddhattha tìm đến hai vị thiền sư trứ danh nhất Ấn Độ thời bấy giờ là **Āḷāra Kālāma** (chứng Vô sở hữu xứ định) và **Uddaka Rāmaputta** (chứng Phi tưởng phi phi tưởng xứ định). Nhận thấy các tầng thiền định này dù vi tế nhưng vẫn còn trong tam giới, chưa dứt cội rễ sanh tử, Ngài từ giã và cùng 5 bạn đồng tu (nhóm Kiều-trần-như) bước vào 6 năm thực hành khổ hạnh ép xác cùng cực tại rừng Uruvelā.
+
+Sau khi kiệt sức bên dòng sông Nerañjarā (Ni-liên-thiền) và nhận bát cháo sữa cúng dường của nàng Sujātā, Bồ Tát nhận ra chân lý: *Khổ hạnh cùng cực hay đắm say dục lạc đều là hai cực đoan sai lầm; chỉ có con đường Trung Đạo (Majjhimā Paṭipadā) dựa trên Bát Chánh Đạo mới dẫn đến giác ngộ.*
+
+Ngài tiến đến cội cây Assattha (Bồ-đề), trải tòa cỏ Kusa và lập lời thệ nguyện kim cương:
+> *"Dù cho máu thịt khô cạn, gân cốt tiêu mòn, nếu chưa chứng đắc Vô Thượng Chánh Đẳng Chánh Giác, ta quyết không rời khỏi tòa sen này!"*
+
+Trong đêm rằm tháng Vesākha năm 589 TCN, tâm Ngài lần lượt chứng đắc:
+- **Canh một**: Chứng đắc **Túc Mạng Minh (*Pubbenivāsānussati-ñāṇa*)** — Nhớ rõ vô lượng kiếp quá khứ của chính mình.
+- **Canh hai**: Chứng đắc **Thiên Nhãn Minh (*Dibbacakkhu-ñāṇa*)** — Thấy rõ sự sinh tử luân hồi của muôn loài chúng sinh theo nghiệp báo (*San-hạ tử-quy*).
+- **Canh ba**: Chứng đắc **Lậu Tận Minh (*Āsavakkhaya-ñāṇa*)** — Thấu suốt Tứ Thánh Đế và Thập Nhị Duyên Khởi, đoạn tận hoàn toàn tham, sân, si và các lậu hoặc rỉ rách.
+
+Khi sao mai vừa mọc, Ngài chính thức trở thành **Đức Phật Thích Ca Mầu Ni** — Bậc Toàn Giác, Bậc A-la-hán, Đấng Đạo Sư của Chư Thiên và Loài Người (*Satthā devamanussānaṃ*).
+
+---
+
+## 4. 45 Năm Hoằng Hóa Chánh Pháp & Tứ Động Tâm Lịch Sử
+
+Sau khi thành đạo, Đức Phật đã dành trọn 45 năm không mệt mỏi, đi bộ bằng đôi chân trần khắp lưu vực sông Hằng để giáo hóa độ sinh. Từ vua chúa quyền uy (Bimbisāra, Pasenadi), thương gia giàu có (Anāthapiṇḍika), đến những người cùng đinh bần cùng (Upāli thợ cạo, Sunīta gánh phân) và cả tướng cướp sát nhân khét tiếng (Aṅgulimāla) đều được ánh sáng Chánh Pháp chuyển hóa.
+
+| Thánh Tích (Tứ Động Tâm) | Tên Pāḷi | Vị Trí Địa Lý | Ý Nghĩa Lịch Sử |
+| :--- | :--- | :--- | :--- |
+| **Lâm-tỳ-ni** | *Lumbinī* | Nepal | Nơi Đấng Bồ Tát Đản Sanh |
+| **Bồ Đề Đạo Tràng** | *Bodh Gayā* | Bang Bihar, Ấn Độ | Nơi Ngài Thành Đạo Vô Thượng |
+| **Vườn Nai (Lộc Uyển)** | *Isipatana (Sarnath)* | Varanasi, Ấn Độ | Nơi Chuyển Pháp Luân Khai Sáng Đạo Phật |
+| **Câu-thi-na** | *Kusinārā* | Uttar Pradesh, Ấn Độ | Nơi Ngài Nhập Đại Bát Niết Bàn |
+
+---
+
+## 5. Đại Bát Niết Bàn (Mahāparinibbāna) & Lời Di Huấn Bất Diệt
+
+Vào năm 80 tuổi, tại rừng cây Sāla song thọ ở Kusinārā, Đức Thế Tôn nằm nghiêng mình về phía hữu trong tư thế Sư tử ngọa (*Sīhaseyya*), thanh tịnh bước vào Đại Bát Niết-bàn (*Mahāparinibbāna*). Trước khi tịch diệt, Ngài đã để lại lời di huấn tối hậu cho Tôn giả Ānanda và hội chúng Tăng-già:
+
+> **"Handadāni bhikkhave āmantayāmi vo, vayadhammā saṅkhārā appamādena sampādetha."**
+> *(Này các Tỳ-kheo, đây là lời nhắn nhủ cuối cùng của Như Lai: Tất cả các pháp hữu vi đều chịu định luật biến dịch hoại diệt. Hãy nỗ lực tinh tấn, chớ có buông lung phóng dật!)*
+EOF
+,
+                'tags' => ['Lịch Sử Phật Giáo', 'Đức Phật Thích Ca', 'Gotama Buddha', 'Bồ Đề Đạo Tràng', 'Tứ Động Tâm', 'Theravada'],
+                'pali_terms' => [
+                    ['term' => 'Gotama', 'meaning' => 'Cù-đàm — chủng tộc danh giá của Đức Phật Thích Ca'],
+                    ['term' => 'Mahābhinikkhamana', 'meaning' => 'Đại Xuất Gia — sự kiện từ bỏ ngai vàng tìm đường cứu khổ'],
+                    ['term' => 'Majjhimā Paṭipadā', 'meaning' => 'Trung Đạo — con đường rời xa hai cực đoan dục lạc và khổ hạnh'],
+                    ['term' => 'Tathāgata', 'meaning' => 'Như Lai — bậc đã đến và đi như chân lý bất biến'],
+                    ['term' => 'Mahāparinibbāna', 'meaning' => 'Đại Bát Niết Bàn — sự viên tịch hoàn toàn của Đức Phật'],
+                ],
+                'audio_chanting_url' => null,
+                'reading_time_min' => 10,
+                'is_published' => true,
+                'published_at' => Carbon::now()->subMinutes(25),
+            ],
+
+            // 27. Lịch Sử Sáu Kỳ Kết Tập Tam Tạng Thánh Điển Pāḷi (Cha Saṅgāyanā)
+            [
+                'site_domain' => 'theravada',
+                'title' => 'Lịch Sử Sáu Kỳ Kết Tập Tam Tạng Thánh Điển Pāḷi (Cha Saṅgāyanā) — Hành Trình Bảo Tồn Lời Phật Suốt 2.500 Năm',
+                'pali_title' => 'Cha Saṅgāyanā Itihāsa',
+                'slug' => 'lich-su-sau-ky-ket-tap-tam-tang-kinh-dien-pali-chasangayana',
+                'category' => 'lich-su',
+                'excerpt' => 'Khảo cứu tường tận bối cảnh lịch sử, địa điểm, chủ tọa và thành tựu của 6 kỳ Đại Kết Tập Tam Tạng Pāḷi (Saṅgāyanā) từ thời Đức Phật nhập Niết-bàn tại Rājagaha cho đến kỳ kết tập thứ 6 tại Kaba Aye Yangon.',
+                'author' => 'Đại Sử Tích Lan (Mahāvaṃsa) & Biên Niên Sử Phật Giáo (Sāsanavaṃsa)',
+                'content' => <<<EOF
+![Hang Động Lịch Sử Nơi Tổ Chức Kết Tập Tam Tạng](https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80)
+
+Sau khi Đức Thế Tôn nhập Đại Bát Niết-bàn, Ngài không chỉ định bất kỳ ai làm người thừa kế duy nhất, mà căn dặn: *"Pháp và Luật (*Dhamma & Vinaya*) mà Như Lai đã giảng dạy sẽ là vị Đạo Sư của các con sau khi Như Lai diệt độ."* Để bảo tồn tính thuần khiết nguyên bản của Giáo Pháp, ngăn ngừa tà thuyết ngoại đạo và sự lơ là giới luật, Tăng đoàn Trưởng lão qua các thời đại đã tổ chức **Sáu Kỳ Đại Kết Tập Thánh Điển (*Cha Saṅgāyanā*)**.
+
+Từ ngữ **Saṅgāyanā** có nghĩa là *cùng nhau tụng đọc và rà soát*. Trong các kỳ kết tập này, các bậc Đại A-la-hán đắc Lục Thông và Tứ Vô Ngại Biện đã cùng nhau đối chiếu, tụng đọc thuộc lòng từng lời dạy của Đức Phật để chuẩn hóa thành Tam Tạng Thánh Điển (*Tipiṭaka*).
+
+---
+
+## 1. Kỳ Kết Tập Thứ Nhất (486 TCN) — Hang Thất Diệp (Rājagaha)
+
+- **Thời gian**: 3 tháng sau khi Đức Phật nhập Niết-bàn.
+- **Địa điểm**: Động Thất Diệp (*Sattapaṇṇiguhā*) tại kinh thành Rājagaha (Vương Xá), dưới sự hộ trì của Vua Ajātasattu (A-xà-thế).
+- **Chủ tọa**: Đại Trưởng lão **Mahākassapa (Đại Ca-diếp)** cùng 500 vị Thánh Tăng A-la-hán.
+- **Tiến trình**:
+  - Tôn giả **Upāli (Ưu-ba-ly)** trùng tuyên toàn bộ **Luật Tạng (*Vinaya Piṭaka*)** sau khi được hỏi cặn kẽ về nguyên nhân, địa điểm và điều kiện chế tác từng giới điều.
+  - Tôn giả **Ānanda (A-nan)** — bậc Đa văn đệ nhất đã chứng đắc A-la-hán ngay đêm trước đại hội — trùng tuyên toàn bộ **Kinh Tạng (*Sutta Piṭaka*)** khởi đầu bằng câu kệ kinh điển: *"Evaṃ me sutaṃ (Như vầy tôi nghe)..."*.
+
+```mermaid
+graph TD
+    A[Kỳ 1: Rājagaha 486 TCN<br/>500 A-la-hán] --> B[Kỳ 2: Vesālī 386 TCN<br/>700 A-la-hán]
+    B --> C[Kỳ 3: Pāṭaliputta 250 TCN<br/>Vua Asoka & Moggaliputta]
+    C --> D[Kỳ 4: Aluvihāra Tích Lan 29 TCN<br/>Khắc Tam Tạng lên Lá Buông]
+    D --> E[Kỳ 5: Mandalay Miến Điện 1871<br/>729 Phiến Đá Cẩm Thạch]
+    E --> F[Kỳ 6: Kaba Aye Yangon 1954-1956<br/>2.500 Chư Tăng Quốc Tế]
+```
+
+---
+
+## 2. Kỳ Kết Tập Thứ Hai (386 TCN) — Thành Vesālī
+
+- **Thời gian**: 100 năm sau Phật Niết-bàn.
+- **Địa điểm**: Chùa Vālukārāma, thành Vesālī (Tỳ-xá-ly), dưới sự bảo trợ của Vua Kālāsoka.
+- **Chủ tọa**: Đại Trưởng lão **Yasa Kākandakaputta** và Trưởng lão **Sabbakāmī** cùng 700 vị A-la-hán.
+- **Nguyên nhân & Kết quả**: Nhóm Tỳ-kheo dòng Vajjī tự ý đặt ra 10 điều phi pháp (như cất giữ muối trong sừng, ăn phi thời, nhận tiền bạc vàng ngọc...). Đại hội đã phán quyết dứt khoát 10 điều này là phi luật, bảo tồn sự tinh nghiêm của Giới Bổn Pātimokkha.
+
+---
+
+## 3. Kỳ Kết Tập Thứ Ba (250 TCN) — Kinh Đô Pāṭaliputta & Thời Kỳ Đại Đế Asoka
+
+- **Thời gian**: Khoảng 236 năm sau Phật Niết-bàn (thế kỷ III TCN).
+- **Địa điểm**: Chùa Asokārāma tại kinh đô Pāṭaliputta (Hoa Thị Thành), do **Đại đế Asoka (A-Dục Vương)** bảo trợ.
+- **Chủ tọa**: Đại Trưởng lão **Moggaliputta Tissa** cùng 1.000 vị Thánh Tăng.
+- **Thành tựu vĩ đại**:
+  - Trục xuất hơn 60.000 tu sĩ giả danh, ngoại đạo trà trộn vào Tăng đoàn làm hoen ố Chánh Pháp.
+  - Ngài Moggaliputta Tissa trước tác bộ **Kathāvatthu (Điểm Đạo Luận)**, hoàn thiện **Vi Diệu Pháp Tạng (*Abhidhamma Piṭaka*)**.
+  - Đại đế Asoka cử **9 phái đoàn truyền giáo** mang Chánh Pháp Theravāda đi khắp thế giới (Tích Lan, Hy Lạp, Miến Điện, Thái Lan...).
+
+---
+
+## 4. Kỳ Kết Tập Thứ Tư (29 TCN) — Ghi Khắc Thánh Điển Lên Lá Buông Tại Tích Lan
+
+- **Địa điểm**: Chùa Aluvihāra (Mātale, Sri Lanka), dưới sự bảo trợ của Vua Vaṭṭagāmaṇī Abhaya.
+- **Thành tựu**: Do chiến tranh và nạn đói đe dọa làm thất truyền phương pháp truyền khẩu (*mukhapāṭha*), chư Đại Trưởng lão Tích Lan đã lần đầu tiên **khắc toàn bộ Tam Tạng Pāḷi và Chú Giải lên lá buông (*Ola leaves*)**, tạo nên kho tàng văn tự Phật giáo bằng tiếng Pāḷi trường tồn với thời gian.
+
+---
+
+## 5. Kỳ Kết Tập Thứ Năm (1871) — 729 Phiến Đá Cẩm Thạch Tại Mandalay (Myanmar)
+
+- **Địa điểm**: Chùa Kuthodaw, chân núi Mandalay (Miến Điện), do Vua Mindon bảo trợ.
+- **Chủ tọa**: Ba vị Đại Trưởng lão Jāgarābhivaṃsa, Narindābhidhaja và Sumaṅgala-sāmī cùng 2.400 vị Tăng.
+- **Thành tựu**: Toàn bộ Tam Tạng Pāḷi được đục khắc tỉ mỉ lên **729 phiến đá cẩm thạch nguyên khối trắng muốt**, được che chắn bởi 729 ngôi bảo tháp nhỏ. Đây được UNESCO công nhận là *"Cuốn sách đá lớn nhất thế giới"*.
+
+---
+
+## 6. Kỳ Kết Tập Thứ Sáu (1954 – 1956) — Kỷ Niệm 2.500 Năm Phật Lịch (Kaba Aye, Yangon)
+
+- **Địa điểm**: Đại Động Hòa Bình Mahā Pāsāṇa Guhā tại Kaba Aye, Yangon (Miến Điện), được xây dựng mô phỏng Động Thất Diệp thời Phật sơ khai.
+- **Chủ tọa**: Đại Trưởng lão **Mahāsi Sayadaw** (chất vấn) và Trưởng lão **Mingun Sayadaw** (thông tuệ Tam Tạng, trùng tuyên đáp lời) cùng 2.500 chư Tăng đến từ Myanmar, Sri Lanka, Thái Lan, Campuchia, Lào, Ấn Độ, Việt Nam...
+- **Thành tựu**: Rà soát, đối chiếu toàn bộ các bản Tam Tạng chữ Miến, Tích Lan, Thái, Khmer và bản La-tinh của Hội Thánh Điển Pāḷi Luân Đôn (PTS), cho ra đời **Bản Ấn Bản Tam Tạng Pāḷi Chuẩn Xác Nhất** lưu hành toàn cầu ngày nay.
+EOF
+,
+                'tags' => ['Kỳ Kết Tập', 'Tam Tạng Pāḷi', 'Tipitaka', 'Saṅgāyanā', 'Lịch Sử Phật Giáo', 'Theravada'],
+                'pali_terms' => [
+                    ['term' => 'Saṅgāyanā', 'meaning' => 'Đại hội kết tập thánh điển — cùng tụng đọc và hiệu đính lời Phật'],
+                    ['term' => 'Vinaya Piṭaka', 'meaning' => 'Luật Tạng — hệ thống giới luật và quy chế sinh hoạt Tăng già'],
+                    ['term' => 'Sutta Piṭaka', 'meaning' => 'Kinh Tạng — các bài pháp thoại Đức Phật giảng cho mọi giới'],
+                    ['term' => 'Abhidhamma', 'meaning' => 'Vi Diệu Pháp / Luận Tạng — giáo lý phân tích tâm pháp rốt ráo'],
+                    ['term' => 'PTS', 'meaning' => 'Pali Text Society — Hội Thánh Điển Pāḷi thành lập tại Anh năm 1881'],
+                ],
+                'audio_chanting_url' => null,
+                'reading_time_min' => 11,
+                'is_published' => true,
+                'published_at' => Carbon::now()->subMinutes(20),
+            ],
+
+            // 28. Đại Đế Asoka (A-Dục Vương) & Kỷ Nguyên Vàng Của Phật Giáo
+            [
+                'site_domain' => 'theravada',
+                'title' => 'Đại Đế Asoka (A-Dục Vương) & Kỷ Nguyên Vàng Của Phật Giáo Nguyên Thủy',
+                'pali_title' => 'Dhammāsoka Mahārājā & Sāsana Pabbajjā',
+                'slug' => 'dai-de-asoka-a-duc-vuong-ky-nguyen-vang-phat-giao',
+                'category' => 'lich-su',
+                'excerpt' => 'Hành trình chuyển hóa phi thường từ vị hoàng đế bạo tàn Candāsoka thành Đại minh quân hộ pháp Dhammāsoka, dựng 84.000 bảo tháp và phái 9 phái đoàn truyền giáo Chánh Pháp ra khắp thế giới cổ đại.',
+                'author' => 'Biên Niên Sử Phật Giáo & Khảo Cổ Học Bia Ký Asoka (Ashoka Edicts)',
+                'content' => <<<EOF
+![Trụ Đá Khắc Bia Ký Và Biểu Tượng Sư Tử Asoka](https://images.unsplash.com/photo-1590766940554-634a7ed41450?auto=format&fit=crop&w=1200&q=80)
+
+Trong toàn bộ lịch sử nhân loại, hiếm có cuộc chuyển hóa tâm thức nào vĩ đại và gây ảnh hưởng sâu rộng đến hòa bình thế giới như cuộc đời của **Đại đế Asoka (A-Dục Vương, 304 – 232 TCN)** — vị hoàng đế thứ ba của vương triều Maurya, người đã thống nhất hầu như toàn bộ tiểu lục địa Ấn Độ rộng lớn.
+
+Nhà sử học H.G. Wells từng viết trong cuốn *Lược Sử Thế Giới*: *"Giữa hàng ngàn tên tuổi của các bậc vua chúa chìm nổi trong lịch sử, cái tên Asoka tỏa sáng rực rỡ như một ngôi sao đơn độc duy nhất không tì vết."*
+
+---
+
+## 1. Từ Bạo Chúa Candāsoka Đến Minh Quân Dhammāsoka
+
+Trước khi quy y Tam Bảo, Asoka nổi tiếng là một bạo chúa hiếu chiến khát máu với biệt danh **Candāsoka (Asoka Bạo Ác)**. Đỉnh điểm là cuộc chinh phạt vương quốc Kalinga vào năm 261 TCN. Trận chiến đẫm máu này đã cướp đi sinh mạng của hơn 100.000 người, 150.000 người bị bắt làm nô lệ và hàng vạn gia đình tan nát trong cảnh đầu rơi máu chảy.
+
+Đứng giữa bãi chiến trường hoang tàn ngập đầy xác chết, nhìn dòng sông Daya nhuộm đỏ máu tươi, tâm thức Asoka bị chấn động dữ dội bởi sự hối hận và ghê tởm chiến tranh. Đúng lúc ấy, Ngài hạnh ngộ vị Sa-di trẻ tuổi **Nigrodha** (mới 7 tuổi nhưng đã chứng đắc A-la-hán). Phong thái thanh tịnh, trầm tĩnh, an nhiên tuyệt đối của vị Sa-di đã thức tỉnh vị hoàng đế. Nghe lời giảng về tâm không phóng dật (*Appamāda*) trong Kinh Pháp Cú, Asoka đã quỳ rạp dưới chân Sa-di Nigrodha, xin quy y Tam Bảo và thề nguyện từ bỏ hoàn toàn gươm đao.
+
+Từ thời khắc lịch sử đó, Candāsoka đã hoàn toàn biến mất, nhường chỗ cho **Dhammāsoka (Asoka Hộ Pháp)**.
+
+```mermaid
+graph LR
+    A[Trận Chiến Kalinga 261 TCN<br/>100.000 người chết] --> B[Khủng Hoảng Lương Tri & Ăn Năn]
+    B --> C[Hạnh Ngộ Sa-di Nigrodha<br/>Quy Y Tam Bảo]
+    C --> D[Chính Sách Chánh Pháp Dhammavijaya<br/>Cấm Sát Sinh - Xây Bệnh Viện]
+    D --> E[Dựng 84.000 Bảo Tháp<br/>Bia Ký Trụ Đá Ashoka]
+    E --> F[9 Phái Đoàn Truyền Giáo Quốc Tế<br/>Phật Giáo Trở Thành Tôn Giáo Toàn Cầu]
+```
+
+---
+
+## 2. Chính Sách Trị Quốc Bằng Chánh Pháp (Dhammavijaya)
+
+Asoka tuyên bố bãi bỏ chính sách bành trướng bằng vũ lực (*Bherighosa*), thay thế bằng **Chinh phục bằng Chánh Pháp (*Dhammavijaya*)**. Các chính sách xã hội tiến bộ vượt thời đại của Ngài gồm có:
+- **Tôn trọng muôn loài**: Nghiêm cấm hiến tế động vật, giảm thiểu tối đa việc sát sinh trong cung điện, thiết lập các bệnh viện và trạm y tế miễn phí cho cả con người và thú vật.
+- **Trồng cây và đào giếng**: Dọc theo các quốc lộ, cứ mỗi nửa dặm lại cho đào giếng nước, trồng cây bàng, cây xoài lấy bóng mát và xây dựng nhà nghỉ cho lữ khách bộ hành.
+- **Đại xá và nhân đạo**: Bãi bỏ nhục hình tra tấn dã man, ban hành ân xá cho tù nhân hàng năm vào các ngày lễ thiêng.
+- **Hòa hợp tôn giáo**: Tôn trọng tất cả các đạo phái (Bà-la-môn, Kỳ-na giáo, Ājīvika), khuyến khích các tôn giáo lắng nghe và học hỏi lẫn nhau trong tinh thần hòa ái.
+
+---
+
+## 3. Xây Dựng 84.000 Bảo Tháp & Di Sản Trụ Đá Bất Hủ
+
+Để xiển dương Giáo Pháp, Vua Asoka đã mở 7 trong số 8 ngôi tháp thờ Xá-lợi Phật nguyên thủy, chia nhỏ Xá-lợi và xây dựng **84.000 ngôi bảo tháp (Dhamma-thūpa)** trên khắp vương quốc.
+
+Ngài cũng cho dựng hàng trăm **Trụ đá Asoka (Ashoka Pillars)** nguyên khối bằng đá sa thạch đánh bóng tinh xảo, khắc các bản tuyên ngôn Chánh Pháp (*Edicts of Ashoka*).
+- Đầu trụ đá tại Sarnath với hình ảnh **Bốn Con Sư Tử** gầm vang bốn phương và **Bánh Xe Pháp Luân 24 Nan Hoa (Ashoka Chakra)** đã được nước Cộng hòa Ấn Độ trang trọng chọn làm **Quốc Huy và biểu tượng trung tâm trên Quốc Kỳ Ấn Độ** ngày nay.
+
+---
+
+## 4. Chín Phái Đoàn Truyền Giáo Lịch Sử Của Vua Asoka
+
+Thành tựu vĩ đại nhất của Vua Asoka là sau Kỳ Kết Tập Thánh Điển lần 3, dưới sự hướng dẫn của Trưởng lão Moggaliputta Tissa, Ngài đã phái 9 đoàn truyền giáo đi khắp thế giới:
+
+| Phái Đoàn | Trưởng Phái Đoàn | Địa Bàn Truyền Giáo |
+| :--- | :--- | :--- |
+| **1. Sri Lanka (Tích Lan)** | Đại đức **Mahinda** (Hoàng tử con Vua Asoka) | Đảo quốc Tích Lan (Cội nguồn Theravāda) |
+| **2. Suvaṇṇabhūmi (Xứ Vàng)** | Tôn giả **Soṇa** & **Uttara** | Miến Điện, Thái Lan, Đông Nam Á |
+| **3. Yona (Xứ Hy Lạp)** | Trưởng lão **Mahārakkhita** | Các vương quốc Hy Lạp - Bactria |
+| **4. Kashmir & Gandhāra** | Trưởng lão **Majjhantika** | Vùng Tây Bắc Ấn & Trung Á |
+| **5. Mahāraṭṭha** | Trưởng lão **Mahādhammarakkhita** | Vùng Maharashtra miền Trung Ấn |
+| **6. Himavanta** | Trưởng lão **Majjhima** | Vùng núi tuyết Hy-mã-lạp-sơn |
+| **7. Aparantaka** | Trưởng lão **Dhammarakkhita** (người Hy Lạp) | Miền Tây Ấn Độ |
+| **8. Vanavāsa** | Trưởng lão **Rakkhita** | Miền Nam Ấn Độ (Karnataka) |
+| **9. Mahiṃsaka** | Trưởng lão **Mahādeva** | Vùng Nam Ấn (Andhra Pradesh) |
+
+Nhờ tầm nhìn vĩ đại này, Phật giáo đã vượt ra khỏi biên giới Ấn Độ để trở thành một tôn giáo toàn cầu của hòa bình, từ bi và trí tuệ.
+EOF
+,
+                'tags' => ['Vua Asoka', 'A-Dục Vương', 'Trụ Đá Asoka', 'Lịch Sử Phật Giáo', 'Dhammavijaya', 'Theravada'],
+                'pali_terms' => [
+                    ['term' => 'Dhammāsoka', 'meaning' => 'Vua Asoka Hộ Pháp — danh hiệu sau khi quy y Tam Bảo'],
+                    ['term' => 'Dhammavijaya', 'meaning' => 'Chinh phục bằng Chánh Pháp — chính sách hòa bình không gươm đao'],
+                    ['term' => 'Appamāda', 'meaning' => 'Không phóng dật — chuyên cần, tỉnh giác, nhiệt tâm trong điều thiện'],
+                    ['term' => 'Suvaṇṇabhūmi', 'meaning' => 'Xứ Vàng — chỉ khu vực bán đảo Đông Nam Á cổ đại'],
+                ],
+                'audio_chanting_url' => null,
+                'reading_time_min' => 10,
+                'is_published' => true,
+                'published_at' => Carbon::now()->subMinutes(15),
+            ],
+
+            // 29. Lịch Sử Truyền Bá Phật Giáo Theravāda Sang Tích Lan & Đông Nam Á
+            [
+                'site_domain' => 'theravada',
+                'title' => 'Lịch Sử Truyền Bá Phật Giáo Theravāda Sang Tích Lan (Sri Lanka) & Các Nước Đông Nam Á',
+                'pali_title' => 'Theravāda Sāsana Vamsa — Laṅkā & Suvaṇṇabhūmi',
+                'slug' => 'lich-su-truyen-ba-theravada-sang-sri-lanka-va-dong-nam-a',
+                'category' => 'lich-su',
+                'excerpt' => 'Biên niên sử vàng của Phật giáo Nam truyền: Từ sứ mạng lịch sử của Thánh Tăng Mahinda tại đỉnh đồi Mihintale Tích Lan đến sự hưng thịnh của Phật giáo Theravāda tại Miến Điện, Thái Lan, Campuchia, Lào và Đông Nam Á.',
+                'author' => 'Đại Sử Tích Lan (Mahāvaṃsa) & Lịch Sử Phật Giáo Đông Nam Á',
+                'content' => <<<EOF
+![Đại Tháp Ruwanwelisaya Cổ Kính Tại Anuradhapura Sri Lanka](https://images.unsplash.com/photo-1586861635167-e5223aadc9fe?auto=format&fit=crop&w=1200&q=80)
+
+Khi Phật giáo tại quê hương Ấn Độ dần suy tàn sau nhiều thế kỷ do các biến động chính trị và nạn ngoại xâm, ngọn đèn Chánh Pháp Theravāda thuần khiết vẫn rực sáng tại đảo quốc **Tích Lan (Sri Lanka)** và lan tỏa mạnh mẽ sang toàn bộ khu vực **Đông Nam Á (Suvaṇṇabhūmi)**. Đây là cuộc hành trình truyền thừa kỳ diệu bảo tồn di sản của Đức Thế Tôn suốt hơn hai thiên niên kỷ.
+
+---
+
+## 1. Sứ Mệnh Lịch Sử Của Thánh Tăng Mahinda Tại Tích Lan (247 TCN)
+
+Vào ngày trăng tròn tháng Jeṭṭha năm 247 TCN, Đại Trưởng lão **Mahinda** (hoàng tử con Vua Asoka đã đắc A-la-hán) cùng các bạn đồng tu đã dùng thần lực quang giáng xuống đỉnh đồi **Mihintale** (gần cố đô Anuradhapura, Sri Lanka).
+
+Tại đây, ngài Mahinda đã gặp Vua **Devānaṃpiyatissa** đang đi săn hươu. Bằng một bài trắc nghiệm trí tuệ sắc bén về cây xoài (*Amba Sutta*), ngài Mahinda nhận thấy nhà vua có đủ trí tuệ để thấu triệt Phật pháp và đã thuyết giảng bài kinh *Tiểu Thí Dụ Dấu Chân Voi (Cūḷahatthipadopama Sutta)*. Vua Devānaṃpiyatissa cùng triều đình lập tức quy y Tam Bảo, đánh dấu ngày Phật giáo chính thức trở thành quốc giáo của Tích Lan.
+
+Ít lâu sau, Ni trưởng **Saṅghamittā** (hoàng nữ con Vua Asoka) cũng dẫn đầu phái đoàn Tỳ-kheo-ni mang theo **nhánh chiết phía nam của Cây Bồ-đề lịch sử tại Bodh Gayā** sang trồng tại Anuradhapura (*Jaya Sri Maha Bodhi*). Cây Bồ-đề này hiện là cây xanh có niên đại trồng tay được ghi chép lịch sử liên tục lâu đời nhất trên thế giới (hơn 2.300 năm tuổi).
+
+```mermaid
+graph TD
+    A[Ấn Độ Maurya<br/>Vua Asoka & Moggaliputta] -->|Thánh Tăng Mahinda 247 TCN| B[Sri Lanka<br/>Đại Tự Mahāvihāra]
+    A -->|Tôn giả Soṇa & Uttara| C[Suvaṇṇabhūmi Xứ Vàng<br/>Thaton & Hạ Miến Điện]
+    B -->|Thế kỷ XI - XII| D[Vương Triều Bagan Miến Điện]
+    B -->|Dòng Truyền Thừa Syāma| E[Vương Quốc Sukhothai & Ayutthaya Thái Lan]
+    E --> F[Campuchia Angkor & Lào Lan Xang]
+    C --> G[Đồng Bằng Sông Cửu Long Việt Nam]
+```
+
+---
+
+## 2. Trung Tâm Mahāvihāra — Trái Tim Của Phật Giáo Theravāda
+
+Ngôi đại tự **Mahāvihāra (Đại Tự Viện)** tại Anuradhapura được thành lập đã trở thành trung tâm nghiên cứu học thuật và tu tập Vipassanā hàng đầu của thế giới Phật giáo cổ đại. Các bậc Trưởng lão Mahāvihāra luôn giữ vững nguyên tắc kiên định: *Tuyệt đối không thêm bớt một chữ nào vào Tam Tạng Pāḷi nguyên thủy của Đức Phật*.
+
+Chính tại Mahāvihāra, vào thế kỷ V SCN, Đại Trưởng lão Buddhaghosa đã hệ thống hóa toàn bộ kho tàng Chú Giải Pāḷi (*Aṭṭhakathā*) và trước tác bộ luận thư bất hủ *Thanh Tịnh Đạo (Visuddhimagga)*.
+
+---
+
+## 3. Hành Trình Đến Xứ Vàng (Suvaṇṇabhūmi) & Đông Nam Á
+
+Theo sử liệu *Sāsanavaṃsa* và *Kalyāṇī Inscriptions*, hai vị Thánh Tăng **Soṇa và Uttara** được Vua Asoka cử đến vùng đất Suvaṇṇabhūmi (trung tâm là Thaton thuộc vương quốc người Môn, nay là miền Nam Myanmar và miền Trung Thái Lan). Chư Tăng đã cảm hóa dân chúng, đẩy lui tà ma và thiết lập Tăng đoàn đầu tiên.
+
+### Dòng Chảy Lịch Sử Tại Các Quốc Gia:
+1. **Miến Điện (Myanmar)**: Năm 1057, Vua Anawrahta (người sáng lập đế chế Bagan hùng mạnh) đã thỉnh Đại Tạng Kinh Pāḷi và chư Tăng từ Thaton về kinh đô Pagan, đưa Theravāda trở thành quốc đạo của toàn dân tộc Miến Điện.
+2. **Thái Lan (Siam)**: Dưới thời Vương quốc Sukhothai (thế kỷ XIII), Vua Ramkhamhaeng đã thỉnh chư Tăng dòng truyền thừa Tích Lan (*Laṅkāvaṃsa*) từ Nakhon Si Thammarat về kinh đô. Về sau, Phật giáo Theravāda tiếp tục hưng thịnh rực rỡ qua các triều đại Ayutthaya, Thonburi và Bangkok (Rattanakosin).
+3. **Campuchia & Lào**: Vào thế kỷ XIII – XIV, Phật giáo Theravāda lan rộng và thay thế hoàn toàn Ấn Độ giáo tại vương quốc Angkor (Campuchia) và vương quốc Triệu Voi Lan Xang (Lào), trở thành linh hồn văn hóa của toàn thể nhân dân.
+
+Sự gắn kết mật thiết giữa Tăng đoàn (*Saṅgha*), Chánh Pháp (*Dhamma*) và đời sống người dân đã tạo nên một nền văn minh đạo đức thuần lương, từ bi và trí tuệ đặc trưng của các quốc gia Phật giáo Nam truyền ngày nay.
+EOF
+,
+                'tags' => ['Truyền Bá Theravada', 'Sri Lanka', 'Đông Nam Á', 'Thánh Tăng Mahinda', 'Suvaṇṇabhūmi', 'Lịch Sử Phật Giáo'],
+                'pali_terms' => [
+                    ['term' => 'Mahāvihāra', 'meaning' => 'Đại Tự Viện tại Anuradhapura Sri Lanka — cái nôi của truyền thống Theravāda'],
+                    ['term' => 'Laṅkāvaṃsa', 'meaning' => 'Dòng truyền thừa Tăng già Tích Lan'],
+                    ['term' => 'Devānaṃpiyatissa', 'meaning' => 'Thiên Ái Đế Thích — vị vua Tích Lan đầu tiên quy y Phật pháp'],
+                    ['term' => 'Anuradhapura', 'meaning' => 'Cố đô linh thiêng của Sri Lanka với cội Bồ-đề hơn 2.300 năm tuổi'],
+                ],
+                'audio_chanting_url' => null,
+                'reading_time_min' => 10,
+                'is_published' => true,
+                'published_at' => Carbon::now()->subMinutes(10),
+            ],
+
+            // 30. Đại Trưởng Lão Buddhaghosa & Tuyệt Tác Luận Thư Thanh Tịnh Đạo (Visuddhimagga)
+            [
+                'site_domain' => 'theravada',
+                'title' => 'Đại Trưởng Lão Buddhaghosa (Phật Âm) & Tuyệt Tác Luận Thư Thanh Tịnh Đạo (Visuddhimagga)',
+                'pali_title' => 'Bhadantācariya Buddhaghosa & Visuddhimagga',
+                'slug' => 'dai-truong-lao-buddhaghosa-va-tuyet-tac-thanh-tinh-dao-visuddhimagga',
+                'category' => 'lich-su',
+                'excerpt' => 'Cuộc đời đại luận sư Buddhaghosa, bài thi kệ khảo nghiệm uyên bác của chư Tăng Mahāvihāra và kiệt tác Thanh Tịnh Đạo (Visuddhimagga) — bản đồ tu tập Tam Học (Giới - Định - Tuệ) vĩ đại nhất của Phật giáo Nguyên thủy.',
+                'author' => 'Chú Giải Tạng Pāḷi (Aṭṭhakathā) & Thanh Tịnh Đạo Luận',
+                'content' => <<<EOF
+![Tủ Sách Lá Buông Cổ Kính Nơi Lưu Trữ Luận Thư Visuddhimagga](https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=80)
+
+Nếu Đại đế Asoka có công lao to lớn nhất trong việc hoằng dương Phật giáo về mặt địa lý, thì **Đại Trưởng lão Bhadantācariya Buddhaghosa (Phật Âm)** sống vào thế kỷ thứ V SCN là bậc học giả có đóng góp vĩ đại nhất trong việc hệ thống hóa toàn bộ giáo lý và phương pháp thực hành thiền quán Theravāda thông qua tuyệt tác luận thư **Thanh Tịnh Đạo (*Visuddhimagga*)**.
+
+Tên gọi **Buddhaghosa** có nghĩa là *"Bậc có tiếng nói thanh tao và uyên bác như Đức Phật"*.
+
+---
+
+## 1. Xuất Thân & Cơ Duyên Sang Đảo Quốc Tích Lan
+
+Ngài Buddhaghosa sinh ra trong một gia đình Bà-la-môn tinh thông Vệ-đà gần Bồ Đề Đạo Tràng (Ấn Độ). Vốn tự hào với trí tuệ vô song, ngài đi khắp nơi tranh luận học thuật. Một ngày nọ, ngài gặp Đại Trưởng lão **Revata** và bị khuất phục hoàn toàn trước câu hỏi uyên áo trích từ Tạng Vi Diệu Pháp (*Abhidhamma*). Nhận thấy giáo pháp của Đức Phật quá đỗi thâm sâu, ngài đã xin xuất gia tu học.
+
+Sau khi nắm vững Tam Tạng tại Ấn Độ, Trưởng lão Revata đã khuyên ngài:
+> *"Tại Ấn Độ hiện nay chỉ còn lưu giữ bản văn Tam Tạng Pāḷi gốc, nhưng các bộ Chú Giải thấu triệt của chư Thánh Tăng thời xưa đã bị thất lạc. May thay, toàn bộ Chú Giải ấy vẫn được chư Tăng bảo tồn trọn vẹn bằng tiếng Sinhala cổ tại Đại Tự Mahāvihāra ở Tích Lan. Con hãy sang đó dịch toàn bộ Chú Giải sang ngôn ngữ Pāḷi để lợi ích cho toàn thể thế giới!"*
+
+Vâng lời thầy, ngài Buddhaghosa đã vượt biển sang Sri Lanka vào thời Vua Mahānāma (thế kỷ V SCN).
+
+---
+
+## 2. Bài Thi Kệ Thử Thách Của Chư Tăng Mahāvihāra
+
+Khi ngài Buddhaghosa ngỏ ý muốn tiếp cận kho tàng Chú Giải lá buông, các vị Đại Trưởng lão tại Mahāvihāra muốn thử thách xem ngài có thực sự thấu triệt giáo lý hay không. Họ trao cho ngài một bài kệ bí hiểm trong Kinh Tương Ưng Bộ (*Saṃyutta Nikāya I, 13*):
+
+> **"Sīle patiṭṭhāya naro sapañño,**
+> **Cittaṃ paññañca bhāvayaṃ;**
+> **Ātāpī nipako bhikkhu,**
+> **So imaṃ vijaṭaye jaṭan’ti."**
+> *(Người có trí an trú trên Giới hạnh, Trau dồi Định tâm và Tuệ giác; Vị Tỳ-kheo nhiệt tâm và thận trọng ấy, Sẽ gỡ được mớ bòng bong rối ren này).*
+
+Để trả lời bài kệ duy nhất ấy, ngài Buddhaghosa đã ngồi xuống và trước tác toàn bộ bộ đại luận thư đồ sộ mang tên **Thanh Tịnh Đạo (*Visuddhimagga*)** — gồm 23 chương tóm lược toàn diện toàn bộ Tam Tạng Thánh Điển.
+
+Truyền thuyết chép rằng, chư Thiên muốn thử thách ngài đã hai lần giấu mất bản thảo. Không nản lòng, ngài Buddhaghosa đã viết lại từ đầu lần thứ hai rồi lần thứ ba hoàn toàn bằng trí nhớ phi thường. Khi đối chiếu ba bản thảo với nhau, chư Trưởng lão Mahāvihāra kinh ngạc thốt lên vì từng câu, từng chữ, từng ý nghĩa trong cả ba bản đều giống hệt nhau như một bản in hoàn hảo! Toàn thể Tăng chúng đã đảnh lễ và trao toàn quyền dịch thuật cho ngài.
+
+```mermaid
+graph TD
+    A[Thanh Tịnh Đạo Visuddhimagga] --> B[1. Giới Thanh Tịnh Sīla<br/>Chương 1 - 2: Biệt Biệt Giải Thoát Thu Thúc Giới]
+    A --> C[2. Tâm Thanh Tịnh Citta<br/>Chương 3 - 13: 40 Đề Mục Thiền Định Samatha]
+    A --> D[3. Tuệ Thanh Tịnh Paññā<br/>Chương 14 - 23: 16 Tuệ Minh Sát Vipassanā & Tứ Thánh Quả]
+```
+
+---
+
+## 3. Cấu Trúc Bảy Giai Đoạn Thanh Tịnh (Satta Visuddhi)
+
+Bộ luận *Visuddhimagga* là bản đồ chi tiết từng bước dẫn dắt hành giả từ phàm phu đến quả vị A-la-hán thông qua **Thất Thanh Tịnh (Bảy Giai Đoạn Thanh Tịnh)**:
+
+1. **Giới Thanh Tịnh (*Sīla-visuddhi*)**: Giữ gìn giới bổn trong sạch, chế ngự các giác quan.
+2. **Tâm Thanh Tịnh (*Citta-visuddhi*)**: Đắc các tầng thiền định (*Jhāna*) tĩnh lặng, dứt sạch năm triền cái.
+3. **Kiến Thanh Tịnh (*Diṭṭhi-visuddhi*)**: Phân biệt rõ Danh (*Nāma*) và Sắc (*Rūpa*), phá tan ảo tưởng về một tự ngã bất biến.
+4. **Đoạn Nghi Thanh Tịnh (*Kaṅkhāvitaraṇa-visuddhi*)**: Thấy rõ quy luật Nhân Duyên Duyên Khởi, dứt sạch mọi hoài nghi về quá khứ, tương lai.
+5. **Đạo Phi Đạo Tri Kiến Thanh Tịnh (*Maggāmaggañāṇadassana-visuddhi*)**: Nhận biết đúng con đường chánh pháp, không bị lạc vào 10 khuyết điểm của thiền quán (*Vipassanūpakkilesa*).
+6. **Đạo Tri Kiến Thanh Tịnh (*Paṭipadāñāṇadassana-visuddhi*)**: Tiến trình phát triển 9 Tuệ Minh Sát rốt ráo (quán Sanh Diệt, Diệt Tận, Kinh Sợ, Hiểm Họa, Yểm Ly, Giải Thoát...).
+7. **Tri Kiến Thanh Tịnh (*Ñāṇadassana-visuddhi*)**: Chứng đạt 4 Thánh Đạo, 4 Thánh Quả (*Sotāpanna, Sakadāgāmī, Anāgāmī, Arahant*) và Niết-bàn giải thoát.
+
+Cho đến ngày nay, *Visuddhimagga* vẫn là cuốn kim chỉ nam tối thượng không thể thiếu cho bất kỳ thiền sinh nào bước chân vào lộ trình thực hành thiền Vipassanā Nguyên thủy.
+EOF
+,
+                'tags' => ['Buddhaghosa', 'Thanh Tịnh Đạo', 'Visuddhimagga', 'Thất Thanh Tịnh', 'Luận Thư', 'Theravada'],
+                'pali_terms' => [
+                    ['term' => 'Visuddhimagga', 'meaning' => 'Thanh Tịnh Đạo — tuyệt tác luận thư chỉ rõ con đường thanh tịnh tâm'],
+                    ['term' => 'Buddhaghosa', 'meaning' => 'Phật Âm — đại luận sư Phật giáo thế kỷ thứ V'],
+                    ['term' => 'Satta Visuddhi', 'meaning' => 'Thất Thanh Tịnh — 7 giai đoạn thanh lọc tâm từ giới đến đắc quả Niết-bàn'],
+                    ['term' => 'Samatha', 'meaning' => 'Thiền Định — pháp tu rèn luyện tâm an chỉ và đắc các tầng thiền chứng'],
+                    ['term' => 'Vipassanā', 'meaning' => 'Thiền Minh Sát — pháp tu quán chiếu vô thường, khổ, vô ngã để phát sinh trí tuệ'],
+                ],
+                'audio_chanting_url' => null,
+                'reading_time_min' => 11,
+                'is_published' => true,
+                'published_at' => Carbon::now()->subMinutes(5),
+            ],
+
+            // 31. Lịch Sử Phật Giáo Nguyên Thủy Theravāda Tại Việt Nam
+            [
+                'site_domain' => 'theravada',
+                'title' => 'Lịch Sử Phật Giáo Nguyên Thủy Theravāda Tại Việt Nam — Hành Trình Du Nhập & Phát Triển',
+                'pali_title' => 'Theravāda Sāsana in Vietnam',
+                'slug' => 'lich-su-phat-giao-nguyen-thuy-theravada-viet-nam',
+                'category' => 'lich-su',
+                'excerpt' => 'Toàn cảnh lịch sử Phật giáo Nam truyền (Theravāda) tại Việt Nam: Từ truyền thống lâu đời của đồng bào Khmer Nam Bộ đến phong trào phục hưng Nam Tông Kinh của chư vị tiền bối Hộ Tông, Bửu Chơn, Giới Nghiêm và Đại dịch giả Thích Minh Châu.',
+                'author' => 'Lịch Sử Phật Giáo Nam Truyền Việt Nam & Kỷ Yếu Giáo Hội',
+                'content' => <<<EOF
+![Cảnh Thiền Tịnh Cổ Kính Tại Tổ Đình Bửu Quang Việt Nam](https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1200&q=80)
+
+Tại Việt Nam, sự hiện diện của **Phật giáo Nguyên thủy (Theravāda / Phật giáo Nam tông)** là một nét đặc sắc vô cùng phong phú trong bức tranh toàn cảnh Phật giáo dân tộc. Hệ phái này hình thành từ hai cội nguồn lớn: truyền thống Phật giáo Theravāda bản địa hàng trăm năm của đồng bào Khmer vùng Tây Nam Bộ và phong trào phục hưng Phật giáo Nam truyền của cộng đồng người Kinh khởi xướng từ thập niên 1930.
+
+---
+
+## 1. Hai Dòng Chảy Lịch Sử Nam Truyền Tại Việt Nam
+
+### A. Phật Giáo Theravāda Của Người Khmer Nam Bộ
+Đồng bào Khmer tại các tỉnh Sóc Trăng, Trà Vinh, An Giang, Kiên Giang... đã tiếp nhận Phật giáo Theravāda từ rất sớm (ảnh hưởng từ văn hóa Phù Nam và Angkor). Với hơn 460 ngôi chùa cổ kính mang kiến trúc Angkor uy nghiêm, ngôi chùa Khmer không chỉ là nơi sinh hoạt tôn giáo mà còn là trung tâm văn hóa, giáo dục và bảo tồn ngôn ngữ, chữ viết Pāḷi - Khmer qua bao thế hệ.
+
+### B. Phong Trào Phục Hưng Nam Tông Của Người Kinh (Thập Niên 1930s)
+Vào những năm 1930, khi phong trào Chấn hưng Phật giáo đang dâng cao khắp ba miền, một số trí thức và cư sĩ người Kinh có duyên lành làm việc tại Campuchia đã tiếp xúc với Phật giáo Theravāda thuần khiết. Nhận thấy vẻ đẹp trang nghiêm, mộc mạc và chân thật của giáo lý Nguyên thủy bám sát lời Phật dạy, quý ngài đã quyết tâm đem ngọn đèn Chánh Pháp về nước nhà.
+
+```mermaid
+timeline
+    title Mốc Lịch Sử Phật Giáo Nguyên Thủy (Người Kinh) Tại Việt Nam
+    1937 : Chùa Sùng Phước (Phnom Penh) : Nơi cư sĩ Lê Văn Giảng (Hòa thượng Hộ Tông) quy tụ nhóm du học
+    1939 : Tổ Đình Bửu Quang (Gò Dưa, Thủ Đức) : Ngôi chùa Phật giáo Nam Tông người Kinh đầu tiên tại Việt Nam
+    1957 : Thành lập Giáo Hội Tăng Già Nguyên Thủy : Trụ sở tại Chùa Kỳ Viên (Quận 3, Sài Gòn)
+    1973 - 1990 : Đại Dịch Giả HT. Thích Minh Châu : Hoàn thành dịch toàn bộ Đại Tạng Kinh Pāḷi sang tiếng Việt
+```
+
+---
+
+## 2. Những Bậc Tiền Bối Khai Sáng Tiên Phong
+
+Sự thành tựu của Phật giáo Nam tông Kinh ghi đậm dấu ấn công đức vô lượng của các bậc tiền bối khai sơn:
+- **Cố Đại Lão Hòa Thượng Hộ Tông (Vansarakkhita, 1893 – 1984)**: Thế danh Lê Văn Giảng, nguyên là Đốc phủ sứ tại Campuchia. Ngài đã xuất gia thọ đại giới Tỳ-kheo với đức Vua sãi Chuon Nath và là vị **Tăng Thống đầu tiên của Giáo hội Tăng Già Nguyên Thủy Việt Nam**. Ngài là người đặt nền móng kiến thiết hầu hết các ngôi tổ đình sơ khai.
+- **Hòa Thượng Bửu Chơn (1907 – 1979)**: Vị danh tăng tinh thông Phạn ngữ, Pāḷi và nhiều ngoại ngữ, từng giữ chức Phó Chủ tịch Hội Phật Giáo Thế Giới (WFB), có công lớn dịch thuật nhiều kinh sách căn bản.
+- **Hòa Thượng Giới Nghiêm (Thitasīlo, 1921 – 1984)**: Bậc giới hạnh tinh nghiêm, từng tu học tại Tích Lan, Miến Điện, Thái Lan và là vị Tăng Thống thứ ba của Giáo hội.
+- **Hòa Thượng Thiện Luật, Hòa Thượng Kim Hào, Hòa Thượng Tối Thắng**: Những bậc cao tăng cùng chung tay xây dựng nền móng Tăng đoàn ban đầu.
+- **Bác sĩ Nguyễn Văn Hiệu**: Vị đại cư sĩ nhiệt thành dâng cúng tịnh tài, đất đai để xây dựng các ngôi chùa đầu tiên.
+
+---
+
+## 3. Các Ngôi Tổ Đình Lịch Sử Tiêu Biểu
+
+1. **Tổ Đình Bửu Quang (Thủ Đức, TP.HCM)**: Được thành lập năm 1939 tại ngọn đồi Gò Dưa, đây là **ngôi chùa Theravāda người Kinh đầu tiên trên lãnh thổ Việt Nam**, nơi lưu giữ nhiều di tích và xá-lợi thiêng liêng.
+2. **Chùa Kỳ Viên (Quận 3, TP.HCM)**: Được khánh thành năm 1957, từng là trụ sở trung ương của Giáo Hội Tăng Già Nguyên Thủy Việt Nam, nơi đón tiếp nhiều đoàn đại biểu Phật giáo quốc tế và tổ chức các đại lễ Tam Hợp Vesak lịch sử.
+3. **Chùa Tam Bảo (Đà Nẵng)**: Trung tâm truyền bá Nam tông đầu tiên tại miền Trung (thành lập 1953).
+4. **Thiền Viện Phước Sơn (Đồng Nai)**: Trung tâm tu học thiền Vipassanā rộng lớn do Hòa thượng Thích Bửu Chánh trụ trì.
+
+---
+
+## 4. Công Trình Dịch Thuật Đại Tạng Kinh Pāḷi Của HT. Thích Minh Châu
+
+Một trong những cột mốc vĩ đại nhất của Phật giáo Việt Nam thế kỷ XX là công trình dịch thuật toàn bộ **Năm Bộ Kinh Nikāya (Trường Bộ, Trung Bộ, Tương Ưng Bộ, Tăng Chi Bộ, Tiểu Bộ)** trực tiếp từ nguyên bản tiếng Pāḷi sang tiếng Việt của **Cố Đại Lão Hòa Thượng Thích Minh Châu (1918 – 2012)** — Tiến sĩ Phật học đầu tiên của Việt Nam tại Đại học Nalanda (Ấn Độ), Viện trưởng sáng lập Viện Nghiên Cứu Phật Học Việt Nam.
+
+Bản dịch trong sáng, chuẩn xác, văn phong thanh thoát và trung thực tuyệt đối với lời Phật của ngài Minh Châu đã giúp hàng triệu Tăng Ni, Phật tử Việt Nam tiếp cận trực tiếp với giáo lý Chánh Tạng nguyên thủy mà không bị rào cản ngôn ngữ.
+
+---
+
+## 5. Diện Mạo & Sức Sống Theravāda Việt Nam Đương Đại
+
+Ngày nay, Phật giáo Nam truyền là một thành viên gắn bó mật thiết trong lòng Giáo hội Phật giáo Việt Nam. Phong trào tu tập thiền **Minh Sát Tuệ Vipassanā** theo truyền thống Mahāsi Sayadaw, Pa-Auk Sayadaw, S.N. Goenka ngày càng thu hút đông đảo giới trẻ, trí thức và Phật tử tham gia để tìm kiếm sự an tịnh nội tâm và chuyển hóa khổ đau trong cuộc sống hiện đại.
+EOF
+,
+                'tags' => ['Theravada Việt Nam', 'Hòa Thượng Hộ Tông', 'Thích Minh Châu', 'Chùa Bửu Quang', 'Kỳ Viên Tự', 'Lịch Sử Phật Giáo'],
+                'pali_terms' => [
+                    ['term' => 'Vansarakkhita', 'meaning' => 'Hộ Tông — pháp danh Pāḷi của vị Sơ Tổ Nam tông Kinh Việt Nam'],
+                    ['term' => 'Nikāya', 'meaning' => 'Năm Bộ Kinh Pāḷi — Trường Bộ, Trung Bộ, Tương Ưng, Tăng Chi, Tiểu Bộ'],
+                    ['term' => 'Sāsana', 'meaning' => 'Phật Pháp / Giáo Pháp — nền tảng giáo dục của chư Phật'],
+                    ['term' => 'Mahāsi Sayadaw', 'meaning' => 'Đại thiền sư Miến Điện phục hưng truyền thống thiền Tứ Niệm Xứ toàn cầu'],
+                ],
+                'audio_chanting_url' => null,
+                'reading_time_min' => 11,
+                'is_published' => true,
+                'published_at' => Carbon::now(),
+            ],
         ];
 
         foreach ($articles as $data) {

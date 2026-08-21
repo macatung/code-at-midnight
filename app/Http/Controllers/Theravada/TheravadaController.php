@@ -86,6 +86,14 @@ class TheravadaController extends Controller
                 'icon' => 'Compass',
                 'count' => $articles->where('category', 'kinh-tung')->count()
             ],
+            [
+                'slug' => 'lich-su',
+                'name' => 'Lịch Sử Phật Giáo',
+                'pali' => 'Sāsana Itihāsa',
+                'description' => 'Biên niên sử Đức Phật Gotama, 6 kỳ kết tập Tam Tạng, Đại đế Asoka và hành trình truyền bá Chánh Pháp.',
+                'icon' => 'Landmark',
+                'count' => $articles->where('category', 'lich-su')->count()
+            ],
         ];
 
         return Inertia::render('Theravada/Index', [
@@ -138,6 +146,7 @@ class TheravadaController extends Controller
             'phap-hoc' => 'Pháp Học (Pariyatti)',
             'phap-hanh' => 'Pháp Hành (Paṭipatti — Vipassanā)',
             'kinh-tung' => 'Tam Tạng & Kinh Tụng Pāḷi (Sutta)',
+            'lich-su' => 'Lịch Sử Phật Giáo (Sāsana Itihāsa)',
         ];
 
         return Inertia::render('Theravada/Category', [

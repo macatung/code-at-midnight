@@ -12,7 +12,6 @@ class ProjectSeeder extends Seeder
         $projects = [
             [
                 'slug' => 'ai-agent-customer-service-ecosystem',
-                'key' => 'OMNI',
                 'title' => 'OmniAgent CS — Hệ Thống Multi-Agent AI Tự Trị Thay Thế Customer Service 24/7',
                 'tagline' => 'Multi-Agent AI tự động tiếp nhận khiếu nại, tra cứu database đơn hàng, đối soát và hoàn tiền đa kênh',
                 'description' => 'Hệ sinh thái Multi-Agent AI tự trị thay thế 100% đội ngũ Customer Service truyền thống. Tích hợp RAG tri thức sản phẩm, Tool/Function Calling với API ERP/Database tra cứu trạng thái đơn hàng, tự động phân loại ticket, giải quyết tranh chấp và hoàn tiền tức thì trên đa kênh (Telegram, Zalo, Web Widget).',
@@ -39,7 +38,6 @@ class ProjectSeeder extends Seeder
             ],
             [
                 'slug' => 'stock-valuation-financial-management',
-                'key' => 'FIN',
                 'title' => 'FinPulse AI — Nền Tảng Định Giá Cổ Phiếu & Cố Vấn Tài Chính Thông Minh',
                 'tagline' => 'Thuật toán định giá 7 năm, trợ lý tài chính Gemini AI, tích hợp MoMo, VNPay, SePay QR & Zoom API',
                 'description' => 'Hệ thống định giá cổ phiếu chuyên sâu và quản lý tài chính cá nhân tự động hóa. Tự động thu thập dữ liệu tài chính từ CafeF, SSI, VNStock qua 50+ Artisan commands, tính toán EPS, P/E, Cổ tức và Biên An Toàn (Safety Margin) cùng chatbot cố vấn thông minh Google Gemini AI.',
@@ -66,7 +64,6 @@ class ProjectSeeder extends Seeder
             ],
             [
                 'slug' => 'optical-network-gis-qgis-management',
-                'key' => 'GEO',
                 'title' => 'GeoFiber — Hệ Thống Số Hóa & Quản Trị Mạng Cáp Quang Toàn Quốc (Web & QGIS)',
                 'tagline' => 'Bản đồ số GIS quản lý cáp quang, hố ga, tủ cáp, măng xông và tự động gợi ý tuyến cáp tối ưu',
                 'description' => 'Hệ thống quản lý cơ sở hạ tầng mạng cáp quang quy mô toàn quốc tích hợp Hệ thống Thông tin Địa lý (GIS) và QGIS. Số hóa toàn bộ tài sản mạng viễn thông, theo dõi bảo trì, quản lý sự cố và tối ưu hóa tuyến cáp/băng thông.',
@@ -93,7 +90,6 @@ class ProjectSeeder extends Seeder
             ],
             [
                 'slug' => 'nms-transmission-equipment-monitor',
-                'key' => 'NMS',
                 'title' => 'NMS Matrix — Hệ Thống Giám Sát Thiết Bị Truyền Dẫn Viễn Thông Thời Gian Thực',
                 'tagline' => 'Giám sát thiết bị SDH/DWDM, bản đồ topology mạng động và dự đoán sự cố bằng Machine Learning',
                 'description' => 'Hệ thống quản trị mạng trung tâm (Network Management System) giám sát trạng thái hoạt động của hàng ngàn thiết bị truyền dẫn SDH/DWDM trên toàn mạng lưới. Thu thập và phân tích chỉ số hiệu năng (KPI), phát hiện dị thường và tự động phân loại sự cố.',
@@ -120,7 +116,6 @@ class ProjectSeeder extends Seeder
             ],
             [
                 'slug' => 'dengue-early-warning-system',
-                'key' => 'RADAR',
                 'title' => 'DengueRadar — Hệ Thống Cảnh Báo Sớm & Bản Đồ Nhiệt Dịch Sốt Xuất Huyết',
                 'tagline' => 'Thu thập dữ liệu ca bệnh từ trạm y tế, dự báo ổ dịch kết hợp thời tiết và mật độ muỗi',
                 'description' => 'Nền tảng y tế công cộng thu thập và phân tích dữ liệu ca bệnh sốt xuất huyết từ các trạm y tế và bệnh viện. Ứng dụng thuật toán dự đoán dịch bệnh dựa trên dữ liệu bệnh nhân, điều kiện thời tiết (nhiệt độ, lượng mưa) và mật độ muỗi.',
@@ -147,7 +142,6 @@ class ProjectSeeder extends Seeder
             ],
             [
                 'slug' => 'streaming-platform-transcoding',
-                'key' => 'STREAM',
                 'title' => 'AsiaStream — Nền Tảng Chuyển Mã Video Tải Cao & Adaptive Bitrate Streaming',
                 'tagline' => 'Transcoding tự động đa độ phân giải FFmpeg, HLS/DASH streaming và Laravel API Gateway',
                 'description' => 'Hệ thống xử lý và phân phối truyền hình trực tuyến và video theo yêu cầu (VOD). Tự động chuyển mã video sang nhiều độ phân giải, phát trực tuyến thích ứng băng thông (Adaptive Bitrate HLS/DASH) và tích hợp mạng phân phối nội dung CDN.',
