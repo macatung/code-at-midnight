@@ -34,26 +34,29 @@ describe('TheravadaContentTest (Canonical Teachings & Internal Links)', () => {
   // TIER 1: Feature Coverage (Isolation)
   // ==========================================================================
   describe('[T1_THERAVADA] Canonical Content & Article Completeness', () => {
-    it('[T1_TH_01] TheravadaContentSeeder contains 32 comprehensive canonical articles', () => {
-      expect(slugs.length).toBe(32);
+    it('[T1_TH_01] TheravadaContentSeeder contains 38 comprehensive canonical articles', () => {
+      expect(slugs.length).toBe(38);
       const uniqueSlugs = new Set(slugs);
-      expect(uniqueSlugs.size).toBe(32);
+      expect(uniqueSlugs.size).toBe(38);
     });
 
-    it('[T1_TH_02] Articles span across all 3 key canonical categories (phap-hoc, phap-hanh, kinh-tung)', () => {
-      expect(categories.length).toBe(32);
+    it('[T1_TH_02] Articles span across all 4 key canonical categories (phap-hoc, phap-hanh, kinh-tung, lich-su)', () => {
+      expect(categories.length).toBe(38);
       const uniqueCategories = new Set(categories);
       expect(uniqueCategories.has('phap-hoc')).toBe(true);
       expect(uniqueCategories.has('phap-hanh')).toBe(true);
       expect(uniqueCategories.has('kinh-tung')).toBe(true);
+      expect(uniqueCategories.has('lich-su')).toBe(true);
 
       const phapHocCount = categories.filter(c => c === 'phap-hoc').length;
       const phapHanhCount = categories.filter(c => c === 'phap-hanh').length;
       const kinhTungCount = categories.filter(c => c === 'kinh-tung').length;
+      const lichSuCount = categories.filter(c => c === 'lich-su').length;
 
       expect(phapHocCount).toBeGreaterThanOrEqual(15);
       expect(phapHanhCount).toBeGreaterThanOrEqual(5);
       expect(kinhTungCount).toBeGreaterThanOrEqual(8);
+      expect(lichSuCount).toBeGreaterThanOrEqual(6);
     });
 
     it('[T1_TH_03] Pali Glossary contains comprehensive term definitions', () => {
@@ -104,10 +107,10 @@ describe('TheravadaContentTest (Canonical Teachings & Internal Links)', () => {
   // TIER 2: Boundary & Corner Cases (Examples & Internal Linking Mesh)
   // ==========================================================================
   describe('[T2_THERAVADA] Rich Examples & Internal Linking Mesh Integrity', () => {
-    it('[T2_TH_01] All 32 articles contain detailed canonical or practical examples', () => {
+    it('[T2_TH_01] All 38 articles contain detailed canonical or practical examples', () => {
       // Split content by article block in seeder
       const articleBlocks = seederContent.split(/\[\s*'site_domain'\s*=>\s*'theravada'/);
-      expect(articleBlocks.length).toBe(33); // 1 header + 32 articles
+      expect(articleBlocks.length).toBe(39); // 1 header + 38 articles
 
       for (let i = 1; i < articleBlocks.length; i++) {
         const block = articleBlocks[i];
@@ -119,13 +122,15 @@ describe('TheravadaContentTest (Canonical Teachings & Internal Links)', () => {
           block.includes('Ứng Dụng') ||
           block.includes('ứng dụng') ||
           block.includes('Tình huống') ||
+          block.includes('Kỳ Kết Tập') ||
+          block.includes('Lịch Sử') ||
           block.includes('Kinh ');
 
         expect(hasExample).toBe(true);
       }
     });
 
-    it('[T2_TH_02] All 32 articles contain internal markdown links referencing other articles', () => {
+    it('[T2_TH_02] All 38 articles contain internal markdown links referencing other articles', () => {
       const articleBlocks = seederContent.split(/\[\s*'site_domain'\s*=>\s*'theravada'/);
       const internalLinkPattern = /\[([^\]]+)\]\(\/theravada\/kinh\/([a-z0-9-]+)\)/g;
 
@@ -147,10 +152,10 @@ describe('TheravadaContentTest (Canonical Teachings & Internal Links)', () => {
         expect(linksInBlock.length).toBeGreaterThanOrEqual(2);
       }
 
-      // Total internal links across all 32 articles should be high (> 80)
-      expect(totalInternalLinks).toBeGreaterThanOrEqual(80);
+      // Total internal links across all 38 articles should be high (> 90)
+      expect(totalInternalLinks).toBeGreaterThanOrEqual(90);
 
-      // Verify that every linked slug actually exists in the 32 articles list!
+      // Verify that every linked slug actually exists in the 38 articles list!
       const validSlugSet = new Set(slugs);
       foundLinkSlugs.forEach(targetSlug => {
         expect(validSlugSet.has(targetSlug)).toBe(true);
@@ -163,6 +168,14 @@ describe('TheravadaContentTest (Canonical Teachings & Internal Links)', () => {
         const block = articleBlocks[i];
         // Ensure each article content is rich (> 1000 characters)
         expect(block.length).toBeGreaterThan(1200);
+      }
+    });
+
+    it('[T2_TH_04] All 38 articles contain valid Mermaid flowchart or timeline diagrams', () => {
+      const articleBlocks = seederContent.split(/\[\s*'site_domain'\s*=>\s*'theravada'/);
+      for (let i = 1; i < articleBlocks.length; i++) {
+        const block = articleBlocks[i];
+        expect(block.includes('```mermaid')).toBe(true);
       }
     });
   });

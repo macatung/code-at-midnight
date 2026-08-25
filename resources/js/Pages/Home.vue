@@ -1,322 +1,91 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
-import { ref } from 'vue';
 import SeoHead from '@/Components/common/SeoHead.vue';
 import Navbar from '@/Components/layout/Navbar.vue';
 import Footer from '@/Components/layout/Footer.vue';
 import TalismanCanvas from '@/Components/mascot/TalismanCanvas.vue';
-import HeroSection from '@/Components/hero/HeroSection.vue';
-import ProjectsSection from '@/Components/projects/ProjectsSection.vue';
-import SkillsSection from '@/Components/skills/SkillsSection.vue';
-import ExperienceSection from '@/Components/experience/ExperienceSection.vue';
-import AboutSection from '@/Components/about/AboutSection.vue';
-import HumanisticPhilosophySection from '@/Components/philosophy/HumanisticPhilosophySection.vue';
-import MidnightTerminal from '@/Components/terminal/MidnightTerminal.vue';
-import ContactSection from '@/Components/contact/ContactSection.vue';
-import MiniMascotLogo from '@/Components/mascot/MiniMascotLogo.vue';
-import Icons from '@/Components/ui/Icons.vue';
-import { sound } from '@/audio/soundEffects';
-import { useTimeCycle } from '@/composables/useTimeCycle';
+import MacatungMascot from '@/Components/mascot/MacatungMascot.vue';
+import { Link } from '@inertiajs/vue3';
 import { useI18n } from '@/composables/useI18n';
+import { useTimeCycle } from '@/composables/useTimeCycle';
 
-defineProps<{
-  title?: string;
-  projects?: any[];
-  skills?: any[];
-  experiences?: any[];
-  latestArticles?: any[];
-  settings?: Record<string, string>;
-  stats?: Record<string, any>;
-}>();
-
-const { activePhase, transitionToast } = useTimeCycle();
+defineProps<{ title?: string; settings?: Record<string, string> }>();
 const { t } = useI18n();
-const globalHopCount = ref(0);
-
-const handleHop = (count: number) => {
-  globalHopCount.value = count;
-};
+const { activePhase, formattedTime } = useTimeCycle();
 
 const homeJsonLd = {
   '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type': 'WebSite',
-      '@id': 'https://macatung.dev/#website',
-      'url': 'https://macatung.dev',
-      'name': 'MacaTung — Building AI Agents & Business Systems',
-      'description': 'MacaTung builds AI agents, automation systems and software products for real businesses.',
-      'publisher': {
-        '@id': 'https://macatung.dev/#person'
-      },
-      'inLanguage': 'en'
-    },
-    {
-      '@type': 'Person',
-      '@id': 'https://macatung.dev/#person',
-      'name': 'Ma Cà Tưng',
-      'alternateName': ['macatung', 'Ma Cà Tưng'],
-      'url': 'https://macatung.dev',
-      'jobTitle': 'Software Engineer & AI Builder',
-      'knowsAbout': ['Laravel', 'Vue.js', 'Inertia.js', 'Tailwind CSS', 'TypeScript', 'Docker', 'Google Cloud Platform', 'AI Multi-Agent Systems'],
-      'sameAs': [
-        'https://github.com/macatung'
-      ]
-    }
-  ]
+  '@type': 'SoftwareApplication',
+  name: 'Task Companion',
+  applicationCategory: 'ProductivityApplication',
+  operatingSystem: 'Windows 10, Windows 11',
+  url: 'https://macatung.dev',
 };
 </script>
 
 <template>
   <SeoHead
-    :title="title || 'MacaTung — Building AI Agents & Business Systems'"
-    description="MacaTung builds AI agents, automation systems and software products for real businesses — from architecture and workflows to production."
-    keywords="MacaTung, macatung.dev, AI agents, business systems, automation, software architecture, distributed systems, Laravel, Vue.js"
+    :title="title || t('home.productTitle')"
+    :description="t('home.productDescription')"
+    keywords="Task Companion, Task Hub, Codex, Claude Code, AI agent workflow, Windows"
     canonical="https://macatung.dev"
     :json-ld="homeJsonLd"
   />
 
-  <div
-    class="min-h-screen bg-midnight-950 text-slate-100 selection:bg-phantom-mint selection:text-midnight-950 flex flex-col justify-between relative overflow-x-hidden w-full bg-grid-pattern transition-colors duration-1000"
-    :style="{
-      '--phase-accent': activePhase.accentHex,
-      '--phase-glow': activePhase.accentGlow,
-      '--phase-border': activePhase.accentBorder
-    }"
-  >
-    <!-- Ambient 2D Canvas Particles Engine -->
+  <div class="min-h-screen bg-midnight-950 text-slate-100 selection:bg-phantom-mint selection:text-midnight-950 flex flex-col overflow-x-hidden bg-grid-pattern">
     <TalismanCanvas />
-
-    <!-- Ambient Background Glow Blurs with Smooth Phase Shift -->
-    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-      <div
-        class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[650px] h-[650px] rounded-full blur-[140px] transition-all duration-1000 opacity-20"
-        :style="{ backgroundColor: activePhase.accentHex }"
-      />
-      <div
-        class="absolute top-2/3 right-10 w-[450px] h-[450px] rounded-full blur-[130px] transition-all duration-1000 opacity-15"
-        :style="{ backgroundColor: activePhase.particlePalette[1] || activePhase.accentHex }"
-      />
-    </div>
-
-    <!-- Phase Transition Alert Toast Pill -->
-    <transition
-      enter-active-class="transition duration-500 ease-out"
-      enter-from-class="opacity-0 -translate-y-8 scale-95"
-      enter-to-class="opacity-100 translate-y-0 scale-100"
-      leave-active-class="transition duration-300 ease-in"
-      leave-from-class="opacity-100 translate-y-0 scale-100"
-      leave-to-class="opacity-0 -translate-y-8 scale-95"
-    >
-      <div
-        v-if="transitionToast.visible"
-        class="fixed top-20 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-2xl glass-panel border shadow-2xl flex items-center gap-3 select-none max-w-md w-full mx-4"
-        :style="{
-          borderColor: activePhase.accentBorder,
-          boxShadow: `0 12px 36px -8px ${activePhase.accentGlow}`
-        }"
-      >
-        <div
-          class="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-          :style="{
-            backgroundColor: `${activePhase.accentHex}20`,
-            color: activePhase.accentHex,
-            border: `1px solid ${activePhase.accentHex}40`
-          }"
-        >
-          <Icons :name="activePhase.icon" :size="16" />
-        </div>
-        <div class="flex-1 min-w-0">
-          <h5 class="text-xs font-bold text-slate-100 tracking-wide">
-            {{ transitionToast.message }}
-          </h5>
-          <p class="text-[11px] text-slate-300 mt-0.5 font-sans truncate">
-            {{ transitionToast.subtitle }}
-          </p>
-        </div>
-        <button
-          type="button"
-          @click="transitionToast.visible = false"
-          class="text-slate-400 hover:text-slate-100 p-1 rounded-lg hover:bg-white/5 transition-colors"
-        >
-          <Icons name="X" :size="13" />
-        </button>
-      </div>
-    </transition>
-
-    <!-- Sticky Navigation Bar -->
     <Navbar />
 
-    <!-- Master Content Sections -->
-    <main class="relative z-10 flex-1 flex flex-col items-center w-full">
-      <!-- 1. Hero Section (#hero) -->
-      <HeroSection @hop="handleHop" />
-
-      <!-- 2. Featured Grimoire Projects Showcase (Top 3 on Home) -->
-      <ProjectsSection :projects="projects" :featured-only="true" />
-
-      <!-- 3. Triết Lý Nhân Sinh Trong Kiến Tạo Ứng Dụng (#philosophy) -->
-      <HumanisticPhilosophySection />
-
-      <!-- 4. Developer Manifesto & Stats (#about) -->
-      <AboutSection :stats="stats" />
-
-      <!-- 4. Midnight Tech Chronicle / Featured Articles Section -->
-      <section v-if="latestArticles && latestArticles.length > 0" class="scroll-mt-24 w-full py-16 sm:py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-left">
-        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
-          <div class="flex flex-col items-start">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-phantom-mint/10 border border-phantom-mint/30 text-phantom-mint text-xs font-mono mb-3 shadow-glow-mint">
-              📜 Midnight Tech Chronicle
-            </span>
-            <h2 class="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold text-white tracking-tight">
-              {{ t('home.blogTitle') }}
-            </h2>
-            <p class="text-sm sm:text-base text-slate-400 mt-2 max-w-2xl font-sans">
-              {{ t('home.blogDescription') }}
-            </p>
+    <main class="relative z-10 flex-1">
+      <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-16 sm:pt-24 sm:pb-24">
+        <div class="grid items-center gap-12 lg:grid-cols-[1.1fr_.9fr] lg:gap-16">
+          <div class="max-w-3xl">
+          <span class="inline-flex items-center gap-2 rounded-full border border-phantom-mint/30 bg-phantom-mint/10 px-3 py-1 text-xs font-mono text-phantom-mint">{{ t('home.productBadge') }}</span>
+          <h1 class="mt-6 text-4xl sm:text-6xl font-display font-black tracking-tight text-white leading-tight">{{ t('home.productHeadline') }}</h1>
+          <p class="mt-6 max-w-2xl text-base sm:text-lg leading-8 text-slate-300">{{ t('home.productDescription') }}</p>
+          <div class="mt-9 flex flex-wrap gap-3">
+            <Link href="/desktop" class="inline-flex items-center gap-2 rounded-xl bg-phantom-mint px-5 py-3 font-bold text-midnight-950 shadow-glow-mint transition hover:-translate-y-0.5">{{ t('home.viewFeatures') }} →</Link>
+            <a href="https://github.com/macatung/code-at-midnight/releases/latest/download/Task-Companion-Setup.exe" class="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-5 py-3 font-bold text-white transition hover:border-phantom-mint/50 hover:bg-white/10">{{ t('home.downloadApp') }}</a>
+          </div>
           </div>
 
-          <Link
-            href="/blog"
-            class="px-5 py-3 rounded-2xl bg-white/5 hover:bg-phantom-mint text-slate-200 hover:text-midnight-950 font-display font-bold text-xs sm:text-sm transition-all flex items-center gap-2 border border-white/10 hover:border-phantom-mint shadow-sm hover:shadow-glow-mint whitespace-nowrap"
-            @click="sound.playClick()"
-          >
-            <span>{{ t('home.readAllBlog') }}</span>
-            <span>→</span>
-          </Link>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <article
-            v-for="article in latestArticles"
-            :key="article.id"
-            class="glass-panel p-6 sm:p-8 rounded-3xl border border-white/10 hover:border-phantom-mint/40 transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1 shadow-lg bg-midnight-900/60"
-          >
-            <div>
-              <div class="flex items-center justify-between text-xs font-mono text-slate-400 mb-4 pb-3 border-b border-white/5">
-                <span class="text-phantom-mint font-bold">⏱ {{ article.reading_time_min }} {{ t('common.minutes') }}</span>
-                <div class="flex flex-wrap gap-1.5">
-                  <span v-for="tag in (article.tags || []).slice(0, 2)" :key="tag" class="px-2 py-0.5 rounded bg-white/5 text-[10px] text-slate-300">
-                    #{{ tag }}
-                  </span>
-                </div>
-              </div>
-              <h3 class="font-display font-bold text-xl sm:text-2xl text-white group-hover:text-phantom-mint transition-colors leading-snug mb-3">
-                <Link :href="`/blog/${article.slug}`">{{ article.title }}</Link>
-              </h3>
-              <p class="text-sm text-slate-300 line-clamp-3 leading-relaxed mb-6">{{ article.excerpt }}</p>
+          <aside class="relative mx-auto flex w-full max-w-md flex-col items-center" :style="{ '--mascot-accent': activePhase.accentHex }" :aria-label="t('home.mascotLabel')">
+            <div class="mb-4 flex w-full items-center justify-between text-xs font-mono text-slate-400">
+              <span class="flex items-center gap-2"><span class="h-2 w-2 rounded-full animate-pulse" :style="{ backgroundColor: activePhase.accentHex }" /> {{ activePhase.name }}</span>
+              <span>{{ formattedTime }}</span>
             </div>
+            <MacatungMascot size="hero" />
+          </aside>
+        </div>
+      </section>
 
-            <Link
-              :href="`/blog/${article.slug}`"
-              class="text-xs font-mono text-phantom-mint flex items-center gap-1.5 group-hover:translate-x-1 transition-transform font-bold pt-4 border-t border-white/5"
-              @click="sound.playClick()"
-            >
-              <span>{{ t('home.viewDetails') }}</span>
-              <span>→</span>
-            </Link>
+      <section class="border-y border-white/5 bg-black/20">
+        <div class="max-w-7xl mx-auto grid gap-6 px-4 py-14 sm:grid-cols-3 sm:px-6 lg:px-8">
+          <article v-for="item in ['home.benefitOne', 'home.benefitTwo', 'home.benefitThree']" :key="item" class="rounded-2xl border border-white/10 bg-midnight-900/70 p-6">
+            <h2 class="font-display text-lg font-bold text-white">{{ t(`${item}Title`) }}</h2>
+            <p class="mt-3 text-sm leading-6 text-slate-400">{{ t(`${item}Description`) }}</p>
           </article>
         </div>
       </section>
 
-      <!-- 7. Arcade Game Chamber Teaser Box -->
-      <section class="scroll-mt-24 w-full py-12 sm:py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-left">
-        <div class="glass-panel p-8 sm:p-10 rounded-3xl border border-talisman-gold/40 relative overflow-hidden bg-gradient-to-r from-midnight-900 via-midnight-950 to-midnight-900 shadow-2xl">
-          <div class="absolute -top-20 -right-20 w-80 h-80 bg-talisman-gold/10 rounded-full blur-3xl pointer-events-none" />
-
-          <div class="flex flex-col lg:flex-row items-center justify-between gap-8 relative z-10">
-            <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
-              <div class="w-24 h-24 rounded-3xl bg-midnight-900 border-2 border-talisman-gold p-2 flex items-center justify-center shadow-glow-talisman shrink-0">
-                <MiniMascotLogo size="lg" :animated="true" />
-              </div>
-
-              <div>
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-talisman-gold/10 border border-talisman-gold/30 text-talisman-gold text-xs font-mono mb-2 shadow-glow-talisman">
-                  🎮 {{ t('home.arcadeBadge') }}
-                </span>
-                <h3 class="text-2xl sm:text-3xl font-display font-extrabold text-white">
-                  {{ t('home.gameTitle') }}
-                </h3>
-                <p class="text-xs sm:text-sm text-slate-300 mt-2 max-w-xl font-sans leading-relaxed">
-                  {{ t('home.gameDescription') }}
-                </p>
-
-                <!-- Mini Stats Pill -->
-                <div class="flex flex-wrap items-center justify-center sm:justify-start gap-3 mt-4 text-xs font-mono text-slate-400">
-                  <span class="flex items-center gap-1">⚡ {{ t('hero.statsSpells') }}</span>
-                  <span>·</span>
-                  <span class="flex items-center gap-1">🏆 {{ t('hero.statsLeaderboard') }}</span>
-                  <span>·</span>
-                  <span class="flex items-center gap-1">🔊 Web Audio SFX</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- CTA Play Button -->
-            <Link
-              href="/game"
-              class="px-8 py-4 rounded-2xl bg-talisman-gold text-midnight-950 font-display font-bold text-sm sm:text-base hover:brightness-110 shadow-glow-talisman transition-all flex items-center gap-2.5 whitespace-nowrap shrink-0 hover:scale-105 active:scale-95"
-              @click="sound.playTalisman()"
-            >
-              <span>{{ t('home.playGame') }}</span>
-              <span>⚡</span>
-            </Link>
+      <section class="max-w-5xl mx-auto px-4 py-20 sm:px-6 lg:px-8">
+        <p class="font-mono text-xs uppercase tracking-[.25em] text-phantom-mint">{{ t('home.workflowLabel') }}</p>
+        <h2 class="mt-3 text-3xl font-display font-bold text-white">{{ t('home.workflowTitle') }}</h2>
+        <div class="mt-10 grid gap-5 md:grid-cols-3">
+          <div v-for="(step, index) in [t('home.workflowOne'), t('home.workflowTwo'), t('home.workflowThree')]" :key="step" class="rounded-2xl border border-white/10 p-5">
+            <span class="font-mono text-phantom-mint">0{{ index + 1 }}</span>
+            <p class="mt-4 text-sm leading-6 text-slate-300">{{ step }}</p>
           </div>
         </div>
-      </section>
-
-      <!-- 8. Developer Talisman Forge Teaser Box -->
-      <section class="scroll-mt-24 w-full py-12 sm:py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-left">
-        <div class="glass-panel p-8 sm:p-10 rounded-3xl border border-phantom-mint/30 relative overflow-hidden bg-gradient-to-r from-midnight-900 via-midnight-950 to-midnight-900 shadow-2xl">
-          <div class="flex flex-col lg:flex-row items-center justify-between gap-8 relative z-10">
-            <div class="flex items-start gap-4">
-              <span class="text-4xl">📜</span>
-              <div>
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-phantom-mint/10 border border-phantom-mint/30 text-phantom-mint text-xs font-mono mb-2">
-                  ✨ {{ t('home.artifactsBadge') }}
-                </span>
-                <h3 class="text-2xl sm:text-3xl font-display font-extrabold text-white">
-                  {{ t('home.talismanTitle') }}
-                </h3>
-                <p class="text-xs sm:text-sm text-slate-300 mt-2 max-w-xl font-sans leading-relaxed">
-                  {{ t('home.talismanDescription') }}
-                </p>
-              </div>
-            </div>
-
-            <Link
-              href="/talisman"
-              class="px-8 py-4 rounded-2xl bg-phantom-mint text-midnight-950 font-display font-bold text-sm sm:text-base hover:brightness-110 shadow-glow-mint transition-all flex items-center gap-2.5 whitespace-nowrap shrink-0 hover:scale-105 active:scale-95"
-              @click="sound.playClick()"
-            >
-              <span>{{ t('home.openForge') }}</span>
-              <span>→</span>
-            </Link>
+        <div class="mt-12 rounded-3xl border border-phantom-mint/20 bg-phantom-mint/5 p-8 sm:flex sm:items-center sm:justify-between">
+          <div>
+            <h2 class="font-display text-2xl font-bold text-white">{{ t('home.readyTitle') }}</h2>
+            <p class="mt-2 text-sm text-slate-400">{{ t('home.readyDescription') }}</p>
           </div>
+          <a href="https://github.com/macatung/code-at-midnight/releases/latest/download/Task-Companion-Setup.exe" class="mt-5 inline-flex rounded-xl bg-phantom-mint px-5 py-3 font-bold text-midnight-950 sm:mt-0">{{ t('home.downloadApp') }}</a>
         </div>
       </section>
-
-      <!-- 9. Midnight Terminal REPL CLI (#terminal) -->
-      <section id="terminal" class="scroll-mt-24 w-full py-16 sm:py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-left">
-        <div class="flex flex-col items-start mb-8">
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-phantom-mint/10 border border-phantom-mint/30 text-phantom-mint text-xs font-mono mb-3 shadow-glow-mint">
-            ⚡ {{ t('terminal.badge') }}
-          </span>
-          <h2 class="text-3xl sm:text-5xl font-display font-extrabold text-white tracking-tight">
-            {{ t('terminal.title') }} <span class="text-transparent bg-clip-text bg-gradient-to-r from-phantom-mint via-phantom-cyan to-talisman-gold">{{ t('terminal.titleAccent') }}</span>
-          </h2>
-          <p class="text-sm sm:text-base text-slate-400 mt-2 max-w-2xl font-sans">
-            {{ t('home.terminalDescription') }}
-          </p>
-        </div>
-        <MidnightTerminal />
-      </section>
-
-      <!-- 10. Summoning Altar Contact Form (#contact) -->
-      <ContactSection />
     </main>
 
-    <!-- Global Footer with Hop-to-Top and Easter Egg -->
     <Footer />
   </div>
 </template>

@@ -22,12 +22,10 @@ interface NavItem {
 
 const navLinks = computed<NavItem[]>(() => [
   { label: t('nav.home'), href: '/', iconName: 'Home' },
+  { label: t('nav.desktop'), href: '/desktop', iconName: 'Monitor' },
   { label: t('nav.projects'), href: '/projects', iconName: 'Layers' },
-  { label: t('nav.desktop'), href: '/desktop', badge: t('nav.new'), iconName: 'Monitor' },
-  { label: t('nav.blog'), href: '/blog', badge: t('nav.new'), iconName: 'BookOpen' },
-  { label: t('nav.game'), href: '/game', badge: t('nav.hot'), iconName: 'Gamepad' },
-  { label: t('nav.talisman'), href: '/talisman', iconName: 'Sparkles' },
-  { label: t('nav.theravada'), href: '/theravada', badge: t('nav.zen'), iconName: 'Sparkles' },
+  { label: t('nav.about'), href: '/about', iconName: 'User' },
+  { label: t('nav.contact'), href: '/contact', iconName: 'Mail' },
 ]);
 
 const isScrolled = ref(false);
@@ -114,7 +112,7 @@ onUnmounted(() => {
             macatung<span class="text-phantom-mint">.dev</span>
           </span>
           <span class="text-[10px] font-mono text-slate-400 -mt-0.5 tracking-wider hidden sm:inline-block">
-            Code at midnight
+            {{ t('brand.tagline') }}
           </span>
         </div>
       </Link>
@@ -230,18 +228,6 @@ onUnmounted(() => {
               <button type="button" class="px-2 py-1 rounded-md cursor-pointer" :class="locale === 'vi' ? 'bg-phantom-mint text-midnight-950 font-bold' : 'text-slate-400'" @click="setLocale('vi')">VI</button>
             </div>
           </div>
-          <Link
-            href="/contact"
-            class="w-full py-3.5 rounded-2xl font-display font-bold text-center text-midnight-950 transition-all flex items-center justify-center gap-2 cursor-pointer"
-            :style="{
-              backgroundColor: activePhase.accentHex,
-              boxShadow: `0 4px 16px -2px ${activePhase.accentGlow}`
-            }"
-            @click="handleNavClick(); sound.playTalisman()"
-          >
-            <span>{{ t('nav.summonDeveloper') }}</span>
-            <span>📜</span>
-          </Link>
         </div>
       </div>
     </transition>

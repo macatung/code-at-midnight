@@ -6,8 +6,6 @@ import TalismanCanvas from '@/Components/mascot/TalismanCanvas.vue';
 import SkillsSection from '@/Components/skills/SkillsSection.vue';
 import ExperienceSection from '@/Components/experience/ExperienceSection.vue';
 import AboutSection from '@/Components/about/AboutSection.vue';
-import MidnightTerminal from '@/Components/terminal/MidnightTerminal.vue';
-import NextStepsHub from '@/Components/layout/NextStepsHub.vue';
 import { Link } from '@inertiajs/vue3';
 import { useI18n } from '@/composables/useI18n';
 
@@ -55,27 +53,11 @@ const aboutJsonLd = {
         <span class="text-phantom-mint font-bold">{{ t('about.breadcrumb') }}</span>
       </nav>
 
-      <!-- 1. Developer Manifesto & Stats -->
+      <!-- Professional profile -->
       <AboutSection :stats="stats" />
 
-      <!-- 2. Interactive Terminal CLI Section -->
-      <section id="terminal" class="scroll-mt-24 w-full py-16 sm:py-20 text-left">
-        <div class="flex flex-col items-start mb-8">
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-phantom-mint/10 border border-phantom-mint/30 text-phantom-mint text-xs font-mono mb-3 shadow-glow-mint">
-            ⚡ Interactive REPL Shell
-          </span>
-          <h2 class="text-3xl sm:text-5xl font-display font-extrabold text-white tracking-tight">
-            Midnight <span class="text-transparent bg-clip-text bg-gradient-to-r from-phantom-mint via-phantom-cyan to-talisman-gold">Terminal CLI</span>
-          </h2>
-          <p class="text-sm sm:text-base text-slate-400 mt-2 max-w-2xl font-sans">
-            {{ t('page.terminalDescription') }}
-          </p>
-        </div>
-        <MidnightTerminal />
-      </section>
-
-      <!-- Next Steps Continuation Hub -->
-      <NextStepsHub current-path="/about" />
+      <ExperienceSection :experiences="experiences" />
+      <SkillsSection :skills="skills" />
     </main>
 
     <Footer />

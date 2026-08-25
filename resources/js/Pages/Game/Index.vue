@@ -4,7 +4,6 @@ import Navbar from '@/Components/layout/Navbar.vue';
 import Footer from '@/Components/layout/Footer.vue';
 import TalismanCanvas from '@/Components/mascot/TalismanCanvas.vue';
 import RuneTyperGame from '@/Components/game/RuneTyperGame.vue';
-import NextStepsHub from '@/Components/layout/NextStepsHub.vue';
 import { beginnerSpells, normalSpells, bossSpells } from '@/data/spellsData';
 import { Link } from '@inertiajs/vue3';
 import { useI18n } from '@/composables/useI18n';
@@ -142,8 +141,6 @@ const gameJsonLd = {
         </div>
       </div>
 
-      <!-- Next Steps Continuation Hub -->
-      <NextStepsHub current-path="/game" />
     </main>
 
     <Footer />

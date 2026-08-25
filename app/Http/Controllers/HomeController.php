@@ -9,46 +9,21 @@ use App\Models\SiteSetting;
 use App\Models\PageView;
 use App\Models\AnalyticsEvent;
 use App\Models\ContactSubmission;
-use App\Models\Article;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class HomeController extends Controller
 {
     /**
-     * Display the portfolio home page with live database records, featured projects and analytics stats.
+     * Display the Task Companion product introduction.
      */
     public function index(): Response
     {
-        $projects = Project::ordered()->get();
-        $skills = Skill::ordered()->get();
-        $experiences = Experience::ordered()->get();
-        $latestArticles = Article::where('is_published', true)->orderBy('published_at', 'desc')->limit(2)->get();
         $settings = SiteSetting::all()->pluck('value', 'key')->toArray();
-
-        // Real computed stats from database
-        $totalPageviews = PageView::count();
-        $totalUniqueVisitors = PageView::distinct('session_id')->count('session_id');
-        $totalInquiries = ContactSubmission::count();
-        $totalHops = AnalyticsEvent::where('event_type', 'hop_mascot')->count();
-        $totalProjects = Project::count();
-
-        $stats = [
-            'total_pageviews' => $totalPageviews,
-            'unique_visitors' => $totalUniqueVisitors,
-            'total_inquiries' => $totalInquiries,
-            'total_hops' => $totalHops,
-            'total_projects' => $totalProjects,
-        ];
 
         return Inertia::render('Home', [
             'title' => $settings['site_title'] ?? 'MacaTung — Building AI Agents & Business Systems',
-            'projects' => $projects,
-            'skills' => $skills,
-            'experiences' => $experiences,
-            'latestArticles' => $latestArticles,
             'settings' => $settings,
-            'stats' => $stats,
         ]);
     }
 

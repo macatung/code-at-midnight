@@ -248,17 +248,28 @@ const renderMermaidDiagrams = async () => {
   try {
     mermaid.initialize({
       startOnLoad: false,
-      theme: 'dark',
-      themeVariables: {
-        darkMode: true,
-        background: '#1c1917',
-        primaryColor: '#d97706',
-        primaryTextColor: '#fffbeb',
-        primaryBorderColor: '#b45309',
-        lineColor: '#f59e0b',
-        secondaryColor: '#292524',
-        tertiaryColor: '#1c1917',
-      },
+      securityLevel: 'loose',
+      theme: isPaperMode.value ? 'neutral' : 'dark',
+      themeVariables: isPaperMode.value
+        ? {
+            background: '#fefce8',
+            primaryColor: '#b45309',
+            primaryTextColor: '#78350f',
+            primaryBorderColor: '#d97706',
+            lineColor: '#92400e',
+            secondaryColor: '#fef3c7',
+            tertiaryColor: '#fffbeb',
+          }
+        : {
+            darkMode: true,
+            background: '#1c1917',
+            primaryColor: '#d97706',
+            primaryTextColor: '#fffbeb',
+            primaryBorderColor: '#b45309',
+            lineColor: '#f59e0b',
+            secondaryColor: '#292524',
+            tertiaryColor: '#1c1917',
+          },
       fontFamily: 'Lora, Merriweather, serif',
     });
 
@@ -268,11 +279,19 @@ const renderMermaidDiagrams = async () => {
       const el = containers[i];
       const rawCode = decodeURIComponent(el.getAttribute('data-code') || '');
       if (rawCode) {
-        const id = `mermaid-zen-${Date.now()}-${i}`;
-        const { svg } = await mermaid.render(id, rawCode);
-        const target = el.querySelector('.mermaid-render-target');
-        if (target) {
-          target.innerHTML = svg;
+        try {
+          const id = `mermaid-zen-${Date.now()}-${i}-${Math.random().toString(36).slice(2, 7)}`;
+          const { svg } = await mermaid.render(id, rawCode);
+          const target = el.querySelector('.mermaid-render-target');
+          if (target) {
+            target.innerHTML = svg;
+          }
+        } catch (itemErr) {
+          console.error(`Error rendering mermaid diagram #${i}:`, itemErr);
+          const target = el.querySelector('.mermaid-render-target');
+          if (target) {
+            target.innerHTML = `<pre class="text-xs text-amber-400/80 bg-stone-950/80 p-3 rounded-lg overflow-x-auto text-left font-mono">${rawCode}</pre>`;
+          }
         }
       }
     }
@@ -473,18 +492,26 @@ const parseMarkdownTables = (content: string, isPaper: boolean): string => {
 // Rich Markdown to Zen HTML Parser with Sutta-first readability & Pāḷi Annotation
 const renderedMarkdown = computed(() => {
   if (!props.article.content) return '';
-  let md = props.article.content;
+  // Normalize line endings to LF
+  let md = props.article.content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
 
-  // 1. Mermaid Diagrams
-  md = md.replace(/```mermaid\n([\s\S]*?)```/gim, (match, code) => {
-    return `<div class="zen-mermaid-container my-8 p-4 sm:p-6 rounded-2xl bg-stone-900 border border-amber-500/30 shadow-xl overflow-x-auto flex flex-col items-center justify-center" data-code="${encodeURIComponent(code.trim())}">
-      <div class="w-full flex items-center justify-between pb-2.5 mb-3 border-b border-amber-500/20 text-xs font-serif text-amber-300 font-semibold tracking-wider">
+  // 1. Mermaid Diagrams (Isolated with double newlines)
+  md = md.replace(/```\s*mermaid\s*\n([\s\S]*?)```/gim, (_match, code) => {
+    const containerTheme = isPaperMode.value
+      ? 'bg-amber-50/80 border-amber-300 shadow-md'
+      : 'bg-stone-900 border-amber-500/30 shadow-xl';
+    const headerBorder = isPaperMode.value ? 'border-amber-300/80 text-amber-900' : 'border-amber-500/20 text-amber-300';
+    const subText = isPaperMode.value ? 'text-amber-800/60' : 'text-stone-400';
+    const targetColor = isPaperMode.value ? 'text-stone-900' : 'text-stone-100';
+
+    return `\n\n<div class="zen-mermaid-container my-8 p-4 sm:p-6 rounded-2xl ${containerTheme} border overflow-x-auto flex flex-col items-center justify-center" data-code="${encodeURIComponent(code.trim())}">
+      <div class="w-full flex items-center justify-between pb-2.5 mb-3 border-b ${headerBorder} text-xs font-serif font-semibold tracking-wider">
         <span>SƠ ĐỒ PHÁP HỌC & QUÁN CHIẾU</span>
-        <span class="text-[10px] text-stone-400 font-mono">Mermaid Flow</span>
+        <span class="text-[10px] ${subText} font-mono">Mermaid Flow</span>
       </div>
-      <div class="mermaid-render-target w-full flex justify-center py-2 text-stone-100">
+      <div class="mermaid-render-target w-full flex justify-center py-2 ${targetColor}">
       </div>
-    </div>`;
+    </div>\n\n`;
   });
 
   // 2. Markdown Tables

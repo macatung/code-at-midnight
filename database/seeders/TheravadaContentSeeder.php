@@ -1436,6 +1436,20 @@ Giới luật (*Sīla*) không phải là những điều cấm đoán hà khắ
 4. Không nói dối, nói lời chân thật hòa ái.
 5. Không uống rượu và dùng các chất say gây nghiện làm buông lung tâm trí.
 
+```mermaid
+graph TD
+    A[Nền Tảng Đạo Đức & Thẩm Định Chân Lý] --> B[Tứ Y Pháp Cattāri Nissayāni]
+    A --> C[Giới Luật Cư Sĩ Sīla]
+    
+    B --> B1[1. Y Pháp Bất Y Nhân: Nương Chánh Pháp, không theo uy quyền cá nhân]
+    B --> B2[2. Y Nghĩa Bất Y Ngữ: Nương tinh thần cốt lõi, không chấp câu chữ]
+    B --> B3[3. Y Liễu Nghĩa Bất Y Bất Liễu Nghĩa: Nương Chân Đế cứu cánh]
+    B --> B4[4. Y Trí Bất Y Thức: Nương Tuệ giác thực chứng, không suy diễn cảm tính]
+    
+    C --> C1[Ngũ Giới Pañcasīla: Bảo hộ thân tâm trọn đời]
+    C --> C2[Bát Quan Trai Aṭṭhaṅgasīla: Tập sự đời sống xuất gia thanh tịnh]
+```
+
 ### Bát Quan Trai Giới (Aṭṭhaṅgasīla — 8 giới thanh tịnh định kỳ):
 Thêm 3 giới tập sự đời sống viễn ly xuất gia:
 6. Không ăn phi thời (sau 12 giờ trưa đến rạng sáng hôm sau).
@@ -1930,6 +1944,21 @@ Bài kinh này đánh dấu sự vận hành của **Bánh Xe Chánh Pháp (Dham
 
 **Con Đường Trung Đạo (Majjhimā Paṭipadā)** mà Như Lai đã thực chứng chính là [Bát Chánh Đạo](/theravada/kinh/bat-chanh-dao-ariya-atthangika-magga-gioi-dinh-tue) dẫn đến tịch tịnh, thắng trí, giác ngộ và Niết-bàn.
 
+```mermaid
+graph TD
+    A[Kinh Chuyển Pháp Luân Dhammacakka] --> B[Tránh Hai Cực Đoan]
+    A --> C[Con Đường Trung Đạo: Bát Chánh Đạo]
+    A --> D[Tứ Thánh Đế: Tam Chuyển Thập Nhị Hành]
+    
+    B --> B1[Dục Lạc Cực Đoan: Đắm say ngũ dục phàm phu]
+    B --> B2[Khổ Hạnh Cực Đoan: Hành hạ thể xác đau đớn vô ích]
+    
+    D --> D1[Khổ Đế: Thực trạng đau khổ ngũ uẩn]
+    D --> D2[Tập Đế: Nguồn gốc tham ái sinh khởi]
+    D --> D3[Diệt Đế: Cảnh giới Niết-bàn tịch diệt]
+    D --> D4[Đạo Đế: Con đường Bát Chánh Đạo diệt khổ]
+```
+
 ---
 
 ## 3. Văn Bản Kinh Song Ngữ Pāḷi — Việt Trích Đoạn Trọng Tâm
@@ -1989,6 +2018,20 @@ Sau khi nghe [Kinh Chuyển Pháp Luân](/theravada/kinh/kinh-chuyen-phap-luan-s
 1. *"Này các Tỳ-kheo, Sắc là thường hay vô thường?"* -> *"Bạch Thế Tôn, là Vô thường."*
 2. *"Cái gì vô thường là khổ hay vui?"* -> *"Bạch Thế Tôn, là Khổ."*
 3. *"Cái gì vô thường, khổ, chịu sự biến hoại, có hợp lý chăng khi quán xét cái ấy: 'Đây là của tôi, đây là tôi, đây là tự ngã của tôi'?"* -> *"Bạch Thế Tôn, chắc chắn là không!"*
+
+```mermaid
+graph TD
+    A[Năm Uẩn: Sắc, Thọ, Tưởng, Hành, Thức] --> B{Thẩm Vấn Biện Chứng}
+    B --> C[Vô Thường Anicca: Biến dịch đổi dời]
+    C --> D[Khổ Dukkha: Chịu bức bách sinh diệt]
+    D --> E[Vô Ngã Anattā: Không thể làm chủ tể]
+    
+    E --> F[Chánh Trí Thấu Triệt]
+    F --> F1[Netaṃ mama: Không phải của tôi]
+    F --> F2[Nesohamasmi: Không phải là tôi]
+    F --> F3[Na meso attā: Không phải tự ngã của tôi]
+    F --> G[Tâm Hoàn Toàn Giải Thoát: Đắc Quả A-La-Hán]
+```
 
 ---
 
@@ -2051,13 +2094,29 @@ Khi các ngài trở về bạch Phật, Đức Thế Tôn không bảo họ đ�
 > Santindriyo ca nipako ca, appagabbho kulesuananugiddho.**<br />
 > *Biết đủ, dễ nuôi dưỡng, ít bận rộn, nếp sống thanh bần giản dị, phòng hộ các căn, sáng suốt chín chắn, không thô lỗ và không quyến luyến gia đình thế tục.*
 
-> **Mātā yathā检测 niyamputtaṃ, āyusā ekaputtamanurakkhe;<br />
+> **Mātā yathā niyaṃ puttaṃ, āyusā ekaputtamanurakkhe;<br />
 > Evampi sabbabhūtesu, mānasaṃ bhāvaye aparimāṇaṃ.**<br />
 > *Như người mẹ thương yêu đứa con duy nhất, sẵn sàng lấy tính mạng che chở cho con; cũng vậy, hãy trải rộng lòng từ bi vô lượng đến tất cả muôn loài chúng sinh.*
 
 > **Mettañca sabbalokasmiṃ, mānasaṃ bhāvaye aparimāṇaṃ;<br />
 > Uddhaṃ adho ca tiriyañca, asambādhaṃ averamasapattaṃ.**<br />
 > *Hãy rải tâm từ vô lượng bao trùm khắp toàn thể vũ trụ: Phía trên, phía dưới, bốn phương tám hướng, không có bất kỳ chướng ngại, không hận thù, không oán kết.*
+
+```mermaid
+graph TD
+    A[Kinh Từ Bi Karaṇīyamettā Sutta] --> B[Nếp Sống Người Hiền Trí]
+    A --> C[Pháp Môn Rải Tâm Từ Vô Lượng]
+    A --> D[Năng Lực Hộ Trì Tâm Linh Paritta]
+    
+    B --> B1[Ngay thẳng, chân thật, dịu dàng, khiêm hạ]
+    B --> B2[Biết đủ, dễ nuôi, ít bận rộn, hộ trì các căn]
+    
+    C --> C1[Như tình mẹ thương đứa con duy nhất]
+    C --> C2[Bao trùm mười phương không ngằn mé, không oán thù]
+    
+    D --> D1[Hóa giải chướng ngại hiểm nguy]
+    D --> D2[An trú chánh niệm đắc Thánh quả]
+```
 
 ---
 
@@ -2119,6 +2178,19 @@ Khi Đức Phật đến thị trấn Kesaputta của bộ tộc Kālāma, các 
 > *"Này người Kalama, khi nào **tự thân các ngươi biết rõ**: 'Các pháp này là bất thiện, các pháp này là đáng chê trách, các pháp này nếu thực hành sẽ đưa đến bất hạnh, đau khổ' — thì các ngươi hãy dứt khoát từ bỏ chúng.<br />
 > Và khi nào **tự thân các ngươi biết rõ**: 'Các pháp này là thiện lành, không đáng chê trách, được bậc trí tán thán, thực hành sẽ đem lại an lạc, hạnh phúc' — thì các ngươi hãy trọn vẹn chấp nhận và thực hành theo!"*
 
+```mermaid
+graph TD
+    A[Kinh Giáo Giới Kalama] --> B[10 Điều Chớ Vội Tin]
+    A --> C[Tiêu Chuẩn Tự Thân Khảo Nghiệm]
+    
+    B --> B1[Truyền thuyết, tập tục, tin đồn, kinh điển]
+    B --> B2[Lý luận, suy diễn, định kiến cá nhân]
+    B --> B3[Uy quyền danh tiếng, lòng tôn kính đạo sư]
+    
+    C --> C1[Tự biết pháp Bất thiện đưa đến đau khổ -> Dứt khoát từ bỏ]
+    C --> C2[Tự biết pháp Thiện lành đem lại an lạc -> Trọn vẹn thực hành]
+```
+
 ---
 
 ## 📚 Các Bài Học & Kinh Điển Liên Quan Mật Thiết
@@ -2173,6 +2245,18 @@ Khi Đức Phật đặt chân đến Vesālī, Ngài đã truyền dạy bài *
 > Na tena dhammena samatthi kiñci, idampi Dhamme ratanaṃ paṇītaṃ;<br />
 > Etena saccena suvatthi hotu!**<br />
 > *Cảnh giới tịch diệt, ly tham, bất tử, tối thượng mà Đức Thích Ca Mâu Ni đã chứng đạt; không có gì sánh bằng Giáo Pháp mầu nhiệm ấy. Nơi Chánh Pháp là Châu Báu Tối Thượng. **Nhờ chân lý chân thật này, nguyện cho muôn loài được an lành!***
+
+```mermaid
+graph TD
+    A[Kinh Châu Báu Ratana Sutta] --> B[Phật Bảo Buddha: Đấng Toàn Giác Tối Thắng Vô Song]
+    A --> C[Pháp Bảo Dhamma: Giáo Pháp Ly Tham Bất Tử Mầu Nhiệm]
+    A --> D[Tăng Bảo Saṅgha: Bậc Thánh 4 Đôi 8 Vị Phước Điền Thế Gian]
+    
+    B --> E[Nhờ Chân Lý Chân Thật Này: Etena saccena suvatthi hotu!]
+    C --> E
+    D --> E
+    E --> F[Giải Trừ Tam Tai: Hạn hán đói kém, Dịch bệnh, Phi nhân quấy phá]
+```
 
 ---
 
@@ -2329,6 +2413,22 @@ Ngược lại, dù ở một mình trong hang đá nhưng tâm nhớ nhung quá
 > Xứng danh 'Biết Sống Một Mình',<br />
 > Bậc Tịch Tịnh tuyên dạy.*
 
+```mermaid
+graph TD
+    A[Kinh Người Biết Sống Một Mình Bhaddekaratta] --> B[Cắt Đứt Hai Đầu Thời Gian]
+    A --> C[An Trú Trọn Vẹn Trong Hiện Tại]
+    A --> D[Tinh Tấn Nhiệt Tâm Ngay Hôm Nay]
+    
+    B --> B1[Quá khứ đã đoạn tận: Không tìm về tiếc nuối]
+    B --> B2[Tương lai lại chưa đến: Không ước vọng lo âu]
+    
+    C --> C1[Chỉ có Pháp hiện tại: Tuệ quán chính ở đây]
+    C --> C2[Tâm không lay động trước 8 ngọn gió đời]
+    
+    D --> D1[Ai biết chết ngày mai?]
+    D --> D2[Không ai điều đình được với Thần Chết]
+```
+
 ---
 
 ## 3. Trị Liệu Căn Bệnh Lo Âu (Anxiety) & Trầm Cảm (Depression)
@@ -2393,6 +2493,18 @@ Chư Tỳ-kheo đáp: *"Bạch Thế Tôn, không hợp lý! Người ấy nên 
 
 > **"Kullūpamaṃ vo, bhikkhave, dhammaṃ desessāmi nittharaṇatthāya, no gahaṇatthāya... Dhammāpi vo pahātabbā, pageva adhammā."**<br />
 > *"Này các Tỳ-kheo, Như Lai thuyết giảng Chánh Pháp như một chiếc bè là để vượt qua sông sinh tử, chứ không phải để nắm giữ chấp thủ. **Đến Chánh Pháp các ngươi còn phải buông bỏ, huống chi là Phi Pháp!**"*.
+
+```mermaid
+graph TD
+    A[Kinh Ví Dụ Con Rắn & Chiếc Bè] --> B[Ẩn Dụ Bắt Rắn Độc Alagadda]
+    A --> C[Ẩn Dụ Chiếc Bè Qua Sông Kullūpama]
+    
+    B --> B1[Bắt đằng đuôi: Học đạo để tranh cãi hơn thua -> Nọc độc hại mình]
+    B --> B2[Bắt bằng chĩa: Học đạo để thanh lọc tâm -> Lấy nọc cứu đời]
+    
+    C --> C1[Giáo pháp là phương tiện vượt sông sinh tử]
+    C --> C2[Đến bờ giải thoát phải buông bè, không chấp thủ giáo điều]
+```
 
 ---
 
@@ -2579,6 +2691,13 @@ Vào năm 80 tuổi, tại rừng cây Sāla song thọ ở Kusinārā, Đức T
 
 > **"Handadāni bhikkhave āmantayāmi vo, vayadhammā saṅkhārā appamādena sampādetha."**
 > *(Này các Tỳ-kheo, đây là lời nhắn nhủ cuối cùng của Như Lai: Tất cả các pháp hữu vi đều chịu định luật biến dịch hoại diệt. Hãy nỗ lực tinh tấn, chớ có buông lung phóng dật!)*
+
+---
+
+## 📚 Các Bài Học & Kinh Điển Liên Quan Mật Thiết
+- [Kinh Chuyển Pháp Luân (Dhammacakkappavattana Sutta)](/theravada/kinh/kinh-chuyen-phap-luan-song-ngu-pali-viet) — Bài kinh sơ chuyển pháp luân tại Vườn Nai.
+- [Tứ Thánh Đế — Bốn Chân Lý Tối Thượng](/theravada/kinh/tu-thanh-de-bon-chan-ly-toi-thuong) — Tinh hoa giác ngộ dưới cội Bồ-đề.
+- [Lịch Sử Sáu Kỳ Kết Tập Tam Tạng Thánh Điển Pāḷi](/theravada/kinh/lich-su-sau-ky-ket-tap-tam-tang-kinh-dien-pali-chasangayana) — Hành trình bảo tồn lời Phật dạy sau khi Ngài nhập Niết-bàn.
 EOF
 ,
                 'tags' => ['Lịch Sử Phật Giáo', 'Đức Phật Thích Ca', 'Gotama Buddha', 'Bồ Đề Đạo Tràng', 'Tứ Động Tâm', 'Theravada'],
@@ -2674,6 +2793,13 @@ graph TD
 - **Địa điểm**: Đại Động Hòa Bình Mahā Pāsāṇa Guhā tại Kaba Aye, Yangon (Miến Điện), được xây dựng mô phỏng Động Thất Diệp thời Phật sơ khai.
 - **Chủ tọa**: Đại Trưởng lão **Mahāsi Sayadaw** (chất vấn) và Trưởng lão **Mingun Sayadaw** (thông tuệ Tam Tạng, trùng tuyên đáp lời) cùng 2.500 chư Tăng đến từ Myanmar, Sri Lanka, Thái Lan, Campuchia, Lào, Ấn Độ, Việt Nam...
 - **Thành tựu**: Rà soát, đối chiếu toàn bộ các bản Tam Tạng chữ Miến, Tích Lan, Thái, Khmer và bản La-tinh của Hội Thánh Điển Pāḷi Luân Đôn (PTS), cho ra đời **Bản Ấn Bản Tam Tạng Pāḷi Chuẩn Xác Nhất** lưu hành toàn cầu ngày nay.
+
+---
+
+## 📚 Các Bài Học & Kinh Điển Liên Quan Mật Thiết
+- [Cuộc Đời Đức Phật Thích Ca Mầu Ni](/theravada/kinh/cuoc-doi-duc-phat-gotama-tu-dan-sanh-den-nhap-niet-ban) — Khởi nguồn của Tam Tạng Thánh Điển.
+- [Đại Đế Asoka (A-Dục Vương)](/theravada/kinh/dai-de-asoka-a-duc-vuong-ky-nguyen-vang-phat-giao) — Hộ trì Kỳ Kết Tập Lần Thứ 3 và truyền bá Chánh Pháp.
+- [Bốn Pháp Chân Đế (Paramattha Dhammā)](/theravada/kinh/bon-phap-chan-de-vi-dieu-phap-paramattha-dhamma) — Khám phá Vi Diệu Pháp Tạng (Abhidhamma).
 EOF
 ,
                 'tags' => ['Kỳ Kết Tập', 'Tam Tạng Pāḷi', 'Tipitaka', 'Saṅgāyanā', 'Lịch Sử Phật Giáo', 'Theravada'],
@@ -2763,6 +2889,13 @@ Thành tựu vĩ đại nhất của Vua Asoka là sau Kỳ Kết Tập Thánh �
 | **9. Mahiṃsaka** | Trưởng lão **Mahādeva** | Vùng Nam Ấn (Andhra Pradesh) |
 
 Nhờ tầm nhìn vĩ đại này, Phật giáo đã vượt ra khỏi biên giới Ấn Độ để trở thành một tôn giáo toàn cầu của hòa bình, từ bi và trí tuệ.
+
+---
+
+## 📚 Các Bài Học & Kinh Điển Liên Quan Mật Thiết
+- [Lịch Sử Sáu Kỳ Kết Tập Tam Tạng Thánh Điển Pāḷi](/theravada/kinh/lich-su-sau-ky-ket-tap-tam-tang-kinh-dien-pali-chasangayana) — Sự kiện bảo trợ đại hội kết tập lần 3 tại Hoa Thị Thành.
+- [Lịch Sử Truyền Bá Theravāda Sang Tích Lan & Đông Nam Á](/theravada/kinh/lich-su-truyen-ba-theravada-sang-sri-lanka-va-dong-nam-a) — Hành trình 9 phái đoàn truyền giáo của Vua Asoka.
+- [Tứ Vô Lượng Tâm (Brahmavihāra)](/theravada/kinh/tu-vo-luong-tam-brahmavihara-tu-bi-hy-xa) — Nguồn cảm hứng cho chính sách trị quốc từ bi Dhammavijaya.
 EOF
 ,
                 'tags' => ['Vua Asoka', 'A-Dục Vương', 'Trụ Đá Asoka', 'Lịch Sử Phật Giáo', 'Dhammavijaya', 'Theravada'],
@@ -2832,6 +2965,13 @@ Theo sử liệu *Sāsanavaṃsa* và *Kalyāṇī Inscriptions*, hai vị Thán
 3. **Campuchia & Lào**: Vào thế kỷ XIII – XIV, Phật giáo Theravāda lan rộng và thay thế hoàn toàn Ấn Độ giáo tại vương quốc Angkor (Campuchia) và vương quốc Triệu Voi Lan Xang (Lào), trở thành linh hồn văn hóa của toàn thể nhân dân.
 
 Sự gắn kết mật thiết giữa Tăng đoàn (*Saṅgha*), Chánh Pháp (*Dhamma*) và đời sống người dân đã tạo nên một nền văn minh đạo đức thuần lương, từ bi và trí tuệ đặc trưng của các quốc gia Phật giáo Nam truyền ngày nay.
+
+---
+
+## 📚 Các Bài Học & Kinh Điển Liên Quan Mật Thiết
+- [Đại Đế Asoka (A-Dục Vương)](/theravada/kinh/dai-de-asoka-a-duc-vuong-ky-nguyen-vang-phat-giao) — Khởi xướng các đoàn truyền giáo đến Tích Lan và Xứ Vàng.
+- [Đại Trưởng Lão Buddhaghosa & Thanh Tịnh Đạo](/theravada/kinh/dai-truong-lao-buddhaghosa-va-tuyet-tac-thanh-tinh-dao-visuddhimagga) — Tuyệt tác luận thư được biên soạn tại Đại Tự Mahāvihāra Tích Lan.
+- [Lịch Sử Phật Giáo Nguyên Thủy Theravāda Tại Việt Nam](/theravada/kinh/lich-su-phat-giao-nguyen-thuy-theravada-viet-nam) — Dòng chảy du nhập và phát triển tại quê hương.
 EOF
 ,
                 'tags' => ['Truyền Bá Theravada', 'Sri Lanka', 'Đông Nam Á', 'Thánh Tăng Mahinda', 'Suvaṇṇabhūmi', 'Lịch Sử Phật Giáo'],
@@ -2912,6 +3052,13 @@ Bộ luận *Visuddhimagga* là bản đồ chi tiết từng bước dẫn dắ
 7. **Tri Kiến Thanh Tịnh (*Ñāṇadassana-visuddhi*)**: Chứng đạt 4 Thánh Đạo, 4 Thánh Quả (*Sotāpanna, Sakadāgāmī, Anāgāmī, Arahant*) và Niết-bàn giải thoát.
 
 Cho đến ngày nay, *Visuddhimagga* vẫn là cuốn kim chỉ nam tối thượng không thể thiếu cho bất kỳ thiền sinh nào bước chân vào lộ trình thực hành thiền Vipassanā Nguyên thủy.
+
+---
+
+## 📚 Các Bài Học & Kinh Điển Liên Quan Mật Thiết
+- [Thất Thanh Tịnh & 16 Tầng Tuệ Minh Sát](/theravada/kinh/that-thanh-tinh-va-muoi-sau-tang-tue-minh-sat-vipassana-nana) — Lộ trình tâm linh qua lăng kính Visuddhimagga.
+- [Thiền Định Samatha & Thiền Tuệ Vipassanā](/theravada/kinh/thien-dinh-samatha-va-thien-tue-vipassana-hai-doi-canh-giai-thoat) — Hai cỗ xe giải thoát trong luận thư Thanh Tịnh Đạo.
+- [Lịch Sử Truyền Bá Theravāda Sang Tích Lan](/theravada/kinh/lich-su-truyen-ba-theravada-sang-sri-lanka-va-dong-nam-a) — Bối cảnh Phật giáo tại Đại Tự Mahāvihāra nơi ngài Buddhaghosa trước tác.
 EOF
 ,
                 'tags' => ['Buddhaghosa', 'Thanh Tịnh Đạo', 'Visuddhimagga', 'Thất Thanh Tịnh', 'Luận Thư', 'Theravada'],
@@ -2994,6 +3141,13 @@ Bản dịch trong sáng, chuẩn xác, văn phong thanh thoát và trung thực
 ## 5. Diện Mạo & Sức Sống Theravāda Việt Nam Đương Đại
 
 Ngày nay, Phật giáo Nam truyền là một thành viên gắn bó mật thiết trong lòng Giáo hội Phật giáo Việt Nam. Phong trào tu tập thiền **Minh Sát Tuệ Vipassanā** theo truyền thống Mahāsi Sayadaw, Pa-Auk Sayadaw, S.N. Goenka ngày càng thu hút đông đảo giới trẻ, trí thức và Phật tử tham gia để tìm kiếm sự an tịnh nội tâm và chuyển hóa khổ đau trong cuộc sống hiện đại.
+
+---
+
+## 📚 Các Bài Học & Kinh Điển Liên Quan Mật Thiết
+- [Lịch Sử Truyền Bá Theravāda Sang Tích Lan & Đông Nam Á](/theravada/kinh/lich-su-truyen-ba-theravada-sang-sri-lanka-va-dong-nam-a) — Hành trình truyền bá Phật giáo Nam truyền.
+- [Thiền Tứ Niệm Xứ (Satipaṭṭhāna)](/theravada/kinh/thien-tu-niem-xu-satipatthana-huong-dan-thuc-hanh-vipassana) — Pháp môn Vipassanā cốt tủy được thực hành rộng rãi.
+- [Phương Pháp Hành Thiền Ānāpānasati 16 Bước](/theravada/kinh/phuong-phap-hanh-thien-anapanasati-16-buoc-chi-tiet) — Hướng dẫn thiền hơi thở thực chứng.
 EOF
 ,
                 'tags' => ['Theravada Việt Nam', 'Hòa Thượng Hộ Tông', 'Thích Minh Châu', 'Chùa Bửu Quang', 'Kỳ Viên Tự', 'Lịch Sử Phật Giáo'],

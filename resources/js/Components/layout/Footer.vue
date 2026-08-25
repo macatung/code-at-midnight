@@ -11,135 +11,43 @@ const { t } = useI18n();
 
 const scrollToTop = () => {
   sound.playHop(1.2);
-  if (typeof window !== 'undefined') {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
-const triggerHeartEasterEgg = (e: MouseEvent) => {
+const triggerHeartEasterEgg = (event: MouseEvent) => {
   heartClicks.value++;
   sound.playSuccess();
-
-  try {
-    if (typeof window !== 'undefined') {
-      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-      const x = (rect.left + rect.width / 2) / window.innerWidth;
-      const y = (rect.top + rect.height / 2) / window.innerHeight;
-
-      confetti({
-        particleCount: 45,
-        spread: 60,
-        origin: { x, y },
-        colors: ['#00f5a0', '#ffd166', '#ff0054', '#9d4edd'],
-        disableForReducedMotion: true,
-      });
-    }
-  } catch {
-    // Fallback
-  }
+  const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+  confetti({ particleCount: 45, spread: 60, origin: { x: (rect.left + rect.width / 2) / window.innerWidth, y: (rect.top + rect.height / 2) / window.innerHeight }, colors: ['#00f5a0', '#ffd166', '#ff0054', '#9d4edd'], disableForReducedMotion: true });
 };
 </script>
 
 <template>
-  <footer class="footer relative z-10 border-t border-white/5 py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-left select-none">
-    <!-- Top Bar with Hop-to-Top Trigger -->
-    <div class="flex flex-col sm:flex-row items-center justify-between pb-8 border-b border-white/5 gap-4">
-      <div class="flex items-center gap-3">
-        <MiniMascotLogo size="sm" :animated="true" />
-        <span class="font-display font-bold text-base sm:text-lg text-white">
-          macatung<span class="text-phantom-mint">.dev</span>
-        </span>
-        <span class="text-xs font-mono text-slate-500 hidden sm:inline">— Code at midnight.</span>
-      </div>
-
-      <!-- Hop-to-Top Button -->
-      <button
-        type="button"
-        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-midnight-900 border border-white/10 text-slate-300 hover:text-phantom-mint hover:border-phantom-mint/40 transition-all text-xs font-mono group min-h-[44px]"
-        @click="scrollToTop"
-      >
-        <span>{{ t('footer.backToTop') }}</span>
-        <Icons name="ChevronUp" :size="16" class="group-hover:-translate-y-1 transition-transform" />
-      </button>
+  <footer class="relative z-10 max-w-7xl mx-auto w-full border-t border-white/5 px-4 py-12 text-left sm:px-6 lg:px-8">
+    <div class="flex flex-col items-center justify-between gap-4 border-b border-white/5 pb-8 sm:flex-row">
+      <div class="flex items-center gap-3"><MiniMascotLogo size="sm" :animated="true" /><span class="font-display font-bold text-base text-white">macatung<span class="text-phantom-mint">.dev</span></span></div>
+      <button type="button" class="inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-white/10 bg-midnight-900 px-4 py-2.5 text-xs font-mono text-slate-300 transition hover:border-phantom-mint/40 hover:text-phantom-mint" @click="scrollToTop">{{ t('footer.backToTop') }} <Icons name="ChevronUp" :size="16" /></button>
     </div>
 
-    <!-- Navigation Columns Grid -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 py-10 border-b border-white/5 text-xs font-sans">
-      <!-- Col 1: Grimoire & Lore -->
+    <div class="grid grid-cols-2 gap-8 border-b border-white/5 py-10 text-xs font-sans md:grid-cols-4">
       <div>
-        <h4 class="font-mono text-slate-400 uppercase tracking-wider mb-3 text-[11px]">{{ t('footer.lore') }}</h4>
-        <ul class="space-y-2 text-slate-400">
-          <li><a href="#hero" class="hover:text-phantom-mint transition-colors">{{ t('footer.night') }}</a></li>
-          <li><a href="#philosophy" class="hover:text-phantom-mint transition-colors">{{ t('footer.philosophy') }}</a></li>
-          <li><a href="#about" class="hover:text-phantom-mint transition-colors">{{ t('footer.manifesto') }}</a></li>
-          <li><a href="#projects" class="hover:text-phantom-mint transition-colors">{{ t('footer.systems') }}</a></li>
-        </ul>
+        <h4 class="mb-3 font-mono text-[11px] uppercase tracking-wider text-slate-400">{{ t('footer.product') }}</h4>
+        <ul class="space-y-2 text-slate-400"><li><a href="/" class="hover:text-phantom-mint">{{ t('nav.home') }}</a></li><li><a href="/desktop" class="hover:text-phantom-mint">Task Companion</a></li><li><a href="/contact" class="hover:text-phantom-mint">{{ t('nav.contact') }}</a></li></ul>
       </div>
-
-      <!-- Col 2: Interactive Labs -->
       <div>
-        <h4 class="font-mono text-slate-400 uppercase tracking-wider mb-3 text-[11px]">{{ t('footer.labs') }}</h4>
-        <ul class="space-y-2 text-slate-400">
-          <li><a href="/projects" class="hover:text-phantom-mint transition-colors">{{ t('footer.projectVault') }}</a></li>
-          <li><a href="/game" class="hover:text-phantom-mint transition-colors">{{ t('footer.arcade') }}</a></li>
-          <li><a href="/talisman" class="hover:text-phantom-mint transition-colors">{{ t('footer.forge') }}</a></li>
-          <li><a href="/theravada" class="hover:text-amber-300 transition-colors flex items-center gap-1"><span>{{ t('nav.theravada') }}</span> <span>🧘</span></a></li>
-        </ul>
+        <h4 class="mb-3 font-mono text-[11px] uppercase tracking-wider text-slate-400">{{ t('footer.discover') }}</h4>
+        <ul class="space-y-2 text-slate-400"><li><a href="/projects" class="hover:text-phantom-mint">{{ t('nav.projects') }}</a></li><li><a href="/about" class="hover:text-phantom-mint">{{ t('nav.about') }}</a></li><li><a href="/blog" class="hover:text-phantom-mint">{{ t('nav.blog') }}</a></li></ul>
       </div>
-
-      <!-- Col 3: Terminal & Altar -->
       <div>
-        <h4 class="font-mono text-slate-400 uppercase tracking-wider mb-3 text-[11px]">{{ t('footer.tools') }}</h4>
-        <ul class="space-y-2 text-slate-400">
-          <li><a href="#terminal" class="hover:text-phantom-mint transition-colors">Midnight Terminal CLI</a></li>
-          <li><a href="#contact" class="hover:text-phantom-mint transition-colors">{{ t('footer.altar') }}</a></li>
-          <li><a href="https://github.com/macatung" target="_blank" rel="noopener noreferrer" class="hover:text-phantom-mint transition-colors">GitHub Repository</a></li>
-        </ul>
+        <h4 class="mb-3 font-mono text-[11px] uppercase tracking-wider text-slate-400">{{ t('footer.labs') }}</h4>
+        <ul class="space-y-2 text-slate-400"><li><a href="/game" class="hover:text-phantom-mint">{{ t('nav.game') }}</a></li><li><a href="/talisman" class="hover:text-phantom-mint">{{ t('nav.talisman') }}</a></li><li><a href="/theravada" class="hover:text-amber-300">{{ t('nav.theravada') }}</a></li></ul>
       </div>
-
-      <!-- Col 4: Status -->
       <div>
-        <h4 class="font-mono text-slate-400 uppercase tracking-wider mb-3 text-[11px]">{{ t('footer.status') }}</h4>
-        <div class="space-y-1.5 text-slate-400 font-mono text-[11px]">
-          <div class="flex items-center gap-1.5 text-phantom-mint">
-            <span class="w-1.5 h-1.5 rounded-full bg-phantom-mint animate-pulse" />
-            <span>100% Uptime Pledge</span>
-          </div>
-          <div>Audio: Web Audio API (0 asset)</div>
-          <div>Framework: Vue 3 + Laravel 11</div>
-          <div class="pt-1">
-            <a href="/admin" class="text-slate-400 hover:text-phantom-mint transition-colors flex items-center gap-1">
-              <span>⚙️ {{ t('footer.admin') }}</span>
-              <span>→</span>
-            </a>
-          </div>
-        </div>
+        <h4 class="mb-3 font-mono text-[11px] uppercase tracking-wider text-slate-400">{{ t('footer.connect') }}</h4>
+        <ul class="space-y-2 text-slate-400"><li><a href="https://github.com/macatung" target="_blank" rel="noopener noreferrer" class="hover:text-phantom-mint">GitHub</a></li><li><a href="/admin" class="hover:text-phantom-mint">{{ t('footer.admin') }}</a></li></ul>
       </div>
     </div>
 
-    <!-- Bottom Attribution & Heart Easter Egg Bar -->
-    <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 font-mono gap-4">
-      <p class="text-center sm:text-left">
-        © 2026 macatung.dev — Crafted with Laravel 11, Inertia.js, Vue 3 & Midnight Magic.
-      </p>
-
-      <!-- Easter Egg Heart Button -->
-      <div class="flex items-center gap-1.5 text-slate-400 select-none">
-        <span>Crafted with</span>
-        <button
-          type="button"
-          class="text-rose-400 hover:scale-125 active:scale-95 transition-transform cursor-pointer p-1 min-h-[32px] min-w-[32px] flex items-center justify-center focus:outline-none"
-        :title="t('footer.heartTitle')"
-          @click="triggerHeartEasterEgg"
-        >
-          ❤️
-        </button>
-        <span>& Midnight Robusta</span>
-        <span v-if="heartClicks > 0" class="text-phantom-mint font-bold ml-1">({{ heartClicks }})</span>
-      </div>
-    </div>
+    <div class="flex flex-col items-center justify-between gap-4 pt-8 text-xs font-mono text-slate-500 sm:flex-row"><p>© 2026 macatung.dev</p><div class="flex items-center gap-1.5"><span>{{ t('footer.crafted') }}</span><button type="button" class="flex min-h-[32px] min-w-[32px] items-center justify-center p-1 text-rose-400" :title="t('footer.heartTitle')" @click="triggerHeartEasterEgg">❤️</button><span v-if="heartClicks" class="font-bold text-phantom-mint">({{ heartClicks }})</span></div></div>
   </footer>
 </template>

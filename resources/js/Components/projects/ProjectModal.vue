@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, watch } from 'vue';
-import { Link } from '@inertiajs/vue3';
 import type { Project } from '@/types/portfolio';
 import { sound } from '@/audio/soundEffects';
 import { useI18n } from '@/composables/useI18n';
@@ -14,23 +13,6 @@ const emit = defineEmits<{
   (e: 'close'): void;
 }>();
 const { t } = useI18n();
-
-const getRelatedBlog = (title: string): { slug: string; label: string } | null => {
-  const lower = title.toLowerCase();
-  if (lower.includes('agent') || lower.includes('crm')) {
-    return { slug: 'kien-truc-multi-agent-ai-customer-service', label: t('projectModal.readArticle') };
-  }
-  if (lower.includes('financial') || lower.includes('chứng khoán') || lower.includes('cổ phiếu')) {
-    return { slug: 'toi-uu-dinh-gia-co-phieu-artisan-gemini-ai', label: t('projectModal.readArticle') };
-  }
-  if (lower.includes('gis') || lower.includes('cáp quang') || lower.includes('telecom')) {
-    return { slug: 'so-hoa-mang-cap-quang-toan-quoc-qgis-postgis', label: t('projectModal.readArticle') };
-  }
-  if (lower.includes('sdh') || lower.includes('nms') || lower.includes('dwdm')) {
-    return { slug: 'giam-sat-ha-tang-truyen-dan-sdh-dwdm-nms-ml', label: t('projectModal.readArticle') };
-  }
-  return null;
-};
 
 const handleKeyDown = (e: KeyboardEvent) => {
   if (e.key === 'Escape' && props.isOpen) {
@@ -195,7 +177,7 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <!-- Modal Footer Actions with Cross-link to Blog -->
+        <!-- Modal Footer Actions -->
         <div class="p-4 sm:p-6 bg-midnight-950/90 border-t border-white/10 flex flex-wrap items-center justify-between gap-4 shrink-0">
           <div class="flex flex-wrap items-center gap-3">
             <button
@@ -206,17 +188,6 @@ onUnmounted(() => {
               <span>{{ t('projectModal.summon') }}</span>
               <span>📜</span>
             </button>
-
-            <!-- Cross-Link to matching Blog article if available -->
-            <Link
-              v-if="getRelatedBlog(project.title)"
-              :href="`/blog/${getRelatedBlog(project.title)!.slug}`"
-              class="px-4 py-2.5 rounded-xl bg-midnight-900 border border-talisman-gold/40 text-talisman-gold hover:bg-talisman-gold hover:text-midnight-950 font-display font-bold text-xs sm:text-sm transition-all flex items-center gap-1.5 min-h-[44px] shadow-sm"
-              @click="emit('close'); sound.playClick()"
-            >
-              <span>📖 {{ t('projectModal.readArticle') }}</span>
-              <span>→</span>
-            </Link>
           </div>
 
           <button

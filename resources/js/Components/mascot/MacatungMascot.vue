@@ -5,9 +5,11 @@ import { sound } from '@/audio/soundEffects';
 import { trackEvent } from '@/utils/analytics';
 import { useTimeCycle } from '@/composables/useTimeCycle';
 import { useMascotReactor } from '@/composables/useMascotReactor';
+import { useI18n } from '@/composables/useI18n';
 
 const { activePhase } = useTimeCycle();
 const { currentReaction, isIdleSleeping, totalHops, incrementHop } = useMascotReactor();
+const { locale, t } = useI18n();
 
 type Mood = 'normal' | 'caffeine' | 'sleepy' | 'rage';
 type MascotSize = 'sm' | 'md' | 'lg' | 'hero';
@@ -34,39 +36,39 @@ const isHopping = ref(false);
 const mood = ref<Mood>('normal');
 const currentQuoteIndex = ref(0);
 
-// Minimalist, Clean Phase Roles
 const currentJobDescription = computed(() => {
+  const isVietnamese = locale.value === 'vi';
   switch (activePhase.value.id) {
     case 'dawn':
       return {
-        title: 'Dawn Robusta',
+        title: isVietnamese ? 'Thiết lập task buổi sáng' : 'Morning task setup',
         icon: '🌅',
-        tag: 'BARISTA ARCHITECT',
+        tag: 'TASK COMPANION',
         badgeColor: '#ffd166',
         accessory: 'coffee'
       };
     case 'afternoon':
       return {
-        title: 'Cyber Shipper',
+        title: isVietnamese ? 'Đưa task đến review' : 'Move work to review',
         icon: '☀️',
-        tag: 'CYBER DEPLOYER',
+        tag: 'TASK COMPANION',
         badgeColor: '#00d2ff',
         accessory: 'sunglasses'
       };
     case 'twilight':
       return {
-        title: 'Twilight Alchemist',
+        title: isVietnamese ? 'Chuẩn bị task tiếp theo' : 'Prepare the next task',
         icon: '🔮',
-        tag: 'TWILIGHT ALCHEMIST',
+        tag: 'TASK COMPANION',
         badgeColor: '#c084fc',
         accessory: 'stretch'
       };
     case 'midnight':
     default:
       return {
-        title: 'Midnight Sorcery',
+        title: isVietnamese ? 'Luồng làm việc tập trung' : 'Focused task flow',
         icon: '🌙',
-        tag: 'NIGHT SORCERER',
+        tag: 'TASK COMPANION',
         badgeColor: '#00f5a0',
         accessory: 'talisman'
       };
@@ -74,34 +76,47 @@ const currentJobDescription = computed(() => {
 });
 
 const quotes = computed(() => {
-  const phaseQuotes: Record<string, string[]> = {
+  const phaseQuotes: Record<string, string[]> = locale.value === 'vi' ? {
     midnight: [
-      'Code lúc nửa đêm là chân ái! 🌙',
-      'Vạn vật say ngủ, dòng code thức giấc! ⚡',
-      'Đang yểm bùa 0 bug vào từng dòng lệnh! 📜',
-      'Tập trung 100% không một tiếng ồn! ⚡',
-      'Thứ Sáu deploy, thứ Bảy ngủ ngon! 🚀',
+      'Task Companion giữ task, workspace và ngữ cảnh ở đúng một nơi. 🌙',
+      'Chọn task tiếp theo và bắt đầu làm việc không mất nhịp. ⚡',
+      'Giao đúng ngữ cảnh cho coding agent trước khi bắt đầu. 📌',
     ],
     dawn: [
-      'Tách Robusta sáng sớm, nạp trọn linh khí! ☕',
-      'Bình minh rực rỡ, tư duy minh mẫn! 🌅',
-      'Standup chuẩn chỉ, sẵn sàng tác chiến! ⚡',
-      'Vừa uống cafe vừa review pull request! ☕',
-      'Cà phê không đường, code không bug! ☕',
+      'Bắt đầu ngày với một task rõ ràng và đúng workspace. ☀️',
+      'Task Companion giúp chuyển brief thành phiên làm việc sẵn sàng. 📋',
+      'Mở Task Hub, chọn task và đi thẳng vào phần cần làm. ✨',
     ],
     afternoon: [
-      'Đang ship tính năng, kính râm chống chói! 🕶️',
-      'Tốc độ ánh sáng, bứt phá tiến độ! 🚀',
-      'Review code chuẩn mực, 0 downtime! 💎',
-      'Microservices chịu tải cao điểm! ⚡',
-      'Deploying feature lên production... 🚀',
+      'Giữ tiến độ: implementation, kết quả và review trong cùng một luồng. 🚀',
+      'Task Companion mở đúng agent cho task bạn đang xử lý. 🤖',
+      'Hoàn tất task với kết quả sẵn sàng review trong Task Hub. ✅',
     ],
     twilight: [
-      'Hoàng hôn buông xuống, bóng đêm trỗi dậy! 🌆',
-      'Vươn vai khởi động gân cốt cho ca đêm! 🧛‍♂️',
-      'Refactor code gọn gàng, đón trăng lên! 🔮',
-      'Ánh đèn neon bật, phù phép bắt đầu! 💜',
-      'Nhảy nhót tí cho ấm người nào! ⚡',
+      'Chuẩn bị task tiếp theo trước khi kết thúc ngày làm việc. 🌆',
+      'Ngữ cảnh rõ ràng giúp bạn hoặc agent tiếp tục ngay ngày mai. 📌',
+      'Task Companion nối Task Hub với desktop workflow của bạn. ✨',
+    ]
+  } : {
+    midnight: [
+      'Task Companion keeps your task, workspace and context together. 🌙',
+      'Choose the next task and start without losing momentum. ⚡',
+      'Give your coding agent the right context before you begin. 📌',
+    ],
+    dawn: [
+      'Start the day with one clear task and the right workspace. ☀️',
+      'Task Companion turns a brief into a ready-to-work session. 📋',
+      'Open Task Hub, choose a task and get straight to the work. ✨',
+    ],
+    afternoon: [
+      'Keep implementation, results and review in one focused flow. 🚀',
+      'Task Companion opens the right agent for the task at hand. 🤖',
+      'Finish with a result that is ready to review in Task Hub. ✅',
+    ],
+    twilight: [
+      'Prepare the next task before you finish the day. 🌆',
+      'Clear context lets you or your agent resume right away tomorrow. 📌',
+      'Task Companion connects Task Hub to your desktop workflow. ✨',
     ]
   };
 
@@ -119,7 +134,7 @@ const currentQuote = computed(() => {
     return `${currentReaction.value.emoji} ${currentReaction.value.message}`;
   }
   if (isIdleSleeping.value) {
-    return '😴 Zzz... Khò khò... (Lữ khách đi vắng, chợp mắt tí)...';
+    return locale.value === 'vi' ? '😴 Task Companion đang chờ task tiếp theo của bạn...' : '😴 Task Companion is ready when you return to your next task...';
   }
   return quotes.value[currentQuoteIndex.value % quotes.value.length];
 });
@@ -146,6 +161,8 @@ const setMood = (newMood: Mood) => {
   emit('mood-change', mood.value);
   sound.playClick();
 };
+
+const moodLabel = (moodName: Mood) => t(`mascot.mood.${moodName}`);
 
 const triggerHop = () => {
   hopCount.value++;
@@ -566,7 +583,7 @@ const dimensions = computed(() => {
     <div v-if="showControls" class="mt-4 flex flex-col items-center gap-3">
       <!-- Hop Counter Display -->
       <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-midnight-900/90 border border-white/10 text-xs font-mono text-slate-300">
-        <span>Hops:</span>
+        <span>{{ t('mascot.hops') }}:</span>
         <span class="font-extrabold text-sm tabular-nums" :style="{ color: activePhase.accentHex }">{{ hopCount }}</span>
       </div>
 
@@ -586,7 +603,7 @@ const dimensions = computed(() => {
           } : {}"
           @click="setMood(m)"
         >
-          {{ m }}
+          {{ moodLabel(m) }}
         </button>
       </div>
     </div>

@@ -4,7 +4,6 @@ import Navbar from '@/Components/layout/Navbar.vue';
 import Footer from '@/Components/layout/Footer.vue';
 import TalismanCanvas from '@/Components/mascot/TalismanCanvas.vue';
 import TalismanGenerator from '@/Components/talisman/TalismanGenerator.vue';
-import NextStepsHub from '@/Components/layout/NextStepsHub.vue';
 import { Link } from '@inertiajs/vue3';
 import { useI18n } from '@/composables/useI18n';
 
@@ -65,8 +64,6 @@ const talismanJsonLd = {
       <!-- Talisman Forge Tool -->
       <TalismanGenerator />
 
-      <!-- Next Steps Continuation Hub -->
-      <NextStepsHub current-path="/talisman" />
     </main>
 
     <Footer />

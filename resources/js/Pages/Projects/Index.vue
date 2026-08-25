@@ -4,7 +4,6 @@ import Navbar from '@/Components/layout/Navbar.vue';
 import Footer from '@/Components/layout/Footer.vue';
 import TalismanCanvas from '@/Components/mascot/TalismanCanvas.vue';
 import ProjectsSection from '@/Components/projects/ProjectsSection.vue';
-import NextStepsHub from '@/Components/layout/NextStepsHub.vue';
 import { useI18n } from '@/composables/useI18n';
 import { Link } from '@inertiajs/vue3';
 
@@ -52,8 +51,6 @@ const projectsJsonLd = {
       <!-- Projects Section Component (Full mode with filter & search) -->
       <ProjectsSection :projects="projects" :featured-only="false" />
 
-      <!-- Next Steps Continuation Hub -->
-      <NextStepsHub current-path="/projects" />
     </main>
 
     <Footer />
