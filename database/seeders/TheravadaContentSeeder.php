@@ -2876,7 +2876,8 @@ graph TD
 
 ### Khổ Kệ 1: Thiết Lập Môi Trường Sống & Nhân Cách Ban Đầu
 > **Asevanā ca bālānaṃ, paṇḍitānañca sevanā;<br />
-> Pūjā ca pūjanīyānaṃ, etaṃ maṅgalamuttamaṃ.**<br />
+> Pūjā ca pūjanīyānaṃ, etaṃ maṅgalamuttamaṃ.**
+
 > 1. Không giao du, thân cận với kẻ ác, kẻ thiếu đạo đức;<br />
 > 2. Luôn gần gũi, học hỏi nơi các bậc hiền trí đức hạnh;<br />
 > 3. Cung kính, tôn trọng những bậc xứng đáng được tôn kính (cha mẹ, thầy tổ, bậc Thánh);<br />
@@ -2884,7 +2885,8 @@ graph TD
 
 ### Khổ Kệ 2: Định Hướng Đời Sống & Tích Lũy Phước Đức
 > **Patirūpadesavāso ca, pubbe ca katapuññatā;<br />
-> Attasammāpaṇidhi ca, etaṃ maṅgalamuttamaṃ.**<br />
+> Attasammāpaṇidhi ca, etaṃ maṅgalamuttamaṃ.**
+
 > 4. Được sinh sống trong môi trường xã hội an lành, thuận lợi cho việc tu học;<br />
 > 5. Đã từng tạo nhiều công đức, phước lành trong quá khứ;<br />
 > 6. Biết định hướng bản thân đi theo con đường chân chính, hướng thượng;<br />
@@ -2892,7 +2894,8 @@ graph TD
 
 ### Khổ Kệ 3: Nâng Cao Trí Tuệ & Kỹ Năng Ứng Xử
 > **Bāhusaccañca sippañca, vinayo ca susikkhito;<br />
-> Subhāsitā ca yā vācā, etaṃ maṅgalamuttamaṃ.**<br />
+> Subhāsitā ca yā vācā, etaṃ maṅgalamuttamaṃ.**
+
 > 7. Học rộng, hiểu sâu, tích lũy nhiều kiến thức hữu ích;<br />
 > 8. Tinh thông nghề nghiệp, có tay nghề chuyên môn giỏi giang;<br />
 > 9. Rèn luyện kỷ luật, giữ gìn giới hạnh trang nghiêm;<br />
@@ -2901,7 +2904,8 @@ graph TD
 
 ### Khổ Kệ 4: Tròn Đầy Đạo Nghĩa Gia Đình & Sự Nghiệp Liêm Chính
 > **Mātāpitu-upaṭṭhānaṃ, puttadārassa saṅgaho;<br />
-> Anākulā ca kammantā, etaṃ maṅgalamuttamaṃ.**<br />
+> Anākulā ca kammantā, etaṃ maṅgalamuttamaṃ.**
+
 > 11. Hết lòng hiếu thảo, phụng dưỡng cha mẹ già yếu chu đáo;<br />
 > 12. Yêu thương, chăm sóc, che chở cho vợ/chồng và con cái ấm êm;<br />
 > 13. Làm việc siêng năng, không bê trễ, không mờ ám phi pháp;<br />
@@ -2909,7 +2913,8 @@ graph TD
 
 ### Khổ Kệ 5: Lan Tỏa Lòng Bác Ái & Hành Xử Không Tì Vết
 > **Dānañca dhammacariyā ca, ñātakānañca saṅgaho;<br />
-> Anavajjāni kammāni, etaṃ maṅgalamuttamaṃ.**<br />
+> Anavajjāni kammāni, etaṃ maṅgalamuttamaṃ.**
+
 > 14. Rộng lòng [Bố Thí chia sẻ](/theravada/kinh/muoi-phap-ba-la-mat-dasa-parami-hanh-nguyen-bo-tat) giúp đỡ người nghèo khó;<br />
 > 15. Sống đời hành trì Chánh Pháp lương thiện, công chính;<br />
 > 16. Giúp đỡ bà con thân quyến khi gặp hoạn nạn khó khăn;<br />
@@ -2918,7 +2923,8 @@ graph TD
 
 ### Khổ Kệ 6: Phòng Ngừa Tệ Nạn & Tỉnh Táo Tâm Trí
 > **Āratī viratī pāpā, majjapānā ca saññamo;<br />
-> Appamādo ca dhammesu, etaṃ maṅgalamuttamaṃ.**<br />
+> Appamādo ca dhammesu, etaṃ maṅgalamuttamaṃ.**
+
 > 18. Ghê sợ và dứt khoát tránh xa mọi điều ác quấy;<br />
 > 19. Không say sưa nghiện ngập rượu chè, cờ bạc, chất kích thích;<br />
 > 20. Không phóng dật buông lung, luôn tinh cần làm các việc thiện lành;<br />
@@ -2926,7 +2932,8 @@ graph TD
 
 ### Khổ Kệ 7: Tôi Luyện Đức Khiêm Hạ & Tri Ân
 > **Gāravo ca nivāto ca, santuṭṭhī ca kataññutā;<br />
-> Kālena dhammassavanaṃ, etaṃ maṅgalamuttamaṃ.**<br />
+> Kālena dhammassavanaṃ, etaṃ maṅgalamuttamaṃ.**
+
 > 21. Cung kính lễ độ với mọi người;<br />
 > 22. Khiêm tốn nhún nhường, không tự cao tự đại;<br />
 > 23. Biết đủ với những gì mình đang có (*Tri túc*);<br />
@@ -2936,7 +2943,8 @@ graph TD
 
 ### Khổ Kệ 8: Hòa Ái, Kiên Nhẫn & Đàm Luận Đạo Lý
 > **Khantī ca sovaccassatā, samaṇānañca dassanaṃ;<br />
-> Kālena dhammasākacchā, etaṃ maṅgalamuttamaṃ.**<br />
+> Kālena dhammasākacchā, etaṃ maṅgalamuttamaṃ.**
+
 > 26. Nhẫn nại chịu đựng nghịch cảnh, không nóng giận oán hờn;<br />
 > 27. Dễ dạy, biết lắng nghe lời chỉ dạy chân thành;<br />
 > 28. Thường xuyên chiêm bái, thân cận các bậc Sa-môn tu hành chân chính;<br />
@@ -2945,7 +2953,8 @@ graph TD
 
 ### Khổ Kệ 9: Thành Tựu Đời Sống Tâm Linh Cao Cả
 > **Tapo ca brahmacariyañca, ariyasaccāna dassanaṃ;<br />
-> Nibbānasacchikiriyā ca, etaṃ maṅgalamuttamaṃ.**<br />
+> Nibbānasacchikiriyā ca, etaṃ maṅgalamuttamaṃ.**
+
 > 30. Sống đời khắc kỷ, tinh tấn thiêu đốt phiền não;<br />
 > 31. Thực hành đời sống phạm hạnh thanh tịnh cao thượng;<br />
 > 32. Thấu suốt [Bốn Chân Lý Tối Thượng (Tứ Thánh Đế)](/theravada/kinh/tu-thanh-de-bon-chan-ly-toi-thuong);<br />
@@ -2954,7 +2963,8 @@ graph TD
 
 ### Khổ Kệ 10: Đỉnh Cao Giải Thoát — Tâm Bất Biến Giữa Dòng Đời
 > **Phuṭṭhassa lokadhammehi, cittaṃ yassa na kampati;<br />
-> Asokaṃ virajaṃ khemaṃ, etaṃ maṅgalamuttamaṃ.**<br />
+> Asokaṃ virajaṃ khemaṃ, etaṃ maṅgalamuttamaṃ.**
+
 > 34. Khi đối diện với [Bát Phong — 8 Ngọn Gió Đời](/theravada/kinh/bat-phong-attha-lokadhamma-tam-ngon-gio-doi-va-tam-bat-bien) (Được - Mất, Khen - Chê, Vinh - Nhục, Vui - Khổ), tâm không hề lay chuyển, chao đảo;<br />
 > 35. Tâm không còn sầu muộn tiếc thương (*Asoka*);<br />
 > 36. Tâm hoàn toàn sạch bóng bụi trần ô nhiễm (*Viraja*);<br />

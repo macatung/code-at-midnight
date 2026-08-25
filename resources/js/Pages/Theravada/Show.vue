@@ -489,6 +489,36 @@ const parseMarkdownTables = (content: string, isPaper: boolean): string => {
   });
 };
 
+const parseBlockquotes = (content: string, isPaper: boolean) => {
+  return content.replace(/(?:^>[^\n]*(?:\n|$))+/gm, (block) => {
+    const lines = block
+      .split('\n')
+      .map(line => line.replace(/^>[ \t]?/, ''))
+      .filter(l => l.trim().length > 0);
+    const rawContent = lines.join('\n').trim();
+    if (!rawContent) return '';
+
+    let text = rawContent
+      .replace(/\r/g, '')
+      .replace(/(?:<br\s*\/?>\s*){2,}/gi, '___STANZA_BREAK___')
+      .replace(/\n\s*\n+/g, '___STANZA_BREAK___')
+      .replace(/<br\s*\/?>/gi, '\n');
+
+    const stanzas = text.split('___STANZA_BREAK___');
+    const borderDivider = isPaper ? 'border-amber-900/15' : 'border-amber-500/20';
+    const formatted = stanzas.map(st => {
+      const stanzaLines = st.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+      return stanzaLines.join('<br/>');
+    }).filter(s => s.length > 0).join(`<div class="my-3 border-t ${borderDivider}"></div>`);
+
+    const containerStyle = isPaper
+      ? 'border-amber-700 bg-amber-50/90 shadow-sm text-[#1c1917]'
+      : 'border-amber-500/80 bg-amber-950/30 shadow-lg text-amber-100/95';
+
+    return `\n\n<blockquote class="my-6 pl-5 pr-4 py-4 border-l-4 ${containerStyle} rounded-r-2xl font-serif text-base sm:text-lg leading-relaxed">\n  <div class="not-italic font-serif leading-[1.85]">${formatted}</div>\n</blockquote>\n\n`;
+  });
+};
+
 // Rich Markdown to Zen HTML Parser with Sutta-first readability & Pāḷi Annotation
 const renderedMarkdown = computed(() => {
   if (!props.article.content) return '';
@@ -517,16 +547,12 @@ const renderedMarkdown = computed(() => {
   // 2. Markdown Tables
   md = parseMarkdownTables(md, isPaperMode.value);
 
+  // 3. Blockquotes (Grouping contiguous lines & stanzas by Pali and Vietnamese)
+  md = parseBlockquotes(md, isPaperMode.value);
+
   let parsedHtml = '';
 
   if (isPaperMode.value) {
-    // 3. Blockquotes (Paper Mode - Clean & High Contrast)
-    md = md.replace(/^>\s?(.*)$/gim, (match, p1) => {
-      return `<blockquote class="my-5 pl-4 py-3 border-l-3 border-amber-700 bg-amber-50/80 rounded-r-xl text-[#1c1917] font-serif italic text-base sm:text-lg leading-relaxed">
-        <div class="not-italic font-serif text-[#1c1917]">${p1.trim()}</div>
-      </blockquote>`;
-    });
-
     // 4. Headings (Pure Elegant Typography without emoji clutter)
     md = md.replace(/^### (.*$)/gim, (m, p1) => `<h3 class="text-lg sm:text-xl font-bold text-amber-950 mt-7 mb-2.5 font-serif leading-snug">${cleanHeadingText(p1)}</h3>`);
     md = md.replace(/^## (.*$)/gim, (m, p1) => `<h2 class="text-xl sm:text-2xl font-bold text-amber-950 mt-9 mb-3.5 pb-2 border-b border-amber-300/80 font-serif leading-snug">${cleanHeadingText(p1)}</h2>`);
@@ -558,13 +584,6 @@ const renderedMarkdown = computed(() => {
       return `<p class="my-4 text-[#1c1917] font-serif leading-[1.95] text-base sm:text-lg text-justify font-normal">${p.replace(/\n/g, '<br/>')}</p>`;
     }).join('\n');
   } else {
-    // 3. Blockquotes (Night Mode)
-    md = md.replace(/^>\s?(.*)$/gim, (match, p1) => {
-      return `<blockquote class="my-5 pl-4 py-3 border-l-3 border-amber-500 bg-amber-950/25 rounded-r-xl text-stone-100 font-serif italic text-base sm:text-lg leading-relaxed">
-        <div class="not-italic text-stone-100">${p1.trim()}</div>
-      </blockquote>`;
-    });
-
     // 4. Headings
     md = md.replace(/^### (.*$)/gim, (m, p1) => `<h3 class="text-lg sm:text-xl font-bold text-amber-200 mt-7 mb-2.5 font-serif leading-snug">${cleanHeadingText(p1)}</h3>`);
     md = md.replace(/^## (.*$)/gim, (m, p1) => `<h2 class="text-xl sm:text-2xl font-bold text-amber-300 mt-9 mb-3.5 pb-2 border-b border-amber-500/30 font-serif leading-snug">${cleanHeadingText(p1)}</h2>`);
