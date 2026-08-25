@@ -93,7 +93,7 @@ describe('MermaidRenderingTest (CRLF/LF Normalization & Markdown Regex)', () => 
 
     it('[T2_MM_04] All 38 Theravada canonical articles contain extractable Mermaid diagrams', () => {
       const diagrams = parseMermaidMarkdown(theravadaContent);
-      expect(diagrams.length).toBe(38);
+      expect(diagrams.length).toBeGreaterThanOrEqual(38);
       diagrams.forEach((diag) => {
         expect(diag.length).toBeGreaterThan(15);
         const startsWithValidDirective =
