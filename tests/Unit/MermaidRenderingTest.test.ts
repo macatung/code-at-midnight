@@ -100,7 +100,12 @@ describe('MermaidRenderingTest (CRLF/LF Normalization & Markdown Regex)', () => 
           diag.startsWith('graph TD') ||
           diag.startsWith('graph LR') ||
           diag.startsWith('timeline') ||
-          diag.startsWith('flowchart');
+          diag.startsWith('flowchart') ||
+          diag.startsWith('sequenceDiagram') ||
+          diag.startsWith('classDiagram') ||
+          diag.startsWith('stateDiagram') ||
+          diag.startsWith('pie') ||
+          diag.startsWith('mindmap');
         expect(startsWithValidDirective).toBe(true);
       });
     });

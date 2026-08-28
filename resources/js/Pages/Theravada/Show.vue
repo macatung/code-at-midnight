@@ -7,6 +7,10 @@ import { PALI_GLOSSARY, PaliGlossaryEntry } from '@/data/paliGlossary';
 import { useZenAtmosphere } from '@/composables/useZenAtmosphere';
 import { useI18n } from '@/composables/useI18n';
 import mermaid from 'mermaid';
+import DualPerspectiveHeaderBanner from '@/Components/common/DualPerspectiveHeaderBanner.vue';
+import DualPerspectiveFooterCard from '@/Components/common/DualPerspectiveFooterCard.vue';
+import DualPerspectiveFloatingPill from '@/Components/common/DualPerspectiveFloatingPill.vue';
+import { parsePerspectiveBlocks, initPerspectiveWidgets } from '@/utils/dualPerspectiveParser';
 
 const props = defineProps<{
   article: {
@@ -23,6 +27,18 @@ const props = defineProps<{
     reading_time_min: number;
     published_at: string;
   };
+  paired_article?: {
+    id?: number;
+    title: string;
+    pali_title?: string;
+    slug: string;
+    excerpt?: string;
+    site_domain: string;
+    reading_time_min?: number;
+    url: string;
+    subdomain_url?: string;
+    main_domain_url?: string;
+  } | null;
   related?: any[];
   title?: string;
 }>();
@@ -305,12 +321,14 @@ onMounted(() => {
   window.addEventListener('keydown', handleKeydown);
   window.addEventListener('click', handleWindowClick);
   renderMermaidDiagrams();
+  nextTick(() => initPerspectiveWidgets());
 });
 
 watch(
   () => [props.article.content, isPaperMode.value],
   () => {
     renderMermaidDiagrams();
+    nextTick(() => initPerspectiveWidgets());
   }
 );
 
@@ -519,11 +537,41 @@ const parseBlockquotes = (content: string, isPaper: boolean) => {
   });
 };
 
+// Math and LaTeX Formula / Flow Sanitizer for Markdown
+const sanitizeMathAndFlows = (content: string, isPaper: boolean): string => {
+  if (!content) return '';
+
+  // Convert $$ ... $$ formula / flow blocks
+  content = content.replace(/\$\$\s*([\s\S]*?)\s*\$\$/g, (_match, inner) => {
+    const cleanFlow = inner
+      .replace(/\\text\{([^}]+)\}/g, '$1')
+      .replace(/\\(long)?rightarrow/g, '➔')
+      .replace(/\\longrightarrow/g, '➔')
+      .replace(/\\rightarrow/g, '➔')
+      .trim();
+
+    const bgClass = isPaper
+      ? 'bg-amber-100/80 border-amber-300 text-amber-950'
+      : 'bg-stone-900/90 border-amber-500/30 text-amber-300';
+    return `\n\n<div class="my-4 p-3.5 sm:p-4 rounded-xl border ${bgClass} font-mono text-sm sm:text-base flex items-center justify-center text-center font-medium shadow-sm overflow-x-auto"><span>${cleanFlow}</span></div>\n\n`;
+  });
+
+  // Convert inline LaTeX arrows $\rightarrow$ or $\longrightarrow$
+  content = content.replace(/\$\\(long)?rightarrow\$/g, '➔');
+  content = content.replace(/\\(long)?rightarrow/g, '➔');
+  content = content.replace(/\\text\{([^}]+)\}/g, '$1');
+
+  return content;
+};
+
 // Rich Markdown to Zen HTML Parser with Sutta-first readability & Pāḷi Annotation
 const renderedMarkdown = computed(() => {
   if (!props.article.content) return '';
   // Normalize line endings to LF
   let md = props.article.content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+
+  // Sanitize math and raw LaTeX symbols into elegant typography
+  md = sanitizeMathAndFlows(md, isPaperMode.value);
 
   // 1. Mermaid Diagrams (Isolated with double newlines)
   md = md.replace(/```\s*mermaid\s*\n([\s\S]*?)```/gim, (_match, code) => {
@@ -544,10 +592,13 @@ const renderedMarkdown = computed(() => {
     </div>\n\n`;
   });
 
-  // 2. Markdown Tables
+  // 2. Dual Perspective Cards
+  md = parsePerspectiveBlocks(md, 'theravada', isPaperMode.value);
+
+  // 3. Markdown Tables
   md = parseMarkdownTables(md, isPaperMode.value);
 
-  // 3. Blockquotes (Grouping contiguous lines & stanzas by Pali and Vietnamese)
+  // 4. Blockquotes (Grouping contiguous lines & stanzas by Pali and Vietnamese)
   md = parseBlockquotes(md, isPaperMode.value);
 
   let parsedHtml = '';
@@ -748,6 +799,13 @@ const suttaJsonLd = computed(() => ({
           Pāḷi: {{ article.pali_title }}
         </p>
 
+        <!-- Dual Perspective Header Banner if counterpart exists -->
+        <DualPerspectiveHeaderBanner
+          v-if="paired_article"
+          :paired-article="paired_article"
+          current-type="theravada"
+        />
+
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 sm:pt-4 border-t border-stone-900 text-xs font-serif text-stone-400">
           <span class="italic text-[11px] sm:text-xs">{{ locale === 'en' ? 'Author / Source' : 'Tác giả / Nguồn' }}: <strong class="text-stone-200 not-italic">{{ article.author || 'Pāḷi Tipiṭaka' }}</strong></span>
 
@@ -879,6 +937,13 @@ const suttaJsonLd = computed(() => ({
         <div class="space-y-4 font-serif text-left antialiased" v-html="renderedMarkdown" />
       </article>
 
+      <!-- Dual Perspective Footer Callout -->
+      <DualPerspectiveFooterCard
+        v-if="paired_article"
+        :paired-article="paired_article"
+        current-type="theravada"
+      />
+
       <!-- Pāḷi Terms Annotation Box (if present) -->
       <div
         v-if="article.pali_terms && article.pali_terms.length > 0"
@@ -989,6 +1054,13 @@ const suttaJsonLd = computed(() => ({
         </Link>
       </div>
     </div>
+
+    <!-- Floating quick switch pill -->
+    <DualPerspectiveFloatingPill
+      v-if="paired_article"
+      :paired-article="paired_article"
+      current-type="theravada"
+    />
   </TheravadaLayout>
 </template>
 

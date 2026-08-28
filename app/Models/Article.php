@@ -11,6 +11,7 @@ class Article extends Model
 
     protected $fillable = [
         'site_domain',
+        'paired_article_id',
         'title',
         'pali_title',
         'slug',
@@ -27,12 +28,18 @@ class Article extends Model
     ];
 
     protected $casts = [
+        'paired_article_id' => 'integer',
         'tags' => 'array',
         'pali_terms' => 'array',
         'is_published' => 'boolean',
         'reading_time_min' => 'integer',
         'published_at' => 'datetime',
     ];
+
+    public function pairedArticle()
+    {
+        return $this->belongsTo(Article::class, 'paired_article_id');
+    }
 
     public function scopePublished($query)
     {

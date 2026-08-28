@@ -110,10 +110,26 @@ class TheravadaController extends Controller
     public function show(string $slug): Response
     {
         $article = Article::query()
+            ->with('pairedArticle')
             ->where('site_domain', 'theravada')
             ->where('slug', $slug)
             ->where('is_published', true)
             ->firstOrFail();
+
+        $pairedArticle = null;
+        if ($article->pairedArticle && $article->pairedArticle->is_published) {
+            $paired = $article->pairedArticle;
+            $pairedArticle = [
+                'id' => $paired->id,
+                'title' => $paired->title,
+                'slug' => $paired->slug,
+                'excerpt' => $paired->excerpt,
+                'site_domain' => $paired->site_domain,
+                'reading_time_min' => $paired->reading_time_min ?? 5,
+                'url' => '/blog/' . $paired->slug,
+                'main_domain_url' => 'https://' . config('app.base_domain', 'macatung.dev') . '/blog/' . $paired->slug,
+            ];
+        }
 
         $related = Article::query()
             ->where('site_domain', 'theravada')
@@ -125,6 +141,7 @@ class TheravadaController extends Controller
 
         return Inertia::render('Theravada/Show', [
             'article' => $article,
+            'paired_article' => $pairedArticle,
             'related' => $related,
             'title' => "{$article->title} — Ma Tọa Thiền",
         ]);
