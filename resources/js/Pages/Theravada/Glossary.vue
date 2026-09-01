@@ -84,6 +84,22 @@ const glossaryJsonLd = {
           Tra cứu ngữ nghĩa chuẩn xác của các thuật ngữ cốt lõi trong Tam Tạng Pāḷi Tipiṭaka và truyền thống thiền định Theravāda.
         </p>
 
+        <!-- Pali Learning Course Link -->
+        <div class="mt-4 p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between gap-3 max-w-2xl">
+          <div class="flex items-center gap-2.5">
+            <span class="text-xl">🎓</span>
+            <span class="text-xs sm:text-sm text-amber-200 font-bold">
+              Muốn học Pāḷi bài bản từ Bảng chữ cái đến Ngữ pháp 8 biến cách?
+            </span>
+          </div>
+          <Link
+            href="/theravada/hoc-pali"
+            class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-stone-950 font-bold text-xs hover:brightness-110 transition-all shrink-0"
+          >
+            Học Pāḷi Ngay ➔
+          </Link>
+        </div>
+
         <!-- Search Bar -->
         <div class="mt-4 sm:mt-6 relative max-w-xl">
           <input

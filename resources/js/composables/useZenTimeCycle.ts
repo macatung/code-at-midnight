@@ -1,4 +1,4 @@
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted, getCurrentInstance } from 'vue';
 
 export interface ZenPhaseInfo {
   id: 'midnight' | 'dawn' | 'afternoon' | 'twilight';
@@ -7,6 +7,9 @@ export interface ZenPhaseInfo {
   timeRange: string;
   icon: string;
   accentHex: string;
+  secondaryHex: string;
+  haloColor: string;
+  stardustColor: string;
   accentGlow: string;
   bgGradient: string;
   mascotQuote: string;
@@ -22,6 +25,9 @@ export const ZEN_PHASES: Record<string, ZenPhaseInfo> = {
     timeRange: '00:00 – 05:59',
     icon: '🌌',
     accentHex: '#f59e0b',
+    secondaryHex: '#d97706',
+    haloColor: '#f59e0b',
+    stardustColor: '#fef08a',
     accentGlow: 'rgba(245, 158, 11, 0.25)',
     bgGradient: 'from-stone-950 via-amber-950/20 to-stone-950',
     mascotQuote: 'Canh khuya vắng lặng, buông bỏ muôn duyên để an trú vào hơi thở trong chánh định.',
@@ -35,6 +41,9 @@ export const ZEN_PHASES: Record<string, ZenPhaseInfo> = {
     timeRange: '06:00 – 11:59',
     icon: '🌅',
     accentHex: '#fbbf24',
+    secondaryHex: '#f59e0b',
+    haloColor: '#fbbf24',
+    stardustColor: '#fef9c3',
     accentGlow: 'rgba(251, 191, 36, 0.3)',
     bgGradient: 'from-amber-950/30 via-stone-900/90 to-stone-950',
     mascotQuote: 'Bình minh rạng ngời, hãy khởi đầu ngày mới bằng tâm từ Mettā vô lượng đến muôn loài chúng sinh.',
@@ -48,6 +57,9 @@ export const ZEN_PHASES: Record<string, ZenPhaseInfo> = {
     timeRange: '12:00 – 17:59',
     icon: '☀️',
     accentHex: '#d97706',
+    secondaryHex: '#b45309',
+    haloColor: '#d97706',
+    stardustColor: '#fde68a',
     accentGlow: 'rgba(217, 119, 6, 0.3)',
     bgGradient: 'from-stone-950 via-amber-900/20 to-stone-950',
     mascotQuote: 'Trưa chiều bận rộn giữa đời thường, hãy giữ tâm bình thản như nước đầu nguồn.',
@@ -61,6 +73,9 @@ export const ZEN_PHASES: Record<string, ZenPhaseInfo> = {
     timeRange: '18:00 – 23:59',
     icon: '🕯️',
     accentHex: '#f43f5e',
+    secondaryHex: '#e11d48',
+    haloColor: '#f43f5e',
+    stardustColor: '#fecdd3',
     accentGlow: 'rgba(244, 63, 94, 0.25)',
     bgGradient: 'from-rose-950/20 via-stone-900/90 to-stone-950',
     mascotQuote: 'Hoàng hôn buông xuống, lắng đọng tâm tư sau một ngày, hồi hướng công đức an lành.',
@@ -101,19 +116,21 @@ export function useZenTimeCycle() {
     realHour.value = new Date().getHours();
   };
 
-  onMounted(() => {
-    updateRealHour();
-    if (!timerInterval) {
-      timerInterval = setInterval(updateRealHour, 60000);
-    }
-  });
+  if (getCurrentInstance()) {
+    onMounted(() => {
+      updateRealHour();
+      if (!timerInterval) {
+        timerInterval = setInterval(updateRealHour, 60000);
+      }
+    });
 
-  onUnmounted(() => {
-    if (timerInterval) {
-      clearInterval(timerInterval);
-      timerInterval = null;
-    }
-  });
+    onUnmounted(() => {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+    });
+  }
 
   return {
     currentHour,

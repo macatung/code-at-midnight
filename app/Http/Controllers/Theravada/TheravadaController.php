@@ -185,6 +185,16 @@ class TheravadaController extends Controller
     }
 
     /**
+     * Pali Learning Module Page
+     */
+    public function paliLearning(): Response
+    {
+        return Inertia::render('Theravada/PaliLearning', [
+            'title' => 'Học Tiếng Pāḷi — Bảng Chữ Cái, Ngữ Pháp & Kệ Ngôn Tipiṭaka — Ma Tọa Thiền',
+        ]);
+    }
+
+    /**
      * Buddhist Interactive Apps Hub
      */
     public function apps(): Response

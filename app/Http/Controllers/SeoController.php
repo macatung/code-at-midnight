@@ -137,9 +137,11 @@ EOT;
         // Static Sections & Apps
         $staticPages = [
             ['url' => $baseUrl . '/', 'priority' => '1.0', 'changefreq' => 'daily'],
+            ['url' => $baseUrl . '/hoc-pali', 'priority' => '0.9', 'changefreq' => 'weekly'],
             ['url' => $baseUrl . '/danh-muc/phap-hoc', 'priority' => '0.9', 'changefreq' => 'weekly'],
             ['url' => $baseUrl . '/danh-muc/phap-hanh', 'priority' => '0.9', 'changefreq' => 'weekly'],
             ['url' => $baseUrl . '/danh-muc/kinh-tung', 'priority' => '0.9', 'changefreq' => 'weekly'],
+            ['url' => $baseUrl . '/danh-muc/lich-su', 'priority' => '0.9', 'changefreq' => 'weekly'],
             ['url' => $baseUrl . '/ung-dung-tu-hoc', 'priority' => '0.9', 'changefreq' => 'weekly'],
             ['url' => $baseUrl . '/tu-dien-pali', 'priority' => '0.8', 'changefreq' => 'monthly'],
         ];

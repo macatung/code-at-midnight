@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { Link } from '@inertiajs/vue3';
 import TheravadaLayout from '@/Layouts/TheravadaLayout.vue';
 import DhammapadaCardGenerator from '@/Components/theravada/DhammapadaCardGenerator.vue';
 import VipassanaTimer from '@/Components/theravada/VipassanaTimer.vue';
@@ -63,6 +64,23 @@ const appsJsonLd = {
         <p class="text-xs sm:text-base text-stone-400 max-w-2xl mx-auto mt-2 sm:mt-3 leading-relaxed px-2">
           Quán chiếu ngũ uẩn vô ngã, thực hành thiền định Vipassanā mỗi ngày và tạo thẻ ảnh trích dẫn lời Phật dạy để gieo duyên lành đến muôn người.
         </p>
+
+        <!-- Pali Course Highlight Banner -->
+        <div class="mt-4 max-w-xl mx-auto p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between gap-3 text-left">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">🎓</span>
+            <div>
+              <h3 class="text-xs sm:text-sm font-bold text-amber-200">Khóa Học Tiếng Pāḷi Tipiṭaka</h3>
+              <p class="text-[11px] text-stone-400">8 Biến cách, phát âm chuẩn & phân tích kệ ngôn.</p>
+            </div>
+          </div>
+          <Link
+            href="/theravada/hoc-pali"
+            class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-stone-950 font-bold text-xs hover:brightness-110 transition-all shrink-0 shadow-sm"
+          >
+            Vào Học ➔
+          </Link>
+        </div>
       </div>
 
       <!-- Quick Tab Switcher (3 Tabs) -->

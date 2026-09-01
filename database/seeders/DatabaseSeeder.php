@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             ContentAndAnalyticsSeeder::class,
             TheravadaContentSeeder::class,
             DualPerspectiveSeriesSeeder::class,
+            AiAgentArchitectureSeriesSeeder::class,
         ]);
     }
 }

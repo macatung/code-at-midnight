@@ -29,6 +29,7 @@ const { locale, t, setLocale } = useI18n();
 
 const navItems = computed(() => [
   { label: t('nav.home'), href: '/theravada', icon: 'Home' },
+  { label: locale.value === 'en' ? 'Learn Pāḷi' : 'Học Pāḷi', href: '/theravada/hoc-pali', icon: 'GraduationCap', isHighlight: true },
   { label: locale.value === 'en' ? 'Dhamma Study' : 'Pháp Học', href: '/theravada/danh-muc/phap-hoc', icon: 'BookOpen' },
   { label: locale.value === 'en' ? 'Vipassanā Practice' : 'Pháp Hành (Vipassanā)', href: '/theravada/danh-muc/phap-hanh', icon: 'Sparkles' },
   { label: locale.value === 'en' ? 'Chanting' : 'Kinh Tụng', href: '/theravada/danh-muc/kinh-tung', icon: 'Scroll' },
@@ -220,7 +221,7 @@ onUnmounted(() => {
               @click="handleNavClick"
             >
               <div class="flex items-center gap-3">
-                <span class="text-base">{{ item.isHighlight ? '✨' : item.icon === 'Home' ? '🏠' : item.icon === 'BookOpen' ? '📖' : item.icon === 'Sparkles' ? '🧘' : item.icon === 'Scroll' ? '📜' : item.icon === 'Landmark' ? '🏛️' : '☸️' }}</span>
+                <span class="text-base">{{ item.isHighlight ? '✨' : item.icon === 'Home' ? '🏠' : item.icon === 'GraduationCap' ? '🎓' : item.icon === 'BookOpen' ? '📖' : item.icon === 'Sparkles' ? '🧘' : item.icon === 'Scroll' ? '📜' : item.icon === 'Landmark' ? '🏛️' : '☸️' }}</span>
                 <span>{{ item.label }}</span>
               </div>
               <span class="text-xs opacity-60 font-mono">➔</span>
@@ -268,6 +269,8 @@ onUnmounted(() => {
         <div class="flex flex-wrap items-center justify-center gap-2.5 sm:gap-4 text-xs sm:text-sm text-stone-300 pt-4 border-t border-stone-900 w-full font-serif leading-loose">
           <span class="w-full sm:w-auto font-medium">© 2026 Ma Tọa Thiền • Theravāda Dhamma • macatung.dev</span>
           <span class="hidden sm:inline">•</span>
+          <Link href="/theravada/hoc-pali" class="hover:text-amber-300 font-semibold px-1 text-amber-300">{{ locale === 'en' ? 'Learn Pāḷi' : 'Học Pāḷi' }}</Link>
+          <span>•</span>
           <Link href="/theravada/danh-muc/phap-hoc" class="hover:text-amber-300 font-semibold px-1">{{ locale === 'en' ? 'Dhamma Study' : 'Pháp Học' }}</Link>
           <span>•</span>
           <Link href="/theravada/danh-muc/phap-hanh" class="hover:text-amber-300 font-semibold px-1">{{ locale === 'en' ? 'Vipassanā Practice' : 'Thiền Vipassanā' }}</Link>

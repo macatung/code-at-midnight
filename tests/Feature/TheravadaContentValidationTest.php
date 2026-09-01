@@ -244,4 +244,18 @@ class TheravadaContentValidationTest extends TestCase
 
         $this->assertGreaterThanOrEqual(100, $totalInternalLinks, "Expected robust mesh of internal cross-links (>100 total links).");
     }
+
+    /**
+     * Tier 3: Test Pali Learning module endpoint renders Inertia component.
+     */
+    public function test_pali_learning_route_renders_successfully(): void
+    {
+        $response = $this->get('/theravada/hoc-pali');
+
+        $response->assertStatus(200);
+        $response->assertInertia(fn ($page) => $page
+            ->component('Theravada/PaliLearning')
+            ->has('title')
+        );
+    }
 }

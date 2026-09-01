@@ -18,13 +18,17 @@ use App\Http\Controllers\Admin\AdminContactController;
 use App\Http\Controllers\SeoController;
 
 $baseDomain = config('app.base_domain', 'macatung.dev');
-// Theravāda Subdomain Routes (e.g. theravada.macatung.dev / theravada.localhost)
+
+// 1. Theravāda Subdomain Routes (e.g. theravada.macatung.dev / theravada.localhost)
 Route::domain('theravada.' . $baseDomain)->group(function () {
     Route::get('/', [TheravadaController::class, 'index'])->name('theravada.domain.index');
     Route::get('/kinh/{slug}', [TheravadaController::class, 'show'])->name('theravada.domain.show');
     Route::get('/bai-viet/{slug}', [TheravadaController::class, 'show']);
     Route::get('/danh-muc/{category}', [TheravadaController::class, 'category'])->name('theravada.domain.category');
     Route::get('/tu-dien-pali', [TheravadaController::class, 'glossary'])->name('theravada.domain.glossary');
+    Route::get('/hoc-pali', [TheravadaController::class, 'paliLearning'])->name('theravada.domain.pali-learning');
+    Route::get('/hoc-tieng-pali', [TheravadaController::class, 'paliLearning']);
+    Route::get('/pali-learning', [TheravadaController::class, 'paliLearning']);
     Route::get('/ung-dung-tu-hoc', [TheravadaController::class, 'apps'])->name('theravada.domain.apps');
     Route::get('/phap-bao', [TheravadaController::class, 'apps']);
     Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('theravada.domain.sitemap');
@@ -38,6 +42,9 @@ Route::prefix('theravada')->name('theravada.')->group(function () {
     Route::get('/bai-viet/{slug}', [TheravadaController::class, 'show']);
     Route::get('/danh-muc/{category}', [TheravadaController::class, 'category'])->name('category');
     Route::get('/tu-dien-pali', [TheravadaController::class, 'glossary'])->name('glossary');
+    Route::get('/hoc-pali', [TheravadaController::class, 'paliLearning'])->name('pali-learning');
+    Route::get('/hoc-tieng-pali', [TheravadaController::class, 'paliLearning']);
+    Route::get('/pali-learning', [TheravadaController::class, 'paliLearning']);
     Route::get('/ung-dung-tu-hoc', [TheravadaController::class, 'apps'])->name('apps');
     Route::get('/phap-bao', [TheravadaController::class, 'apps']);
     Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('sitemap');

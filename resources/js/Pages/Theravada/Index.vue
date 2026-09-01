@@ -90,13 +90,20 @@ const theravadaHomeJsonLd = {
       </p>
 
       <!-- CTA Action Buttons -->
-      <div class="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3.5 mb-4 w-full max-w-2xl px-2 sm:px-0">
+      <div class="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3.5 mb-4 w-full max-w-3xl px-2 sm:px-0">
         <Link
-          href="/theravada/danh-muc/phap-hoc"
+          href="/theravada/hoc-pali"
           class="px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 text-stone-950 font-serif font-bold text-xs sm:text-sm hover:brightness-110 transition-all shadow-lg hover:scale-105 active:scale-95 text-center flex items-center justify-center gap-2 min-h-[44px]"
         >
+          <span>🎓</span>
+          <span>{{ locale === 'en' ? 'Learn Pāḷi' : 'Học Tiếng Pāḷi' }} ➔</span>
+        </Link>
+        <Link
+          href="/theravada/danh-muc/phap-hoc"
+          class="px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl bg-stone-900 border border-amber-500/40 text-amber-300 font-serif font-bold text-xs sm:text-sm hover:bg-stone-800 transition-all hover:scale-105 active:scale-95 text-center flex items-center justify-center gap-2 min-h-[44px]"
+        >
           <span>📖</span>
-          <span>{{ t('theravada.study') }} ➔</span>
+          <span>{{ t('theravada.study') }}</span>
         </Link>
         <Link
           href="/theravada/danh-muc/phap-hanh"
