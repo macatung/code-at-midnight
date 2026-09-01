@@ -19,8 +19,10 @@ class BlogController extends Controller
             return [
                 'id' => $article->id,
                 'title' => $article->title,
+                'title_en' => $article->title_en,
                 'slug' => $article->slug,
                 'excerpt' => $article->excerpt,
+                'excerpt_en' => $article->excerpt_en,
                 'reading_time_min' => $article->reading_time_min ?? 5,
                 'published_at' => $article->published_at ? Carbon::parse($article->published_at)->format('d/m/Y') : '',
             ];
@@ -66,9 +68,12 @@ class BlogController extends Controller
             'article' => [
                 'id' => $article->id,
                 'title' => $article->title,
+                'title_en' => $article->title_en,
                 'slug' => $article->slug,
                 'excerpt' => $article->excerpt,
+                'excerpt_en' => $article->excerpt_en,
                 'content' => $article->content,
+                'content_en' => $article->content_en,
                 'cover_image' => $article->cover_image ?? null,
                 'tags' => $article->tags ?? [],
                 'reading_time_min' => $article->reading_time_min ?? 5,

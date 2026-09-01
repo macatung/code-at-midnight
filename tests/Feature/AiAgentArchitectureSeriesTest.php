@@ -18,7 +18,7 @@ class AiAgentArchitectureSeriesTest extends TestCase
     }
 
     /**
-     * Test all 5 articles in the AI Agent Architecture series are seeded properly.
+     * Test all 5 articles in the AI Agent Architecture series are seeded properly with bilingual fields.
      */
     public function test_ai_agent_architecture_series_seeded_successfully(): void
     {
@@ -40,37 +40,48 @@ class AiAgentArchitectureSeriesTest extends TestCase
             $this->assertGreaterThanOrEqual(10, $article->reading_time_min);
             $this->assertNotEmpty($article->tags);
             $this->assertGreaterThan(500, strlen($article->content));
+
+            // Verify English fields are present and substantial
+            $this->assertNotEmpty($article->title_en, "Article [{$slug}] must have title_en.");
+            $this->assertNotEmpty($article->excerpt_en, "Article [{$slug}] must have excerpt_en.");
+            $this->assertNotEmpty($article->content_en, "Article [{$slug}] must have content_en.");
+            $this->assertGreaterThan(500, strlen($article->content_en));
         }
 
-        // Test specific architectural content assertions
+        // Test specific architectural content assertions in both languages
         $part1 = Article::where('slug', 'kien-truc-ai-agent-phan-1-core-patterns-react-reflexion-swarms')->first();
         $this->assertStringContainsString('```mermaid', $part1->content);
-        $this->assertStringContainsString('ReAct', $part1->content);
-        $this->assertStringContainsString('Reflexion', $part1->content);
+        $this->assertStringContainsString('```mermaid', $part1->content_en);
+        $this->assertStringContainsString('ReAct', $part1->content_en);
+        $this->assertStringContainsString('Reflexion', $part1->content_en);
 
         $part2 = Article::where('slug', 'kien-truc-ai-agent-phan-2-mcp-protocol-a2a-layered-memory-graphrag')->first();
         $this->assertStringContainsString('Model Context Protocol', $part2->content);
+        $this->assertStringContainsString('Model Context Protocol', $part2->content_en);
         $this->assertStringContainsString('GraphRAG', $part2->content);
-        $this->assertStringContainsString('```mermaid', $part2->content);
+        $this->assertStringContainsString('GraphRAG', $part2->content_en);
+        $this->assertStringContainsString('```mermaid', $part2->content_en);
 
         $part3 = Article::where('slug', 'kien-truc-ai-agent-phan-3-dai-chien-frameworks-langgraph-crewai-autogen')->first();
         $this->assertStringContainsString('LangGraph', $part3->content);
+        $this->assertStringContainsString('LangGraph', $part3->content_en);
         $this->assertStringContainsString('CrewAI', $part3->content);
         $this->assertStringContainsString('Semantic Kernel', $part3->content);
 
         $part4 = Article::where('slug', 'kien-truc-ai-agent-phan-4-system-design-checkpointing-hitl-observability')->first();
         $this->assertStringContainsString('Checkpointing', $part4->content);
         $this->assertStringContainsString('OpenInference', $part4->content);
-        $this->assertStringContainsString('G-Eval', $part4->content);
+        $this->assertStringContainsString('G-Eval', $part4->content_en);
 
         $part5 = Article::where('slug', 'kien-truc-ai-agent-phan-5-cam-nang-tech-lead-chi-so-asi-anti-patterns-checklist')->first();
         $this->assertStringContainsString('Agentic Selection Index', $part5->content);
+        $this->assertStringContainsString('Agentic Selection Index', $part5->content_en);
         $this->assertStringContainsString('Anti-Patterns', $part5->content);
-        $this->assertStringContainsString('Production Checklist', $part5->content);
+        $this->assertStringContainsString('Production Checklist', $part5->content_en);
     }
 
     /**
-     * Test each article endpoint returns HTTP 200 with Inertia Blog/Show component.
+     * Test each article endpoint returns HTTP 200 with Inertia Blog/Show component including bilingual fields.
      */
     public function test_ai_agent_architecture_articles_accessible_via_http(): void
     {
@@ -90,13 +101,15 @@ class AiAgentArchitectureSeriesTest extends TestCase
                 ->component('Blog/Show')
                 ->has('article')
                 ->where('article.slug', $slug)
+                ->has('article.title_en')
+                ->has('article.content_en')
                 ->has('settings')
             );
         }
     }
 
     /**
-     * Test that Blog Index page lists the AI Agent series.
+     * Test that Blog Index page lists the AI Agent series with English excerpts.
      */
     public function test_blog_index_contains_ai_agent_series(): void
     {

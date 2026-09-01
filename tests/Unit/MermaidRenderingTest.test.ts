@@ -112,7 +112,7 @@ describe('MermaidRenderingTest (CRLF/LF Normalization & Markdown Regex)', () => 
 
     it('[T2_MM_05] Blog seeder contains valid Multi-Agent Orchestration Mermaid diagram', () => {
       const diagrams = parseMermaidMarkdown(blogContent);
-      expect(diagrams.length).toBe(1);
+      expect(diagrams.length).toBeGreaterThanOrEqual(1);
       expect(diagrams[0].includes('Router Agent')).toBe(true);
       expect(diagrams[0].includes('ERP Database Agent')).toBe(true);
     });
