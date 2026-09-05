@@ -322,4 +322,41 @@ class TheravadaController extends Controller
             'title' => 'Ứng Dụng Pháp Bảo & Tọa Thiền Chánh Niệm — Ma Tọa Thiền',
         ]);
     }
+
+    /**
+     * JSON Feed endpoint for AI Content Agents & RSS aggregators
+     */
+    public function feedJson()
+    {
+        $articles = Article::query()
+            ->where('site_domain', 'theravada')
+            ->where('is_published', true)
+            ->orderBy('published_at', 'desc')
+            ->take(20)
+            ->get();
+
+        return response()->json([
+            'version' => 'https://jsonfeed.org/version/1.1',
+            'title' => 'Ma Tọa Thiền — Phật Giáo Nguyên Thủy Theravāda',
+            'home_page_url' => 'https://theravada.macatung.dev',
+            'feed_url' => 'https://theravada.macatung.dev/feed.json',
+            'description' => 'Tuyển tập kinh điển Pāḷi Tipiṭaka, pháp hành thiền Vipassanā và bài pháp chuyển hóa thân tâm.',
+            'items' => $articles->map(function ($article) {
+                return [
+                    'id' => (string) $article->id,
+                    'url' => 'https://theravada.macatung.dev/kinh/' . $article->slug,
+                    'title' => $article->title,
+                    'pali_title' => $article->pali_title,
+                    'content_html' => $article->content,
+                    'summary' => $article->excerpt,
+                    'date_published' => $article->published_at ? $article->published_at->toIso8601String() : null,
+                    'author' => [
+                        'name' => $article->author ?: 'Ma Tọa Thiền'
+                    ],
+                    'tags' => $article->tags,
+                    'category' => $article->category,
+                ];
+            })
+        ]);
+    }
 }

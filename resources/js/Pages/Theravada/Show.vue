@@ -419,7 +419,7 @@ const annotatePaliTermsInHtml = (html: string) => {
   let lastIndex = 0;
   let result = '';
   let insideExcludedTag = 0;
-  const excludedTags = new Set(['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'code', 'pre', 'svg', 'button', 'a', 'strong', 'th', 'td']);
+  const excludedTags = new Set(['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'code', 'pre', 'svg', 'button', 'a', 'strong', 'th', 'td', 'iframe']);
 
   let match: RegExpExecArray | null;
   while ((match = tagRegex.exec(html)) !== null) {
@@ -629,7 +629,7 @@ const renderedMarkdown = computed(() => {
     const paragraphs = md.split(/\n\n+/);
     parsedHtml = paragraphs.map(p => {
       p = p.trim();
-      if (p.startsWith('<div') || p.startsWith('<blockquote') || p.startsWith('<h') || p.startsWith('<li') || p.startsWith('<table') || p.startsWith('<figure')) {
+      if (p.startsWith('<div') || p.startsWith('<blockquote') || p.startsWith('<h') || p.startsWith('<li') || p.startsWith('<table') || p.startsWith('<figure') || p.startsWith('<iframe')) {
         return p;
       }
       return `<p class="my-4 text-[#1c1917] font-serif leading-[1.95] text-base sm:text-lg text-justify font-normal">${p.replace(/\n/g, '<br/>')}</p>`;
@@ -660,7 +660,7 @@ const renderedMarkdown = computed(() => {
     const paragraphs = md.split(/\n\n+/);
     parsedHtml = paragraphs.map(p => {
       p = p.trim();
-      if (p.startsWith('<div') || p.startsWith('<blockquote') || p.startsWith('<h') || p.startsWith('<li') || p.startsWith('<table') || p.startsWith('<figure')) {
+      if (p.startsWith('<div') || p.startsWith('<blockquote') || p.startsWith('<h') || p.startsWith('<li') || p.startsWith('<table') || p.startsWith('<figure') || p.startsWith('<iframe')) {
         return p;
       }
       return `<p class="my-4 text-stone-100 font-serif leading-[1.95] text-base sm:text-lg text-justify font-normal">${p.replace(/\n/g, '<br/>')}</p>`;

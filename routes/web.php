@@ -33,7 +33,7 @@ Route::domain('theravada.' . $baseDomain)->group(function () {
     Route::get('/hoc-tieng-pali/{slug}', [TheravadaController::class, 'paliLessonShow']);
     Route::get('/pali-learning/{slug}', [TheravadaController::class, 'paliLessonShow']);
     Route::get('/ung-dung-tu-hoc', [TheravadaController::class, 'apps'])->name('theravada.domain.apps');
-    Route::get('/phap-bao', [TheravadaController::class, 'apps']);
+    Route::get('/feed.json', [TheravadaController::class, 'feedJson'])->name('theravada.domain.feed');
     Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('theravada.domain.sitemap');
     Route::get('/robots.txt', [SeoController::class, 'robots'])->name('theravada.domain.robots');
 });
@@ -50,9 +50,9 @@ Route::prefix('theravada')->name('theravada.')->group(function () {
     Route::get('/pali-learning', [TheravadaController::class, 'paliLearning']);
     Route::get('/hoc-pali/{slug}', [TheravadaController::class, 'paliLessonShow'])->name('pali-lesson.show');
     Route::get('/hoc-tieng-pali/{slug}', [TheravadaController::class, 'paliLessonShow']);
-    Route::get('/pali-learning/{slug}', [TheravadaController::class, 'paliLessonShow']);
     Route::get('/ung-dung-tu-hoc', [TheravadaController::class, 'apps'])->name('apps');
     Route::get('/phap-bao', [TheravadaController::class, 'apps']);
+    Route::get('/feed.json', [TheravadaController::class, 'feedJson'])->name('feed');
     Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('sitemap');
 });
 
