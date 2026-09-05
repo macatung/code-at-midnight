@@ -1165,4 +1165,95 @@ const suttaJsonLd = computed(() => ({
   color: #fcd34d !important;
   border-color: rgba(245, 158, 11, 0.5) !important;
 }
+
+/* Responsive 16:9 Video Wrapper Enforcements */
+:deep(.zen-video-wrapper),
+:deep(.aspect-video) {
+  position: relative !important;
+  width: 100% !important;
+  padding-top: 56.25% !important; /* Strictly Lock to 16:9 Ratio */
+  height: 0 !important;
+  overflow: hidden !important;
+  border-radius: 1rem !important;
+  background-color: #000000 !important;
+}
+
+:deep(.zen-video-wrapper iframe),
+:deep(.aspect-video iframe),
+:deep(.zen-article-content iframe) {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  border: 0 !important;
+}
+
+/* Zen Opening Quote Box Contrast (Paper Mode vs Night Mode) */
+.zen-article-content.bg-stone-50\/95 :deep(.zen-opening-quote) {
+  background-color: rgba(245, 158, 11, 0.12) !important;
+  border: 1.5px solid rgba(180, 83, 9, 0.4) !important;
+  box-shadow: 0 4px 15px rgba(180, 83, 9, 0.08) !important;
+}
+.zen-article-content.bg-stone-50\/95 :deep(.zen-opening-quote),
+.zen-article-content.bg-stone-50\/95 :deep(.zen-opening-quote p) {
+  color: #451a03 !important; /* Deep dark amber-950 for high contrast on light paper */
+  font-weight: 500 !important;
+}
+
+.zen-article-content:not(.bg-stone-50\/95) :deep(.zen-opening-quote) {
+  background-color: rgba(245, 158, 11, 0.15) !important;
+  border: 1.5px solid rgba(245, 158, 11, 0.5) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+}
+.zen-article-content:not(.bg-stone-50\/95) :deep(.zen-opening-quote),
+.zen-article-content:not(.bg-stone-50\/95) :deep(.zen-opening-quote p) {
+  color: #fef3c7 !important; /* Bright warm amber-100 for high contrast in dark mode */
+  font-weight: 500 !important;
+}
+
+/* Zen Media Card Contrast (Paper Mode vs Night Mode) */
+.zen-article-content.bg-stone-50\/95 :deep(.zen-media-card) {
+  background-color: #fdfbf7 !important;
+  border: 1.5px solid rgba(217, 119, 6, 0.45) !important;
+  box-shadow: 0 10px 30px -5px rgba(180, 83, 9, 0.12) !important;
+}
+.zen-article-content.bg-stone-50\/95 :deep(.zen-media-card-header) {
+  border-color: rgba(217, 119, 6, 0.25) !important;
+}
+.zen-article-content.bg-stone-50\/95 :deep(.zen-media-card-icon) {
+  background-color: rgba(245, 158, 11, 0.2) !important;
+  color: #92400e !important;
+  border: 1px solid rgba(217, 119, 6, 0.3) !important;
+}
+.zen-article-content.bg-stone-50\/95 :deep(.zen-media-card-title) {
+  color: #451a03 !important; /* Deep dark amber-950 */
+}
+.zen-article-content.bg-stone-50\/95 :deep(.zen-media-card-subtitle),
+.zen-article-content.bg-stone-50\/95 :deep(.zen-media-card-caption) {
+  color: #78350f !important; /* Deep warm amber-900 */
+}
+
+.zen-article-content:not(.bg-stone-50\/95) :deep(.zen-media-card) {
+  background-color: #0c0a09 !important;
+  border: 1.5px solid rgba(245, 158, 11, 0.5) !important;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.8) !important;
+}
+.zen-article-content:not(.bg-stone-50\/95) :deep(.zen-media-card-header) {
+  border-color: rgba(245, 158, 11, 0.2) !important;
+}
+.zen-article-content:not(.bg-stone-50\/95) :deep(.zen-media-card-icon) {
+  background-color: rgba(245, 158, 11, 0.2) !important;
+  color: #fcd34d !important;
+  border: 1px solid rgba(245, 158, 11, 0.4) !important;
+}
+.zen-article-content:not(.bg-stone-50\/95) :deep(.zen-media-card-title) {
+  color: #fde68a !important; /* Bright warm gold */
+}
+.zen-article-content:not(.bg-stone-50\/95) :deep(.zen-media-card-subtitle) {
+  color: #d6d3d1 !important; /* Stone-300 */
+}
+.zen-article-content:not(.bg-stone-50\/95) :deep(.zen-media-card-caption) {
+  color: #fde68a !important; /* Bright warm gold */
+}
 </style>
