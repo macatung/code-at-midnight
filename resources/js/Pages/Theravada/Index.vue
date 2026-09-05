@@ -199,7 +199,7 @@ const theravadaHomeJsonLd = {
           <div>
             <div class="flex items-center justify-between mb-4">
               <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/15 border border-amber-500/30 text-2xl text-amber-300 group-hover:scale-110 transition-transform shadow-inner">
-                {{ cat.slug === 'phap-hoc' ? '📖' : cat.slug === 'phap-hanh' ? '🧘' : cat.slug === 'kinh-tung' ? '📜' : '🏛️' }}
+                {{ cat.slug === 'phap-hoc' ? '📖' : cat.slug === 'phap-hanh' ? '🧘' : cat.slug === 'phap-thoai' ? '🎧' : cat.slug === 'kinh-tung' ? '📜' : '🏛️' }}
               </span>
               <span class="text-xs font-serif text-amber-300 font-bold bg-stone-950 px-3 py-1 rounded-full border border-stone-800 shadow-sm">
                 {{ cat.count }} {{ t('theravada.articles') }}
@@ -251,7 +251,7 @@ const theravadaHomeJsonLd = {
           <div>
             <div class="flex items-center justify-between gap-2 text-xs font-serif text-stone-300 mb-3">
               <span class="px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 font-serif font-bold">
-                {{ item.category === 'phap-hoc' ? (locale === 'en' ? 'Dhamma Study' : 'Pháp Học') : item.category === 'phap-hanh' ? (locale === 'en' ? 'Dhamma Practice' : 'Pháp Hành') : item.category === 'kinh-tung' ? t('theravada.chanting') : (locale === 'en' ? 'History' : 'Lịch Sử') }}
+                {{ item.category === 'phap-hoc' ? (locale === 'en' ? 'Dhamma Study' : 'Pháp Học') : item.category === 'phap-hanh' ? (locale === 'en' ? 'Dhamma Practice' : 'Pháp Hành') : item.category === 'phap-thoai' ? (locale === 'en' ? 'Dharma Talks' : 'Pháp Thoại') : item.category === 'kinh-tung' ? t('theravada.chanting') : (locale === 'en' ? 'History' : 'Lịch Sử') }}
               </span>
               <span class="text-stone-300 font-medium">⏱️ {{ item.reading_time_min }} {{ t('theravada.minutes') }}</span>
             </div>

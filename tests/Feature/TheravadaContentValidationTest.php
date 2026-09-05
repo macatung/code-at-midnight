@@ -36,6 +36,7 @@ class TheravadaContentValidationTest extends TestCase
     protected array $validCategories = [
         'phap-hoc',
         'phap-hanh',
+        'phap-thoai',
         'lich-su',
         'kinh-tung',
     ];

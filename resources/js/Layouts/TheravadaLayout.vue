@@ -32,6 +32,7 @@ const navItems = computed(() => [
   { label: locale.value === 'en' ? 'Learn Pāḷi' : 'Học Pāḷi', href: '/theravada/hoc-pali', icon: 'GraduationCap', isHighlight: true },
   { label: locale.value === 'en' ? 'Dhamma Study' : 'Pháp Học', href: '/theravada/danh-muc/phap-hoc', icon: 'BookOpen' },
   { label: locale.value === 'en' ? 'Vipassanā Practice' : 'Pháp Hành (Vipassanā)', href: '/theravada/danh-muc/phap-hanh', icon: 'Sparkles' },
+  { label: locale.value === 'en' ? 'Dharma Talks' : 'Pháp Thoại', href: '/theravada/danh-muc/phap-thoai', icon: 'Headphones' },
   { label: locale.value === 'en' ? 'Chanting' : 'Kinh Tụng', href: '/theravada/danh-muc/kinh-tung', icon: 'Scroll' },
   { label: locale.value === 'en' ? 'History' : 'Lịch Sử', href: '/theravada/danh-muc/lich-su', icon: 'Landmark' },
   { label: t('theravada.glossary'), href: '/theravada/tu-dien-pali', icon: 'Compass' },
@@ -319,6 +320,8 @@ onUnmounted(() => {
           <Link href="/theravada/danh-muc/phap-hoc" class="hover:text-amber-300 font-semibold px-1">{{ locale === 'en' ? 'Dhamma Study' : 'Pháp Học' }}</Link>
           <span>•</span>
           <Link href="/theravada/danh-muc/phap-hanh" class="hover:text-amber-300 font-semibold px-1">{{ locale === 'en' ? 'Vipassanā Practice' : 'Thiền Vipassanā' }}</Link>
+          <span>•</span>
+          <Link href="/theravada/danh-muc/phap-thoai" class="hover:text-amber-300 font-semibold px-1">{{ locale === 'en' ? 'Dharma Talks' : 'Pháp Thoại' }}</Link>
           <span>•</span>
           <Link href="/theravada/danh-muc/kinh-tung" class="hover:text-amber-300 font-semibold px-1">{{ locale === 'en' ? 'Chanting' : 'Kinh Tụng' }}</Link>
           <span>•</span>

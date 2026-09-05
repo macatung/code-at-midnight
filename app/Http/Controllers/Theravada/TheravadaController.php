@@ -80,6 +80,14 @@ class TheravadaController extends Controller
                 'count' => $articles->where('category', 'phap-hanh')->count()
             ],
             [
+                'slug' => 'phap-thoai',
+                'name' => 'Pháp Thoại & Pháp Âm',
+                'pali' => 'Dhammakathā',
+                'description' => 'Các bài pháp thoại, chia sẻ Phật pháp, pháp âm tỉnh thức và hướng dẫn nuôi dưỡng an lạc cho đời sống.',
+                'icon' => 'Headphones',
+                'count' => $articles->where('category', 'phap-thoai')->count()
+            ],
+            [
                 'slug' => 'kinh-tung',
                 'name' => 'Kinh Tụng & Paritta',
                 'pali' => 'Sutta & Paritta',
@@ -163,6 +171,7 @@ class TheravadaController extends Controller
         $categoryNames = [
             'phap-hoc' => 'Pháp Học (Pariyatti)',
             'phap-hanh' => 'Pháp Hành (Paṭipatti — Vipassanā)',
+            'phap-thoai' => 'Pháp Thoại & Pháp Âm Tỉnh Thức (Dhammakathā)',
             'kinh-tung' => 'Tam Tạng & Kinh Tụng Pāḷi (Sutta)',
             'lich-su' => 'Lịch Sử Phật Giáo (Sāsana Itihāsa)',
         ];
@@ -344,7 +353,9 @@ class TheravadaController extends Controller
             'items' => $articles->map(function ($article) {
                 return [
                     'id' => (string) $article->id,
-                    'url' => 'https://theravada.macatung.dev/kinh/' . $article->slug,
+                    'url' => ($article->category === 'phap-thoai'
+                        ? 'https://theravada.macatung.dev/phap-thoai/' . $article->slug
+                        : 'https://theravada.macatung.dev/kinh/' . $article->slug),
                     'title' => $article->title,
                     'pali_title' => $article->pali_title,
                     'content_html' => $article->content,

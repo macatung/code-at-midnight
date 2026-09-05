@@ -55,9 +55,14 @@ const { isLeavesEnabled, toggleLeaves } = useZenAtmosphere();
 const { t, locale } = useI18n();
 
 const categoryLabel = (category: string) => {
+  if (category === 'phap-thoai') return locale.value === 'en' ? 'Dharma Talks' : 'Pháp Thoại & Pháp Âm';
   const key = category === 'phap-hoc' ? 'theravada.study' : category === 'phap-hanh' ? 'theravada.practice' : category === 'kinh-tung' ? 'theravada.chanting' : 'theravada.history';
   return t(key);
 };
+
+const hasMediaAttachment = computed(() => {
+  return props.article.content?.includes('phap-am-dinh-kem') || props.article.content?.includes('iframe') || props.article.category === 'phap-thoai';
+});
 
 // Social Share Methods
 const copyArticleLink = async () => {
@@ -789,6 +794,15 @@ const suttaJsonLd = computed(() => ({
           <span class="text-xs text-stone-400 font-serif">
             {{ article.reading_time_min }} {{ t('theravada.minutes') }}
           </span>
+          <a
+            v-if="hasMediaAttachment"
+            href="#phap-am-dinh-kem"
+            class="px-2.5 py-0.5 rounded-full text-xs font-serif font-medium bg-amber-500/10 text-amber-300 hover:text-amber-100 hover:bg-amber-500/20 border border-amber-500/30 transition-all inline-flex items-center gap-1.5"
+          >
+            <span>🎧</span>
+            <span>{{ locale === 'en' ? 'Attached Media' : 'Có video & pháp âm đính kèm' }}</span>
+            <span class="text-[10px] text-amber-400">↓</span>
+          </a>
         </div>
 
         <h1 class="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-amber-100 leading-tight mb-2 sm:mb-3">

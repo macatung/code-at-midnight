@@ -24,6 +24,7 @@ Route::domain('theravada.' . $baseDomain)->group(function () {
     Route::get('/', [TheravadaController::class, 'index'])->name('theravada.domain.index');
     Route::get('/kinh/{slug}', [TheravadaController::class, 'show'])->name('theravada.domain.show');
     Route::get('/bai-viet/{slug}', [TheravadaController::class, 'show']);
+    Route::get('/phap-thoai/{slug}', [TheravadaController::class, 'show'])->name('theravada.domain.phap-thoai');
     Route::get('/danh-muc/{category}', [TheravadaController::class, 'category'])->name('theravada.domain.category');
     Route::get('/tu-dien-pali', [TheravadaController::class, 'glossary'])->name('theravada.domain.glossary');
     Route::get('/hoc-pali', [TheravadaController::class, 'paliLearning'])->name('theravada.domain.pali-learning');
@@ -43,6 +44,7 @@ Route::prefix('theravada')->name('theravada.')->group(function () {
     Route::get('/', [TheravadaController::class, 'index'])->name('index');
     Route::get('/kinh/{slug}', [TheravadaController::class, 'show'])->name('show');
     Route::get('/bai-viet/{slug}', [TheravadaController::class, 'show']);
+    Route::get('/phap-thoai/{slug}', [TheravadaController::class, 'show'])->name('phap-thoai');
     Route::get('/danh-muc/{category}', [TheravadaController::class, 'category'])->name('category');
     Route::get('/tu-dien-pali', [TheravadaController::class, 'glossary'])->name('glossary');
     Route::get('/hoc-pali', [TheravadaController::class, 'paliLearning'])->name('pali-learning');
