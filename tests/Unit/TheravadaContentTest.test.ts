@@ -256,4 +256,59 @@ describe('TheravadaContentTest (Canonical Teachings, Schema & Expansion Integrit
       });
     });
   });
+
+  // ==========================================================================
+  // TIER 3: Mobile UI/UX, Smart Header & Contrast Integrity
+  // ==========================================================================
+  describe('[T3_THERAVADA] Mobile Zen Reader, Bottom Controls & Contrast Specs', () => {
+    const showVuePath = path.resolve(process.cwd(), 'resources/js/Pages/Theravada/Show.vue');
+    const showVueContent = fs.readFileSync(showVuePath, 'utf-8');
+
+    const layoutVuePath = path.resolve(process.cwd(), 'resources/js/Layouts/TheravadaLayout.vue');
+    const layoutVueContent = fs.readFileSync(layoutVuePath, 'utf-8');
+
+    const i18nPath = path.resolve(process.cwd(), 'resources/js/composables/useI18n.ts');
+    const i18nContent = fs.readFileSync(i18nPath, 'utf-8');
+
+    it('[T3_TH_01] Show.vue implements localStorage keys for reader settings persistence', () => {
+      expect(showVueContent.includes("const STORAGE_FONT_SIZE_KEY = 'zen_reader_font_size'")).toBe(true);
+      expect(showVueContent.includes("const STORAGE_PAPER_MODE_KEY = 'zen_reader_paper_mode'")).toBe(true);
+      expect(showVueContent.includes('localStorage.getItem(STORAGE_FONT_SIZE_KEY)')).toBe(true);
+      expect(showVueContent.includes('localStorage.getItem(STORAGE_PAPER_MODE_KEY)')).toBe(true);
+    });
+
+    it('[T3_TH_02] Show.vue parses Table of Contents headings and injects anchor IDs', () => {
+      expect(showVueContent.includes('const tocHeadings = computed')).toBe(true);
+      expect(showVueContent.includes('const scrollToHeading =')).toBe(true);
+      expect(showVueContent.includes('toc-sec-')).toBe(true);
+    });
+
+    it('[T3_TH_03] useI18n.ts provides mobile-specific glossary hints and TOC translations', () => {
+      expect(i18nContent.includes("'theravada.glossaryHintMobile'")).toBe(true);
+      expect(i18nContent.includes("'theravada.toc'")).toBe(true);
+      expect(i18nContent.includes("'theravada.readingPreferences'")).toBe(true);
+      expect(i18nContent.includes("'theravada.zenControls'")).toBe(true);
+    });
+
+    it('[T3_TH_04] TheravadaLayout.vue implements smart header auto-hide on mobile scroll', () => {
+      expect(layoutVueContent.includes('const isHeaderHidden = ref(false)')).toBe(true);
+      expect(layoutVueContent.includes("'-translate-y-full': isHeaderHidden")).toBe(true);
+      expect(layoutVueContent.includes('window.innerWidth < 768')).toBe(true);
+    });
+
+    it('[T3_TH_05] Show.vue enforces high-contrast styles using .is-paper-mode and .is-night-mode classes', () => {
+      expect(showVueContent.includes("is-paper-mode bg-stone-50/98 text-[#1c1917]")).toBe(true);
+      expect(showVueContent.includes("is-night-mode bg-stone-900/90 text-stone-200")).toBe(true);
+      expect(showVueContent.includes('.zen-article-content.is-paper-mode :deep(.zen-opening-quote)')).toBe(true);
+      expect(showVueContent.includes('.zen-article-content.is-night-mode :deep(.zen-opening-quote)')).toBe(true);
+      expect(showVueContent.includes('#451a03 !important; /* Deep dark warm brown')).toBe(true);
+    });
+
+    it('[T3_TH_06] Show.vue renders Mobile Zen Bottom Floating Bar and Pāḷi Bottom Sheet', () => {
+      expect(showVueContent.includes('sm:hidden fixed bottom-0 left-0 right-0 z-40')).toBe(true);
+      expect(showVueContent.includes('isZenSheetOpen && isMobileScreen')).toBe(true);
+      expect(showVueContent.includes('zen-pali-mobile-sheet')).toBe(true);
+      expect(showVueContent.includes('sm:hidden inline-flex items-center gap-1.5 text-amber-400')).toBe(true);
+    });
+  });
 });

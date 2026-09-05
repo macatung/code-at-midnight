@@ -58,6 +58,29 @@ const handleNavClick = () => {
   mindfulBell.strikeWoodenFish();
 };
 
+const isHeaderHidden = ref(false);
+let lastScrollY = 0;
+
+const handleScroll = () => {
+  if (typeof window === 'undefined') return;
+  const currentY = window.scrollY;
+  // Auto-hide only on mobile screens (< 768px) and when mobile menu is not open
+  if (window.innerWidth < 768) {
+    if (isMobileMenuOpen.value) {
+      isHeaderHidden.value = false;
+      return;
+    }
+    if (currentY > 70 && currentY > lastScrollY + 6) {
+      isHeaderHidden.value = true;
+    } else if (currentY < lastScrollY - 10 || currentY <= 70) {
+      isHeaderHidden.value = false;
+    }
+  } else {
+    isHeaderHidden.value = false;
+  }
+  lastScrollY = currentY;
+};
+
 // Close on escape key
 const handleKeyDown = (e: KeyboardEvent) => {
   if (e.key === 'Escape' && isMobileMenuOpen.value) {
@@ -68,12 +91,14 @@ const handleKeyDown = (e: KeyboardEvent) => {
 onMounted(() => {
   if (typeof window !== 'undefined') {
     window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('scroll', handleScroll, { passive: true });
   }
 });
 
 onUnmounted(() => {
   if (typeof window !== 'undefined') {
     window.removeEventListener('keydown', handleKeyDown);
+    window.removeEventListener('scroll', handleScroll);
   }
 });
 </script>
@@ -107,8 +132,11 @@ onUnmounted(() => {
     <!-- Multi-Layer Zen Background Canvas (Dhamma Wheel, Petals, Bodhi Leaves & Incense Smoke) -->
     <ZenBackgroundCanvas />
 
-    <!-- 1. Zen Top Navigation Header -->
-    <header class="sticky top-0 z-40 w-full border-b border-amber-500/20 bg-stone-950/95 backdrop-blur-xl shadow-xl py-3 sm:py-4">
+    <!-- 1. Zen Top Navigation Header (Smart auto-hide on mobile scroll) -->
+    <header
+      class="sticky top-0 z-40 w-full border-b border-amber-500/20 bg-stone-950/95 backdrop-blur-xl shadow-xl py-2.5 sm:py-4 transition-transform duration-300 ease-out"
+      :class="{ '-translate-y-full': isHeaderHidden }"
+    >
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-3 sm:gap-6">
         
         <!-- Brand / Zen Mascot Logo + Title: MA TỌA THIỀN -->
@@ -118,14 +146,14 @@ onUnmounted(() => {
           @click="closeMobileMenu"
         >
           <!-- Mascot Tọa Thiền Tòa Sen Logo -->
-          <ZenMascotLogo :size="42" class="sm:w-12 sm:h-12 shrink-0" />
+          <ZenMascotLogo :size="40" class="sm:w-12 sm:h-12 shrink-0" />
           
           <div class="flex flex-col text-left justify-center min-w-0">
             <div class="flex items-center gap-1.5 sm:gap-2">
               <span class="text-base sm:text-xl lg:text-2xl font-serif font-bold text-amber-100 tracking-tight sm:tracking-wide truncate">
                 {{ t('theravada.brand') }}
               </span>
-              <span class="inline-block text-[10px] sm:text-[11px] font-sans px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500/20 to-yellow-500/20 text-amber-300 border border-amber-500/40 font-semibold shrink-0 shadow-sm">
+              <span class="hidden xs:inline-block text-[10px] sm:text-[11px] font-sans px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500/20 to-yellow-500/20 text-amber-300 border border-amber-500/40 font-semibold shrink-0 shadow-sm">
                 Theravāda
               </span>
             </div>

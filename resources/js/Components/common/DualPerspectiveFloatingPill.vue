@@ -51,7 +51,7 @@ const targetHref = computed(() => {
   >
     <div
       v-if="pairedArticle && isVisible"
-      class="fixed bottom-6 left-6 z-40 max-w-xs sm:max-w-sm select-none"
+      class="fixed bottom-16 sm:bottom-6 left-4 sm:left-6 z-30 max-w-[calc(100vw-32px)] sm:max-w-sm select-none"
     >
       <a
         :href="targetHref"

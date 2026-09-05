@@ -51,8 +51,55 @@ const isCandlelightOn = ref(false);
 const isFocusModeOn = ref(false);
 const isPaperMode = ref(true); // Default to high-contrast paper background
 const copiedLink = ref(false);
+const isMobileScreen = ref(false);
+const isZenSheetOpen = ref(false);
+const isPaliHintDismissed = ref(false);
 const { isLeavesEnabled, toggleLeaves } = useZenAtmosphere();
 const { t, locale } = useI18n();
+
+const STORAGE_FONT_SIZE_KEY = 'zen_reader_font_size';
+const STORAGE_PAPER_MODE_KEY = 'zen_reader_paper_mode';
+
+const checkMobileScreen = () => {
+  if (typeof window !== 'undefined') {
+    isMobileScreen.value = window.innerWidth < 640;
+  }
+};
+
+interface TocHeading {
+  id: string;
+  title: string;
+  level: number;
+}
+
+const tocHeadings = computed<TocHeading[]>(() => {
+  if (!props.article.content) return [];
+  const headings: TocHeading[] = [];
+  let counter = 0;
+  const headingRegex = /^(#{2,3})\s+(.*$)/gm;
+  let match: RegExpExecArray | null;
+  while ((match = headingRegex.exec(props.article.content)) !== null) {
+    counter++;
+    const level = match[1].length;
+    const title = cleanHeadingText(match[2]);
+    headings.push({ id: `toc-sec-${counter}`, title, level });
+  }
+  return headings;
+});
+
+const scrollToHeading = (id: string) => {
+  isZenSheetOpen.value = false;
+  if (typeof window === 'undefined') return;
+  nextTick(() => {
+    const el = document.getElementById(id);
+    if (el) {
+      const yOffset = -75;
+      const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+      mindfulBell.ringBell(528, 0.8);
+    }
+  });
+};
 
 const categoryLabel = (category: string) => {
   if (category === 'phap-thoai') return locale.value === 'en' ? 'Dharma Talks' : 'Pháp Thoại & Pháp Âm';
@@ -322,11 +369,41 @@ const renderMermaidDiagrams = async () => {
 };
 
 onMounted(() => {
+  checkMobileScreen();
+  try {
+    const savedSize = localStorage.getItem(STORAGE_FONT_SIZE_KEY);
+    if (savedSize) {
+      const parsed = parseInt(savedSize, 10);
+      if (parsed >= 15 && parsed <= 26) {
+        fontSize.value = parsed;
+      }
+    }
+    const savedPaper = localStorage.getItem(STORAGE_PAPER_MODE_KEY);
+    if (savedPaper !== null) {
+      isPaperMode.value = savedPaper === 'true';
+    }
+  } catch (e) {
+    // Gracefully handle private browsing mode storage restriction
+  }
+
+  window.addEventListener('resize', checkMobileScreen, { passive: true });
   window.addEventListener('scroll', handleScroll, { passive: true });
   window.addEventListener('keydown', handleKeydown);
   window.addEventListener('click', handleWindowClick);
   renderMermaidDiagrams();
   nextTick(() => initPerspectiveWidgets());
+});
+
+watch(fontSize, (newVal) => {
+  try {
+    localStorage.setItem(STORAGE_FONT_SIZE_KEY, newVal.toString());
+  } catch (e) {}
+});
+
+watch(isPaperMode, (newVal) => {
+  try {
+    localStorage.setItem(STORAGE_PAPER_MODE_KEY, newVal ? 'true' : 'false');
+  } catch (e) {}
 });
 
 watch(
@@ -338,6 +415,7 @@ watch(
 );
 
 onUnmounted(() => {
+  window.removeEventListener('resize', checkMobileScreen);
   window.removeEventListener('scroll', handleScroll);
   window.removeEventListener('keydown', handleKeydown);
   window.removeEventListener('click', handleWindowClick);
@@ -607,11 +685,28 @@ const renderedMarkdown = computed(() => {
   md = parseBlockquotes(md, isPaperMode.value);
 
   let parsedHtml = '';
+  let headingCounter = 0;
+  const headingReplacer = (_m: string, hashes: string, p1: string) => {
+    headingCounter++;
+    const id = `toc-sec-${headingCounter}`;
+    const title = cleanHeadingText(p1);
+    const level = hashes.length;
+    if (level === 2) {
+      const h2Class = isPaperMode.value
+        ? 'text-xl sm:text-2xl font-bold text-amber-950 mt-9 mb-3.5 pb-2 border-b border-amber-300/80 font-serif leading-snug scroll-mt-24'
+        : 'text-xl sm:text-2xl font-bold text-amber-300 mt-9 mb-3.5 pb-2 border-b border-amber-500/30 font-serif leading-snug scroll-mt-24';
+      return `<h2 id="${id}" class="${h2Class}">${title}</h2>`;
+    } else {
+      const h3Class = isPaperMode.value
+        ? 'text-lg sm:text-xl font-bold text-amber-950 mt-7 mb-2.5 font-serif leading-snug scroll-mt-24'
+        : 'text-lg sm:text-xl font-bold text-amber-200 mt-7 mb-2.5 font-serif leading-snug scroll-mt-24';
+      return `<h3 id="${id}" class="${h3Class}">${title}</h3>`;
+    }
+  };
 
   if (isPaperMode.value) {
-    // 4. Headings (Pure Elegant Typography without emoji clutter)
-    md = md.replace(/^### (.*$)/gim, (m, p1) => `<h3 class="text-lg sm:text-xl font-bold text-amber-950 mt-7 mb-2.5 font-serif leading-snug">${cleanHeadingText(p1)}</h3>`);
-    md = md.replace(/^## (.*$)/gim, (m, p1) => `<h2 class="text-xl sm:text-2xl font-bold text-amber-950 mt-9 mb-3.5 pb-2 border-b border-amber-300/80 font-serif leading-snug">${cleanHeadingText(p1)}</h2>`);
+    // 4. Headings (Pure Elegant Typography with TOC anchor IDs)
+    md = md.replace(/^(#{2,3})\s+(.*$)/gim, headingReplacer);
 
     // 5. Horizontal Rules (Minimalist hairline)
     md = md.replace(/^---$/gim, '<div class="my-8 flex items-center justify-center gap-3 text-amber-700/40 select-none"><span class="h-px w-20 bg-amber-300"></span><span class="text-xs">✦</span><span class="h-px w-20 bg-amber-300"></span></div>');
@@ -640,9 +735,8 @@ const renderedMarkdown = computed(() => {
       return `<p class="my-4 text-[#1c1917] font-serif leading-[1.95] text-base sm:text-lg text-justify font-normal">${p.replace(/\n/g, '<br/>')}</p>`;
     }).join('\n');
   } else {
-    // 4. Headings
-    md = md.replace(/^### (.*$)/gim, (m, p1) => `<h3 class="text-lg sm:text-xl font-bold text-amber-200 mt-7 mb-2.5 font-serif leading-snug">${cleanHeadingText(p1)}</h3>`);
-    md = md.replace(/^## (.*$)/gim, (m, p1) => `<h2 class="text-xl sm:text-2xl font-bold text-amber-300 mt-9 mb-3.5 pb-2 border-b border-amber-500/30 font-serif leading-snug">${cleanHeadingText(p1)}</h2>`);
+    // 4. Headings (Night Mode Typography with TOC anchor IDs)
+    md = md.replace(/^(#{2,3})\s+(.*$)/gim, headingReplacer);
 
     // 5. Horizontal Rules
     md = md.replace(/^---$/gim, '<div class="my-8 flex items-center justify-center gap-3 text-amber-500/40 select-none"><span class="h-px w-20 bg-amber-500/30"></span><span class="text-xs">✦</span><span class="h-px w-20 bg-amber-500/30"></span></div>');
@@ -735,9 +829,9 @@ const suttaJsonLd = computed(() => ({
       />
     </div>
 
-    <!-- Floating Pāḷi explanation for highlighted terms -->
+    <!-- Floating Pāḷi explanation for highlighted terms (Desktop only) -->
     <div
-      v-if="activeTooltip"
+      v-if="activeTooltip && !isMobileScreen"
       class="zen-pali-popover fixed w-[min(380px,calc(100vw-32px))] rounded-2xl border border-amber-500/70 p-4 text-left font-sans shadow-2xl"
       :style="{
         left: `${activeTooltip.x}px`,
@@ -771,28 +865,90 @@ const suttaJsonLd = computed(() => ({
       </div>
     </div>
 
-    <div class="max-w-4xl mx-auto py-6 sm:py-10 relative z-10">
+    <!-- Mobile Bottom Sheet for Pāḷi Term Explanation -->
+    <transition
+      enter-active-class="transition duration-300 ease-out"
+      enter-from-class="translate-y-full opacity-0"
+      enter-to-class="translate-y-0 opacity-100"
+      leave-active-class="transition duration-200 ease-in"
+      leave-from-class="translate-y-0 opacity-100"
+      leave-to-class="translate-y-full opacity-0"
+    >
+      <div
+        v-if="activeTooltip && isMobileScreen"
+        class="zen-pali-mobile-sheet fixed inset-x-0 bottom-0 z-50 p-5 bg-[#0f0d0b] border-t-2 border-amber-500/70 shadow-[0_-20px_60px_rgba(0,0,0,0.95)] rounded-t-3xl max-h-[80vh] overflow-y-auto text-left"
+        role="dialog"
+        aria-live="polite"
+      >
+        <div class="w-12 h-1.5 bg-amber-500/40 rounded-full mx-auto mb-4" />
+
+        <div class="flex items-start justify-between gap-3">
+          <div class="min-w-0">
+            <div class="text-lg font-serif font-bold text-amber-300">{{ activeTooltip.term }}</div>
+            <div class="text-xs text-amber-200/90 font-serif mt-0.5">{{ activeTooltip.vietnamese }}</div>
+          </div>
+          <button
+            type="button"
+            class="p-2 rounded-xl text-stone-400 hover:text-white hover:bg-stone-800 transition-colors shrink-0"
+            @click="closeTooltip"
+            :aria-label="locale === 'en' ? 'Close' : 'Đóng'"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div class="inline-flex mt-3 rounded-full border border-amber-500/40 bg-amber-500/15 px-2.5 py-0.5 text-[11px] font-semibold text-amber-300 font-sans">
+          {{ activeTooltip.category }}
+        </div>
+
+        <div class="mt-3.5 rounded-2xl bg-stone-900 border border-stone-800 p-4 text-stone-200 text-sm font-serif leading-relaxed">
+          {{ activeTooltip.meaning }}
+        </div>
+      </div>
+    </transition>
+
+    <!-- Backdrop for mobile pali sheet -->
+    <div
+      v-if="activeTooltip && isMobileScreen"
+      class="fixed inset-0 bg-black/70 backdrop-blur-xs z-40"
+      @click="closeTooltip"
+    />
+
+    <div class="max-w-4xl mx-auto py-4 sm:py-10 px-0 sm:px-4 relative z-10 pb-20 sm:pb-0">
       <!-- Breadcrumb Navigation -->
-      <nav class="flex items-center gap-2 text-xs font-serif text-stone-400 mb-6" aria-label="Breadcrumb">
-        <Link href="/theravada" class="hover:text-amber-300">Theravāda</Link>
-        <span>/</span>
-        <Link :href="`/theravada/danh-muc/${article.category}`" class="hover:text-amber-300">
-          {{ categoryLabel(article.category) }}
+      <nav class="flex items-center justify-between text-xs font-serif text-stone-400 mb-4 sm:mb-6 px-4 sm:px-0" aria-label="Breadcrumb">
+        <!-- Mobile: clean back button to category -->
+        <Link
+          :href="`/theravada/danh-muc/${article.category}`"
+          class="sm:hidden inline-flex items-center gap-1.5 text-amber-400 hover:text-amber-300 font-medium py-1"
+        >
+          <span>←</span>
+          <span class="truncate max-w-[240px]">{{ categoryLabel(article.category) }}</span>
         </Link>
-        <span>/</span>
-        <span class="text-amber-400 font-bold truncate max-w-[200px] sm:max-w-md">
-          {{ article.title }}
+
+        <!-- Desktop: full 3-tier breadcrumb -->
+        <div class="hidden sm:flex items-center gap-2">
+          <Link href="/theravada" class="hover:text-amber-300">Theravāda</Link>
+          <span>/</span>
+          <Link :href="`/theravada/danh-muc/${article.category}`" class="hover:text-amber-300">
+            {{ categoryLabel(article.category) }}
+          </Link>
+          <span>/</span>
+          <span class="text-amber-400 font-bold truncate max-w-[200px] sm:max-w-md">
+            {{ article.title }}
+          </span>
+        </div>
+
+        <span class="text-xs text-stone-400 font-serif shrink-0">
+          {{ article.reading_time_min }} {{ t('theravada.minutes') }}
         </span>
       </nav>
 
       <!-- Article Header -->
-      <header class="mb-8 text-left border-b border-stone-800 pb-6">
+      <header class="mb-6 sm:mb-8 text-left border-b border-stone-800 pb-5 sm:pb-6 px-4 sm:px-0">
         <div class="flex flex-wrap items-center gap-2.5 mb-3">
           <span class="px-3 py-1 rounded-full text-xs font-serif font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30">
             {{ categoryLabel(article.category) }}
-          </span>
-          <span class="text-xs text-stone-400 font-serif">
-            {{ article.reading_time_min }} {{ t('theravada.minutes') }}
           </span>
           <a
             v-if="hasMediaAttachment"
@@ -823,8 +979,8 @@ const suttaJsonLd = computed(() => ({
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 sm:pt-4 border-t border-stone-900 text-xs font-serif text-stone-400">
           <span class="italic text-[11px] sm:text-xs">{{ locale === 'en' ? 'Author / Source' : 'Tác giả / Nguồn' }}: <strong class="text-stone-200 not-italic">{{ article.author || 'Pāḷi Tipiṭaka' }}</strong></span>
 
-          <!-- Reader Controls: Minimalist Toolbar (Horizontally Scrollable Pill on Mobile) -->
-          <div class="w-full sm:w-auto flex items-center gap-1.5 overflow-x-auto pb-1.5 pt-0.5 sm:flex-wrap no-scrollbar">
+          <!-- Desktop Reader Controls: Minimalist Toolbar (hidden on mobile, bottom floating bar handles mobile) -->
+          <div class="hidden sm:flex items-center gap-1.5 overflow-x-auto pb-1.5 pt-0.5 flex-wrap no-scrollbar">
             <!-- Paper / Night Mode Toggle -->
             <button
               @click="togglePaperMode"
@@ -922,13 +1078,13 @@ const suttaJsonLd = computed(() => ({
         </div>
       </header>
 
-      <!-- Main Text Body -->
+      <!-- Main Text Body (Full-bleed on mobile, elegant card on desktop) -->
       <article
         :class="[
-          'zen-article-content font-serif leading-relaxed rounded-3xl p-4 sm:p-10 lg:p-12 mb-8 sm:mb-12 relative overflow-hidden transition-all duration-500 shadow-2xl',
+          'zen-article-content font-serif leading-relaxed rounded-none sm:rounded-3xl px-4 py-6 sm:p-10 lg:p-12 mb-8 sm:mb-12 relative overflow-hidden transition-all duration-500 shadow-xl sm:shadow-2xl',
           isPaperMode
-            ? 'bg-stone-50/95 text-[#1c1917] border border-amber-600/20 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.4)]'
-            : 'bg-stone-900/80 text-stone-200 border border-amber-500/30 backdrop-blur-md',
+            ? 'is-paper-mode bg-stone-50/98 text-[#1c1917] border-y sm:border border-amber-600/20 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.4)]'
+            : 'is-night-mode bg-stone-900/90 text-stone-200 border-y sm:border border-amber-500/30 backdrop-blur-md',
           { 'focus-mode-active': isFocusModeOn }
         ]"
         :style="{ fontSize: `${fontSize}px` }"
@@ -939,29 +1095,54 @@ const suttaJsonLd = computed(() => ({
         <!-- Top Golden Accent Bar -->
         <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-600 via-amber-400 to-yellow-400" />
 
-        <!-- Notification Banner about Pāḷi Term Highlights -->
-        <div class="mb-7 flex items-center justify-between gap-3 text-xs sm:text-sm font-serif bg-stone-900 text-stone-200 border border-amber-500/40 px-4 py-3 rounded-xl shadow-md">
-          <div class="flex items-center gap-2 text-left">
-            <span class="text-amber-400 text-xs">✦</span>
-            <span><strong class="text-amber-300 font-semibold">{{ t('theravada.glossary') }}:</strong> {{ t('theravada.glossaryHint') }}</span>
+        <!-- Notification Banner about Pāḷi Term Highlights (Mobile-friendly & dismissible) -->
+        <div
+          v-if="!isPaliHintDismissed"
+          :class="[
+            'mb-6 flex items-center justify-between gap-3 text-xs sm:text-sm font-serif px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl shadow-sm border transition-all',
+            isPaperMode
+              ? 'bg-amber-100/70 text-amber-950 border-amber-300/80'
+              : 'bg-stone-900/90 text-stone-200 border-amber-500/40'
+          ]"
+        >
+          <div class="flex items-center gap-2 text-left min-w-0">
+            <span class="text-amber-500 text-xs shrink-0">✦</span>
+            <span class="truncate sm:whitespace-normal">
+              <strong :class="isPaperMode ? 'text-amber-900' : 'text-amber-300'" class="font-semibold">{{ t('theravada.glossary') }}:</strong>
+              <span class="hidden sm:inline"> {{ t('theravada.glossaryHint') }}</span>
+              <span class="sm:hidden"> {{ t('theravada.glossaryHintMobile') }}</span>
+            </span>
           </div>
-          <span class="text-[10px] font-mono text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-lg bg-stone-950 shrink-0 hidden sm:inline">Pāḷi Canon</span>
+          <div class="flex items-center gap-2 shrink-0">
+            <span class="text-[10px] font-mono border px-2 py-0.5 rounded-lg shrink-0 hidden sm:inline" :class="isPaperMode ? 'text-amber-900 border-amber-400/40 bg-amber-50/60' : 'text-amber-300 border-amber-500/30 bg-stone-950'">Pāḷi Canon</span>
+            <button
+              type="button"
+              @click="isPaliHintDismissed = true"
+              class="text-xs px-1.5 py-0.5 rounded hover:bg-black/10 dark:hover:bg-white/10 transition-colors cursor-pointer text-stone-400 hover:text-stone-200"
+              title="Đóng thông báo"
+              aria-label="Đóng thông báo"
+            >
+              ✕
+            </button>
+          </div>
         </div>
 
         <div class="space-y-4 font-serif text-left antialiased" v-html="renderedMarkdown" />
       </article>
 
       <!-- Dual Perspective Footer Callout -->
-      <DualPerspectiveFooterCard
-        v-if="paired_article"
-        :paired-article="paired_article"
-        current-type="theravada"
-      />
+      <div class="px-4 sm:px-0">
+        <DualPerspectiveFooterCard
+          v-if="paired_article"
+          :paired-article="paired_article"
+          current-type="theravada"
+        />
+      </div>
 
       <!-- Pāḷi Terms Annotation Box (if present) -->
       <div
         v-if="article.pali_terms && article.pali_terms.length > 0"
-        class="my-10 p-6 sm:p-7 rounded-2xl bg-stone-900/90 border border-amber-500/30 shadow-xl text-left"
+        class="my-8 sm:my-10 p-5 sm:p-7 mx-4 sm:mx-0 rounded-2xl bg-stone-900/90 border border-amber-500/30 shadow-xl text-left"
       >
         <div class="text-amber-300 font-serif font-bold text-base mb-4 flex items-center gap-2">
           <span class="text-xs">✦</span>
@@ -981,7 +1162,7 @@ const suttaJsonLd = computed(() => ({
       </div>
 
       <!-- Social Sharing Bar (Lan Tỏa Chánh Pháp) -->
-      <div class="my-10 p-6 sm:p-7 rounded-2xl bg-stone-900/90 border border-amber-500/30 shadow-xl text-left">
+      <div class="my-8 sm:my-10 p-5 sm:p-7 mx-4 sm:mx-0 rounded-2xl bg-stone-900/90 border border-amber-500/30 shadow-xl text-left">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div class="space-y-1">
             <div class="text-amber-300 font-serif font-bold text-sm sm:text-base flex items-center gap-2">
@@ -1048,7 +1229,7 @@ const suttaJsonLd = computed(() => ({
       </div>
 
       <!-- Footer Actions & Tags -->
-      <div class="mt-10 pt-6 border-t border-stone-800 flex flex-wrap items-center justify-between gap-4">
+      <div class="mt-8 sm:mt-10 pt-6 px-4 sm:px-0 border-t border-stone-800 flex flex-wrap items-center justify-between gap-4">
         <div class="flex flex-wrap items-center gap-2">
           <span class="text-xs font-serif text-stone-400">Từ khóa:</span>
           <span
@@ -1068,6 +1249,221 @@ const suttaJsonLd = computed(() => ({
         </Link>
       </div>
     </div>
+
+    <!-- Mobile Zen Bottom Floating Bar (sm:hidden) -->
+    <div
+      class="sm:hidden fixed bottom-0 left-0 right-0 z-40 px-3 pb-[max(12px,env(safe-area-inset-bottom))] pt-2.5 bg-[#141210]/95 backdrop-blur-xl border-t border-amber-500/30 shadow-[0_-10px_35px_rgba(0,0,0,0.9)] flex items-center justify-between gap-1.5 select-none"
+    >
+      <!-- Paper / Night Mode Toggle -->
+      <button
+        type="button"
+        @click="togglePaperMode"
+        class="flex-1 py-2 px-2 rounded-xl border flex items-center justify-center gap-1 text-xs font-medium transition-all active:scale-95"
+        :class="isPaperMode ? 'bg-amber-100 text-stone-950 border-amber-400 font-bold shadow-sm' : 'bg-stone-900 text-stone-300 border-stone-800'"
+        :title="isPaperMode ? t('theravada.switchNight') : t('theravada.switchPaper')"
+      >
+        <span>{{ isPaperMode ? '📜 Giấy' : '🌙 Đêm' }}</span>
+      </button>
+
+      <!-- Font Size Quick Adjust -->
+      <div class="flex items-center bg-stone-900 rounded-xl border border-stone-800 px-1 py-0.5">
+        <button
+          type="button"
+          @click="fontSize = Math.max(15, fontSize - 1)"
+          class="px-2 py-1 text-stone-300 font-bold text-xs active:scale-95"
+          :title="t('theravada.decreaseFont')"
+          aria-label="Giảm cỡ chữ"
+        >
+          A-
+        </button>
+        <span class="px-1 text-xs font-mono text-amber-300 font-bold min-w-[28px] text-center">{{ fontSize }}</span>
+        <button
+          type="button"
+          @click="fontSize = Math.min(26, fontSize + 1)"
+          class="px-2 py-1 text-stone-300 font-bold text-xs active:scale-95"
+          :title="t('theravada.increaseFont')"
+          aria-label="Tăng cỡ chữ"
+        >
+          A+
+        </button>
+      </div>
+
+      <!-- Mindful Bell Ring Trigger -->
+      <button
+        type="button"
+        @click="ringBell"
+        class="p-2 rounded-xl border border-amber-500/30 bg-amber-500/15 text-amber-300 active:scale-95 transition-all text-xs flex items-center justify-center shrink-0 min-w-[40px]"
+        :class="{ 'animate-pulse ring-2 ring-amber-400 bg-amber-500/30': isRinging }"
+        :title="t('theravada.ringBell')"
+        aria-label="Thỉnh chuông"
+      >
+        <span>🔔</span>
+      </button>
+
+      <!-- TOC & Zen Sheet Menu Button -->
+      <button
+        type="button"
+        @click="isZenSheetOpen = true"
+        class="py-2 px-2.5 rounded-xl border border-amber-500/30 bg-stone-900 text-amber-300 active:scale-95 transition-all text-xs font-medium flex items-center justify-center gap-1.5 shrink-0"
+        aria-label="Mở menu đọc và mục lục"
+      >
+        <span>📑</span>
+        <span class="font-serif text-[11px]">{{ t('theravada.toc') }}</span>
+        <span v-if="tocHeadings.length > 0" class="text-[10px] bg-amber-500/25 px-1 py-0.2 rounded-full font-mono font-bold">{{ tocHeadings.length }}</span>
+      </button>
+    </div>
+
+    <!-- Mobile Zen Bottom Sheet (TOC, Reading Tools & Share) -->
+    <transition
+      enter-active-class="transition duration-300 ease-out"
+      enter-from-class="translate-y-full opacity-0"
+      enter-to-class="translate-y-0 opacity-100"
+      leave-active-class="transition duration-200 ease-in"
+      leave-from-class="translate-y-0 opacity-100"
+      leave-to-class="translate-y-full opacity-0"
+    >
+      <div
+        v-if="isZenSheetOpen && isMobileScreen"
+        class="fixed inset-x-0 bottom-0 z-50 p-5 bg-[#12100e] border-t-2 border-amber-500/60 shadow-[0_-20px_60px_rgba(0,0,0,0.95)] rounded-t-3xl max-h-[85vh] overflow-y-auto text-left flex flex-col"
+        role="dialog"
+        aria-live="polite"
+      >
+        <!-- Pull Handle -->
+        <div class="w-12 h-1.5 bg-amber-500/30 rounded-full mx-auto mb-3" />
+
+        <div class="flex items-center justify-between pb-3 border-b border-stone-800">
+          <div>
+            <h3 class="text-base font-serif font-bold text-amber-300">{{ t('theravada.readingPreferences') }}</h3>
+            <p class="text-xs text-stone-400 font-serif mt-0.5 truncate max-w-[250px]">{{ article.title }}</p>
+          </div>
+          <button
+            type="button"
+            class="p-2 rounded-xl text-stone-400 hover:text-white hover:bg-stone-800 transition-colors"
+            @click="isZenSheetOpen = false"
+            aria-label="Đóng bảng tuỳ chỉnh"
+          >
+            ✕
+          </button>
+        </div>
+
+        <!-- Section 1: Table of Contents (TOC) -->
+        <div class="my-4">
+          <div class="flex items-center justify-between mb-2.5">
+            <span class="text-xs font-serif font-bold text-amber-400 flex items-center gap-1.5">
+              <span>📑</span>
+              <span>{{ t('theravada.toc') }}</span>
+            </span>
+            <span class="text-[10px] text-stone-400 font-serif italic">{{ t('theravada.tocDescription') }}</span>
+          </div>
+
+          <div v-if="tocHeadings.length > 0" class="space-y-1.5 max-h-56 overflow-y-auto pr-1">
+            <button
+              v-for="heading in tocHeadings"
+              :key="heading.id"
+              type="button"
+              @click="scrollToHeading(heading.id)"
+              class="w-full text-left px-3 py-2 rounded-xl text-xs font-serif transition-colors flex items-start gap-2 group hover:bg-amber-500/10 active:bg-amber-500/20 cursor-pointer"
+              :class="heading.level === 2 ? 'bg-stone-900/80 text-amber-200 font-medium' : 'bg-stone-950/60 text-stone-300 pl-6 text-[11px]'"
+            >
+              <span class="text-amber-500/60 group-hover:text-amber-400 text-[10px] mt-0.5">✦</span>
+              <span class="leading-relaxed line-clamp-2">{{ heading.title }}</span>
+            </button>
+          </div>
+          <div v-else class="text-xs font-serif text-stone-400 italic p-3 bg-stone-900/50 rounded-xl">
+            Đang đọc toàn văn bài kinh
+          </div>
+        </div>
+
+        <!-- Section 2: Atmosphere Tools -->
+        <div class="my-3 pt-3 border-t border-stone-800">
+          <span class="text-xs font-serif font-bold text-amber-400 flex items-center gap-1.5 mb-2.5">
+            <span>🧘</span>
+            <span>{{ t('theravada.zenControls') }}</span>
+          </span>
+
+          <div class="grid grid-cols-3 gap-2">
+            <!-- Falling Leaves Toggle -->
+            <button
+              type="button"
+              @click="toggleLeaves"
+              class="py-2.5 px-2 rounded-xl border text-center text-xs font-serif transition-all cursor-pointer active:scale-95"
+              :class="isLeavesEnabled ? 'bg-amber-500/20 text-amber-300 border-amber-500/50 font-bold' : 'bg-stone-900 text-stone-400 border-stone-800'"
+            >
+              <div>🍃</div>
+              <div class="text-[11px] mt-1">{{ t('theravada.leaves') }}</div>
+            </button>
+
+            <!-- Candlelight Glow Toggle -->
+            <button
+              type="button"
+              @click="toggleCandlelight"
+              class="py-2.5 px-2 rounded-xl border text-center text-xs font-serif transition-all cursor-pointer active:scale-95"
+              :class="isCandlelightOn ? 'bg-amber-500 text-stone-950 border-amber-400 font-bold' : 'bg-stone-900 text-stone-300 border-stone-800'"
+            >
+              <div>🕯️</div>
+              <div class="text-[11px] mt-1">{{ t('theravada.candle') }}</div>
+            </button>
+
+            <!-- Focus Mode Toggle -->
+            <button
+              type="button"
+              @click="toggleFocusMode"
+              class="py-2.5 px-2 rounded-xl border text-center text-xs font-serif transition-all cursor-pointer active:scale-95"
+              :class="isFocusModeOn ? 'bg-amber-500 text-stone-950 border-amber-400 font-bold' : 'bg-stone-900 text-stone-300 border-stone-800'"
+            >
+              <div>🎯</div>
+              <div class="text-[11px] mt-1">{{ t('theravada.focus') }}</div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Section 3: Quick Share -->
+        <div class="mt-3 pt-3 border-t border-stone-800">
+          <span class="text-xs font-serif font-bold text-amber-400 flex items-center gap-1.5 mb-2.5">
+            <span>🔗</span>
+            <span>{{ t('theravada.shareTitle') }}</span>
+          </span>
+
+          <div class="grid grid-cols-4 gap-2">
+            <button
+              type="button"
+              @click="shareArticleToFacebook"
+              class="py-2 px-1 rounded-xl bg-[#1877F2]/20 border border-[#1877F2]/40 text-[#5295ff] text-[11px] font-sans font-medium flex flex-col items-center justify-center gap-1 active:scale-95 cursor-pointer"
+            >
+              <span>Facebook</span>
+            </button>
+            <button
+              type="button"
+              @click="shareArticleToZalo"
+              class="py-2 px-1 rounded-xl bg-[#0068FF]/20 border border-[#0068FF]/40 text-[#5295ff] text-[11px] font-sans font-medium flex flex-col items-center justify-center gap-1 active:scale-95 cursor-pointer"
+            >
+              <span>Zalo</span>
+            </button>
+            <button
+              type="button"
+              @click="shareArticleToTelegram"
+              class="py-2 px-1 rounded-xl bg-[#24A1DE]/20 border border-[#24A1DE]/40 text-[#55c0f5] text-[11px] font-sans font-medium flex flex-col items-center justify-center gap-1 active:scale-95 cursor-pointer"
+            >
+              <span>Telegram</span>
+            </button>
+            <button
+              type="button"
+              @click="copyArticleLink"
+              class="py-2 px-1 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[11px] font-sans font-medium flex flex-col items-center justify-center gap-1 active:scale-95 cursor-pointer"
+            >
+              <span>{{ copiedLink ? '✓ Đã chép' : 'Sao chép' }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </transition>
+
+    <!-- Backdrop for mobile zen sheet -->
+    <div
+      v-if="isZenSheetOpen && isMobileScreen"
+      class="fixed inset-0 bg-black/70 backdrop-blur-xs z-40"
+      @click="isZenSheetOpen = false"
+    />
 
     <!-- Floating quick switch pill -->
     <DualPerspectiveFloatingPill
@@ -1123,14 +1519,14 @@ const suttaJsonLd = computed(() => ({
 
 /* Night Mode Colors for terms */
 :global(.dark) :deep(.zen-pali-term),
-.zen-article-content:not(.bg-stone-50\/95) :deep(.zen-pali-term) {
+.zen-article-content.is-night-mode :deep(.zen-pali-term) {
   border-bottom: 1.5px dotted #fbbf24;
   color: #fde68a;
 }
 
 :global(.dark) :deep(.zen-pali-term:hover),
 :global(.dark) :deep(.zen-pali-term:focus),
-.zen-article-content:not(.bg-stone-50\/95) :deep(.zen-pali-term:hover) {
+.zen-article-content.is-night-mode :deep(.zen-pali-term:hover) {
   background-color: rgba(120, 53, 15, 0.45);
   color: #fef3c7;
   border-bottom-style: solid;
@@ -1138,29 +1534,37 @@ const suttaJsonLd = computed(() => ({
 }
 
 /* High Contrast Popover Enforcements */
-:global(.zen-pali-popover) {
+:global(.zen-pali-popover),
+:global(.zen-pali-mobile-sheet) {
   background-color: #0c0a09 !important;
   color: #f5f5f4 !important;
   box-shadow: 0 25px 80px -10px rgba(0, 0, 0, 0.98), 0 0 0 2px rgba(245, 158, 11, 0.8) !important;
   opacity: 1 !important;
+}
+
+:global(.zen-pali-popover) {
   z-index: 99999 !important;
 }
 
-:global(.zen-pali-popover .pali-title) {
+:global(.zen-pali-popover .pali-title),
+:global(.zen-pali-mobile-sheet .pali-title) {
   color: #fcd34d !important;
 }
 
-:global(.zen-pali-popover .pali-vn) {
+:global(.zen-pali-popover .pali-vn),
+:global(.zen-pali-mobile-sheet .pali-vn) {
   color: #fde68a !important;
 }
 
-:global(.zen-pali-popover .pali-meaning) {
+:global(.zen-pali-popover .pali-meaning),
+:global(.zen-pali-mobile-sheet .pali-meaning) {
   background-color: #1c1917 !important;
   color: #ffffff !important;
   border-color: #292524 !important;
 }
 
-:global(.zen-pali-popover .pali-badge) {
+:global(.zen-pali-popover .pali-badge),
+:global(.zen-pali-mobile-sheet .pali-badge) {
   background-color: rgba(245, 158, 11, 0.2) !important;
   color: #fcd34d !important;
   border-color: rgba(245, 158, 11, 0.5) !important;
@@ -1190,70 +1594,88 @@ const suttaJsonLd = computed(() => ({
 }
 
 /* Zen Opening Quote Box Contrast (Paper Mode vs Night Mode) */
-.zen-article-content.bg-stone-50\/95 :deep(.zen-opening-quote) {
-  background-color: rgba(245, 158, 11, 0.12) !important;
-  border: 1.5px solid rgba(180, 83, 9, 0.4) !important;
+.zen-article-content.is-paper-mode :deep(.zen-opening-quote),
+:deep(.is-paper-mode .zen-opening-quote) {
+  background-color: #fef9ee !important;
+  border: 1.5px solid rgba(217, 119, 6, 0.45) !important;
   box-shadow: 0 4px 15px rgba(180, 83, 9, 0.08) !important;
 }
-.zen-article-content.bg-stone-50\/95 :deep(.zen-opening-quote),
-.zen-article-content.bg-stone-50\/95 :deep(.zen-opening-quote p) {
-  color: #451a03 !important; /* Deep dark amber-950 for high contrast on light paper */
+.zen-article-content.is-paper-mode :deep(.zen-opening-quote),
+.zen-article-content.is-paper-mode :deep(.zen-opening-quote p),
+:deep(.is-paper-mode .zen-opening-quote),
+:deep(.is-paper-mode .zen-opening-quote p) {
+  color: #451a03 !important; /* Deep dark warm brown for high contrast on light paper */
   font-weight: 500 !important;
 }
 
-.zen-article-content:not(.bg-stone-50\/95) :deep(.zen-opening-quote) {
-  background-color: rgba(245, 158, 11, 0.15) !important;
-  border: 1.5px solid rgba(245, 158, 11, 0.5) !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+.zen-article-content.is-night-mode :deep(.zen-opening-quote),
+:deep(.is-night-mode .zen-opening-quote) {
+  background-color: rgba(245, 158, 11, 0.12) !important;
+  border: 1.5px solid rgba(245, 158, 11, 0.45) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6) !important;
 }
-.zen-article-content:not(.bg-stone-50\/95) :deep(.zen-opening-quote),
-.zen-article-content:not(.bg-stone-50\/95) :deep(.zen-opening-quote p) {
-  color: #fef3c7 !important; /* Bright warm amber-100 for high contrast in dark mode */
+.zen-article-content.is-night-mode :deep(.zen-opening-quote),
+.zen-article-content.is-night-mode :deep(.zen-opening-quote p),
+:deep(.is-night-mode .zen-opening-quote),
+:deep(.is-night-mode .zen-opening-quote p) {
+  color: #fef3c7 !important; /* Bright warm gold for high contrast in dark mode */
   font-weight: 500 !important;
 }
 
 /* Zen Media Card Contrast (Paper Mode vs Night Mode) */
-.zen-article-content.bg-stone-50\/95 :deep(.zen-media-card) {
+.zen-article-content.is-paper-mode :deep(.zen-media-card),
+:deep(.is-paper-mode .zen-media-card) {
   background-color: #fdfbf7 !important;
   border: 1.5px solid rgba(217, 119, 6, 0.45) !important;
   box-shadow: 0 10px 30px -5px rgba(180, 83, 9, 0.12) !important;
 }
-.zen-article-content.bg-stone-50\/95 :deep(.zen-media-card-header) {
+.zen-article-content.is-paper-mode :deep(.zen-media-card-header),
+:deep(.is-paper-mode .zen-media-card-header) {
   border-color: rgba(217, 119, 6, 0.25) !important;
 }
-.zen-article-content.bg-stone-50\/95 :deep(.zen-media-card-icon) {
+.zen-article-content.is-paper-mode :deep(.zen-media-card-icon),
+:deep(.is-paper-mode .zen-media-card-icon) {
   background-color: rgba(245, 158, 11, 0.2) !important;
   color: #92400e !important;
   border: 1px solid rgba(217, 119, 6, 0.3) !important;
 }
-.zen-article-content.bg-stone-50\/95 :deep(.zen-media-card-title) {
+.zen-article-content.is-paper-mode :deep(.zen-media-card-title),
+:deep(.is-paper-mode .zen-media-card-title) {
   color: #451a03 !important; /* Deep dark amber-950 */
 }
-.zen-article-content.bg-stone-50\/95 :deep(.zen-media-card-subtitle),
-.zen-article-content.bg-stone-50\/95 :deep(.zen-media-card-caption) {
+.zen-article-content.is-paper-mode :deep(.zen-media-card-subtitle),
+.zen-article-content.is-paper-mode :deep(.zen-media-card-caption),
+:deep(.is-paper-mode .zen-media-card-subtitle),
+:deep(.is-paper-mode .zen-media-card-caption) {
   color: #78350f !important; /* Deep warm amber-900 */
 }
 
-.zen-article-content:not(.bg-stone-50\/95) :deep(.zen-media-card) {
+.zen-article-content.is-night-mode :deep(.zen-media-card),
+:deep(.is-night-mode .zen-media-card) {
   background-color: #0c0a09 !important;
   border: 1.5px solid rgba(245, 158, 11, 0.5) !important;
   box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.8) !important;
 }
-.zen-article-content:not(.bg-stone-50\/95) :deep(.zen-media-card-header) {
+.zen-article-content.is-night-mode :deep(.zen-media-card-header),
+:deep(.is-night-mode .zen-media-card-header) {
   border-color: rgba(245, 158, 11, 0.2) !important;
 }
-.zen-article-content:not(.bg-stone-50\/95) :deep(.zen-media-card-icon) {
+.zen-article-content.is-night-mode :deep(.zen-media-card-icon),
+:deep(.is-night-mode .zen-media-card-icon) {
   background-color: rgba(245, 158, 11, 0.2) !important;
   color: #fcd34d !important;
   border: 1px solid rgba(245, 158, 11, 0.4) !important;
 }
-.zen-article-content:not(.bg-stone-50\/95) :deep(.zen-media-card-title) {
+.zen-article-content.is-night-mode :deep(.zen-media-card-title),
+:deep(.is-night-mode .zen-media-card-title) {
   color: #fde68a !important; /* Bright warm gold */
 }
-.zen-article-content:not(.bg-stone-50\/95) :deep(.zen-media-card-subtitle) {
+.zen-article-content.is-night-mode :deep(.zen-media-card-subtitle),
+:deep(.is-night-mode .zen-media-card-subtitle) {
   color: #d6d3d1 !important; /* Stone-300 */
 }
-.zen-article-content:not(.bg-stone-50\/95) :deep(.zen-media-card-caption) {
+.zen-article-content.is-night-mode :deep(.zen-media-card-caption),
+:deep(.is-night-mode .zen-media-card-caption) {
   color: #fde68a !important; /* Bright warm gold */
 }
 </style>
