@@ -154,9 +154,26 @@ onUnmounted(() => {
           </Link>
         </nav>
 
-        <div class="hidden md:flex items-center rounded-lg border border-amber-500/30 bg-stone-900/80 p-0.5 text-[10px] font-sans" role="group" aria-label="Language">
-          <button type="button" class="px-2 py-1 rounded-md" :class="locale === 'en' ? 'bg-amber-400 text-stone-950 font-bold' : 'text-stone-400'" @click="setLocale('en')">EN</button>
-          <button type="button" class="px-2 py-1 rounded-md" :class="locale === 'vi' ? 'bg-amber-400 text-stone-950 font-bold' : 'text-stone-400'" @click="setLocale('vi')">VI</button>
+        <div class="hidden md:flex items-center gap-2.5">
+          <!-- YouTube Channel Link -->
+          <a
+            href="https://www.youtube.com/@matoathien"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-red-500/30 bg-stone-900/90 text-red-400 hover:text-red-300 hover:bg-red-500/15 hover:border-red-500/50 text-[11px] font-sans font-semibold transition-all duration-200 group shadow-sm shrink-0"
+            title="Kênh YouTube Ma Tọa Thiền (@matoathien)"
+            @click="mindfulBell.strikeWoodenFish()"
+          >
+            <svg class="w-3.5 h-3.5 text-red-500 group-hover:scale-110 transition-transform" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+            </svg>
+            <span class="tracking-wide">YouTube</span>
+          </a>
+
+          <div class="flex items-center rounded-lg border border-amber-500/30 bg-stone-900/80 p-0.5 text-[10px] font-sans" role="group" aria-label="Language">
+            <button type="button" class="px-2 py-1 rounded-md" :class="locale === 'en' ? 'bg-amber-400 text-stone-950 font-bold' : 'text-stone-400'" @click="setLocale('en')">EN</button>
+            <button type="button" class="px-2 py-1 rounded-md" :class="locale === 'vi' ? 'bg-amber-400 text-stone-950 font-bold' : 'text-stone-400'" @click="setLocale('vi')">VI</button>
+          </div>
         </div>
 
         <!-- Mobile Action Controls (visible only on < md: 768px) -->
@@ -228,7 +245,20 @@ onUnmounted(() => {
             </Link>
           </div>
 
-          <div class="pt-3 border-t border-stone-800/80 flex items-center justify-between gap-3">
+          <div class="pt-3 border-t border-stone-800/80 flex flex-col gap-2">
+            <a
+              href="https://www.youtube.com/@matoathien"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-red-950/40 via-stone-900 to-stone-900 border border-red-500/30 text-red-300 hover:text-red-200 text-xs font-serif font-semibold text-center flex items-center justify-center gap-2 transition-all min-h-[44px]"
+              @click="handleNavClick"
+            >
+              <svg class="w-4 h-4 text-red-500" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+              </svg>
+              <span>Kênh YouTube: Ma Tọa Thiền (@matoathien)</span>
+            </a>
+
             <Link
               href="/"
               class="w-full py-3 px-4 rounded-2xl bg-stone-900 border border-stone-800 text-stone-300 hover:text-amber-300 hover:bg-stone-800 text-xs font-serif font-semibold text-center flex items-center justify-center gap-2 transition-all min-h-[44px]"
@@ -265,6 +295,21 @@ onUnmounted(() => {
             (Avoid all evil, cultivate the good, purify the mind — the teaching of the Buddhas, Dhammapada 183)
           </span>
         </p>
+
+        <!-- YouTube Channel Feature Badge in Footer -->
+        <a
+          href="https://www.youtube.com/@matoathien"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-stone-900/90 hover:bg-red-950/40 border border-red-500/30 hover:border-red-500/60 text-red-300 hover:text-red-200 text-xs font-serif transition-all duration-300 shadow-sm group"
+          @click="mindfulBell.strikeWoodenFish()"
+        >
+          <svg class="w-4 h-4 text-red-500 group-hover:scale-110 transition-transform" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+          </svg>
+          <span class="font-semibold tracking-wide">Kênh YouTube: Ma Tọa Thiền (@matoathien)</span>
+          <span class="text-stone-400 text-[11px] group-hover:translate-x-0.5 transition-transform">➔</span>
+        </a>
 
         <div class="flex flex-wrap items-center justify-center gap-2.5 sm:gap-4 text-xs sm:text-sm text-stone-300 pt-4 border-t border-stone-900 w-full font-serif leading-loose">
           <span class="w-full sm:w-auto font-medium">© 2026 Ma Tọa Thiền • Theravāda Dhamma • macatung.dev</span>

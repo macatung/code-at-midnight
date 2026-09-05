@@ -1,7 +1,9 @@
 /**
  * Test Suite: Pali Learning Module (Theravāda Canonical Bhāsā Sikkhā)
- * Tier 1: Feature Coverage (Isolation) — Lesson data structure, categories, vocabulary, quiz validity
- * Tier 2: Boundary & Corner Cases — Score calculation, word breakdown completeness, routing
+ * Tier 1: Feature Coverage (Isolation) — Lesson data structure, categories, vocabulary, quiz validity, beginner guides
+ * Tier 2: Boundary & Corner Cases — Score calculation, word breakdown completeness, dedicated routing, adjacent navigation
+ * Tier 3: Cross-Feature Interactions — Glossary, Apps, SEO Sitemap, i18n
+ * Tier 4: Real-World E2E Scenarios — Dedicated show page component structure, progress mastery simulation
  */
 
 import { describe, it, expect } from '../Harness/index.js';
@@ -10,12 +12,13 @@ import {
   PALI_LESSONS,
   findLessonById,
   getLessonsByCategory,
+  getAdjacentLessons,
 } from '../../resources/js/data/paliLessonsData.ts';
 import { usePaliProgress } from '../../resources/js/composables/usePaliProgress.ts';
 import fs from 'fs';
 import path from 'path';
 
-describe('PaliLearningModuleTest (Pāḷi Learning Module, Categories & Progress Tracking)', () => {
+describe('PaliLearningModuleTest (Pāḷi Learning Module, Dedicated Show Page & Progress Tracking)', () => {
   
   // ==========================================================================
   // TIER 1: Feature Coverage (Isolation)
@@ -86,6 +89,21 @@ describe('PaliLearningModuleTest (Pāḷi Learning Module, Categories & Progress
         });
       });
     });
+
+    it('[T1_PL_05] Every lesson includes a dedicated beginner guide for students starting from zero', () => {
+      PALI_LESSONS.forEach((lesson) => {
+        expect(lesson.beginnerGuide).toBeDefined();
+        const bg = lesson.beginnerGuide!;
+        expect(bg.title.length).toBeGreaterThan(5);
+        expect(bg.introduction.length).toBeGreaterThan(10);
+        expect(bg.coreConcept.length).toBeGreaterThan(10);
+        expect(bg.stepByStep.length).toBeGreaterThanOrEqual(2);
+        bg.stepByStep.forEach((st) => {
+          expect(st.step.length).toBeGreaterThan(2);
+          expect(st.explanation.length).toBeGreaterThan(5);
+        });
+      });
+    });
   });
 
   // ==========================================================================
@@ -134,18 +152,19 @@ describe('PaliLearningModuleTest (Pāḷi Learning Module, Categories & Progress
       });
     });
 
-    it('[T2_PL_04] web.php and TheravadaController register the Pali learning route and handler', () => {
+    it('[T2_PL_04] web.php and TheravadaController register the dedicated Pali lesson show route and handler', () => {
       const webPhpPath = path.resolve(process.cwd(), 'routes/web.php');
       const webPhpContent = fs.readFileSync(webPhpPath, 'utf-8');
 
-      expect(webPhpContent.includes('/hoc-pali')).toBe(true);
-      expect(webPhpContent.includes('paliLearning')).toBe(true);
+      expect(webPhpContent.includes('/hoc-pali/{slug}')).toBe(true);
+      expect(webPhpContent.includes('paliLessonShow')).toBe(true);
 
       const controllerPath = path.resolve(process.cwd(), 'app/Http/Controllers/Theravada/TheravadaController.php');
       const controllerContent = fs.readFileSync(controllerPath, 'utf-8');
 
-      expect(controllerContent.includes('function paliLearning')).toBe(true);
-      expect(controllerContent.includes('Theravada/PaliLearning')).toBe(true);
+      expect(controllerContent.includes('function paliLessonShow')).toBe(true);
+      expect(controllerContent.includes('Theravada/PaliLessonShow')).toBe(true);
+      expect(controllerContent.includes('abort(404')).toBe(true);
     });
 
     it('[T2_PL_05] TheravadaLayout.vue and Index.vue include navigation links to /theravada/hoc-pali', () => {
@@ -265,17 +284,56 @@ describe('PaliLearningModuleTest (Pāḷi Learning Module, Categories & Progress
       expect(trimmedLesson?.slug).toBe('nguyen-am-va-phu-am-pali');
     });
 
-    it('[T2_PL_10] SeoController includes /hoc-pali in the Theravada XML sitemap generator', () => {
-      const seoPath = path.resolve(process.cwd(), 'app/Http/Controllers/SeoController.php');
-      const seoContent = fs.readFileSync(seoPath, 'utf-8');
+    it('[T2_PL_10] getAdjacentLessons correctly computes previous and next lessons for first, middle and last lessons', () => {
+      // First lesson
+      const first = getAdjacentLessons(PALI_LESSONS[0].slug);
+      expect(first.prevLesson).toBeNull();
+      expect(first.nextLesson).toBeDefined();
+      expect(first.nextLesson?.id).toBe(PALI_LESSONS[1].id);
 
-      expect(seoContent.includes('/hoc-pali')).toBe(true);
-      expect(seoContent.includes('/danh-muc/lich-su')).toBe(true);
+      // Middle lesson (Lesson 5)
+      const middle = getAdjacentLessons(PALI_LESSONS[4].slug);
+      expect(middle.prevLesson?.id).toBe(PALI_LESSONS[3].id);
+      expect(middle.nextLesson?.id).toBe(PALI_LESSONS[5].id);
+
+      // Last lesson (Lesson 10)
+      const lastIndex = PALI_LESSONS.length - 1;
+      const last = getAdjacentLessons(PALI_LESSONS[lastIndex].slug);
+      expect(last.prevLesson?.id).toBe(PALI_LESSONS[lastIndex - 1].id);
+      expect(last.nextLesson).toBeNull();
+
+      // Invalid input
+      const invalid = getAdjacentLessons('invalid-ghost-slug');
+      expect(invalid.prevLesson).toBeNull();
+      expect(invalid.nextLesson).toBeNull();
+    });
+
+    it('[T2_PL_11] All grammar tables have exact column count match between headers and row cells', () => {
+      PALI_LESSONS.forEach((lesson) => {
+        lesson.grammarSections.forEach((sec) => {
+          if (sec.table) {
+            const headerCount = sec.table.headers.length;
+            expect(headerCount).toBeGreaterThanOrEqual(2);
+            sec.table.rows.forEach((row) => {
+              expect(row.length).toBe(headerCount);
+            });
+          }
+        });
+      });
+    });
+
+    it('[T2_PL_12] usePaliProgress source implements cross-tab storage event synchronization and fallback', () => {
+      const progressPath = path.resolve(process.cwd(), 'resources/js/composables/usePaliProgress.ts');
+      const progressContent = fs.readFileSync(progressPath, 'utf-8');
+
+      expect(progressContent.includes('storage')).toBe(true);
+      expect(progressContent.includes('addEventListener')).toBe(true);
+      expect(progressContent.includes('STORAGE_KEY')).toBe(true);
     });
   });
 
   // ==========================================================================
-  // TIER 3: Cross-Feature Interactions (Glossary, Apps & i18n)
+  // TIER 3: Cross-Feature Interactions (Glossary, Apps, Sitemap & i18n)
   // ==========================================================================
   describe('[T3_PALI] Cross-Feature Linking & i18n Localization', () => {
     it('[T3_PL_01] Apps.vue and Glossary.vue cross-link to /theravada/hoc-pali', () => {
@@ -295,10 +353,30 @@ describe('PaliLearningModuleTest (Pāḷi Learning Module, Categories & Progress
       expect(i18nContent.includes("'theravada.paliLearning': 'Học Tiếng Pāḷi'")).toBe(true);
       expect(i18nContent.includes("'theravada.paliLearning': 'Learn Pāḷi'")).toBe(true);
     });
+
+    it('[T3_PL_03] SeoController includes all individual /hoc-pali/{slug} show page URLs in the Theravada XML sitemap generator', () => {
+      const seoPath = path.resolve(process.cwd(), 'app/Http/Controllers/SeoController.php');
+      const seoContent = fs.readFileSync(seoPath, 'utf-8');
+
+      expect(seoContent.includes('/hoc-pali')).toBe(true);
+      PALI_LESSONS.forEach((lesson) => {
+        expect(seoContent.includes(lesson.slug)).toBe(true);
+      });
+    });
+
+    it('[T3_PL_04] TheravadaController validLessons dictionary strictly mirrors all 10 frontend lesson slugs and IDs', () => {
+      const controllerPath = path.resolve(process.cwd(), 'app/Http/Controllers/Theravada/TheravadaController.php');
+      const controllerContent = fs.readFileSync(controllerPath, 'utf-8');
+
+      PALI_LESSONS.forEach((lesson) => {
+        expect(controllerContent.includes(`'${lesson.slug}'`)).toBe(true);
+        expect(controllerContent.includes(`'${lesson.id}'`)).toBe(true);
+      });
+    });
   });
 
   // ==========================================================================
-  // TIER 4: Real-World E2E Scenarios (Learning Workflow & Progress Mastery Simulation)
+  // TIER 4: Real-World E2E Scenarios (Learning Workflow & Show Page Structure)
   // ==========================================================================
   describe('[T4_PALI] End-to-End Learning Workflow Simulation', () => {
     it('[T4_PL_01] Simulates complete curriculum progress calculation and rank mastery across all 5 tiers', () => {
@@ -355,25 +433,50 @@ describe('PaliLearningModuleTest (Pāḷi Learning Module, Categories & Progress
       });
     });
 
-    it('[T4_PL_03] PaliLessonModal.vue source includes keyboard accessibility (Escape key), body scroll lock and ARIA dialog semantics', () => {
-      const modalPath = path.resolve(process.cwd(), 'resources/js/Components/theravada/PaliLessonModal.vue');
-      const modalContent = fs.readFileSync(modalPath, 'utf-8');
+    it('[T4_PL_03] PaliLessonShow.vue contains dynamic TOC, font-size adjustment, mindful bell, focus mode and adjacent lesson navigation', () => {
+      const showPagePath = path.resolve(process.cwd(), 'resources/js/Pages/Theravada/PaliLessonShow.vue');
+      const showPageContent = fs.readFileSync(showPagePath, 'utf-8');
 
-      expect(modalContent.includes('Escape')).toBe(true);
-      expect(modalContent.includes('role="dialog"')).toBe(true);
-      expect(modalContent.includes('aria-modal="true"')).toBe(true);
-      expect(modalContent.includes('aria-labelledby="lesson-modal-title"')).toBe(true);
-      expect(modalContent.includes('overflow')).toBe(true);
+      expect(showPageContent.includes('mindfulBell')).toBe(true);
+      expect(showPageContent.includes('toggleFontSize')).toBe(true);
+      expect(showPageContent.includes('isFocusMode')).toBe(true);
+      expect(showPageContent.includes('prevTarget')).toBe(true);
+      expect(showPageContent.includes('nextTarget')).toBe(true);
+      expect(showPageContent.includes('submitQuiz')).toBe(true);
+      expect(showPageContent.includes('usePaliProgress')).toBe(true);
+      expect(showPageContent.includes('tocItems')).toBe(true);
     });
 
-    it('[T4_PL_04] PaliLearning.vue supports deep linking via URL query parameters, hash navigation, and robust fallback', () => {
+    it('[T4_PL_04] PaliLearning.vue navigates directly to dedicated lesson routes /theravada/hoc-pali/{slug} with zero dead modal relics', () => {
       const pagePath = path.resolve(process.cwd(), 'resources/js/Pages/Theravada/PaliLearning.vue');
       const pageContent = fs.readFileSync(pagePath, 'utf-8');
 
+      expect(pageContent.includes('/theravada/hoc-pali/')).toBe(true);
+      expect(pageContent.includes('router.visit')).toBe(true);
       expect(pageContent.includes('URLSearchParams')).toBe(true);
       expect(pageContent.includes('location.search')).toBe(true);
       expect(pageContent.includes('location.hash')).toBe(true);
-      expect(pageContent.includes('openLastActiveLesson')).toBe(true);
+      expect(pageContent.includes('PaliLessonModal')).toBe(false);
+    });
+
+    it('[T4_PL_05] All 10 lessons contain practice exercises with solutions and breakdowns', () => {
+      PALI_LESSONS.forEach((lesson) => {
+        expect(lesson.practiceExercises).toBeDefined();
+        expect(lesson.practiceExercises!.length).toBeGreaterThanOrEqual(1);
+        lesson.practiceExercises!.forEach((ex) => {
+          expect(ex.instruction.length).toBeGreaterThan(5);
+          expect(ex.paliText.length).toBeGreaterThan(1);
+          expect(ex.solution.length).toBeGreaterThan(2);
+        });
+      });
+    });
+
+    it('[T4_PL_06] TheravadaController supports ID alias redirection for backward compatibility', () => {
+      const controllerPath = path.resolve(process.cwd(), 'app/Http/Controllers/Theravada/TheravadaController.php');
+      const controllerContent = fs.readFileSync(controllerPath, 'utf-8');
+
+      expect(controllerContent.includes("redirect(")).toBe(true);
+      expect(controllerContent.includes("301")).toBe(true);
     });
   });
 });

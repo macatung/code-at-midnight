@@ -58,6 +58,14 @@ const defaultKeywords = computed(() => {
     : 'Full-Stack Developer, Creative Engineer, Laravel, Vue.js, Inertia.js, Tailwind CSS, TypeScript, Midnight Coder, Software Architecture, Portfolio, Ma Cà Tưng';
 });
 
+const defaultOgImage = computed(() => {
+  return props.isTheravada
+    ? 'https://theravada.macatung.dev/brand/theravada/og-theravada-1200x630.jpg'
+    : 'https://macatung.dev/brand/macatung-logo-horizontal.png';
+});
+
+const effectiveOgImage = computed(() => props.ogImage || defaultOgImage.value);
+
 const metaKeywords = computed(() => props.keywords || defaultKeywords.value);
 
 const formattedJsonLd = computed(() => {
@@ -84,7 +92,7 @@ const formattedJsonLd = computed(() => {
     <meta property="og:site_name" :content="siteName" />
     <meta property="og:locale" content="vi_VN" />
     <meta v-if="canonical" property="og:url" :content="canonical" />
-    <meta v-if="ogImage" property="og:image" :content="ogImage" />
+    <meta v-if="effectiveOgImage" property="og:image" :content="effectiveOgImage" />
 
     <!-- Article Specific OG -->
     <meta v-if="ogType === 'article' && article?.publishedTime" property="article:published_time" :content="article.publishedTime" />
@@ -99,7 +107,7 @@ const formattedJsonLd = computed(() => {
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" :content="fullTitle" />
     <meta name="twitter:description" :content="metaDescription" />
-    <meta v-if="ogImage" name="twitter:image" :content="ogImage" />
+    <meta v-if="effectiveOgImage" name="twitter:image" :content="effectiveOgImage" />
 
     <!-- JSON-LD Structured Data Schema (for Google Rich Results & AI Search Engines) -->
     <component :is="'script'" v-if="formattedJsonLd" type="application/ld+json">

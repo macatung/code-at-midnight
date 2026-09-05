@@ -154,6 +154,28 @@ EOT;
             $xml .= "  </url>\n";
         }
 
+        // Dedicated Pali Lessons Show Pages
+        $paliLessons = [
+            'nguyen-am-va-phu-am-pali',
+            'quy-tac-phat-am-chuan-va-trong-am',
+            'danh-tu-va-8-bien-cach-vibhatti',
+            'dong-tu-va-thoi-hien-tai-akhyata',
+            'tam-bao-va-tam-quy-y-tisarana',
+            'tu-thanh-de-va-bat-chanh-dao-cattari-ariyasaccani',
+            'kinh-phap-cu-ke-so-1-yamakavagga',
+            'kinh-phap-cu-ke-so-183-buddhavagga',
+            'tho-tri-ngu-gioi-pancasila',
+            'kinh-rai-tam-tu-metta-sutta',
+        ];
+
+        foreach ($paliLessons as $lessonSlug) {
+            $xml .= "  <url>\n";
+            $xml .= "    <loc>{$baseUrl}/hoc-pali/{$lessonSlug}</loc>\n";
+            $xml .= "    <changefreq>weekly</changefreq>\n";
+            $xml .= "    <priority>0.85</priority>\n";
+            $xml .= "  </url>\n";
+        }
+
         // Canonical Suttas & Articles
         foreach ($articles as $art) {
             $lastmod = $art->updated_at ? $art->updated_at->toAtomString() : ($art->published_at ? $art->published_at->toAtomString() : now()->toAtomString());

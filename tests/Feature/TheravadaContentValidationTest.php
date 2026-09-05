@@ -258,4 +258,58 @@ class TheravadaContentValidationTest extends TestCase
             ->has('title')
         );
     }
+
+    /**
+     * Tier 3: Test all 10 dedicated Pali lesson show routes render Inertia component with full metadata.
+     */
+    public function test_all_dedicated_pali_lesson_show_routes_render_successfully(): void
+    {
+        $validLessons = [
+            'nguyen-am-va-phu-am-pali',
+            'quy-tac-phat-am-chuan-va-trong-am',
+            'danh-tu-va-8-bien-cach-vibhatti',
+            'dong-tu-va-thoi-hien-tai-akhyata',
+            'tam-bao-va-tam-quy-y-tisarana',
+            'tu-thanh-de-va-bat-chanh-dao-cattari-ariyasaccani',
+            'kinh-phap-cu-ke-so-1-yamakavagga',
+            'kinh-phap-cu-ke-so-183-buddhavagga',
+            'tho-tri-ngu-gioi-pancasila',
+            'kinh-rai-tam-tu-metta-sutta',
+        ];
+
+        foreach ($validLessons as $slug) {
+            $response = $this->get("/theravada/hoc-pali/{$slug}");
+            $response->assertStatus(200);
+            $response->assertInertia(fn ($page) => $page
+                ->component('Theravada/PaliLessonShow')
+                ->where('slug', $slug)
+                ->has('lessonMeta')
+                ->has('title')
+                ->has('relatedLessons')
+            );
+        }
+    }
+
+    /**
+     * Tier 3: Test Pali lesson ID alias returns 301 permanent redirect to canonical slug route.
+     */
+    public function test_pali_lesson_id_alias_redirects_301_permanently(): void
+    {
+        $response = $this->get('/theravada/hoc-pali/pali-01-nguyen-am-phu-am');
+        $response->assertStatus(301);
+        $response->assertRedirect('/theravada/hoc-pali/nguyen-am-va-phu-am-pali');
+
+        $responseLast = $this->get('/theravada/hoc-pali/pali-10-kinh-rai-tam-tu-metta');
+        $responseLast->assertStatus(301);
+        $responseLast->assertRedirect('/theravada/hoc-pali/kinh-rai-tam-tu-metta-sutta');
+    }
+
+    /**
+     * Tier 3: Test non-existent lesson slug returns 404.
+     */
+    public function test_invalid_pali_lesson_slug_returns_404(): void
+    {
+        $response = $this->get('/theravada/hoc-pali/invalid-non-existent-lesson-slug-xyz');
+        $response->assertStatus(404);
+    }
 }

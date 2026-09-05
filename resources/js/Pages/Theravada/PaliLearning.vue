@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, router } from '@inertiajs/vue3';
 import TheravadaLayout from '@/Layouts/TheravadaLayout.vue';
 import Icons from '@/Components/ui/Icons.vue';
-import PaliLessonModal from '@/Components/theravada/PaliLessonModal.vue';
 import { mindfulBell } from '@/audio/mindfulBellAudio';
 import {
   PALI_LESSON_CATEGORIES,
@@ -40,10 +39,6 @@ const searchQuery = ref('');
 const selectedCategoryId = ref<string>('ALL');
 const selectedLevel = ref<string>('ALL');
 const selectedStatus = ref<'ALL' | 'COMPLETED' | 'INCOMPLETE' | 'BOOKMARKED'>('ALL');
-
-// Modal State
-const isModalOpen = ref(false);
-const activeLesson = ref<PaliLesson | null>(null);
 
 // Alphabet Reference Accordion Toggle
 const isAlphabetRefOpen = ref(false);
@@ -107,21 +102,10 @@ const filteredLessons = computed(() => {
   });
 });
 
-const openLesson = (lesson: PaliLesson) => {
-  if (!lesson) return;
-  activeLesson.value = lesson;
-  setLastActiveLesson(lesson.id);
-  isModalOpen.value = true;
-  mindfulBell.ringBell(528, 2.0);
-};
-
-const openLastActiveLesson = () => {
+const activeTargetLesson = computed(() => {
   const lastId = progressState.value.lastActiveLessonId;
-  const target = (lastId ? findLessonById(lastId) : undefined) || PALI_LESSONS[0];
-  if (target) {
-    openLesson(target);
-  }
-};
+  return (lastId ? findLessonById(lastId) : undefined) || PALI_LESSONS[0];
+});
 
 const handleCategorySelect = (catId: string) => {
   selectedCategoryId.value = catId;
@@ -151,7 +135,7 @@ onMounted(() => {
   if (targetSlug && targetSlug.trim().length > 0) {
     const found = findLessonById(targetSlug.trim());
     if (found) {
-      openLesson(found);
+      router.visit(`/theravada/hoc-pali/${found.slug}`);
     }
   }
 });
@@ -248,14 +232,13 @@ const paliLearningJsonLd = {
 
           <!-- Right: Action Buttons -->
           <div class="flex flex-wrap items-center gap-2 shrink-0 w-full md:w-auto justify-start md:justify-end">
-            <button
-              type="button"
-              @click="openLastActiveLesson"
+            <Link
+              :href="`/theravada/hoc-pali/${activeTargetLesson.slug}`"
               class="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 text-stone-950 font-bold text-xs sm:text-sm hover:brightness-110 transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
             >
               <span>▶</span>
               <span>{{ progressState.lastActiveLessonId ? 'Tiếp Tục Bài Học' : 'Bắt Đầu Bài 1' }}</span>
-            </button>
+            </Link>
 
             <button
               type="button"
@@ -482,14 +465,14 @@ const paliLearningJsonLd = {
             </div>
 
             <!-- Title & Pali Subtitle -->
-            <div>
-              <h3 class="text-base sm:text-lg font-bold text-amber-100 group-hover:text-amber-300 transition-colors leading-snug">
+            <Link :href="`/theravada/hoc-pali/${lesson.slug}`" class="block group/title">
+              <h3 class="text-base sm:text-lg font-bold text-amber-100 group-hover/title:text-amber-300 transition-colors leading-snug">
                 {{ lesson.title }}
               </h3>
               <p class="text-xs text-amber-300/80 font-sans italic mt-0.5">
                 {{ lesson.paliTitle }}
               </p>
-            </div>
+            </Link>
 
             <!-- Description -->
             <p class="text-xs sm:text-sm text-stone-300 line-clamp-3 leading-relaxed">
@@ -515,9 +498,8 @@ const paliLearningJsonLd = {
               <span v-if="lesson.verseAnalysis"> • Kệ ngôn</span>
             </div>
 
-            <button
-              type="button"
-              @click="openLesson(lesson)"
+            <Link
+              :href="`/theravada/hoc-pali/${lesson.slug}`"
               class="px-4 py-2 rounded-xl font-bold text-xs transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
               :class="[
                 isLessonCompleted(lesson.id)
@@ -527,7 +509,7 @@ const paliLearningJsonLd = {
             >
               <span>{{ isLessonCompleted(lesson.id) ? 'Ôn Tập Lại' : 'Vào Học Ngay' }}</span>
               <span>➔</span>
-            </button>
+            </Link>
           </div>
         </div>
       </div>
@@ -591,14 +573,6 @@ const paliLearningJsonLd = {
           </p>
         </Link>
       </div>
-
     </div>
-
-    <!-- Interactive Lesson Detail Modal -->
-    <PaliLessonModal
-      :is-open="isModalOpen"
-      :lesson="activeLesson"
-      @close="isModalOpen = false"
-    />
   </TheravadaLayout>
 </template>

@@ -80,6 +80,8 @@ function loadFromStorage() {
           ? Math.max(0, Math.round(parsed.totalStudyMinutes))
           : 0,
       };
+    } else {
+      progressState.value = { ...defaultState };
     }
   } catch (e) {
     console.warn('[PaliProgress] Failed to parse localStorage state:', e);
@@ -99,7 +101,26 @@ function saveToStorage() {
   }
 }
 
+let isStorageListenerAttached = false;
+
+function setupStorageListener() {
+  if (typeof window !== 'undefined' && !isStorageListenerAttached) {
+    try {
+      window.addEventListener('storage', (event: StorageEvent) => {
+        if (event.key === STORAGE_KEY) {
+          loadFromStorage();
+        }
+      });
+      isStorageListenerAttached = true;
+    } catch {
+      // Ignore if window is not available or restricted
+    }
+  }
+}
+
 export function usePaliProgress() {
+  setupStorageListener();
+
   if (getCurrentInstance()) {
     onMounted(() => {
       if (!isHydrated) {

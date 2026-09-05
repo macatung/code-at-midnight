@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Theravada;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -191,6 +192,124 @@ class TheravadaController extends Controller
     {
         return Inertia::render('Theravada/PaliLearning', [
             'title' => 'Học Tiếng Pāḷi — Bảng Chữ Cái, Ngữ Pháp & Kệ Ngôn Tipiṭaka — Ma Tọa Thiền',
+        ]);
+    }
+
+    /**
+     * Dedicated Pali Lesson Detail Show Page
+     */
+    public function paliLessonShow(string $slug): Response|RedirectResponse
+    {
+        $validLessons = [
+            'nguyen-am-va-phu-am-pali' => [
+                'id' => 'pali-01-nguyen-am-phu-am',
+                'title' => 'Bài 1: Hệ Thống 41 Mẫu Tự Pāḷi (Sara & Vyañjana)',
+                'pali_title' => 'Paṭhamo Pāṭho: Akkharamālā (Sara ca Vyañjana)',
+                'category_id' => 'bang-chu-cai-phat-am',
+                'order' => 1,
+            ],
+            'quy-tac-phat-am-chuan-va-trong-am' => [
+                'id' => 'pali-02-quy-tac-phat-am',
+                'title' => 'Bài 2: Quy Tắc Trọng Âm & Đọc Tụng Chuẩn Pāḷi',
+                'pali_title' => 'Dutiyo Pāṭho: Uccāraṇavidhi & Garulahu',
+                'category_id' => 'bang-chu-cai-phat-am',
+                'order' => 2,
+            ],
+            'danh-tu-va-8-bien-cach-vibhatti' => [
+                'id' => 'pali-03-danh-tu-8-bien-cach',
+                'title' => 'Bài 3: Danh Từ & 8 Biến Cách Pāḷi (Aṭṭha Vibhatti)',
+                'pali_title' => 'Tatiyo Pāṭho: Nāmapada & Aṭṭhavibhatti',
+                'category_id' => 'ngu-phap-can-ban',
+                'order' => 3,
+            ],
+            'dong-tu-va-thoi-hien-tai-akhyata' => [
+                'id' => 'pali-04-dong-tu-thoi-hien-tai',
+                'title' => 'Bài 4: Động Từ Thì Hiện Tại (Vattamānā Ākhyāta)',
+                'pali_title' => 'Catuttho Pāṭho: Ākhyātapada & Vattamānā Kāla',
+                'category_id' => 'ngu-phap-can-ban',
+                'order' => 4,
+            ],
+            'tam-bao-va-tam-quy-y-tisarana' => [
+                'id' => 'pali-05-tam-bao-tam-quy-y',
+                'title' => 'Bài 5: Tam Bảo & Lời Tuyên Ngôn Tam Quy Y (Ti-saraṇa)',
+                'pali_title' => 'Pañcamo Pāṭho: Ratanattaya ca Tisaraṇagamana',
+                'category_id' => 'tu-vung-cot-loi',
+                'order' => 5,
+            ],
+            'tu-thanh-de-va-bat-chanh-dao-cattari-ariyasaccani' => [
+                'id' => 'pali-06-tu-thanh-de-bat-chanh-dao',
+                'title' => 'Bài 6: Tứ Thánh Đế & Bát Chánh Đạo (Cattāri Ariyasaccāni)',
+                'pali_title' => 'Chaṭṭho Pāṭho: Cattāri Ariyasaccāni & Ariyo Aṭṭhaṅgiko Maggo',
+                'category_id' => 'tu-vung-cot-loi',
+                'order' => 6,
+            ],
+            'kinh-phap-cu-ke-so-1-yamakavagga' => [
+                'id' => 'pali-07-kinh-phap-cu-ke-so-1',
+                'title' => 'Bài 7: Khảo Sát Kệ Pháp Cú Số 1 (Dhammapada Yamakavagga)',
+                'pali_title' => 'Sattamo Pāṭho: Dhammapada Gāthā 1 Vicaya',
+                'category_id' => 'phan-tich-ke-ngon',
+                'order' => 7,
+            ],
+            'kinh-phap-cu-ke-so-183-buddhavagga' => [
+                'id' => 'pali-08-kinh-phap-cu-ke-so-183',
+                'title' => 'Bài 8: Khảo Sát Kệ Pháp Cú Số 183 — Tôn Chỉ Chư Phật',
+                'pali_title' => 'Aṭṭhamo Pāṭho: Dhammapada Gāthā 183 (Sabbapāpassa Akaraṇaṃ)',
+                'category_id' => 'phan-tich-ke-ngon',
+                'order' => 8,
+            ],
+            'tho-tri-ngu-gioi-pancasila' => [
+                'id' => 'pali-09-ngu-gioi-pali',
+                'title' => 'Bài 9: Lời Tuyên Nguyện Thọ Trì Ngũ Giới (Pañcasīla)',
+                'pali_title' => 'Navamo Pāṭho: Pañcasīla Samādāna',
+                'category_id' => 'kinh-tung-thien-mon',
+                'order' => 9,
+            ],
+            'kinh-rai-tam-tu-metta-sutta' => [
+                'id' => 'pali-10-kinh-rai-tam-tu-metta',
+                'title' => 'Bài 10: Khảo Sát Kinh Rải Tâm Từ (Karaṇīyametta Sutta)',
+                'pali_title' => 'Dasamo Pāṭho: Karaṇīyamettasutta Vicaya',
+                'category_id' => 'kinh-tung-thien-mon',
+                'order' => 10,
+            ],
+        ];
+
+        $cleanSlug = trim(strtolower($slug));
+        if (!isset($validLessons[$cleanSlug])) {
+            // Check if slug is a lesson ID alias (e.g. pali-01-nguyen-am-phu-am)
+            foreach ($validLessons as $s => $l) {
+                if (strtolower($l['id']) === $cleanSlug) {
+                    $prefix = request()->is('theravada/*') ? '/theravada' : '';
+                    return redirect($prefix . '/hoc-pali/' . $s, 301);
+                }
+            }
+            abort(404, 'Không tìm thấy bài học Pāḷi tương ứng.');
+        }
+
+        $currentLesson = $validLessons[$cleanSlug];
+        $orderedSlugs = array_keys($validLessons);
+        $currentIndex = array_search($cleanSlug, $orderedSlugs);
+
+        $prevSlug = $currentIndex > 0 ? $orderedSlugs[$currentIndex - 1] : null;
+        $nextSlug = $currentIndex < count($orderedSlugs) - 1 ? $orderedSlugs[$currentIndex + 1] : null;
+
+        $prevLesson = $prevSlug ? array_merge($validLessons[$prevSlug], ['slug' => $prevSlug]) : null;
+        $nextLesson = $nextSlug ? array_merge($validLessons[$nextSlug], ['slug' => $nextSlug]) : null;
+
+        // Related lessons in the same category
+        $relatedLessons = [];
+        foreach ($validLessons as $s => $l) {
+            if ($s !== $cleanSlug && $l['category_id'] === $currentLesson['category_id']) {
+                $relatedLessons[] = array_merge($l, ['slug' => $s]);
+            }
+        }
+
+        return Inertia::render('Theravada/PaliLessonShow', [
+            'slug' => $cleanSlug,
+            'lessonMeta' => array_merge($currentLesson, ['slug' => $cleanSlug]),
+            'prevLesson' => $prevLesson,
+            'nextLesson' => $nextLesson,
+            'relatedLessons' => $relatedLessons,
+            'title' => "{$currentLesson['title']} — Học Tiếng Pāḷi — Ma Tọa Thiền",
         ]);
     }
 
