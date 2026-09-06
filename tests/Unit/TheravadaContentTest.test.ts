@@ -338,6 +338,20 @@ describe('TheravadaContentTest (Canonical Teachings, Schema & Expansion Integrit
       expect(showVueContent.includes('⏱️')).toBe(true);
       expect(showVueContent.includes('article.reading_time_min')).toBe(true);
     });
+
+    it('[T2_TH_06] Dual perspective parser ensures high-contrast backgrounds and readable text in Paper Mode', () => {
+      const parserPath = path.resolve(process.cwd(), 'resources/js/utils/dualPerspectiveParser.ts');
+      const parserContent = fs.readFileSync(parserPath, 'utf-8');
+
+      // Paper Mode tab container and inactive tab contrast
+      expect(parserContent.includes("'bg-amber-200/60 border border-amber-300/80 text-stone-900'")).toBe(true);
+      expect(parserContent.includes("'text-stone-700 hover:text-stone-950 font-medium'")).toBe(true);
+      expect(parserContent.includes("data-paper=")).toBe(true);
+
+      // Paper Mode split panel cards have opaque light backgrounds with dark text
+      expect(parserContent.includes("isPaperMode ? 'bg-white/80 border border-emerald-300/80 text-stone-900 shadow-sm'")).toBe(true);
+      expect(parserContent.includes("isPaperMode ? 'bg-amber-100/70 border border-amber-300/80 text-stone-900 shadow-sm'")).toBe(true);
+    });
   });
 });
 

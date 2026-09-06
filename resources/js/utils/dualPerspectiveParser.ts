@@ -78,8 +78,16 @@ export function parsePerspectiveBlocks(
         ? 'bg-stone-900/90 border-b border-amber-500/30'
         : 'bg-slate-900/90 border-b border-emerald-500/20';
 
+    const tabContainerBg = isPaperMode
+      ? 'bg-amber-200/60 border border-amber-300/80 text-stone-900'
+      : 'bg-black/20 backdrop-blur-sm border border-white/10';
+
+    const inactiveTabClass = isPaperMode
+      ? 'text-stone-700 hover:text-stone-950 font-medium'
+      : 'text-slate-400 hover:text-slate-200';
+
     return `
-<div class="dual-perspective-widget my-10 rounded-2xl border ${borderColor} overflow-hidden font-sans transition-all duration-300" id="${widgetId}" data-current-tab="${defaultTab}">
+<div class="dual-perspective-widget my-10 rounded-2xl border ${borderColor} overflow-hidden font-sans transition-all duration-300 ${isPaperMode ? 'is-paper-mode' : ''}" id="${widgetId}" data-current-tab="${defaultTab}" data-paper="${isPaperMode ? 'true' : 'false'}">
   <!-- Widget Header & Controls -->
   <div class="px-4 py-3 sm:px-6 flex flex-wrap items-center justify-between gap-3 ${headerBg}">
     <div class="flex items-center gap-2">
@@ -90,14 +98,14 @@ export function parsePerspectiveBlocks(
     </div>
     
     <!-- Tab Selectors -->
-    <div class="flex items-center p-1 rounded-xl bg-black/20 backdrop-blur-sm border border-white/10 text-xs font-semibold gap-1 select-none">
-      <button type="button" class="dp-tab-btn px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${defaultTab === 'dev' ? 'bg-emerald-500 text-slate-950 font-bold shadow' : 'text-slate-400 hover:text-slate-200'}" data-tab="dev" data-widget-id="${widgetId}">
+    <div class="flex items-center p-1 rounded-xl ${tabContainerBg} text-xs font-semibold gap-1 select-none">
+      <button type="button" class="dp-tab-btn px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${defaultTab === 'dev' ? 'bg-emerald-500 text-slate-950 font-bold shadow' : inactiveTabClass}" data-tab="dev" data-widget-id="${widgetId}">
         <span>🌱</span> <span class="hidden sm:inline">Góc nhìn</span> Đời Thường
       </button>
-      <button type="button" class="dp-tab-btn px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${defaultTab === 'theravada' ? 'bg-amber-400 text-stone-950 font-bold shadow' : 'text-slate-400 hover:text-slate-200'}" data-tab="theravada" data-widget-id="${widgetId}">
+      <button type="button" class="dp-tab-btn px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${defaultTab === 'theravada' ? 'bg-amber-400 text-stone-950 font-bold shadow' : inactiveTabClass}" data-tab="theravada" data-widget-id="${widgetId}">
         <span>🧘</span> <span class="hidden sm:inline">Quán chiếu</span> Theravāda
       </button>
-      <button type="button" class="dp-tab-btn hidden md:flex px-3 py-1.5 rounded-lg transition-all items-center gap-1.5 text-slate-400 hover:text-slate-200" data-tab="split" data-widget-id="${widgetId}">
+      <button type="button" class="dp-tab-btn hidden md:flex px-3 py-1.5 rounded-lg transition-all items-center gap-1.5 ${inactiveTabClass}" data-tab="split" data-widget-id="${widgetId}">
         <span>⚖️</span> Song Song
       </button>
     </div>
@@ -107,8 +115,8 @@ export function parsePerspectiveBlocks(
   <div class="p-5 sm:p-7">
     <!-- Life Panel -->
     <div class="dp-panel dp-panel-dev ${defaultTab === 'dev' ? 'block' : 'hidden'} transition-opacity duration-300">
-      <div class="flex items-center gap-2 mb-3 text-xs font-sans text-emerald-400 uppercase tracking-wider font-semibold">
-        <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+      <div class="flex items-center gap-2 mb-3 text-xs font-sans ${isPaperMode ? 'text-emerald-800' : 'text-emerald-400'} uppercase tracking-wider font-semibold">
+        <span class="h-2 w-2 rounded-full ${isPaperMode ? 'bg-emerald-600' : 'bg-emerald-400 animate-pulse'}"></span>
         <span>LĂNG KÍNH ĐỜI SỐNG & TÂM LÝ HIỆN ĐẠI</span>
       </div>
       <div class="text-sm sm:text-base leading-relaxed ${isPaperMode ? 'text-stone-800' : 'text-slate-200'}">
@@ -118,8 +126,8 @@ export function parsePerspectiveBlocks(
 
     <!-- Theravada Panel -->
     <div class="dp-panel dp-panel-theravada ${defaultTab === 'theravada' ? 'block' : 'hidden'} transition-opacity duration-300">
-      <div class="flex items-center gap-2 mb-3 text-xs font-serif text-amber-500 uppercase tracking-wider font-bold">
-        <span class="h-2 w-2 rounded-full bg-amber-400 animate-pulse"></span>
+      <div class="flex items-center gap-2 mb-3 text-xs font-serif ${isPaperMode ? 'text-amber-900' : 'text-amber-500'} uppercase tracking-wider font-bold">
+        <span class="h-2 w-2 rounded-full ${isPaperMode ? 'bg-amber-600' : 'bg-amber-400 animate-pulse'}"></span>
         <span>LĂNG KÍNH PHẬT HỌC • VÔ NGÃ & TÂM THỨC VIPASSANĀ</span>
       </div>
       <div class="text-sm sm:text-base leading-relaxed font-serif ${isPaperMode ? 'text-stone-900' : 'text-amber-100/90'}">
@@ -129,17 +137,17 @@ export function parsePerspectiveBlocks(
 
     <!-- Split Side-by-Side Panel -->
     <div class="dp-panel dp-panel-split hidden grid-cols-1 md:grid-cols-2 gap-6 transition-opacity duration-300">
-      <div class="p-4 sm:p-5 rounded-xl bg-slate-950/60 border border-emerald-500/20 text-xs sm:text-sm">
-        <div class="flex items-center gap-2 mb-2.5 text-xs font-sans text-emerald-400 font-bold uppercase">
+      <div class="p-4 sm:p-5 rounded-xl ${isPaperMode ? 'bg-white/80 border border-emerald-300/80 text-stone-900 shadow-sm' : 'bg-slate-950/60 border border-emerald-500/20 text-slate-300'} text-xs sm:text-sm">
+        <div class="flex items-center gap-2 mb-2.5 text-xs font-sans ${isPaperMode ? 'text-emerald-800' : 'text-emerald-400'} font-bold uppercase">
           <span>🌱 Góc Nhìn Đời Thường</span>
         </div>
-        <div class="text-slate-300 leading-relaxed">${devHtml}</div>
+        <div class="${isPaperMode ? 'text-stone-800' : 'text-slate-300'} leading-relaxed">${devHtml}</div>
       </div>
-      <div class="p-4 sm:p-5 rounded-xl bg-amber-950/20 border border-amber-500/30 text-xs sm:text-sm font-serif">
-        <div class="flex items-center gap-2 mb-2.5 text-xs font-serif text-amber-400 font-bold uppercase">
+      <div class="p-4 sm:p-5 rounded-xl ${isPaperMode ? 'bg-amber-100/70 border border-amber-300/80 text-stone-900 shadow-sm' : 'bg-amber-950/20 border border-amber-500/30 text-amber-100/90'} text-xs sm:text-sm font-serif">
+        <div class="flex items-center gap-2 mb-2.5 text-xs font-serif ${isPaperMode ? 'text-amber-900' : 'text-amber-400'} font-bold uppercase">
           <span>🧘 Quán Chiếu Theravāda</span>
         </div>
-        <div class="text-amber-100/90 leading-relaxed">${theravadaHtml}</div>
+        <div class="${isPaperMode ? 'text-stone-900' : 'text-amber-100/90'} leading-relaxed">${theravadaHtml}</div>
       </div>
     </div>
   </div>
@@ -169,10 +177,15 @@ export function initPerspectiveWidgets(): void {
 
         widget.setAttribute('data-current-tab', targetTab);
 
+        const isPaper = widget.getAttribute('data-paper') === 'true';
+        const inactiveClass = isPaper
+          ? 'text-stone-700 hover:text-stone-950 font-medium'
+          : 'text-slate-400 hover:text-slate-200';
+
         buttons.forEach(b => {
-          b.className = 'dp-tab-btn px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 text-slate-400 hover:text-slate-200';
+          b.className = `dp-tab-btn px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${inactiveClass}`;
           if (b.getAttribute('data-tab') === 'split') {
-            b.className = 'dp-tab-btn hidden md:flex px-3 py-1.5 rounded-lg transition-all items-center gap-1.5 text-slate-400 hover:text-slate-200';
+            b.className = `dp-tab-btn hidden md:flex px-3 py-1.5 rounded-lg transition-all items-center gap-1.5 ${inactiveClass}`;
           }
         });
 
