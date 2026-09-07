@@ -729,6 +729,12 @@ const renderedMarkdown = computed(() => {
   // Normalize line endings to LF
   let md = props.article.content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
 
+  // Defensive guard: Strip orphaned or obsolete placeholder blocks when a video iframe is already embedded
+  if (md.includes('<iframe') && (md.includes('Đang Chuẩn Bị Video') || md.includes('Đang Được Sản Xuất'))) {
+    const placeholderRegex = /(?:<\/div>\s*)*<div[^>]*class="[^"]*rounded-full[^"]*"[^>]*>[\s\S]*?Đang Chuẩn Bị Video AI[\s\S]*?<\/p>\s*<\/div>/gi;
+    md = md.replace(placeholderRegex, '');
+  }
+
   // Sanitize math and raw LaTeX symbols into elegant typography
   md = sanitizeMathAndFlows(md, isPaperMode.value);
 
