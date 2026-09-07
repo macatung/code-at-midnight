@@ -1083,8 +1083,8 @@ const suttaJsonLd = computed(() => ({
         :class="[
           'zen-article-content font-serif leading-relaxed rounded-none sm:rounded-3xl px-4 py-6 sm:p-10 lg:p-12 mb-8 sm:mb-12 relative overflow-hidden transition-all duration-500 shadow-xl sm:shadow-2xl',
           isPaperMode
-            ? 'is-paper-mode bg-stone-50/98 text-[#1c1917] border-y sm:border border-amber-600/20 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.4)]'
-            : 'is-night-mode bg-stone-900/90 text-stone-200 border-y sm:border border-amber-500/30 backdrop-blur-md',
+            ? 'is-paper-mode bg-[#faf7ee] text-[#1c1917] border-y sm:border border-amber-600/20 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.4)]'
+            : 'is-night-mode bg-[#141210] text-stone-200 border-y sm:border border-amber-500/30 backdrop-blur-md',
           { 'focus-mode-active': isFocusModeOn }
         ]"
         :style="{ fontSize: `${fontSize}px` }"
@@ -1591,6 +1591,45 @@ const suttaJsonLd = computed(() => ({
   width: 100% !important;
   height: 100% !important;
   border: 0 !important;
+}
+
+/* Core Canvas Solid Background & Text Contrast Enforcements */
+.zen-article-content.is-paper-mode {
+  background-color: #faf7ee !important;
+  color: #1c1917 !important;
+  border-color: rgba(217, 119, 6, 0.25) !important;
+}
+
+.zen-article-content.is-night-mode {
+  background-color: #141210 !important;
+  color: #f5f5f4 !important;
+  border-color: rgba(245, 158, 11, 0.3) !important;
+}
+
+.zen-article-content.is-paper-mode :deep(p),
+.zen-article-content.is-paper-mode :deep(li) {
+  color: #1c1917;
+}
+
+.zen-article-content.is-paper-mode :deep(h1),
+.zen-article-content.is-paper-mode :deep(h2),
+.zen-article-content.is-paper-mode :deep(h3),
+.zen-article-content.is-paper-mode :deep(h4),
+.zen-article-content.is-paper-mode :deep(strong) {
+  color: #451a03;
+}
+
+.zen-article-content.is-night-mode :deep(p),
+.zen-article-content.is-night-mode :deep(li) {
+  color: #f5f5f4;
+}
+
+.zen-article-content.is-night-mode :deep(h1),
+.zen-article-content.is-night-mode :deep(h2),
+.zen-article-content.is-night-mode :deep(h3),
+.zen-article-content.is-night-mode :deep(h4),
+.zen-article-content.is-night-mode :deep(strong) {
+  color: #fcd34d;
 }
 
 /* Zen Opening Quote Box Contrast (Paper Mode vs Night Mode) */

@@ -58,7 +58,7 @@ const currentDisplayQuote = () => {
     >
       <div
         v-if="isSpeaking || isHovered"
-        class="absolute -top-24 sm:-top-24 z-30 w-[270px] sm:w-auto max-w-[88vw] sm:max-w-md px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-2xl bg-stone-900/98 border-2 border-amber-500/60 text-amber-100 text-xs sm:text-sm font-serif shadow-[0_20px_50px_rgba(217,119,6,0.35)] backdrop-blur-xl text-center leading-relaxed left-1/2 -translate-x-1/2"
+        class="absolute -top-24 sm:-top-24 z-30 w-[270px] sm:w-auto max-w-[88vw] sm:max-w-md px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-2xl bg-stone-900 border-2 border-amber-500/60 text-amber-100 text-xs sm:text-sm font-serif shadow-[0_20px_50px_rgba(217,119,6,0.35)] backdrop-blur-xl text-center leading-relaxed left-1/2 -translate-x-1/2"
       >
         <p class="italic text-[11px] sm:text-xs md:text-sm break-words">"{{ currentDisplayQuote() }}"</p>
         <div class="flex items-center justify-center gap-1.5 sm:gap-2 mt-1.5 pt-1.5 border-t border-amber-500/20 text-[10px] text-amber-400 font-sans font-bold">

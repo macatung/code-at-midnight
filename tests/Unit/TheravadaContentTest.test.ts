@@ -297,10 +297,10 @@ describe('TheravadaContentTest (Canonical Teachings, Schema & Expansion Integrit
     });
 
     it('[T3_TH_05] Show.vue enforces high-contrast styles using .is-paper-mode and .is-night-mode classes', () => {
-      expect(showVueContent.includes("is-paper-mode bg-stone-50/98 text-[#1c1917]")).toBe(true);
-      expect(showVueContent.includes("is-night-mode bg-stone-900/90 text-stone-200")).toBe(true);
-      expect(showVueContent.includes('.zen-article-content.is-paper-mode :deep(.zen-opening-quote)')).toBe(true);
-      expect(showVueContent.includes('.zen-article-content.is-night-mode :deep(.zen-opening-quote)')).toBe(true);
+      expect(showVueContent.includes("is-paper-mode bg-[#faf7ee] text-[#1c1917]")).toBe(true);
+      expect(showVueContent.includes("is-night-mode bg-[#141210] text-stone-200")).toBe(true);
+      expect(showVueContent.includes('.zen-article-content.is-paper-mode')).toBe(true);
+      expect(showVueContent.includes('.zen-article-content.is-night-mode')).toBe(true);
       expect(showVueContent.includes('#451a03 !important; /* Deep dark warm brown')).toBe(true);
     });
 

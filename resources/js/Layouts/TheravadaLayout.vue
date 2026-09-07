@@ -307,7 +307,7 @@ onUnmounted(() => {
     </main>
 
     <!-- 2. Zen Footer -->
-    <footer class="relative z-10 border-t border-stone-800/90 bg-stone-950/98 py-10 sm:py-12 px-4 sm:px-6 lg:px-8 text-center font-serif text-stone-300 text-sm">
+    <footer class="relative z-10 border-t border-stone-800/90 bg-stone-950 py-10 sm:py-12 px-4 sm:px-6 lg:px-8 text-center font-serif text-stone-300 text-sm">
       <div class="max-w-4xl mx-auto flex flex-col items-center gap-4 sm:gap-5">
         <!-- Dharma Lotus Seal -->
         <div class="flex items-center justify-center gap-2 sm:gap-3 text-amber-400 text-base sm:text-xl">
