@@ -310,5 +310,34 @@ describe('TheravadaContentTest (Canonical Teachings, Schema & Expansion Integrit
       expect(showVueContent.includes('zen-pali-mobile-sheet')).toBe(true);
       expect(showVueContent.includes('sm:hidden inline-flex items-center gap-1.5 text-amber-400')).toBe(true);
     });
+
+    it('[T3_TH_07] Show.vue parses generic code blocks and ASCII diagrams with .zen-ascii-diagram and HTML escaping', () => {
+      expect(showVueContent.includes('escapeHtml')).toBe(true);
+      expect(showVueContent.includes('zen-ascii-diagram')).toBe(true);
+      expect(showVueContent.includes('SƠ ĐỒ PHÁP HỌC & TIẾN TRÌNH QUÁN CHIẾU')).toBe(true);
+      expect(showVueContent.includes('.zen-article-content.is-paper-mode :deep(.zen-ascii-diagram)')).toBe(true);
+      expect(showVueContent.includes('.zen-article-content.is-night-mode :deep(.zen-ascii-diagram)')).toBe(true);
+    });
+
+    it('[T3_TH_08] Show.vue parses multi-line markdown lists (*, -, +, 1.) and wraps in semantic <ul> and <ol>', () => {
+      expect(showVueContent.includes('parseMarkdownLists')).toBe(true);
+      expect(showVueContent.includes('p.startsWith(\'<ul\') || p.startsWith(\'<ol\')')).toBe(true);
+      expect(showVueContent.includes('list-disc pl-6 marker:text-amber-800')).toBe(true);
+      expect(showVueContent.includes('list-decimal pl-6 marker:text-amber-800')).toBe(true);
+    });
+
+    it('[T3_TH_09] Show.vue enforces mobile title prominence, breadcrumb reading time, and Pāḷi badge framing', () => {
+      // Mobile title font elevated to text-2xl
+      expect(showVueContent.includes('text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-amber-100')).toBe(true);
+      // Pāḷi title badge with lotus icon
+      expect(showVueContent.includes('🪷')).toBe(true);
+      expect(showVueContent.includes('Pāḷi:</span> {{ article.pali_title }}')).toBe(true);
+      // Category pill hidden on mobile when redundant with breadcrumb back link
+      expect(showVueContent.includes('hidden sm:inline-flex px-3 py-1 rounded-full text-xs font-serif font-bold bg-amber-500/15 text-amber-300')).toBe(true);
+      // Reading time badge in breadcrumb bar
+      expect(showVueContent.includes('⏱️')).toBe(true);
+      expect(showVueContent.includes('article.reading_time_min')).toBe(true);
+    });
   });
 });
+

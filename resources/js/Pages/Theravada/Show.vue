@@ -548,6 +548,82 @@ const cleanHeadingText = (text: string) => {
   return text.replace(/^[\p{Emoji}\p{Symbol}\p{Punctuation}\s—–]+/u, '').trim();
 };
 
+const escapeHtml = (text: string): string => {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+};
+
+// Markdown List Parser (Handles *, -, +, and numbered lists 1., 2. with multi-line text)
+const parseMarkdownLists = (content: string, isPaper: boolean): string => {
+  const liClass = isPaper
+    ? 'text-[#1c1917] leading-relaxed text-base sm:text-lg font-serif'
+    : 'text-stone-100 leading-relaxed text-base sm:text-lg font-serif';
+  const ulClass = isPaper
+    ? 'my-5 space-y-2.5 list-disc pl-6 marker:text-amber-800'
+    : 'my-5 space-y-2.5 list-disc pl-6 marker:text-amber-400';
+  const olClass = isPaper
+    ? 'my-5 space-y-2.5 list-decimal pl-6 marker:text-amber-800'
+    : 'my-5 space-y-2.5 list-decimal pl-6 marker:text-amber-400';
+
+  // Process unordered lists: lines starting with *, -, or +
+  const unorderedBlockRegex = /(?:^[ \t]*[-*+]\s+[^\n]*(?:\n[ \t]*\n[ \t]*[-*+]\s+[^\n]*|\n[ \t]*[-*+]\s+[^\n]*|\n[ \t]{2,}[^\n]+)*)/gm;
+
+  content = content.replace(unorderedBlockRegex, (block) => {
+    const rawLines = block.split('\n');
+    const items: string[] = [];
+    let currentItem = '';
+
+    for (const rawLine of rawLines) {
+      const trimmed = rawLine.trim();
+      if (!trimmed) continue;
+      const match = rawLine.match(/^[ \t]*[-*+]\s+(.*)$/);
+      if (match) {
+        if (currentItem) items.push(currentItem);
+        currentItem = match[1].trim();
+      } else if (currentItem && /^[ \t]{2,}(.*)$/.test(rawLine)) {
+        currentItem += ' ' + trimmed;
+      }
+    }
+    if (currentItem) items.push(currentItem);
+    if (items.length === 0) return block;
+
+    const lisHtml = items.map(it => `  <li class="${liClass}">${it}</li>`).join('\n');
+    return `\n\n<ul class="${ulClass}">\n${lisHtml}\n</ul>\n\n`;
+  });
+
+  // Process ordered lists: lines starting with digits + dot + space
+  const orderedBlockRegex = /(?:^[ \t]*\d+\.\s+[^\n]*(?:\n[ \t]*\n[ \t]*\d+\.\s+[^\n]*|\n[ \t]*\d+\.\s+[^\n]*|\n[ \t]{2,}[^\n]+)*)/gm;
+
+  content = content.replace(orderedBlockRegex, (block) => {
+    const rawLines = block.split('\n');
+    const items: string[] = [];
+    let currentItem = '';
+
+    for (const rawLine of rawLines) {
+      const trimmed = rawLine.trim();
+      if (!trimmed) continue;
+      const match = rawLine.match(/^[ \t]*\d+\.\s+(.*)$/);
+      if (match) {
+        if (currentItem) items.push(currentItem);
+        currentItem = match[1].trim();
+      } else if (currentItem && /^[ \t]{2,}(.*)$/.test(rawLine)) {
+        currentItem += ' ' + trimmed;
+      }
+    }
+    if (currentItem) items.push(currentItem);
+    if (items.length === 0) return block;
+
+    const lisHtml = items.map(it => `  <li class="${liClass}">${it}</li>`).join('\n');
+    return `\n\n<ol class="${olClass}">\n${lisHtml}\n</ol>\n\n`;
+  });
+
+  return content;
+};
+
 // Markdown Table Parser
 const parseMarkdownTables = (content: string, isPaper: boolean): string => {
   const tableRegex = /((?:\|[^\n]+\|\r?\n)(?:\|[-:\|\s]+\|\r?\n)(?:\|[^\n]+\|\r?\n?)+)/g;
@@ -675,6 +751,38 @@ const renderedMarkdown = computed(() => {
     </div>\n\n`;
   });
 
+  // 1.5 Generic Code Blocks & ASCII Diagrams (Isolated with double newlines)
+  md = md.replace(/```([a-zA-Z0-9_-]*)[^\n]*\n([\s\S]*?)```/gim, (_match, lang, code) => {
+    const rawLang = (lang || '').trim().toLowerCase();
+    const cleanCode = escapeHtml(code.trim());
+    const isAsciiOrText = !rawLang || rawLang === 'text' || rawLang === 'ascii';
+
+    const containerTheme = isPaperMode.value
+      ? 'bg-amber-50/90 border-amber-300 shadow-sm text-stone-900'
+      : 'bg-stone-900/95 border-stone-800 shadow-lg text-amber-200/90';
+
+    const headerBorder = isPaperMode.value
+      ? 'border-amber-200/80 bg-amber-100/60 text-amber-900'
+      : 'border-stone-800 bg-stone-950/60 text-amber-400';
+
+    const langTitle = isAsciiOrText
+      ? 'SƠ ĐỒ PHÁP HỌC & TIẾN TRÌNH QUÁN CHIẾU'
+      : (rawLang.toUpperCase() + ' CODE');
+
+    const subBadge = isAsciiOrText ? 'ASCII Diagram' : rawLang.toUpperCase();
+
+    return `\n\n<div class="zen-ascii-diagram my-8 rounded-2xl border ${containerTheme} overflow-hidden font-mono shadow-sm">
+      <div class="px-4 py-2.5 border-b ${headerBorder} flex items-center justify-between text-xs font-semibold tracking-wider">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-amber-500/80 inline-block"></span>
+          <span class="font-serif">${langTitle}</span>
+        </div>
+        <span class="text-[10px] opacity-75 font-mono px-2 py-0.5 rounded-full bg-black/10 border border-current/20">${subBadge}</span>
+      </div>
+      <div class="p-4 sm:p-5 overflow-x-auto text-xs sm:text-sm leading-relaxed whitespace-pre font-mono"><code>${cleanCode}</code></div>
+    </div>\n\n`;
+  });
+
   // 2. Dual Perspective Cards
   md = parsePerspectiveBlocks(md, 'theravada', isPaperMode.value);
 
@@ -683,6 +791,9 @@ const renderedMarkdown = computed(() => {
 
   // 4. Blockquotes (Grouping contiguous lines & stanzas by Pali and Vietnamese)
   md = parseBlockquotes(md, isPaperMode.value);
+
+  // 4.5 Lists (Unordered *, -, + and Ordered 1., 2.)
+  md = parseMarkdownLists(md, isPaperMode.value);
 
   let parsedHtml = '';
   let headingCounter = 0;
@@ -705,65 +816,65 @@ const renderedMarkdown = computed(() => {
   };
 
   if (isPaperMode.value) {
-    // 4. Headings (Pure Elegant Typography with TOC anchor IDs)
+    // 5. Headings (Pure Elegant Typography with TOC anchor IDs)
     md = md.replace(/^(#{2,3})\s+(.*$)/gim, headingReplacer);
 
-    // 5. Horizontal Rules (Minimalist hairline)
+    // 6. Horizontal Rules (Minimalist hairline)
     md = md.replace(/^---$/gim, '<div class="my-8 flex items-center justify-center gap-3 text-amber-700/40 select-none"><span class="h-px w-20 bg-amber-300"></span><span class="text-xs">✦</span><span class="h-px w-20 bg-amber-300"></span></div>');
 
-    // 6. Bold & Italic
+    // 7. Bold & Italic
     md = md.replace(/\*\*(.*?)\*\*/gim, '<strong class="font-bold text-amber-950">$1</strong>');
     md = md.replace(/\*(.*?)\*/gim, '<em class="italic text-stone-800 font-serif">$1</em>');
 
-    // 6.5 Markdown Images (With responsive wrapper and caption)
+    // 8. Inline Code
+    md = md.replace(/`([^`\n]+)`/g, (_m, code) => `<code class="bg-amber-100/90 text-amber-950 border border-amber-300/80 px-1.5 py-0.5 rounded text-xs sm:text-sm font-mono">${escapeHtml(code)}</code>`);
+
+    // 8.5 Markdown Images (With responsive wrapper and caption)
     md = md.replace(/!\[(.*?)\]\((.*?)\)/gim, '<figure class="my-6 text-center max-w-2xl mx-auto"><img src="$2" alt="$1" class="rounded-2xl max-w-full h-auto mx-auto shadow-md border border-amber-300/40 object-cover" loading="lazy" /><figcaption class="text-xs font-serif text-stone-600 mt-2 italic">$1</figcaption></figure>');
 
-    // 7. Markdown Links (Internal & External)
+    // 9. Markdown Links (Internal & External)
     md = md.replace(/\[(.*?)\]\((.*?)\)/gim, '<a href="$2" class="zen-internal-link text-amber-800 hover:text-amber-950 font-semibold underline decoration-amber-400 decoration-1 hover:decoration-2 transition-all inline-flex items-center gap-0.5">$1</a>');
 
-    // 8. Ordered & Unordered Lists
-    md = md.replace(/^\d+\.\s(.*)$/gim, '<li class="ml-4 pl-2 list-decimal text-[#1c1917] my-1 leading-relaxed text-base sm:text-lg font-serif">$1</li>');
-    md = md.replace(/^-\s(.*)$/gim, '<li class="ml-4 pl-2 list-disc text-[#1c1917] my-1 leading-relaxed text-base sm:text-lg font-serif">$1</li>');
-
-    // 9. Paragraphs
+    // 10. Paragraphs
     const paragraphs = md.split(/\n\n+/);
     parsedHtml = paragraphs.map(p => {
       p = p.trim();
-      if (p.startsWith('<div') || p.startsWith('<blockquote') || p.startsWith('<h') || p.startsWith('<li') || p.startsWith('<table') || p.startsWith('<figure') || p.startsWith('<iframe')) {
+      if (!p) return '';
+      if (p.startsWith('<div') || p.startsWith('<blockquote') || p.startsWith('<h') || p.startsWith('<ul') || p.startsWith('<ol') || p.startsWith('<li') || p.startsWith('<table') || p.startsWith('<figure') || p.startsWith('<iframe')) {
         return p;
       }
       return `<p class="my-4 text-[#1c1917] font-serif leading-[1.95] text-base sm:text-lg text-justify font-normal">${p.replace(/\n/g, '<br/>')}</p>`;
-    }).join('\n');
+    }).filter(Boolean).join('\n');
   } else {
-    // 4. Headings (Night Mode Typography with TOC anchor IDs)
+    // 5. Headings (Night Mode Typography with TOC anchor IDs)
     md = md.replace(/^(#{2,3})\s+(.*$)/gim, headingReplacer);
 
-    // 5. Horizontal Rules
+    // 6. Horizontal Rules
     md = md.replace(/^---$/gim, '<div class="my-8 flex items-center justify-center gap-3 text-amber-500/40 select-none"><span class="h-px w-20 bg-amber-500/30"></span><span class="text-xs">✦</span><span class="h-px w-20 bg-amber-500/30"></span></div>');
 
-    // 6. Bold & Italic
+    // 7. Bold & Italic
     md = md.replace(/\*\*(.*?)\*\*/gim, '<strong class="font-bold text-amber-300">$1</strong>');
     md = md.replace(/\*(.*?)\*/gim, '<em class="italic text-stone-200 font-serif">$1</em>');
 
-    // 6.5 Markdown Images (With responsive wrapper and caption)
+    // 8. Inline Code
+    md = md.replace(/`([^`\n]+)`/g, (_m, code) => `<code class="bg-stone-800 text-amber-300 border border-stone-700 px-1.5 py-0.5 rounded text-xs sm:text-sm font-mono">${escapeHtml(code)}</code>`);
+
+    // 8.5 Markdown Images (With responsive wrapper and caption)
     md = md.replace(/!\[(.*?)\]\((.*?)\)/gim, '<figure class="my-6 text-center max-w-2xl mx-auto"><img src="$2" alt="$1" class="rounded-2xl max-w-full h-auto mx-auto shadow-md border border-amber-500/30 object-cover" loading="lazy" /><figcaption class="text-xs font-serif text-stone-400 mt-2 italic">$1</figcaption></figure>');
 
-    // 7. Markdown Links (Internal & External)
+    // 9. Markdown Links (Internal & External)
     md = md.replace(/\[(.*?)\]\((.*?)\)/gim, '<a href="$2" class="zen-internal-link text-amber-400 hover:text-amber-200 font-semibold underline decoration-amber-500/60 decoration-1 hover:decoration-2 transition-all inline-flex items-center gap-0.5">$1</a>');
 
-    // 8. Ordered & Unordered Lists
-    md = md.replace(/^\d+\.\s(.*)$/gim, '<li class="ml-4 pl-2 list-decimal text-stone-100 my-1 leading-relaxed text-base sm:text-lg font-serif">$1</li>');
-    md = md.replace(/^-\s(.*)$/gim, '<li class="ml-4 pl-2 list-disc text-stone-100 my-1 leading-relaxed text-base sm:text-lg font-serif">$1</li>');
-
-    // 9. Paragraphs
+    // 10. Paragraphs
     const paragraphs = md.split(/\n\n+/);
     parsedHtml = paragraphs.map(p => {
       p = p.trim();
-      if (p.startsWith('<div') || p.startsWith('<blockquote') || p.startsWith('<h') || p.startsWith('<li') || p.startsWith('<table') || p.startsWith('<figure') || p.startsWith('<iframe')) {
+      if (!p) return '';
+      if (p.startsWith('<div') || p.startsWith('<blockquote') || p.startsWith('<h') || p.startsWith('<ul') || p.startsWith('<ol') || p.startsWith('<li') || p.startsWith('<table') || p.startsWith('<figure') || p.startsWith('<iframe')) {
         return p;
       }
       return `<p class="my-4 text-stone-100 font-serif leading-[1.95] text-base sm:text-lg text-justify font-normal">${p.replace(/\n/g, '<br/>')}</p>`;
-    }).join('\n');
+    }).filter(Boolean).join('\n');
   }
 
   return annotatePaliTermsInHtml(parsedHtml);
@@ -923,7 +1034,7 @@ const suttaJsonLd = computed(() => ({
           class="sm:hidden inline-flex items-center gap-1.5 text-amber-400 hover:text-amber-300 font-medium py-1"
         >
           <span>←</span>
-          <span class="truncate max-w-[240px]">{{ categoryLabel(article.category) }}</span>
+          <span class="truncate max-w-[220px]">{{ categoryLabel(article.category) }}</span>
         </Link>
 
         <!-- Desktop: full 3-tier breadcrumb -->
@@ -939,35 +1050,41 @@ const suttaJsonLd = computed(() => ({
           </span>
         </div>
 
-        <span class="text-xs text-stone-400 font-serif shrink-0">
-          {{ article.reading_time_min }} {{ t('theravada.minutes') }}
+        <span class="inline-flex items-center gap-1 text-[11px] sm:text-xs text-stone-400 font-serif shrink-0 px-2 py-0.5 rounded-full bg-stone-900/80 border border-stone-800/80">
+          <span>⏱️</span>
+          <span>{{ article.reading_time_min }} {{ t('theravada.minutes') }}</span>
         </span>
       </nav>
 
       <!-- Article Header -->
       <header class="mb-6 sm:mb-8 text-left border-b border-stone-800 pb-5 sm:pb-6 px-4 sm:px-0">
-        <div class="flex flex-wrap items-center gap-2.5 mb-3">
-          <span class="px-3 py-1 rounded-full text-xs font-serif font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30">
+        <div v-if="hasMediaAttachment" class="flex flex-wrap items-center gap-2 mb-2.5 sm:mb-3">
+          <span class="hidden sm:inline-flex px-3 py-1 rounded-full text-xs font-serif font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30">
             {{ categoryLabel(article.category) }}
           </span>
           <a
-            v-if="hasMediaAttachment"
             href="#phap-am-dinh-kem"
-            class="px-2.5 py-0.5 rounded-full text-xs font-serif font-medium bg-amber-500/10 text-amber-300 hover:text-amber-100 hover:bg-amber-500/20 border border-amber-500/30 transition-all inline-flex items-center gap-1.5"
+            class="px-2.5 py-1 rounded-full text-xs font-serif font-medium bg-amber-500/10 text-amber-300 hover:text-amber-100 hover:bg-amber-500/20 border border-amber-500/30 transition-all inline-flex items-center gap-1.5"
           >
             <span>🎧</span>
             <span>{{ locale === 'en' ? 'Attached Media' : 'Có video & pháp âm đính kèm' }}</span>
             <span class="text-[10px] text-amber-400">↓</span>
           </a>
         </div>
+        <div v-else class="hidden sm:flex items-center gap-2 mb-3">
+          <span class="px-3 py-1 rounded-full text-xs font-serif font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30">
+            {{ categoryLabel(article.category) }}
+          </span>
+        </div>
 
-        <h1 class="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-amber-100 leading-tight mb-2 sm:mb-3">
+        <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-amber-100 leading-snug sm:leading-tight mb-2.5 sm:mb-3 tracking-tight">
           {{ article.title }}
         </h1>
 
-        <p v-if="article.pali_title" class="text-sm sm:text-base md:text-lg font-serif italic text-amber-400/90 mb-3 sm:mb-4">
-          Pāḷi: {{ article.pali_title }}
-        </p>
+        <div v-if="article.pali_title" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/25 text-amber-300/90 mb-3.5 sm:mb-4 text-xs sm:text-sm md:text-base font-serif italic max-w-full">
+          <span class="text-xs not-italic select-none opacity-80">🪷</span>
+          <span class="truncate sm:whitespace-normal"><span class="font-semibold not-italic">Pāḷi:</span> {{ article.pali_title }}</span>
+        </div>
 
         <!-- Dual Perspective Header Banner if counterpart exists -->
         <DualPerspectiveHeaderBanner
@@ -1716,5 +1833,33 @@ const suttaJsonLd = computed(() => ({
 .zen-article-content.is-night-mode :deep(.zen-media-card-caption),
 :deep(.is-night-mode .zen-media-card-caption) {
   color: #fde68a !important; /* Bright warm gold */
+}
+
+/* Zen ASCII Diagrams & Code Blocks Contrast */
+.zen-article-content.is-paper-mode :deep(.zen-ascii-diagram),
+:deep(.is-paper-mode .zen-ascii-diagram) {
+  background-color: #fdfbf7 !important;
+  border-color: rgba(217, 119, 6, 0.35) !important;
+  color: #1c1917 !important;
+}
+.zen-article-content.is-paper-mode :deep(.zen-ascii-diagram pre),
+.zen-article-content.is-paper-mode :deep(.zen-ascii-diagram code),
+:deep(.is-paper-mode .zen-ascii-diagram pre),
+:deep(.is-paper-mode .zen-ascii-diagram code) {
+  color: #1c1917 !important;
+  font-weight: 500;
+}
+
+.zen-article-content.is-night-mode :deep(.zen-ascii-diagram),
+:deep(.is-night-mode .zen-ascii-diagram) {
+  background-color: #0c0a09 !important;
+  border-color: rgba(245, 158, 11, 0.3) !important;
+  color: #fef3c7 !important;
+}
+.zen-article-content.is-night-mode :deep(.zen-ascii-diagram pre),
+.zen-article-content.is-night-mode :deep(.zen-ascii-diagram code),
+:deep(.is-night-mode .zen-ascii-diagram pre),
+:deep(.is-night-mode .zen-ascii-diagram code) {
+  color: #fde68a !important;
 }
 </style>

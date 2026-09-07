@@ -45,6 +45,22 @@ class TheravadaContentValidationTest extends TestCase
     {
         parent::setUp();
         $this->seed(TheravadaContentSeeder::class);
+
+        if (!Article::where('site_domain', 'theravada')->where('category', 'phap-thoai')->exists()) {
+            Article::create([
+                'site_domain' => 'theravada',
+                'title' => 'Pháp Thoại Mẫu Về Chánh Niệm',
+                'pali_title' => 'Sati Sutta Desana',
+                'slug' => 'phap-thoai-mau-ve-chanh-niem',
+                'category' => 'phap-thoai',
+                'excerpt' => 'Pháp thoại giảng giải Phật pháp nguyên thủy Theravada sâu sắc về chánh niệm và tỉnh giác trong đời sống hàng ngày.',
+                'content' => "## Giới Thiệu Pháp Thoại Chánh Niệm\n\nTrong đời sống hiện đại đầy biến động, thực hành chánh niệm và tỉnh giác là phương thuốc tối thượng giúp hành giả giữ vững tâm an tĩnh trước những phong ba bão táp của cuộc đời. Khi tâm an định, trí tuệ tự nhiên phát sinh, giúp chúng ta nhìn rõ bản chất vô thường, khổ và vô ngã của mọi hiện tượng tâm lý và vật lý.\n\n```mermaid\ngraph TD\n  A[Tiếp Xúc Căn Trần] --> B[Khởi Lên Thọ Cảm]\n  B --> C[Chánh Niệm Nhận Biết]\n  C --> D[Tâm An Nhiên Giải Thoát]\n```\n\nNgười có chánh niệm luôn biết rõ thân mình đang làm gì, miệng đang nói gì và tâm ý đang suy nghĩ gì. Không để cho những ngọn lửa tham sân si thiêu đốt ngôi nhà tâm thức, hành giả quay về nương tựa nơi hơi thở vào và hơi thở ra, cảm nhận từng bước chân an lạc trên mặt đất mẹ bao la. Khi phiền não lắng dịu, nguồn năng lượng từ bi và hỷ xả sẽ tự động lan tỏa đến muôn loài chúng sanh xung quanh, kiến tạo một không gian thanh tịnh và an lành.\n\nThực tập chánh niệm không đòi hỏi chúng ta phải từ bỏ cuộc sống thường nhật hay trốn tránh trách nhiệm xã hội, mà chính là sự hiện diện trọn vẹn và tỉnh thức trong từng khoảnh khắc hiện tại ngay tại đây và bây giờ.",
+                'author' => 'Ma Tọa Thiền',
+                'reading_time_min' => 5,
+                'is_published' => true,
+                'published_at' => now(),
+            ]);
+        }
     }
 
     /**
