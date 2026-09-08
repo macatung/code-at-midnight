@@ -156,4 +156,37 @@ class AdminTheravadaVideoController extends Controller
 
         return redirect()->back()->with('success', $message);
     }
+
+    /**
+     * Update video metadata, YouTube link, status, and SEO content.
+     *
+     * PUT /admin/theravada/videos/{article}
+     */
+    public function update(Article $article, Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'youtube_url' => ['nullable', 'string', 'max:500'],
+            'seo_title' => ['nullable', 'string', 'max:255'],
+            'seo_description' => ['nullable', 'string'],
+            'social_caption' => ['nullable', 'string'],
+            'hashtags' => ['nullable'],
+            'video_status' => ['nullable', 'string', 'in:draft,processing,completed,published,failed'],
+        ]);
+
+        if (isset($validated['hashtags']) && is_string($validated['hashtags'])) {
+            $raw = trim($validated['hashtags']);
+            if (str_contains($raw, ',')) {
+                $validated['hashtags'] = array_values(array_filter(array_map('trim', explode(',', $raw))));
+            } elseif (str_contains($raw, '#')) {
+                preg_match_all('/#?([a-zA-Z0-9_\x{00C0}-\x{024F}\x{1E00}-\x{1EFF}]+)/u', $raw, $matches);
+                $validated['hashtags'] = $matches[1] ?? [];
+            } else {
+                $validated['hashtags'] = array_values(array_filter(explode(' ', $raw)));
+            }
+        }
+
+        $article->update($validated);
+
+        return redirect()->back()->with('success', 'Đã cập nhật thông tin video và metadata thành công!');
+    }
 }

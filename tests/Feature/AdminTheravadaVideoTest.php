@@ -212,4 +212,50 @@ class AdminTheravadaVideoTest extends TestCase
         $responseShow = $this->get("http://theravada.macatung.dev/admin/videos/{$article->id}");
         $responseShow->assertStatus(200);
     }
+
+    public function test_admin_can_update_video_metadata_and_youtube_url(): void
+    {
+        $this->authenticateAdmin();
+
+        $article = Article::create([
+            'site_domain' => 'theravada',
+            'title' => 'Bài Pháp Thoại Cần Cập Nhật',
+            'slug' => 'bai-phap-thoai-can-cap-nhat',
+            'content' => 'Nội dung bài viết...',
+            'video_status' => 'completed',
+        ]);
+
+        $response = $this->from("/admin/theravada/videos/{$article->id}")
+            ->put("/admin/theravada/videos/{$article->id}", [
+                'youtube_url' => 'https://youtu.be/cjdEOM6sn24',
+                'seo_title' => 'Tâm An Vạn Sự An | Tiêu Đề Mới',
+                'seo_description' => 'Mô tả video mới...',
+                'social_caption' => 'Caption mới...',
+                'hashtags' => 'TamAn, LoiPhatDay, Theravada',
+            ]);
+
+        $response->assertRedirect("/admin/theravada/videos/{$article->id}");
+        $response->assertSessionHas('success');
+
+        $article->refresh();
+        $this->assertSame('https://youtu.be/cjdEOM6sn24', $article->youtube_url);
+        $this->assertSame('cjdEOM6sn24', $article->youtube_id);
+        $this->assertSame('Tâm An Vạn Sự An | Tiêu Đề Mới', $article->seo_title);
+        $this->assertEquals(['TamAn', 'LoiPhatDay', 'Theravada'], $article->hashtags);
+    }
+
+    public function test_youtube_id_accessor(): void
+    {
+        $article = new Article(['youtube_url' => 'https://www.youtube.com/watch?v=cjdEOM6sn24']);
+        $this->assertSame('cjdEOM6sn24', $article->youtube_id);
+
+        $article2 = new Article(['youtube_url' => 'https://youtu.be/cjdEOM6sn24']);
+        $this->assertSame('cjdEOM6sn24', $article2->youtube_id);
+
+        $article3 = new Article(['youtube_url' => 'cjdEOM6sn24']);
+        $this->assertSame('cjdEOM6sn24', $article3->youtube_id);
+
+        $article4 = new Article(['youtube_url' => null]);
+        $this->assertNull($article4->youtube_id);
+    }
 }

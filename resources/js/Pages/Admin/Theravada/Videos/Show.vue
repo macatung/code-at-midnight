@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import Icons from '@/Components/ui/Icons.vue';
@@ -18,6 +18,8 @@ interface ArticleDetail {
   video_status: 'draft' | 'processing' | 'completed' | 'published' | 'failed' | string;
   video_long_url?: string | null;
   video_short_url?: string | null;
+  youtube_url?: string | null;
+  youtube_id?: string | null;
   thumbnail_long_url?: string | null;
   thumbnail_short_url?: string | null;
   video_long_duration?: string | null;
@@ -28,6 +30,7 @@ interface ArticleDetail {
   seo_description?: string | null;
   social_caption?: string | null;
   hashtags?: string[] | null;
+  has_video?: boolean;
   pipeline_task_id?: string | null;
   pipeline_started_at?: string | null;
   pipeline_completed_at?: string | null;
@@ -42,9 +45,53 @@ const props = defineProps<{
   article: ArticleDetail;
 }>();
 
+// Active Platform Tab
+const activePlatform = ref<'youtube' | 'tiktok' | 'reels' | 'website'>('youtube');
+
+// Dual Player Mode for YouTube tab: 'youtube' or 'gcs_mp4'
+const playerMode = ref<'youtube' | 'gcs_mp4'>(props.article.youtube_id ? 'youtube' : 'gcs_mp4');
+
+// Sub-tabs for scripts in Website tab
 const activeScriptTab = ref<'long' | 'reel' | 'original'>('long');
+
+// Form for updating YouTube URL and metadata
+const ytForm = useForm({
+  youtube_url: props.article.youtube_url || '',
+});
+
 const isTriggering = ref(false);
 const copyFeedback = ref<Record<string, boolean>>({});
+
+// 1-Click Copy Utility
+const copyToClipboard = async (text: string, key: string) => {
+  if (!text) return;
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+  }
+  copyFeedback.value[key] = true;
+  setTimeout(() => {
+    copyFeedback.value[key] = false;
+  }, 2000);
+};
+
+// Save YouTube URL
+const saveYoutubeUrl = () => {
+  ytForm.put(`/admin/theravada/videos/${props.article.id}`, {
+    preserveScroll: true,
+    onSuccess: () => {
+      if (props.article.youtube_id || ytForm.youtube_url) {
+        playerMode.value = 'youtube';
+      }
+    },
+  });
+};
 
 const triggerPipeline = () => {
   if (isTriggering.value) return;
@@ -77,65 +124,69 @@ const togglePublish = () => {
   }
 };
 
-// 1-Click Copy Utility
-const copyToClipboard = async (text: string, key: string) => {
-  if (!text) return;
-  try {
-    await navigator.clipboard.writeText(text);
-    copyFeedback.value[key] = true;
-    setTimeout(() => {
-      copyFeedback.value[key] = false;
-    }, 2000);
-  } catch {
-    // Fallback for environments without clipboard permissions
-    const textarea = document.createElement('textarea');
-    textarea.value = text;
-    document.body.appendChild(textarea);
-    textarea.select();
-    document.execCommand('copy');
-    document.body.removeChild(textarea);
-    copyFeedback.value[key] = true;
-    setTimeout(() => {
-      copyFeedback.value[key] = false;
-    }, 2000);
-  }
-};
-
-// Formatted Strings for 1-Click Copy
+// Formatted Computed Properties
 const formattedTitle = computed(() => props.article.seo_title || props.article.title);
 const formattedDescription = computed(() => props.article.seo_description || props.article.excerpt || '');
 const formattedCaption = computed(() => props.article.social_caption || '');
-const formattedHashtags = computed(() => {
+
+const formattedHashtagsList = computed(() => {
   const tags = props.article.hashtags;
-  if (Array.isArray(tags)) {
-    return tags.map((t) => (t.startsWith('#') ? t : `#${t}`)).join(' ');
+  if (Array.isArray(tags) && tags.length > 0) {
+    return tags.map((t) => (t.startsWith('#') ? t : `#${t}`));
   }
-  return '#TamAnVanSuAn #LoiPhatDay #Theravada #macatungdev';
+  return ['#TamAnVanSuAn', '#LoiPhatDay', '#Theravada', '#ThienDinh', '#MaToaThien'];
 });
 
-const formattedFullKit = computed(() => {
+const formattedHashtagsString = computed(() => formattedHashtagsList.value.join(' '));
+
+// Platform-Specific Kits
+const youtubeFullKit = computed(() => {
   return [
-    `=== TIÊU ĐỀ VIDEO YOUTUBE ===`,
+    `=== TIÊU ĐỀ YOUTUBE ===`,
     formattedTitle.value,
     ``,
-    `=== MÔ TẢ VIDEO (YOUTUBE / FACEBOOK) ===`,
+    `=== MÔ TẢ YOUTUBE (SEO & TIMESTAMPS) ===`,
     formattedDescription.value,
     ``,
-    `=== CAPTION MẠNG XÃ HỘI (TIKTOK / REELS / SHORTS) ===`,
+    `🎧 Nghe trọn bộ tuyển tập Pháp Thoại tại: https://theravada.macatung.dev`,
+    `🔔 Đăng ký kênh Ma Tọa Thiền để đón nhận nguồn năng lượng bình an mỗi ngày.`,
+    ``,
+    `=== TỪ KHÓA / HASHTAGS ===`,
+    formattedHashtagsString.value,
+    ``,
+    `=== BÀI VIẾT NGUYÊN BẢN ===`,
+    `https://theravada.macatung.dev/phap-thoai/${props.article.slug}`,
+  ].join('\n');
+});
+
+const tiktokFullKit = computed(() => {
+  return [
     formattedCaption.value,
     ``,
-    `=== HASHTAGS BÀI ĐĂNG ===`,
-    formattedHashtags.value,
-    ``,
-    `=== LIÊN KẾT BÀI VIẾT NGUYÊN BẢN ===`,
-    `https://theravada.macatung.dev/phap-thoai/${props.article.slug}`,
-    ``,
-    `=== TÀI NGUYÊN MEDIA CDN ===`,
-    `Video dài (16:9): ${props.article.video_long_url || 'Chưa hoàn thành'}`,
-    `Video ngắn (9:16): ${props.article.video_short_url || 'Chưa hoàn thành'}`,
-    `Thumbnail 16:9: ${props.article.thumbnail_long_url || 'Chưa hoàn thành'}`,
-    `Thumbnail 9:16: ${props.article.thumbnail_short_url || 'Chưa hoàn thành'}`,
+    `🎧 Nghe trọn bài giảng tại link bio!`,
+    formattedHashtagsString.value + ' #shorts #reels #xuhuong',
   ].join('\n');
+});
+
+const reelsFullKit = computed(() => {
+  return [
+    formattedCaption.value,
+    ``,
+    `🌿 Lời Phật dạy cho tâm an giữa vạn biến cuộc đời.`,
+    `🎵 Âm thanh: Nhạc thiền 432Hz hòa trộn tiếng chuông chánh niệm`,
+    formattedHashtagsString.value,
+  ].join('\n');
+});
+
+// Website Responsive Embed Code
+const embedCodeSnippet = computed(() => {
+  if (props.article.youtube_id) {
+    return `<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px;">\n  <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" src="https://www.youtube-nocookie.com/embed/${props.article.youtube_id}" title="${props.article.title}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>\n</div>`;
+  }
+  if (props.article.video_long_url) {
+    return `<div style="border-radius: 12px; overflow: hidden; max-width: 100%;">\n  <video controls playsinline style="width: 100%; border-radius: 12px;" src="${props.article.video_long_url}" poster="${props.article.thumbnail_long_url || ''}"></video>\n</div>`;
+  }
+  return `<!-- Video chưa sẵn sàng -->`;
 });
 
 const wordCountLong = computed(() => {
@@ -161,11 +212,11 @@ const formatDuration = (val?: string | null) => {
 </script>
 
 <template>
-  <AdminLayout :title="`Video: ${article.title}`">
-    <Head :title="`Chi Tiết Video: ${article.title} — Admin CMS`" />
+  <AdminLayout :title="`Trạm Phát Hành: ${article.title}`">
+    <Head :title="`Trạm Phát Hành: ${article.title} — Admin CMS`" />
 
     <div class="space-y-6">
-      <!-- Breadcrumb & Top Action Header -->
+      <!-- Breadcrumb & Header -->
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/10">
         <div>
           <Link
@@ -173,7 +224,7 @@ const formatDuration = (val?: string | null) => {
             class="inline-flex items-center gap-1.5 text-xs font-mono text-slate-400 hover:text-phantom-mint transition-colors mb-2"
           >
             <Icons name="ChevronLeft" :size="14" />
-            <span>Quay lại Danh Sách Video</span>
+            <span>Quay lại Trạm Phát Hành Video</span>
           </Link>
 
           <div class="flex items-center gap-2 flex-wrap">
@@ -213,10 +264,14 @@ const formatDuration = (val?: string | null) => {
             </span>
 
             <span class="text-xs font-mono text-slate-500">ID: #{{ article.id }}</span>
+
+            <span v-if="article.youtube_id" class="px-2 py-0.5 rounded text-[10px] font-mono bg-red-500/15 text-red-300 border border-red-500/30 font-bold">
+              YouTube ID: {{ article.youtube_id }}
+            </span>
           </div>
 
           <h1 class="text-xl sm:text-2xl lg:text-3xl font-display font-extrabold text-white mt-1.5 line-clamp-2">
-            {{ article.title }}
+            {{ article.seo_title || article.title }}
           </h1>
           <div v-if="article.pali_title" class="text-xs sm:text-sm font-serif italic text-amber-200/80 mt-0.5">
             {{ article.pali_title }}
@@ -255,12 +310,12 @@ const formatDuration = (val?: string | null) => {
             @click="triggerPipeline"
           >
             <Icons :name="isTriggering ? 'Clock' : 'Zap'" :size="14" />
-            <span>{{ isTriggering ? 'Đang kích hoạt...' : 'Tạo Video (n8n)' }}</span>
+            <span>{{ isTriggering ? 'Đang kích hoạt...' : 'Tạo Lại (n8n)' }}</span>
           </button>
         </div>
       </div>
 
-      <!-- Pipeline Error Alert Banner -->
+      <!-- Pipeline Error Alert Banner if any -->
       <div
         v-if="article.pipeline_error"
         class="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-mono flex items-start gap-3"
@@ -272,445 +327,754 @@ const formatDuration = (val?: string | null) => {
         </div>
       </div>
 
-      <!-- Main Content Grid: Left Dual Players & Thumbnails (8 cols), Right 1-Click Copy Suite & Metadata (4 cols) -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        <!-- Left Column: Dual Video Players & Thumbnails (8 cols) -->
+      <!-- Platform Hub Tabs Navigation -->
+      <div class="flex items-center gap-2 p-1.5 rounded-2xl bg-midnight-900/90 border border-white/10 overflow-x-auto no-scrollbar">
+        <!-- Tab 1: YouTube Studio -->
+        <button
+          type="button"
+          class="flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold transition-all shrink-0"
+          :class="
+            activePlatform === 'youtube'
+              ? 'bg-red-600 text-white shadow-lg shadow-red-900/30'
+              : 'text-slate-400 hover:text-white hover:bg-white/5'
+          "
+          @click="activePlatform = 'youtube'"
+        >
+          <span class="w-2 h-2 rounded-full" :class="article.video_long_url ? 'bg-red-300' : 'bg-slate-600'"></span>
+          <span>YouTube Studio (16:9)</span>
+          <span v-if="article.youtube_id" class="px-1.5 py-0.2 rounded bg-white/20 text-[10px]">LIVE</span>
+        </button>
+
+        <!-- Tab 2: TikTok -->
+        <button
+          type="button"
+          class="flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold transition-all shrink-0"
+          :class="
+            activePlatform === 'tiktok'
+              ? 'bg-cyan-500 text-midnight-950 shadow-lg shadow-cyan-900/30'
+              : 'text-slate-400 hover:text-white hover:bg-white/5'
+          "
+          @click="activePlatform = 'tiktok'"
+        >
+          <span class="w-2 h-2 rounded-full" :class="article.video_short_url ? 'bg-cyan-200' : 'bg-slate-600'"></span>
+          <span>TikTok Hub (9:16)</span>
+        </button>
+
+        <!-- Tab 3: Facebook & Instagram Reels -->
+        <button
+          type="button"
+          class="flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold transition-all shrink-0"
+          :class="
+            activePlatform === 'reels'
+              ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-900/30'
+              : 'text-slate-400 hover:text-white hover:bg-white/5'
+          "
+          @click="activePlatform = 'reels'"
+        >
+          <span class="w-2 h-2 rounded-full" :class="article.video_short_url ? 'bg-pink-200' : 'bg-slate-600'"></span>
+          <span>Facebook & IG Reels</span>
+        </button>
+
+        <!-- Tab 4: Website & Kịch Bản -->
+        <button
+          type="button"
+          class="flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold transition-all shrink-0"
+          :class="
+            activePlatform === 'website'
+              ? 'bg-phantom-mint text-midnight-950 shadow-lg shadow-emerald-900/30 font-extrabold'
+              : 'text-slate-400 hover:text-white hover:bg-white/5'
+          "
+          @click="activePlatform = 'website'"
+        >
+          <Icons name="Code" :size="14" />
+          <span>Website & Kịch Bản</span>
+        </button>
+      </div>
+
+      <!-- MAIN TAB CONTENT PANELS -->
+
+      <!-- ======================================================== -->
+      <!-- TAB 1: YOUTUBE STUDIO (16:9 Landscape Player & Kit)      -->
+      <!-- ======================================================== -->
+      <div v-if="activePlatform === 'youtube'" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <!-- Left 8 Cols: Dual Video Player & Thumbnail 16:9 -->
         <div class="lg:col-span-8 space-y-6">
-          <!-- Section 1: Dual Video Players -->
+          <!-- Video Player Container -->
           <div class="p-5 rounded-2xl glass-panel border border-white/10 space-y-4">
-            <div class="flex items-center justify-between border-b border-white/5 pb-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/5 pb-3">
               <div class="flex items-center gap-2">
-                <Icons name="Play" :size="18" class="text-phantom-mint" />
+                <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>
                 <h2 class="font-display font-bold text-base text-white">
-                  Trình Xem Trước Video Đa Định Dạng (HTML5 Video Players)
+                  Trình Xem Trước Video YouTube (16:9 Full HD)
                 </h2>
               </div>
-              <div class="text-[11px] font-mono text-slate-400">
-                16:9 YouTube & 9:16 Shorts/TikTok
+
+              <!-- Dual Player Mode Switcher -->
+              <div class="flex items-center gap-1 p-1 rounded-xl bg-midnight-900 border border-white/10 text-xs font-mono">
+                <button
+                  type="button"
+                  class="px-2.5 py-1 rounded-lg transition-all"
+                  :class="
+                    playerMode === 'youtube'
+                      ? 'bg-red-600 text-white font-bold shadow'
+                      : 'text-slate-400 hover:text-white'
+                  "
+                  :disabled="!article.youtube_id"
+                  :title="!article.youtube_id ? 'Vui lòng nhập link YouTube bên dưới trước' : ''"
+                  @click="playerMode = 'youtube'"
+                >
+                  Trình phát YouTube
+                </button>
+                <button
+                  type="button"
+                  class="px-2.5 py-1 rounded-lg transition-all"
+                  :class="
+                    playerMode === 'gcs_mp4'
+                      ? 'bg-indigo-600 text-white font-bold shadow'
+                      : 'text-slate-400 hover:text-white'
+                  "
+                  @click="playerMode = 'gcs_mp4'"
+                >
+                  Video Gốc MP4
+                </button>
               </div>
             </div>
 
-            <!-- Dual Players Container -->
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
-              <!-- Player 1: 16:9 Landscape Player (7 cols) -->
-              <div class="md:col-span-7 space-y-2.5">
-                <div class="flex items-center justify-between">
-                  <span class="text-xs font-mono text-indigo-300 flex items-center gap-1.5 font-bold">
-                    <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
-                    <span>16:9 Landscape (Full HD 1080p)</span>
-                  </span>
-                  <span class="text-[11px] font-mono text-slate-400">
-                    ⏱️ {{ formatDuration(article.video_long_duration) }}
-                  </span>
-                </div>
+            <!-- Frame Display -->
+            <div class="aspect-video rounded-xl overflow-hidden bg-black border border-white/10 relative shadow-2xl flex items-center justify-center">
+              <!-- YouTube Embed Player -->
+              <iframe
+                v-if="playerMode === 'youtube' && article.youtube_id"
+                :src="`https://www.youtube-nocookie.com/embed/${article.youtube_id}?autoplay=0&rel=0`"
+                class="w-full h-full border-0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+              />
 
-                <!-- Video Frame -->
-                <div class="aspect-video rounded-xl overflow-hidden bg-black/90 border border-white/10 relative shadow-xl flex items-center justify-center">
-                  <video
-                    v-if="article.video_long_url"
-                    controls
-                    playsinline
-                    class="w-full h-full object-contain"
-                    :src="article.video_long_url"
-                    :poster="article.thumbnail_long_url || undefined"
-                  />
-                  <div v-else class="p-6 text-center text-slate-500 font-mono text-xs space-y-2">
-                    <Icons name="Play" :size="32" class="mx-auto text-slate-600 mb-1" />
-                    <div>Video 16:9 chưa được render</div>
-                    <button
-                      type="button"
-                      class="px-3 py-1.5 rounded-lg bg-phantom-mint/10 hover:bg-phantom-mint hover:text-midnight-950 text-phantom-mint text-[11px] transition-all"
-                      @click="triggerPipeline"
-                    >
-                      Bấm "Tạo Video" để bắt đầu
-                    </button>
-                  </div>
-                </div>
+              <!-- Native HTML5 MP4 Player -->
+              <video
+                v-else-if="article.video_long_url"
+                controls
+                playsinline
+                class="w-full h-full object-contain"
+                :src="article.video_long_url"
+                :poster="article.thumbnail_long_url || undefined"
+              />
 
-                <!-- Video 16:9 Actions -->
-                <div v-if="article.video_long_url" class="flex items-center justify-between gap-2 pt-1">
-                  <a
-                    :href="article.video_long_url"
-                    target="_blank"
-                    class="text-[11px] font-mono text-slate-300 hover:text-phantom-mint flex items-center gap-1"
-                  >
-                    <Icons name="ExternalLink" :size="12" />
-                    <span>Mở file MP4</span>
-                  </a>
-                  <button
-                    type="button"
-                    class="text-[11px] font-mono text-slate-300 hover:text-phantom-mint flex items-center gap-1"
-                    @click="copyToClipboard(article.video_long_url, 'v16x9')"
-                  >
-                    <Icons name="Copy" :size="12" />
-                    <span>{{ copyFeedback['v16x9'] ? '✓ Đã chép CDN!' : 'Sao chép CDN link' }}</span>
-                  </button>
-                </div>
+              <!-- Placeholder when neither is available -->
+              <div v-else class="p-8 text-center text-slate-500 font-mono text-xs space-y-2">
+                <Icons name="Play" :size="36" class="mx-auto text-slate-600 mb-1" />
+                <div>Video 16:9 chưa được tạo</div>
+                <button
+                  type="button"
+                  class="px-3.5 py-1.5 rounded-lg bg-phantom-mint/10 hover:bg-phantom-mint hover:text-midnight-950 text-phantom-mint text-xs transition-all"
+                  @click="triggerPipeline"
+                >
+                  Bấm "Tạo Lại (n8n)" để sản xuất
+                </button>
+              </div>
+            </div>
+
+            <!-- Video Player Controls & Direct Links -->
+            <div class="flex items-center justify-between gap-3 text-xs font-mono text-slate-400 pt-1 flex-wrap">
+              <div class="flex items-center gap-2">
+                <span>Thời lượng:</span>
+                <span class="text-white font-bold">{{ formatDuration(article.video_long_duration) }}</span>
+                <span>•</span>
+                <span>Độ phân giải: 1920x1080 (30fps)</span>
               </div>
 
-              <!-- Player 2: 9:16 Vertical Smartphone Frame (5 cols) -->
-              <div class="md:col-span-5 space-y-2.5">
-                <div class="flex items-center justify-between">
-                  <span class="text-xs font-mono text-purple-300 flex items-center gap-1.5 font-bold">
-                    <span class="w-2 h-2 rounded-full bg-purple-400"></span>
-                    <span>9:16 Reel / Shorts (1080x1920)</span>
-                  </span>
-                  <span class="text-[11px] font-mono text-slate-400">
-                    ⏱️ {{ formatDuration(article.video_short_duration) }}
-                  </span>
-                </div>
-
-                <!-- Smartphone Frame -->
-                <div class="w-full max-w-[240px] aspect-[9/16] mx-auto rounded-3xl overflow-hidden bg-slate-900 border-4 border-slate-700 shadow-2xl relative flex flex-col justify-between">
-                  <!-- Smartphone Pill Notch -->
-                  <div class="absolute top-2 left-1/2 -translate-x-1/2 w-16 h-3.5 bg-black/80 rounded-full z-10 pointer-events-none flex items-center justify-center">
-                    <div class="w-2 h-2 rounded-full bg-slate-800"></div>
-                  </div>
-
-                  <video
-                    v-if="article.video_short_url"
-                    controls
-                    playsinline
-                    class="w-full h-full object-cover"
-                    :src="article.video_short_url"
-                    :poster="article.thumbnail_short_url || undefined"
-                  />
-                  <div v-else class="h-full flex flex-col items-center justify-center p-4 text-center text-slate-500 font-mono text-xs space-y-2">
-                    <Icons name="Play" :size="28" class="text-slate-600 mb-1" />
-                    <div>Reel 9:16 chưa render</div>
-                  </div>
-                </div>
-
-                <!-- Video 9:16 Actions -->
-                <div v-if="article.video_short_url" class="flex items-center justify-between gap-2 pt-1 max-w-[240px] mx-auto">
-                  <a
-                    :href="article.video_short_url"
-                    target="_blank"
-                    class="text-[11px] font-mono text-slate-300 hover:text-purple-300 flex items-center gap-1"
-                  >
-                    <Icons name="ExternalLink" :size="12" />
-                    <span>Mở Reel</span>
-                  </a>
-                  <button
-                    type="button"
-                    class="text-[11px] font-mono text-slate-300 hover:text-purple-300 flex items-center gap-1"
-                    @click="copyToClipboard(article.video_short_url, 'v9x16')"
-                  >
-                    <Icons name="Copy" :size="12" />
-                    <span>{{ copyFeedback['v9x16'] ? '✓ Đã chép!' : 'Copy CDN link' }}</span>
-                  </button>
-                </div>
+              <div class="flex items-center gap-2">
+                <a
+                  v-if="article.video_long_url"
+                  :href="article.video_long_url"
+                  target="_blank"
+                  class="text-indigo-300 hover:underline flex items-center gap-1"
+                >
+                  <Icons name="ExternalLink" :size="12" />
+                  <span>Tải MP4 Gốc</span>
+                </a>
+                <span v-if="article.video_long_url">•</span>
+                <button
+                  v-if="article.video_long_url"
+                  type="button"
+                  class="text-phantom-mint hover:underline"
+                  @click="copyToClipboard(article.video_long_url, 'cdn16x9')"
+                >
+                  {{ copyFeedback['cdn16x9'] ? '✓ Đã chép CDN!' : 'Copy CDN link' }}
+                </button>
               </div>
             </div>
           </div>
 
-          <!-- Section 2: Dual Thumbnail Cards -->
-          <div class="p-5 rounded-2xl glass-panel border border-white/10 space-y-4">
-            <div class="flex items-center justify-between border-b border-white/5 pb-3">
+          <!-- YouTube Link & Video Attachment Card -->
+          <div class="p-5 rounded-2xl glass-panel border border-white/10 space-y-3">
+            <div class="flex items-center justify-between border-b border-white/5 pb-2.5">
               <div class="flex items-center gap-2">
-                <Icons name="Sparkles" :size="18" class="text-amber-300" />
-                <h2 class="font-display font-bold text-base text-white">
-                  Hình Thu Nhỏ Độ Nét Cao (Dual High-Contrast Thumbnails)
-                </h2>
+                <Icons name="Play" :size="16" class="text-red-400" />
+                <h3 class="font-mono font-bold text-xs text-white uppercase tracking-wider">
+                  Liên Kết YouTube Đã Tải Lên (YouTube Video URL / ID)
+                </h3>
               </div>
-              <div class="text-[11px] font-mono text-slate-400">
-                Chuẩn phông tiếng Việt Unicode
-              </div>
+              <span v-if="article.youtube_id" class="text-[11px] font-mono text-phantom-mint">
+                ✓ Đã trích xuất ID: {{ article.youtube_id }}
+              </span>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
-              <!-- 16:9 Thumbnail -->
-              <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 space-y-2">
-                <div class="flex items-center justify-between text-xs font-mono">
-                  <span class="text-indigo-300 font-bold">Thumbnail 16:9 (YouTube)</span>
-                  <span class="text-slate-500">1920x1080</span>
-                </div>
-                <div class="aspect-video rounded-lg overflow-hidden bg-black/60 border border-white/10 flex items-center justify-center">
-                  <img
-                    v-if="article.thumbnail_long_url"
-                    :src="article.thumbnail_long_url"
-                    alt="Thumbnail 16:9"
-                    class="w-full h-full object-cover"
-                  />
-                  <div v-else class="text-slate-600 font-mono text-xs">Chưa có ảnh 16:9</div>
-                </div>
-                <div v-if="article.thumbnail_long_url" class="flex items-center justify-between pt-1">
-                  <a
-                    :href="article.thumbnail_long_url"
-                    target="_blank"
-                    class="text-[11px] font-mono text-slate-300 hover:text-white flex items-center gap-1"
-                  >
-                    <Icons name="ExternalLink" :size="12" />
-                    <span>Mở ảnh gốc</span>
-                  </a>
-                  <button
-                    type="button"
-                    class="text-[11px] font-mono text-phantom-mint hover:underline"
-                    @click="copyToClipboard(article.thumbnail_long_url, 't16x9')"
-                  >
-                    {{ copyFeedback['t16x9'] ? '✓ Đã chép link!' : 'Copy Link Ảnh' }}
-                  </button>
-                </div>
+            <p class="text-xs text-slate-400 font-sans">
+              Sau khi tải video lên YouTube Studio, hãy dán liên kết (ví dụ: <code class="text-red-300">https://youtu.be/cjdEOM6sn24</code> hoặc <code class="text-red-300">cjdEOM6sn24</code>) vào đây để hệ thống tự động nhúng trình phát YouTube.
+            </p>
+
+            <form @submit.prevent="saveYoutubeUrl" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 pt-1">
+              <div class="relative flex-1">
+                <input
+                  v-model="ytForm.youtube_url"
+                  type="text"
+                  placeholder="https://youtu.be/cjdEOM6sn24 hoặc ID 11 ký tự..."
+                  class="w-full pl-9 pr-4 py-2 rounded-xl bg-midnight-900 border border-white/15 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-red-500 font-mono"
+                />
+                <span class="absolute left-3 top-2.5 text-red-400">
+                  <Icons name="Play" :size="14" />
+                </span>
               </div>
 
-              <!-- 9:16 Thumbnail -->
-              <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 space-y-2">
-                <div class="flex items-center justify-between text-xs font-mono">
-                  <span class="text-purple-300 font-bold">Thumbnail 9:16 (Shorts/TikTok)</span>
-                  <span class="text-slate-500">1080x1920</span>
-                </div>
-                <div class="aspect-[9/16] max-h-52 rounded-lg overflow-hidden bg-black/60 border border-white/10 mx-auto flex items-center justify-center">
-                  <img
-                    v-if="article.thumbnail_short_url"
-                    :src="article.thumbnail_short_url"
-                    alt="Thumbnail 9:16"
-                    class="w-full h-full object-cover"
-                  />
-                  <div v-else class="text-slate-600 font-mono text-xs">Chưa có ảnh 9:16</div>
-                </div>
-                <div v-if="article.thumbnail_short_url" class="flex items-center justify-between pt-1">
-                  <a
-                    :href="article.thumbnail_short_url"
-                    target="_blank"
-                    class="text-[11px] font-mono text-slate-300 hover:text-white flex items-center gap-1"
-                  >
-                    <Icons name="ExternalLink" :size="12" />
-                    <span>Mở ảnh gốc</span>
-                  </a>
-                  <button
-                    type="button"
-                    class="text-[11px] font-mono text-purple-300 hover:underline"
-                    @click="copyToClipboard(article.thumbnail_short_url, 't9x16')"
-                  >
-                    {{ copyFeedback['t9x16'] ? '✓ Đã chép link!' : 'Copy Link Ảnh' }}
-                  </button>
-                </div>
-              </div>
-            </div>
+              <button
+                type="submit"
+                class="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white font-mono text-xs font-bold transition-all shadow-md shrink-0 flex items-center justify-center gap-1.5"
+                :disabled="ytForm.processing"
+              >
+                <Icons name="Check" :size="14" />
+                <span>{{ ytForm.processing ? 'Đang lưu...' : 'Lưu Link YouTube' }}</span>
+              </button>
+
+              <a
+                v-if="article.youtube_url"
+                :href="article.youtube_url"
+                target="_blank"
+                class="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 font-mono text-xs transition-all border border-white/10 flex items-center justify-center gap-1 shrink-0"
+              >
+                <Icons name="ExternalLink" :size="12" />
+                <span>Mở YouTube</span>
+              </a>
+            </form>
           </div>
 
-          <!-- Section 3: Tabbed Scripts & Original Buddhist Content -->
-          <div class="p-5 rounded-2xl glass-panel border border-white/10 space-y-4">
-            <div class="flex items-center justify-between border-b border-white/5 pb-3">
-              <!-- Script Tabs -->
-              <div class="flex items-center gap-1.5 p-1 rounded-xl bg-midnight-900 border border-white/10">
-                <button
-                  type="button"
-                  class="px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all"
-                  :class="activeScriptTab === 'long' ? 'bg-phantom-mint text-midnight-950 font-bold' : 'text-slate-400 hover:text-white'"
-                  @click="activeScriptTab = 'long'"
-                >
-                  Kịch Bản Dài 16:9 ({{ wordCountLong }} từ)
-                </button>
-                <button
-                  type="button"
-                  class="px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all"
-                  :class="activeScriptTab === 'reel' ? 'bg-phantom-mint text-midnight-950 font-bold' : 'text-slate-400 hover:text-white'"
-                  @click="activeScriptTab = 'reel'"
-                >
-                  Kịch Bản Reel 9:16 ({{ wordCountReel }} từ)
-                </button>
-                <button
-                  type="button"
-                  class="px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all"
-                  :class="activeScriptTab === 'original' ? 'bg-phantom-mint text-midnight-950 font-bold' : 'text-slate-400 hover:text-white'"
-                  @click="activeScriptTab = 'original'"
-                >
-                  Bài Viết Gốc
-                </button>
+          <!-- 16:9 Thumbnail Preview Card -->
+          <div class="p-5 rounded-2xl glass-panel border border-white/10 space-y-3">
+            <div class="flex items-center justify-between border-b border-white/5 pb-2.5">
+              <div class="flex items-center gap-2">
+                <Icons name="Sparkles" :size="16" class="text-amber-300" />
+                <h3 class="font-mono font-bold text-xs text-white uppercase tracking-wider">
+                  Thumbnail 16:9 Chuẩn YouTube 1080p (Unicode Tiếng Việt)
+                </h3>
               </div>
+              <span class="text-slate-400 font-mono text-xs">1920x1080</span>
+            </div>
 
-              <!-- Copy active tab script button -->
+            <div class="aspect-video rounded-xl overflow-hidden bg-black/60 border border-white/10 flex items-center justify-center group/thumb relative shadow-md">
+              <img
+                v-if="article.thumbnail_long_url"
+                :src="article.thumbnail_long_url"
+                alt="Thumbnail 16:9"
+                class="w-full h-full object-cover group-hover/thumb:scale-[1.02] transition-transform duration-300"
+              />
+              <div v-else class="text-slate-500 font-mono text-xs">Chưa có ảnh thu nhỏ 16:9</div>
+            </div>
+
+            <div v-if="article.thumbnail_long_url" class="flex items-center justify-between pt-1 text-xs font-mono">
+              <a
+                :href="article.thumbnail_long_url"
+                target="_blank"
+                class="text-slate-300 hover:text-white flex items-center gap-1"
+              >
+                <Icons name="ExternalLink" :size="12" />
+                <span>Mở ảnh gốc Full HD</span>
+              </a>
+
               <button
                 type="button"
-                class="text-xs font-mono text-phantom-mint hover:underline flex items-center gap-1"
-                @click="
-                  copyToClipboard(
-                    activeScriptTab === 'long'
-                      ? article.script_long || ''
-                      : activeScriptTab === 'reel'
-                      ? article.script_short || ''
-                      : article.content,
-                    'activeScript'
-                  )
-                "
+                class="text-phantom-mint hover:underline font-bold"
+                @click="copyToClipboard(article.thumbnail_long_url, 't16x9')"
               >
-                <Icons name="Copy" :size="12" />
-                <span>{{ copyFeedback['activeScript'] ? '✓ Đã sao chép kịch bản!' : 'Sao chép văn bản' }}</span>
+                {{ copyFeedback['t16x9'] ? '✓ Đã chép link ảnh!' : 'Sao chép link CDN Thumbnail' }}
               </button>
-            </div>
-
-            <!-- Tab Content Display -->
-            <div class="p-4 rounded-xl bg-midnight-900/80 border border-white/5 max-h-[480px] overflow-y-auto font-sans text-xs sm:text-sm text-slate-300 leading-relaxed space-y-3">
-              <!-- Tab 1: Kịch bản dài -->
-              <div v-if="activeScriptTab === 'long'" class="whitespace-pre-wrap font-sans">
-                <div v-if="article.script_long">
-                  {{ article.script_long }}
-                </div>
-                <div v-else class="text-slate-500 font-mono text-center py-8">
-                  Chưa có kịch bản dài 16:9. Kịch bản sẽ tự động đồng bộ khi n8n workflow hoàn tất.
-                </div>
-              </div>
-
-              <!-- Tab 2: Kịch bản Reel ngắn -->
-              <div v-else-if="activeScriptTab === 'reel'" class="whitespace-pre-wrap font-sans">
-                <div v-if="article.script_short">
-                  {{ article.script_short }}
-                </div>
-                <div v-else class="text-slate-500 font-mono text-center py-8">
-                  Chưa có kịch bản Reel 9:16. Kịch bản sẽ tự động đồng bộ khi n8n workflow hoàn tất.
-                </div>
-              </div>
-
-              <!-- Tab 3: Bài viết gốc -->
-              <div v-else class="space-y-4">
-                <div v-if="article.excerpt" class="p-3 rounded-lg bg-white/5 border-l-2 border-phantom-mint italic text-slate-300">
-                  {{ article.excerpt }}
-                </div>
-                <div class="whitespace-pre-wrap leading-relaxed font-sans text-slate-200">
-                  {{ article.content }}
-                </div>
-              </div>
             </div>
           </div>
         </div>
 
-        <!-- Right Column: 1-Click Copy Tools Suite & Pipeline Metadata (4 cols) -->
+        <!-- Right 4 Cols: YouTube Publishing Suite & 1-Click Copy -->
         <div class="lg:col-span-4 space-y-6">
-          <!-- 1-Click Copy Tools Suite -->
           <div class="p-5 rounded-2xl glass-panel border border-white/10 space-y-4">
-            <div class="flex items-center gap-2 border-b border-white/5 pb-3">
-              <Icons name="Copy" :size="18" class="text-phantom-mint" />
-              <h2 class="font-display font-bold text-base text-white">
-                Bộ Công Cụ Tiện Ích (1-Click Copy)
-              </h2>
+            <div class="flex items-center justify-between border-b border-white/5 pb-2.5">
+              <div class="flex items-center gap-2">
+                <Icons name="Copy" :size="18" class="text-red-400" />
+                <h3 class="font-display font-bold text-sm text-white">
+                  Bộ Xuất Bản YouTube Studio
+                </h3>
+              </div>
+              <span class="text-[10px] font-mono text-slate-400">1-Click Copy</span>
             </div>
-            <p class="text-xs text-slate-400 font-sans">
-              Sao chép tức thì siêu tốc các trường nội dung chuẩn SEO để đăng lên YouTube, TikTok, Facebook Reels.
-            </p>
 
             <div class="space-y-3">
-              <!-- Copy Button 1: Tiêu đề SEO -->
+              <!-- Field 1: Tiêu đề YouTube -->
               <div class="p-3 rounded-xl bg-white/5 border border-white/10 space-y-1.5">
                 <div class="flex items-center justify-between">
-                  <span class="text-[11px] font-mono text-slate-400">Tiêu Đề SEO / YouTube</span>
+                  <span class="text-[11px] font-mono text-slate-400">Tiêu đề Video</span>
                   <button
                     type="button"
-                    class="text-[11px] font-mono text-phantom-mint hover:underline font-bold"
-                    @click="copyToClipboard(formattedTitle, 'title')"
+                    class="text-[11px] font-mono text-red-400 hover:underline font-bold"
+                    @click="copyToClipboard(formattedTitle, 'yt-title')"
                   >
-                    {{ copyFeedback['title'] ? '✓ Đã sao chép!' : 'Sao chép' }}
+                    {{ copyFeedback['yt-title'] ? '✓ Đã sao chép!' : 'Sao chép' }}
                   </button>
                 </div>
-                <div class="text-xs text-white font-medium line-clamp-2">
+                <div class="text-xs text-white font-medium line-clamp-3">
                   {{ formattedTitle }}
                 </div>
               </div>
 
-              <!-- Copy Button 2: Mô tả YouTube -->
+              <!-- Field 2: Mô tả YouTube -->
               <div class="p-3 rounded-xl bg-white/5 border border-white/10 space-y-1.5">
                 <div class="flex items-center justify-between">
-                  <span class="text-[11px] font-mono text-slate-400">Mô Tả Video (SEO Description)</span>
+                  <span class="text-[11px] font-mono text-slate-400">Mô tả (SEO & Timestamps)</span>
                   <button
                     type="button"
-                    class="text-[11px] font-mono text-phantom-mint hover:underline font-bold"
-                    @click="copyToClipboard(formattedDescription, 'desc')"
+                    class="text-[11px] font-mono text-red-400 hover:underline font-bold"
+                    @click="copyToClipboard(formattedDescription, 'yt-desc')"
                   >
-                    {{ copyFeedback['desc'] ? '✓ Đã sao chép!' : 'Sao chép' }}
+                    {{ copyFeedback['yt-desc'] ? '✓ Đã sao chép!' : 'Sao chép' }}
                   </button>
                 </div>
-                <div class="text-xs text-slate-300 line-clamp-3">
+                <div class="text-xs text-slate-300 line-clamp-6 leading-relaxed whitespace-pre-line">
                   {{ formattedDescription || '—' }}
                 </div>
               </div>
 
-              <!-- Copy Button 3: Social Caption -->
+              <!-- Field 3: Thẻ Tags / Từ khóa -->
               <div class="p-3 rounded-xl bg-white/5 border border-white/10 space-y-1.5">
                 <div class="flex items-center justify-between">
-                  <span class="text-[11px] font-mono text-slate-400">Social Caption (TikTok / Reels)</span>
+                  <span class="text-[11px] font-mono text-slate-400">Từ khóa & Hashtags</span>
                   <button
                     type="button"
-                    class="text-[11px] font-mono text-phantom-mint hover:underline font-bold"
-                    @click="copyToClipboard(formattedCaption, 'caption')"
+                    class="text-[11px] font-mono text-red-400 hover:underline font-bold"
+                    @click="copyToClipboard(formattedHashtagsString, 'yt-tags')"
                   >
-                    {{ copyFeedback['caption'] ? '✓ Đã sao chép!' : 'Sao chép' }}
+                    {{ copyFeedback['yt-tags'] ? '✓ Đã sao chép!' : 'Sao chép' }}
                   </button>
                 </div>
-                <div class="text-xs text-slate-300 line-clamp-3">
-                  {{ formattedCaption || '—' }}
+                <div class="flex flex-wrap gap-1 pt-0.5">
+                  <span
+                    v-for="(tag, idx) in formattedHashtagsList"
+                    :key="idx"
+                    class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-red-500/15 text-red-300 border border-red-500/20"
+                  >
+                    {{ tag }}
+                  </span>
                 </div>
               </div>
 
-              <!-- Copy Button 4: Hashtags -->
-              <div class="p-3 rounded-xl bg-white/5 border border-white/10 space-y-1.5">
-                <div class="flex items-center justify-between">
-                  <span class="text-[11px] font-mono text-slate-400">Hashtags</span>
-                  <button
-                    type="button"
-                    class="text-[11px] font-mono text-phantom-mint hover:underline font-bold"
-                    @click="copyToClipboard(formattedHashtags, 'tags')"
-                  >
-                    {{ copyFeedback['tags'] ? '✓ Đã sao chép!' : 'Sao chép' }}
-                  </button>
-                </div>
-                <div class="text-xs font-mono text-phantom-mint/80 line-clamp-2">
-                  {{ formattedHashtags }}
-                </div>
-              </div>
-
-              <!-- Master Button: Copy Trọn Bộ Xuất Bản (Full Publishing Kit) -->
+              <!-- Master Button: Copy toàn bộ YouTube Kit -->
               <button
                 type="button"
-                class="w-full py-2.5 px-4 rounded-xl bg-phantom-mint/15 hover:bg-phantom-mint hover:text-midnight-950 text-phantom-mint text-xs font-mono font-bold transition-all border border-phantom-mint/30 flex items-center justify-center gap-2"
-                @click="copyToClipboard(formattedFullKit, 'fullkit')"
+                class="w-full py-2.5 px-4 rounded-xl bg-red-600 hover:bg-red-500 text-white font-mono text-xs font-bold transition-all shadow-lg shadow-red-950/40 flex items-center justify-center gap-2"
+                @click="copyToClipboard(youtubeFullKit, 'yt-full')"
               >
                 <Icons name="Copy" :size="14" />
-                <span>{{ copyFeedback['fullkit'] ? '✓ Đã sao chép Trọn Bộ Xuất Bản!' : '⚡ Sao Chép Trọn Bộ Xuất Bản' }}</span>
+                <span>{{ copyFeedback['yt-full'] ? '✓ Đã sao chép Toàn Bộ Kit!' : '⚡ Sao Chép Toàn Bộ YouTube Kit' }}</span>
               </button>
             </div>
           </div>
 
-          <!-- Pipeline Execution Metadata Card -->
+          <!-- Pipeline Execution Specs -->
           <div class="p-5 rounded-2xl glass-panel border border-white/10 space-y-3">
-            <div class="flex items-center gap-2 border-b border-white/5 pb-2.5">
-              <Icons name="Terminal" :size="16" class="text-slate-400" />
-              <h3 class="font-mono font-bold text-xs text-slate-300 uppercase tracking-wider">
-                Thông Số Tiến Trình Sản Xuất
+            <div class="flex items-center gap-2 border-b border-white/5 pb-2">
+              <Icons name="Terminal" :size="14" class="text-slate-400" />
+              <h4 class="font-mono font-bold text-xs text-slate-300 uppercase tracking-wider">Thông Số Kỹ Thuật</h4>
+            </div>
+            <div class="space-y-1.5 text-xs font-mono text-slate-400">
+              <div class="flex justify-between">
+                <span>Task ID:</span>
+                <span class="text-white truncate max-w-[150px]">{{ article.pipeline_task_id || '—' }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Trạng thái:</span>
+                <span class="text-phantom-mint font-bold uppercase">{{ article.video_status }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Cập nhật:</span>
+                <span class="text-slate-300">{{ new Date(article.updated_at).toLocaleDateString('vi-VN') }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- TAB 2: TIKTOK HUB (9:16 Vertical Smartphone Viewport)    -->
+      <!-- ======================================================== -->
+      <div v-else-if="activePlatform === 'tiktok'" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <!-- Left 6 Cols: Smartphone Frame with Reel Video Player -->
+        <div class="lg:col-span-6 space-y-4">
+          <div class="p-5 rounded-2xl glass-panel border border-white/10 space-y-4 text-center">
+            <div class="flex items-center justify-between border-b border-white/5 pb-3 text-left">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
+                <h2 class="font-display font-bold text-base text-white">
+                  Khung Mô Phỏng Màn Hình TikTok (9:16)
+                </h2>
+              </div>
+              <span class="text-xs font-mono text-cyan-300 font-bold">
+                ⏱️ {{ formatDuration(article.video_short_duration) }}
+              </span>
+            </div>
+
+            <!-- Smartphone Frame -->
+            <div class="w-full max-w-[280px] aspect-[9/16] mx-auto rounded-[36px] overflow-hidden bg-black border-4 border-slate-700 shadow-2xl relative flex flex-col justify-between">
+              <!-- Smartphone Island Notch -->
+              <div class="absolute top-2.5 left-1/2 -translate-x-1/2 w-20 h-4 bg-black/90 rounded-full z-20 pointer-events-none flex items-center justify-center border border-white/5">
+                <div class="w-2.5 h-2.5 rounded-full bg-slate-900 border border-slate-800"></div>
+              </div>
+
+              <!-- Native HTML5 Video Player -->
+              <video
+                v-if="article.video_short_url"
+                controls
+                playsinline
+                class="w-full h-full object-cover"
+                :src="article.video_short_url"
+                :poster="article.thumbnail_short_url || undefined"
+              />
+
+              <div v-else class="h-full flex flex-col items-center justify-center p-6 text-slate-500 font-mono text-xs space-y-2">
+                <Icons name="Play" :size="36" class="text-slate-600 mb-1" />
+                <div>Reel 9:16 chưa được tạo</div>
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-lg bg-cyan-500/15 hover:bg-cyan-500 hover:text-midnight-950 text-cyan-300 text-xs transition-all"
+                  @click="triggerPipeline"
+                >
+                  Tạo Reel tự động
+                </button>
+              </div>
+            </div>
+
+            <!-- Download and CDN Links -->
+            <div v-if="article.video_short_url" class="flex items-center justify-center gap-4 text-xs font-mono pt-1">
+              <a
+                :href="article.video_short_url"
+                target="_blank"
+                class="text-cyan-300 hover:underline flex items-center gap-1 font-bold"
+              >
+                <Icons name="ExternalLink" :size="12" />
+                <span>Tải Video Reel MP4</span>
+              </a>
+              <span>•</span>
+              <button
+                type="button"
+                class="text-phantom-mint hover:underline font-bold"
+                @click="copyToClipboard(article.video_short_url, 'cdn9x16')"
+              >
+                {{ copyFeedback['cdn9x16'] ? '✓ Đã chép CDN!' : 'Copy Link CDN MP4' }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right 6 Cols: TikTok Copy Suite & Thumbnail 9:16 -->
+        <div class="lg:col-span-6 space-y-6">
+          <div class="p-5 rounded-2xl glass-panel border border-white/10 space-y-4">
+            <div class="flex items-center justify-between border-b border-white/5 pb-2.5">
+              <div class="flex items-center gap-2">
+                <Icons name="Copy" :size="18" class="text-cyan-400" />
+                <h3 class="font-display font-bold text-sm text-white">
+                  Bộ Xuất Bản TikTok
+                </h3>
+              </div>
+              <span class="text-[10px] font-mono text-slate-400">Tối ưu tương tác</span>
+            </div>
+
+            <!-- TikTok Caption -->
+            <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-mono text-slate-400">Social Caption (Lời tựa lôi cuốn)</span>
+                <button
+                  type="button"
+                  class="text-xs font-mono text-cyan-400 hover:underline font-bold"
+                  @click="copyToClipboard(formattedCaption, 'tt-caption')"
+                >
+                  {{ copyFeedback['tt-caption'] ? '✓ Đã sao chép!' : 'Sao chép' }}
+                </button>
+              </div>
+              <div class="text-xs sm:text-sm text-slate-200 leading-relaxed whitespace-pre-line">
+                {{ formattedCaption || '—' }}
+              </div>
+            </div>
+
+            <!-- TikTok Hashtags -->
+            <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-mono text-slate-400">Bộ Hashtags TikTok</span>
+                <button
+                  type="button"
+                  class="text-xs font-mono text-cyan-400 hover:underline font-bold"
+                  @click="copyToClipboard(formattedHashtagsString + ' #shorts #tiktok #xuhuong', 'tt-tags')"
+                >
+                  {{ copyFeedback['tt-tags'] ? '✓ Đã sao chép!' : 'Sao chép' }}
+                </button>
+              </div>
+              <div class="text-xs font-mono text-cyan-300/90 leading-relaxed">
+                {{ formattedHashtagsString }} #shorts #tiktok #xuhuong
+              </div>
+            </div>
+
+            <!-- Master Button: Copy toàn bộ TikTok Kit -->
+            <button
+              type="button"
+              class="w-full py-3 px-4 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-midnight-950 font-mono text-xs font-bold transition-all shadow-lg shadow-cyan-950/40 flex items-center justify-center gap-2"
+              @click="copyToClipboard(tiktokFullKit, 'tt-full')"
+            >
+              <Icons name="Copy" :size="14" />
+              <span>{{ copyFeedback['tt-full'] ? '✓ Đã sao chép Toàn Bộ TikTok Kit!' : '⚡ Sao Chép Toàn Bộ TikTok Kit' }}</span>
+            </button>
+          </div>
+
+          <!-- Thumbnail 9:16 Card -->
+          <div class="p-5 rounded-2xl glass-panel border border-white/10 space-y-3">
+            <div class="flex items-center justify-between border-b border-white/5 pb-2.5">
+              <span class="text-xs font-mono font-bold text-white uppercase">Thumbnail Dọc 9:16 (1080x1920)</span>
+              <button
+                v-if="article.thumbnail_short_url"
+                type="button"
+                class="text-xs font-mono text-cyan-300 hover:underline"
+                @click="copyToClipboard(article.thumbnail_short_url, 't9x16')"
+              >
+                {{ copyFeedback['t9x16'] ? '✓ Đã chép link!' : 'Copy Link Ảnh' }}
+              </button>
+            </div>
+
+            <div class="w-36 aspect-[9/16] rounded-xl overflow-hidden bg-black/60 border border-white/10 mx-auto flex items-center justify-center shadow-md">
+              <img
+                v-if="article.thumbnail_short_url"
+                :src="article.thumbnail_short_url"
+                alt="Thumbnail 9:16"
+                class="w-full h-full object-cover"
+              />
+              <span v-else class="text-slate-500 font-mono text-[10px]">Chưa có</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- TAB 3: FACEBOOK & INSTAGRAM REELS                        -->
+      <!-- ======================================================== -->
+      <div v-else-if="activePlatform === 'reels'" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <!-- Left 6 Cols: Reel Smartphone Player -->
+        <div class="lg:col-span-6 space-y-4">
+          <div class="p-5 rounded-2xl glass-panel border border-white/10 space-y-4 text-center">
+            <div class="flex items-center justify-between border-b border-white/5 pb-3 text-left">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-pink-500"></span>
+                <h2 class="font-display font-bold text-base text-white">
+                  Facebook & Instagram Reels
+                </h2>
+              </div>
+              <span class="text-xs font-mono text-pink-300 font-bold">
+                ⏱️ {{ formatDuration(article.video_short_duration) }}
+              </span>
+            </div>
+
+            <!-- Smartphone Frame -->
+            <div class="w-full max-w-[280px] aspect-[9/16] mx-auto rounded-[36px] overflow-hidden bg-black border-4 border-slate-700 shadow-2xl relative flex flex-col justify-between">
+              <div class="absolute top-2.5 left-1/2 -translate-x-1/2 w-20 h-4 bg-black/90 rounded-full z-20 pointer-events-none flex items-center justify-center border border-white/5">
+                <div class="w-2.5 h-2.5 rounded-full bg-slate-900 border border-slate-800"></div>
+              </div>
+
+              <video
+                v-if="article.video_short_url"
+                controls
+                playsinline
+                class="w-full h-full object-cover"
+                :src="article.video_short_url"
+                :poster="article.thumbnail_short_url || undefined"
+              />
+              <div v-else class="h-full flex flex-col items-center justify-center p-6 text-slate-500 font-mono text-xs space-y-2">
+                <Icons name="Play" :size="36" class="text-slate-600 mb-1" />
+                <div>Reel 9:16 chưa được tạo</div>
+              </div>
+            </div>
+
+            <div v-if="article.video_short_url" class="flex items-center justify-center gap-3 text-xs font-mono pt-1">
+              <a
+                :href="article.video_short_url"
+                target="_blank"
+                class="text-pink-300 hover:underline flex items-center gap-1 font-bold"
+              >
+                <Icons name="ExternalLink" :size="12" />
+                <span>Tải Tệp Video Reel</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right 6 Cols: Facebook & Instagram Copy Suite -->
+        <div class="lg:col-span-6 space-y-6">
+          <div class="p-5 rounded-2xl glass-panel border border-white/10 space-y-4">
+            <div class="flex items-center justify-between border-b border-white/5 pb-2.5">
+              <div class="flex items-center gap-2">
+                <Icons name="Copy" :size="18" class="text-pink-400" />
+                <h3 class="font-display font-bold text-sm text-white">
+                  Bộ Xuất Bản FB & IG Reels
+                </h3>
+              </div>
+              <span class="text-[10px] font-mono text-slate-400">Chuẩn định dạng</span>
+            </div>
+
+            <!-- Reels Caption -->
+            <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-mono text-slate-400">Caption Bài Đăng</span>
+                <button
+                  type="button"
+                  class="text-xs font-mono text-pink-400 hover:underline font-bold"
+                  @click="copyToClipboard(formattedCaption, 'reels-caption')"
+                >
+                  {{ copyFeedback['reels-caption'] ? '✓ Đã sao chép!' : 'Sao chép' }}
+                </button>
+              </div>
+              <div class="text-xs sm:text-sm text-slate-200 leading-relaxed whitespace-pre-line">
+                {{ formattedCaption || '—' }}
+              </div>
+            </div>
+
+            <!-- Audio & Credit Notice -->
+            <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 space-y-1.5">
+              <div class="text-xs font-mono text-slate-400">Nhạc nền & Bản quyền âm thanh</div>
+              <div class="text-xs text-slate-300">
+                Nhạc thiền 432Hz (-22dB) + Tiếng chuông xoay chánh niệm (Bản quyền Ma Tọa Thiền).
+              </div>
+            </div>
+
+            <!-- Master Button: Copy toàn bộ Reels Kit -->
+            <button
+              type="button"
+              class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:brightness-110 text-white font-mono text-xs font-bold transition-all shadow-lg shadow-purple-950/40 flex items-center justify-center gap-2"
+              @click="copyToClipboard(reelsFullKit, 'reels-full')"
+            >
+              <Icons name="Copy" :size="14" />
+              <span>{{ copyFeedback['reels-full'] ? '✓ Đã sao chép Toàn Bộ Reels Kit!' : '⚡ Sao Chép Toàn Bộ FB/IG Reels Kit' }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- TAB 4: WEBSITE EMBED & SCRIPTS (HTML Iframe & Kịch Bản)  -->
+      <!-- ======================================================== -->
+      <div v-else-if="activePlatform === 'website'" class="space-y-6">
+        <!-- Section 1: Responsive Iframe Embed Code -->
+        <div class="p-5 rounded-2xl glass-panel border border-white/10 space-y-3">
+          <div class="flex items-center justify-between border-b border-white/5 pb-2.5">
+            <div class="flex items-center gap-2">
+              <Icons name="Code" :size="18" class="text-phantom-mint" />
+              <h3 class="font-display font-bold text-sm text-white">
+                Mã Nhúng Trình Phát Video Vào Website (HTML Embed Snippet)
               </h3>
             </div>
 
-            <div class="space-y-2 text-xs font-mono">
-              <div class="flex items-center justify-between">
-                <span class="text-slate-500">Mã Tác Vụ (Job ID):</span>
-                <span class="text-slate-200 truncate max-w-[160px]" :title="article.pipeline_task_id || undefined">
-                  {{ article.pipeline_task_id || '—' }}
-                </span>
-              </div>
+            <button
+              type="button"
+              class="px-3 py-1 rounded-lg bg-phantom-mint/15 hover:bg-phantom-mint hover:text-midnight-950 text-phantom-mint font-mono text-xs font-bold transition-all border border-phantom-mint/30 flex items-center gap-1.5"
+              @click="copyToClipboard(embedCodeSnippet, 'embed-code')"
+            >
+              <Icons name="Copy" :size="12" />
+              <span>{{ copyFeedback['embed-code'] ? '✓ Đã sao chép mã!' : 'Sao chép mã nhúng' }}</span>
+            </button>
+          </div>
 
-              <div class="flex items-center justify-between">
-                <span class="text-slate-500">Trạng Thái Video:</span>
-                <span class="text-phantom-mint uppercase font-bold">{{ article.video_status }}</span>
-              </div>
+          <p class="text-xs text-slate-400 font-sans">
+            Dán đoạn mã HTML này vào bất kỳ bài viết hoặc trang web nào để hiển thị trình phát video responsive tỉ lệ 16:9 tự động co giãn.
+          </p>
 
-              <div class="flex items-center justify-between">
-                <span class="text-slate-500">Thời Gian Bắt Đầu:</span>
-                <span class="text-slate-300">
-                  {{ article.pipeline_started_at ? new Date(article.pipeline_started_at).toLocaleString('vi-VN') : '—' }}
-                </span>
-              </div>
+          <pre class="p-4 rounded-xl bg-midnight-950 border border-white/10 overflow-x-auto text-xs font-mono text-emerald-400/90 leading-relaxed">{{ embedCodeSnippet }}</pre>
+        </div>
 
-              <div class="flex items-center justify-between">
-                <span class="text-slate-500">Thời Gian Hoàn Tất:</span>
-                <span class="text-slate-300">
-                  {{ article.pipeline_completed_at ? new Date(article.pipeline_completed_at).toLocaleString('vi-VN') : '—' }}
-                </span>
-              </div>
+        <!-- Section 2: Full Scripts & Original Content Viewer -->
+        <div class="p-5 rounded-2xl glass-panel border border-white/10 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/5 pb-3">
+            <!-- Sub-tabs for scripts -->
+            <div class="flex items-center gap-1.5 p-1 rounded-xl bg-midnight-900 border border-white/10 overflow-x-auto no-scrollbar">
+              <button
+                type="button"
+                class="px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all shrink-0"
+                :class="activeScriptTab === 'long' ? 'bg-phantom-mint text-midnight-950 font-bold' : 'text-slate-400 hover:text-white'"
+                @click="activeScriptTab = 'long'"
+              >
+                Kịch Bản Dài 16:9 ({{ wordCountLong }} từ)
+              </button>
+              <button
+                type="button"
+                class="px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all shrink-0"
+                :class="activeScriptTab === 'reel' ? 'bg-phantom-mint text-midnight-950 font-bold' : 'text-slate-400 hover:text-white'"
+                @click="activeScriptTab = 'reel'"
+              >
+                Kịch Bản Reel 9:16 ({{ wordCountReel }} từ)
+              </button>
+              <button
+                type="button"
+                class="px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all shrink-0"
+                :class="activeScriptTab === 'original' ? 'bg-phantom-mint text-midnight-950 font-bold' : 'text-slate-400 hover:text-white'"
+                @click="activeScriptTab = 'original'"
+              >
+                Bài Viết Gốc Trên Theravāda
+              </button>
+            </div>
 
-              <div class="flex items-center justify-between">
-                <span class="text-slate-500">Cập Nhật Lần Cuối:</span>
-                <span class="text-slate-400">
-                  {{ new Date(article.updated_at).toLocaleString('vi-VN') }}
-                </span>
+            <!-- Copy button for current active script -->
+            <button
+              type="button"
+              class="text-xs font-mono text-phantom-mint hover:underline flex items-center gap-1 shrink-0"
+              @click="
+                copyToClipboard(
+                  activeScriptTab === 'long'
+                    ? article.script_long || ''
+                    : activeScriptTab === 'reel'
+                    ? article.script_short || ''
+                    : article.content,
+                  'activeScript'
+                )
+              "
+            >
+              <Icons name="Copy" :size="12" />
+              <span>{{ copyFeedback['activeScript'] ? '✓ Đã sao chép kịch bản!' : 'Sao chép văn bản tab này' }}</span>
+            </button>
+          </div>
+
+          <!-- Script Content Container -->
+          <div class="p-4 rounded-xl bg-midnight-900/80 border border-white/5 max-h-[500px] overflow-y-auto font-sans text-xs sm:text-sm text-slate-300 leading-relaxed">
+            <!-- Long Script Tab -->
+            <div v-if="activeScriptTab === 'long'" class="whitespace-pre-wrap font-sans">
+              <div v-if="article.script_long">{{ article.script_long }}</div>
+              <div v-else class="text-slate-500 font-mono text-center py-8">
+                Chưa có nội dung kịch bản dài.
+              </div>
+            </div>
+
+            <!-- Reel Script Tab -->
+            <div v-else-if="activeScriptTab === 'reel'" class="whitespace-pre-wrap font-sans">
+              <div v-if="article.script_short">{{ article.script_short }}</div>
+              <div v-else class="text-slate-500 font-mono text-center py-8">
+                Chưa có nội dung kịch bản Reel.
+              </div>
+            </div>
+
+            <!-- Original Article Tab -->
+            <div v-else class="space-y-4">
+              <div v-if="article.excerpt" class="p-3 rounded-lg bg-white/5 border-l-2 border-phantom-mint italic text-slate-300">
+                {{ article.excerpt }}
+              </div>
+              <div class="whitespace-pre-wrap leading-relaxed font-sans text-slate-200">
+                {{ article.content }}
               </div>
             </div>
           </div>

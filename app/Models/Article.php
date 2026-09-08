@@ -34,6 +34,7 @@ class Article extends Model
         'video_status',
         'video_long_url',
         'video_short_url',
+        'youtube_url',
         'thumbnail_long_url',
         'thumbnail_short_url',
         'video_long_duration',
@@ -48,6 +49,11 @@ class Article extends Model
         'pipeline_started_at',
         'pipeline_completed_at',
         'pipeline_error',
+    ];
+
+    protected $appends = [
+        'youtube_id',
+        'has_video',
     ];
 
     protected $casts = [
@@ -93,7 +99,25 @@ class Article extends Model
 
     public function getHasVideoAttribute(): bool
     {
-        return !empty($this->video_long_url) || !empty($this->video_short_url);
+        return !empty($this->video_long_url) || !empty($this->video_short_url) || !empty($this->youtube_url);
+    }
+
+    public function getYoutubeIdAttribute(): ?string
+    {
+        if (empty($this->youtube_url)) {
+            return null;
+        }
+
+        $url = trim($this->youtube_url);
+        if (preg_match('/^[a-zA-Z0-9_-]{11}$/', $url)) {
+            return $url;
+        }
+
+        if (preg_match('/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/', $url, $matches)) {
+            return $matches[1];
+        }
+
+        return null;
     }
 }
 

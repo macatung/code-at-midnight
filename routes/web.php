@@ -53,6 +53,8 @@ Route::domain('theravada.' . $baseDomain)->group(function () {
         Route::post('/theravada/videos/{article}/trigger', [AdminTheravadaVideoController::class, 'triggerPipeline'])->name('videos.theravada.trigger');
         Route::patch('/videos/{article}/publish', [AdminTheravadaVideoController::class, 'publish'])->name('videos.publish');
         Route::patch('/theravada/videos/{article}/publish', [AdminTheravadaVideoController::class, 'publish'])->name('videos.theravada.publish');
+        Route::put('/videos/{article}', [AdminTheravadaVideoController::class, 'update'])->name('videos.update');
+        Route::put('/theravada/videos/{article}', [AdminTheravadaVideoController::class, 'update'])->name('videos.theravada.update');
     });
 });
 
@@ -140,6 +142,7 @@ Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function
     Route::get('/theravada/videos/{article}', [AdminTheravadaVideoController::class, 'show'])->name('theravada.videos.show');
     Route::post('/theravada/videos/{article}/trigger', [AdminTheravadaVideoController::class, 'triggerPipeline'])->name('theravada.videos.trigger');
     Route::patch('/theravada/videos/{article}/publish', [AdminTheravadaVideoController::class, 'publish'])->name('theravada.videos.publish');
+    Route::put('/theravada/videos/{article}', [AdminTheravadaVideoController::class, 'update'])->name('theravada.videos.update');
 
     // Site Settings & Profile CMS
     Route::get('/settings', [AdminSettingController::class, 'index'])->name('settings.index');
