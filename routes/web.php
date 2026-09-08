@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\AdminProjectController;
 use App\Http\Controllers\Admin\AdminSkillController;
 use App\Http\Controllers\Admin\AdminExperienceController;
 use App\Http\Controllers\Admin\AdminArticleController;
+use App\Http\Controllers\Admin\AdminTheravadaVideoController;
 use App\Http\Controllers\Admin\AdminSettingController;
 use App\Http\Controllers\Admin\AdminContactController;
 use App\Http\Controllers\SeoController;
@@ -37,6 +38,22 @@ Route::domain('theravada.' . $baseDomain)->group(function () {
     Route::get('/feed.json', [TheravadaController::class, 'feedJson'])->name('theravada.domain.feed');
     Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('theravada.domain.sitemap');
     Route::get('/robots.txt', [SeoController::class, 'robots'])->name('theravada.domain.robots');
+
+    // Subdomain Admin Auth & Video CMS Routes
+    Route::get('/admin/login', [AdminAuthController::class, 'showLogin'])->name('theravada.admin.login');
+    Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('theravada.admin.login.submit');
+    Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('theravada.admin.logout');
+
+    Route::prefix('admin')->name('theravada.admin.')->middleware('admin.auth')->group(function () {
+        Route::get('/videos', [AdminTheravadaVideoController::class, 'index'])->name('videos.index');
+        Route::get('/theravada/videos', [AdminTheravadaVideoController::class, 'index'])->name('videos.theravada.index');
+        Route::get('/videos/{article}', [AdminTheravadaVideoController::class, 'show'])->name('videos.show');
+        Route::get('/theravada/videos/{article}', [AdminTheravadaVideoController::class, 'show'])->name('videos.theravada.show');
+        Route::post('/videos/{article}/trigger', [AdminTheravadaVideoController::class, 'triggerPipeline'])->name('videos.trigger');
+        Route::post('/theravada/videos/{article}/trigger', [AdminTheravadaVideoController::class, 'triggerPipeline'])->name('videos.theravada.trigger');
+        Route::patch('/videos/{article}/publish', [AdminTheravadaVideoController::class, 'publish'])->name('videos.publish');
+        Route::patch('/theravada/videos/{article}/publish', [AdminTheravadaVideoController::class, 'publish'])->name('videos.theravada.publish');
+    });
 });
 
 // 2. Theravāda Path-based Routes (Available on main domain /theravada/* & local testing)
@@ -117,6 +134,12 @@ Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function
     Route::post('/articles', [AdminArticleController::class, 'store'])->name('articles.store');
     Route::put('/articles/{article}', [AdminArticleController::class, 'update'])->name('articles.update');
     Route::delete('/articles/{article}', [AdminArticleController::class, 'destroy'])->name('articles.destroy');
+
+    // Video & Pháp Thoại CMS (Milestone 3 / R3)
+    Route::get('/theravada/videos', [AdminTheravadaVideoController::class, 'index'])->name('theravada.videos.index');
+    Route::get('/theravada/videos/{article}', [AdminTheravadaVideoController::class, 'show'])->name('theravada.videos.show');
+    Route::post('/theravada/videos/{article}/trigger', [AdminTheravadaVideoController::class, 'triggerPipeline'])->name('theravada.videos.trigger');
+    Route::patch('/theravada/videos/{article}/publish', [AdminTheravadaVideoController::class, 'publish'])->name('theravada.videos.publish');
 
     // Site Settings & Profile CMS
     Route::get('/settings', [AdminSettingController::class, 'index'])->name('settings.index');

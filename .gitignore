@@ -38,6 +38,8 @@ dist-ssr
 /.agents/
 /tests/reports/
 ORIGINAL_REQUEST.md
+*.mp3
+/video_render_work/
 PROJECT.md
 TEST_INFRA.md
 TEST_READY.md

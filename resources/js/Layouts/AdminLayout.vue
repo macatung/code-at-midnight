@@ -41,6 +41,7 @@ const navItems = [
   { label: 'Kỹ Năng & Pháp Bảo', href: '/admin/skills', icon: 'Zap', exact: false, badge: null },
   { label: 'Biên Niên Sử', href: '/admin/experiences', icon: 'Clock', exact: false, badge: null },
   { label: 'Ghi Chú & Bài Viết', href: '/admin/articles', icon: 'FileText', exact: false, badge: null },
+  { label: 'Video & Pháp Thoại CMS', href: '/admin/theravada/videos', icon: 'Video', exact: false, badge: 'R3' },
   { label: 'Hộp Thư Triệu Hồi', href: '/admin/contacts', icon: 'Mail', exact: false, badge: null },
   { label: 'Cài Đặt & Profile', href: '/admin/settings', icon: 'Shield', exact: false, badge: null },
 ];

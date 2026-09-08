@@ -18,7 +18,10 @@ class AdminAuthMiddleware
         }
 
         if (!$request->session()->get('admin_authenticated', false)) {
-            return redirect()->route('admin.login')->with('warning', 'Vui lòng nhập mật khẩu quản trị để truy cập CMS.');
+            $loginRoute = ($request->routeIs('theravada.admin.*') && \Illuminate\Support\Facades\Route::has('theravada.admin.login'))
+                ? route('theravada.admin.login')
+                : route('admin.login');
+            return redirect($loginRoute)->with('warning', 'Vui lòng nhập mật khẩu quản trị để truy cập CMS.');
         }
 
         return $next($request);

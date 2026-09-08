@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -28,15 +30,36 @@ class Article extends Model
         'reading_time_min',
         'is_published',
         'published_at',
+        // Video Production Pipeline Attributes
+        'video_status',
+        'video_long_url',
+        'video_short_url',
+        'thumbnail_long_url',
+        'thumbnail_short_url',
+        'video_long_duration',
+        'video_short_duration',
+        'script_long',
+        'script_short',
+        'seo_title',
+        'seo_description',
+        'social_caption',
+        'hashtags',
+        'pipeline_task_id',
+        'pipeline_started_at',
+        'pipeline_completed_at',
+        'pipeline_error',
     ];
 
     protected $casts = [
         'paired_article_id' => 'integer',
         'tags' => 'array',
         'pali_terms' => 'array',
+        'hashtags' => 'array',
         'is_published' => 'boolean',
         'reading_time_min' => 'integer',
         'published_at' => 'datetime',
+        'pipeline_started_at' => 'datetime',
+        'pipeline_completed_at' => 'datetime',
     ];
 
     public function pairedArticle()
@@ -58,4 +81,19 @@ class Article extends Model
     {
         return $query->where('site_domain', 'theravada');
     }
+
+    public function scopeWithVideoStatus($query, ?string $status)
+    {
+        if ($status && $status !== 'all') {
+            return $query->where('video_status', $status);
+        }
+
+        return $query;
+    }
+
+    public function getHasVideoAttribute(): bool
+    {
+        return !empty($this->video_long_url) || !empty($this->video_short_url);
+    }
 }
+
