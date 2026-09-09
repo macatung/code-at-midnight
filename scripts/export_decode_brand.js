@@ -80,7 +80,7 @@ for (const item of exportsList) {
     },
     font: {
       loadSystemFonts: true,
-      defaultFontFamily: 'Segoe UI',
+      defaultFontFamily: 'Arial',
     },
     background: item.transparent ? undefined : '#060913',
   });

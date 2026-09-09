@@ -86,10 +86,11 @@
       <text x="88" y="0" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="600" fill="#38bdf8" opacity="0.8">SYSTEM.ANATOMY // 1080P</text>
     </g>
 
-    <!-- Main Channel Title -->
-    <text x="0" y="68" font-family="'Be Vietnam Pro', 'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif" font-size="30" font-weight="900" fill="url(#textCyan)" letter-spacing="1">
-      MA GIẢI MÃ
+    <!-- Main Channel Title (100% Sans-Serif Vector Harmony) -->
+    <text x="0" y="68" font-family="Arial" font-size="30" font-weight="bold" fill="url(#textCyan)" letter-spacing="1">
+      MA GIAI MÃ
     </text>
+    <path d="M 105.5 40 C 105.5 36, 110.5 36, 110.5 39 C 110.5 41, 108 42, 108 44" stroke="#c0fcf5" stroke-width="2.6" stroke-linecap="round" fill="none" />
 
     <!-- Subdomain & Tagline Row -->
     <g transform="translate(0, 94)">
