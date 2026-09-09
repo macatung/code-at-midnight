@@ -38,6 +38,12 @@ Route::domain('theravada.' . $baseDomain)->group(function () {
     Route::get('/feed.json', [TheravadaController::class, 'feedJson'])->name('theravada.domain.feed');
     Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('theravada.domain.sitemap');
     Route::get('/robots.txt', [SeoController::class, 'robots'])->name('theravada.domain.robots');
+    Route::get('/favicon.ico', function () {
+        return response()->file(public_path('brand/theravada/favicon-theravada.ico'), [
+            'Content-Type' => 'image/x-icon',
+            'Cache-Control' => 'public, max-age=604800, immutable',
+        ]);
+    })->name('theravada.domain.favicon');
 
     // Subdomain Admin Auth & Video CMS Routes
     Route::get('/admin/login', [AdminAuthController::class, 'showLogin'])->name('theravada.admin.login');
@@ -77,7 +83,25 @@ Route::prefix('theravada')->name('theravada.')->group(function () {
     Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('sitemap');
 });
 
-// 3. Global SEO Endpoints
+// 3. Global SEO & Asset Endpoints
+Route::get('/favicon.ico', function (\Illuminate\Http\Request $request) {
+    if (str_starts_with($request->getHost(), 'theravada.')) {
+        return response()->file(public_path('brand/theravada/favicon-theravada.ico'), [
+            'Content-Type' => 'image/x-icon',
+            'Cache-Control' => 'public, max-age=604800, immutable',
+        ]);
+    }
+    if (file_exists(public_path('favicon.ico'))) {
+        return response()->file(public_path('favicon.ico'), [
+            'Content-Type' => 'image/x-icon',
+            'Cache-Control' => 'public, max-age=604800, immutable',
+        ]);
+    }
+    return response()->file(public_path('favicon.svg'), [
+        'Content-Type' => 'image/svg+xml',
+        'Cache-Control' => 'public, max-age=604800, immutable',
+    ]);
+})->name('favicon');
 Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('sitemap');
 Route::get('/robots.txt', [SeoController::class, 'robots'])->name('robots');
 
