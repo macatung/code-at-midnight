@@ -174,4 +174,52 @@ class CashbackShopeeApiServiceTest extends TestCase
             ->expectsOutput('Starting Shopee Cashback order synchronization...')
             ->assertExitCode(0);
     }
+
+    /**
+     * Adversarial Test: Shopee conversion report with 13-digit millisecond timestamp and subId/sub_ids variations.
+     */
+    public function test_order_sync_handles_millisecond_timestamp_and_sub_id_variations(): void
+    {
+        $wallet = CashbackWallet::create([
+            'sub_id' => 'mt_sub_variations',
+            'pending_balance' => 0.00,
+            'available_balance' => 0.00,
+            'status' => 'active',
+        ]);
+
+        $nodes = [
+            // Node 1: 13-digit millisecond purchaseTime and subId key
+            [
+                'order_id' => '240909SHP_MS_1',
+                'purchaseTime' => 1725883200000, // milliseconds: 2024-09-09 12:00:00 UTC
+                'subId' => 'mt_sub_variations',
+                'orderStatus' => 'COMPLETED',
+                'totalCommission' => 30000,
+                'gmv' => 400000,
+                'product_name' => 'Sản phẩm Shopee Test Milliseconds',
+            ],
+            // Node 2: purchase_time snake_case and subId1 key
+            [
+                'orderId' => '240909SHP_MS_2',
+                'purchase_time' => 1725883200,
+                'subId1' => 'mt_sub_variations',
+                'orderStatus' => 'COMPLETED',
+                'totalCommission' => 20000,
+                'gmv' => 250000,
+            ],
+        ];
+
+        $syncService = app(CashbackOrderSyncService::class);
+        $processed = $syncService->processReportNodes($nodes);
+
+        $this->assertCount(2, $processed);
+        $order1 = $processed[0];
+        // Year must be 2024 or 2026, never > 2100!
+        $this->assertLessThan(2100, (int) date('Y', strtotime($order1->order_time)));
+        $this->assertEquals('240909SHP_MS_1', $order1->shopee_order_id);
+
+        $order2 = $processed[1];
+        $this->assertEquals('240909SHP_MS_2', $order2->shopee_order_id);
+    }
 }
+

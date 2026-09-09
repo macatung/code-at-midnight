@@ -79,4 +79,26 @@ class CashbackRoutingTest extends TestCase
         $response2->assertStatus(200);
         $this->assertEquals($subId, session('cashback_sub_id'));
     }
+
+    /**
+     * Adversarial Test: Named route cashback.domain.index must resolve to baseDomain (e.g. hoantien.macatung.dev),
+     * NOT be overwritten by local development domain.
+     */
+    public function test_named_route_resolves_to_production_base_domain(): void
+    {
+        $url = route('cashback.domain.index');
+        $expectedHost = 'hoantien.' . config('app.base_domain', 'macatung.dev');
+        $this->assertStringContainsString($expectedHost, $url);
+    }
+
+    /**
+     * Adversarial Test: Subdomain access with /hoantien prefix also returns 200 smoothly.
+     */
+    public function test_subdomain_with_hoantien_prefix_path_returns_200(): void
+    {
+        $response = $this->get('http://hoantien.localhost:8000/hoantien');
+        $response->assertStatus(200);
+        $response->assertInertia(fn (Assert $page) => $page->component('Cashback/Index'));
+    }
 }
+

@@ -90,6 +90,12 @@ const isShopeeUrl = (url: string) => {
   return pattern.test(url.trim());
 };
 
+// Dynamic API endpoint resolution (subdomain / vs fallback path /hoantien)
+const getApiEndpoint = (endpoint: string) => {
+  const isSubdomain = typeof window !== 'undefined' && window.location.hostname.startsWith('hoantien.');
+  return isSubdomain ? `/${endpoint}` : `/hoantien/${endpoint}`;
+};
+
 // Submit Link Generator
 const handleGenerateLink = async () => {
   errorMessage.value = '';
@@ -107,7 +113,7 @@ const handleGenerateLink = async () => {
 
   isGenerating.value = true;
   try {
-    const res = await fetch('/hoantien/generate-link', {
+    const res = await fetch(getApiEndpoint('generate-link'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -178,7 +184,7 @@ const setWithdrawAmount = (amt: number) => {
 
 // Submit Withdrawal
 const submitWithdrawal = () => {
-  withdrawForm.post('/hoantien/withdraw', {
+  withdrawForm.post(getApiEndpoint('withdraw'), {
     preserveScroll: true,
     onSuccess: () => {
       showWithdrawModal.value = false;

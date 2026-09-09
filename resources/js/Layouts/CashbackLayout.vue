@@ -27,6 +27,12 @@ const copySubId = async () => {
 const formatVND = (num: number) => {
   return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(num || 0);
 };
+
+const isSubdomain = typeof window !== 'undefined' && window.location.hostname.startsWith('hoantien.');
+const homeUrl = isSubdomain ? '/' : '/hoantien';
+const mainPortfolioUrl = isSubdomain
+  ? (window.location.hostname.includes('localhost') ? `${window.location.protocol}//localhost:8000` : 'https://macatung.dev')
+  : '/';
 </script>
 
 <template>
@@ -43,7 +49,7 @@ const formatVND = (num: number) => {
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <!-- Brand / Logo -->
         <div class="flex items-center gap-3">
-          <Link href="/hoantien" class="flex items-center gap-2 group">
+          <Link :href="homeUrl" class="flex items-center gap-2 group">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-orange-600 via-orange-500 to-amber-400 flex items-center justify-center shadow-lg shadow-orange-500/20 group-hover:scale-105 transition-transform">
               <span class="text-white font-black text-xl tracking-tight">S</span>
             </div>
@@ -91,7 +97,7 @@ const formatVND = (num: number) => {
 
           <!-- Main Portfolio Backlink -->
           <a
-            href="/"
+            :href="mainPortfolioUrl"
             class="text-xs text-slate-400 hover:text-white transition-colors border border-slate-700/60 rounded-lg px-2.5 py-1.5 hidden sm:inline-block"
           >
             ← MacaTung
@@ -137,7 +143,7 @@ const formatVND = (num: number) => {
           <div>
             <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-300 mb-3">Hỗ trợ & Phát triển</h4>
             <p class="text-xs text-slate-400 mb-2">
-              Được phát triển và vận hành bởi <a href="/" class="text-orange-400 hover:underline">MacaTung</a>.
+              Được phát triển và vận hành bởi <a :href="mainPortfolioUrl" class="text-orange-400 hover:underline">MacaTung</a>.
             </p>
             <p class="text-xs text-slate-500">
               Shopee là thương hiệu đã đăng ký của Shopee Pte. Ltd. Hệ thống hoạt động theo chính sách Đối tác Tiếp thị liên kết chính thức.
@@ -148,9 +154,9 @@ const formatVND = (num: number) => {
         <div class="border-t border-slate-800/60 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
           <p>© 2026 MacaTung. All rights reserved.</p>
           <div class="flex items-center gap-4">
-            <Link href="/hoantien" class="hover:text-slate-300">Cổng Hoàn Tiền</Link>
+            <Link :href="homeUrl" class="hover:text-slate-300">Cổng Hoàn Tiền</Link>
             <a href="https://shopee.vn" target="_blank" rel="noopener" class="hover:text-slate-300">Shopee Việt Nam</a>
-            <a href="/" class="hover:text-slate-300">Portfolio Chính</a>
+            <a :href="mainPortfolioUrl" class="hover:text-slate-300">Portfolio Chính</a>
           </div>
         </div>
       </div>

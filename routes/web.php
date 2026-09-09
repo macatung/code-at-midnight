@@ -109,19 +109,36 @@ Route::prefix('decode')->name('decode.')->group(function () {
 });
 
 // 5. Shopee Cashback Subdomain Routes (e.g. hoantien.macatung.dev / hoantien.localhost)
-$cashbackDomains = array_unique(array_filter([
-    'hoantien.' . $baseDomain,
-    'hoantien.localhost',
-]));
-foreach ($cashbackDomains as $domain) {
-    Route::domain($domain)->group(function () {
-        Route::get('/', [CashbackController::class, 'index'])->name('cashback.domain.index');
-        Route::post('/generate-link', [CashbackController::class, 'generateLink'])->name('cashback.domain.generate-link');
-        Route::post('/withdraw', [CashbackController::class, 'withdraw'])->name('cashback.domain.withdraw');
-        Route::post('/webhook', [CashbackController::class, 'webhook'])->name('cashback.domain.webhook');
-        Route::post('/sync', [CashbackController::class, 'sync'])->name('cashback.domain.sync');
+$prodSubdomain = 'hoantien.' . $baseDomain;
+$localSubdomain = 'hoantien.localhost';
+
+// Local development subdomain group (registered first so canonical names belong to production)
+if ($localSubdomain !== $prodSubdomain) {
+    Route::domain($localSubdomain)->group(function () {
+        Route::get('/', [CashbackController::class, 'index']);
+        Route::post('/generate-link', [CashbackController::class, 'generateLink']);
+        Route::post('/withdraw', [CashbackController::class, 'withdraw']);
+        Route::post('/webhook', [CashbackController::class, 'webhook']);
+        Route::post('/sync', [CashbackController::class, 'sync']);
+        // Subdomain compatibility with /hoantien prefix
+        Route::get('/hoantien', [CashbackController::class, 'index']);
+        Route::post('/hoantien/generate-link', [CashbackController::class, 'generateLink']);
+        Route::post('/hoantien/withdraw', [CashbackController::class, 'withdraw']);
     });
 }
+
+// Canonical production subdomain group
+Route::domain($prodSubdomain)->group(function () {
+    Route::get('/', [CashbackController::class, 'index'])->name('cashback.domain.index');
+    Route::post('/generate-link', [CashbackController::class, 'generateLink'])->name('cashback.domain.generate-link');
+    Route::post('/withdraw', [CashbackController::class, 'withdraw'])->name('cashback.domain.withdraw');
+    Route::post('/webhook', [CashbackController::class, 'webhook'])->name('cashback.domain.webhook');
+    Route::post('/sync', [CashbackController::class, 'sync'])->name('cashback.domain.sync');
+    // Subdomain compatibility with /hoantien prefix
+    Route::get('/hoantien', [CashbackController::class, 'index']);
+    Route::post('/hoantien/generate-link', [CashbackController::class, 'generateLink']);
+    Route::post('/hoantien/withdraw', [CashbackController::class, 'withdraw']);
+});
 
 // 6. Shopee Cashback Path-based Fallback Routes (Available on main domain /hoantien/* & local dev)
 Route::prefix('hoantien')->name('cashback.')->group(function () {

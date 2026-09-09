@@ -368,4 +368,175 @@ class CashbackWalletAndFraudSafetyTest extends TestCase
         $this->assertEquals(130000.00, $wallet->available_balance);
         $this->assertEquals(70000.00, $wallet->withdrawn_balance);
     }
+
+    /**
+     * Adversarial Test: Order status stays 'pending', but commission is updated.
+     * Expected: commission, cashback and wallet pending balance must be updated.
+     */
+    public function test_pending_order_with_same_status_updates_commission_and_pending_balance(): void
+    {
+        $walletService = app(CashbackWalletService::class);
+
+        $wallet = CashbackWallet::create([
+            'sub_id' => 'mt_same_status_user',
+            'pending_balance' => 0.00,
+            'available_balance' => 0.00,
+            'status' => 'active',
+        ]);
+
+        // 1. Initial pending order with 10,000 commission (8,000 cashback)
+        $order = $walletService->processOrder([
+            'shopee_order_id' => 'ORDER_SAME_01',
+            'sub_id' => 'mt_same_status_user',
+            'commission_shopee' => 10000,
+            'cashback_rate' => 0.80,
+            'status' => 'pending',
+            'product_name' => 'Sản phẩm thử nghiệm',
+        ]);
+
+        $wallet->refresh();
+        $this->assertEquals(8000.00, $wallet->pending_balance);
+        $this->assertEquals(8000.00, $order->cashback_amount);
+
+        // 2. Shopee sends update: still pending, but final commission is 50,000 (40,000 cashback)
+        $updatedOrder = $walletService->processOrder([
+            'shopee_order_id' => 'ORDER_SAME_01',
+            'sub_id' => 'mt_same_status_user',
+            'commission_shopee' => 50000,
+            'cashback_rate' => 0.80,
+            'status' => 'pending',
+            'product_name' => 'Sản phẩm thử nghiệm (cập nhật)',
+        ]);
+
+        $wallet->refresh();
+        $this->assertEquals(40000.00, $wallet->pending_balance);
+        $this->assertEquals(50000.00, $updatedOrder->commission_shopee);
+        $this->assertEquals(40000.00, $updatedOrder->cashback_amount);
+    }
+
+    /**
+     * Adversarial Test: Previously cancelled order transitioned to confirmed.
+     * Expected: order confirmed, available balance credited.
+     */
+    public function test_cancelled_order_transitioning_to_confirmed_credits_available_balance(): void
+    {
+        $walletService = app(CashbackWalletService::class);
+
+        $wallet = CashbackWallet::create([
+            'sub_id' => 'mt_cancel_to_confirm_user',
+            'pending_balance' => 0.00,
+            'available_balance' => 0.00,
+            'status' => 'active',
+        ]);
+
+        // 1. Arrives as cancelled
+        $order = $walletService->processOrder([
+            'shopee_order_id' => 'ORDER_REINSTATE_01',
+            'sub_id' => 'mt_cancel_to_confirm_user',
+            'commission_shopee' => 50000,
+            'cashback_rate' => 0.80,
+            'status' => 'cancelled',
+            'product_name' => 'Đơn tạm hủy',
+        ]);
+
+        $wallet->refresh();
+        $this->assertEquals(0.00, $wallet->pending_balance);
+        $this->assertEquals(0.00, $wallet->available_balance);
+
+        // 2. Shopee re-confirms order
+        $updatedOrder = $walletService->processOrder([
+            'shopee_order_id' => 'ORDER_REINSTATE_01',
+            'sub_id' => 'mt_cancel_to_confirm_user',
+            'commission_shopee' => 50000,
+            'cashback_rate' => 0.80,
+            'status' => 'confirmed',
+            'product_name' => 'Đơn tạm hủy',
+        ]);
+
+        $wallet->refresh();
+        $this->assertEquals('confirmed', $updatedOrder->status);
+        $this->assertEquals(40000.00, $wallet->available_balance);
+        $this->assertEquals(0.00, $wallet->pending_balance);
+    }
+
+    /**
+     * Adversarial Test: Failed, rejected, or expired orders must NEVER be treated as pending.
+     */
+    public function test_failed_or_rejected_order_never_credits_pending_balance(): void
+    {
+        $walletService = app(CashbackWalletService::class);
+
+        $wallet = CashbackWallet::create([
+            'sub_id' => 'mt_failed_order_user',
+            'pending_balance' => 0.00,
+            'available_balance' => 0.00,
+            'status' => 'active',
+        ]);
+
+        $order = $walletService->processOrder([
+            'shopee_order_id' => 'ORDER_FAILED_99',
+            'sub_id' => 'mt_failed_order_user',
+            'commission_shopee' => 100000,
+            'cashback_rate' => 0.80,
+            'status' => 'FAILED',
+            'product_name' => 'Đơn hàng thất bại',
+        ]);
+
+        $wallet->refresh();
+        $this->assertEquals(0.00, $wallet->pending_balance);
+        $this->assertEquals(0.00, $wallet->available_balance);
+        $this->assertContains($order->status, ['cancelled', 'refunded']);
+    }
+
+    /**
+     * Adversarial Test: Frozen or suspended wallet cannot request withdrawal.
+     */
+    public function test_frozen_wallet_cannot_request_withdrawal(): void
+    {
+        $walletService = app(CashbackWalletService::class);
+
+        $wallet = CashbackWallet::create([
+            'sub_id' => 'mt_frozen_user',
+            'available_balance' => 100000.00,
+            'status' => 'frozen',
+        ]);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('khóa hoặc tạm ngưng');
+
+        $walletService->requestWithdrawal($wallet, 50000.00, [
+            'bank_name' => 'Vietcombank',
+            'bank_account_number' => '12345678',
+            'bank_account_name' => 'FROZEN USER',
+        ]);
+    }
+
+    /**
+     * Adversarial Test: Shopee products with long names (>255 chars) do not crash DB.
+     */
+    public function test_long_product_name_is_safely_truncated(): void
+    {
+        $walletService = app(CashbackWalletService::class);
+
+        $wallet = CashbackWallet::create([
+            'sub_id' => 'mt_long_name_user',
+            'pending_balance' => 0.00,
+            'available_balance' => 0.00,
+            'status' => 'active',
+        ]);
+
+        $longName = str_repeat('Bàn phím cơ Shopee Siêu Bền ', 20); // ~560 chars
+
+        $order = $walletService->processOrder([
+            'shopee_order_id' => 'ORDER_LONG_NAME_01',
+            'sub_id' => 'mt_long_name_user',
+            'commission_shopee' => 50000,
+            'status' => 'pending',
+            'product_name' => $longName,
+        ]);
+
+        $this->assertNotNull($order);
+        $this->assertLessThanOrEqual(255, mb_strlen($order->product_name));
+    }
 }
+

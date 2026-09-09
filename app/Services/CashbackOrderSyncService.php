@@ -40,12 +40,20 @@ class CashbackOrderSyncService
                 continue;
             }
 
-            // Extract sub_id
+            // Extract sub_id from all Shopee API formats
             $subId = null;
             if (!empty($node['subIds']) && is_array($node['subIds'])) {
                 $subId = $node['subIds'][0] ?? null;
+            } elseif (!empty($node['sub_ids']) && is_array($node['sub_ids'])) {
+                $subId = $node['sub_ids'][0] ?? null;
             } elseif (!empty($node['sub_id'])) {
-                $subId = $node['sub_id'];
+                $subId = (string) $node['sub_id'];
+            } elseif (!empty($node['subId'])) {
+                $subId = (string) $node['subId'];
+            } elseif (!empty($node['subId1'])) {
+                $subId = (string) $node['subId1'];
+            } elseif (!empty($node['sub_id1'])) {
+                $subId = (string) $node['sub_id1'];
             }
 
             if (!$subId) {
@@ -74,6 +82,19 @@ class CashbackOrderSyncService
                 }
             }
 
+            // Parse purchase timestamp (support seconds or 13-digit milliseconds)
+            $rawTime = $node['purchaseTime'] ?? $node['purchase_time'] ?? null;
+            $orderTime = now();
+            if ($rawTime) {
+                $ts = is_numeric($rawTime) ? (int) $rawTime : strtotime((string) $rawTime);
+                if ($ts > 9999999999) { // 13-digit millisecond timestamp
+                    $ts = (int) round($ts / 1000);
+                }
+                if ($ts > 0) {
+                    $orderTime = date('Y-m-d H:i:s', $ts);
+                }
+            }
+
             // Match click if exists
             $click = CashbackClick::where('sub_id', $subId)->latest()->first();
 
@@ -81,12 +102,12 @@ class CashbackOrderSyncService
                 'shopee_order_id' => $orderId,
                 'sub_id' => $subId,
                 'click_id' => $click?->id,
-                'product_name' => $productName ?: 'Sản phẩm Shopee #' . $orderId,
+                'product_name' => $productName ?: ('Sản phẩm Shopee #' . $orderId),
                 'gmv' => $gmv,
                 'commission_shopee' => $commission,
                 'status' => $node['orderStatus'] ?? $node['status'] ?? 'pending',
                 'raw_data' => $node,
-                'order_time' => isset($node['purchaseTime']) ? date('Y-m-d H:i:s', $node['purchaseTime']) : now(),
+                'order_time' => $orderTime,
             ];
 
             $order = $this->walletService->processOrder($orderData);
