@@ -44,7 +44,7 @@ Trong hệ sinh thái thương hiệu cá nhân của **Ma Cà Tưng**, hai nhá
 
 ## 🔤 3. Quy Chuẩn Kiểu Chữ (Typography Hierarchy)
 
-- **Logo Title & Display Headlines**: `Space Grotesk` / `Syne` (Bold, Tracking-tight, sắc nét, hiện đại).
+- **Logo Title & Display Headlines**: `Be Vietnam Pro` / `Plus Jakarta Sans` / `Segoe UI` (Đậm nét, hình học hiện đại, hỗ trợ chuẩn xác 100% các dấu thanh tiếng Việt: hỏi, ngã, nặng).
 - **Technical HUD & Telemetry Metrics**: `JetBrains Mono` / `Fira Code` (Monospace chính xác, hiển thị nano-giây, giao thức, payload).
 - **Body & Script Prose**: `Plus Jakarta Sans` / `Inter` (Độ tương phản cao, dễ đọc trên nền tối).
 

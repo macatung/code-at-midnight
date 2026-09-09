@@ -38,7 +38,7 @@ export default {
         sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
         serif: ['"Lora"', '"Merriweather"', 'Georgia', 'serif'],
         pali: ['"Lora"', 'Georgia', 'serif'],
-        display: ['"Space Grotesk"', '"Syne"', 'sans-serif'],
+        display: ['"Be Vietnam Pro"', '"Plus Jakarta Sans"', '"Space Grotesk"', 'sans-serif'],
         mono: ['"JetBrains Mono"', '"Fira Code"', 'monospace'],
         rune: ['"Lora"', 'serif'],
       },

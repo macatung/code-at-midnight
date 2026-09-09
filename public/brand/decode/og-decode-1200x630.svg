@@ -48,7 +48,7 @@
   <!-- Main Left Content -->
   <g transform="translate(64, 180)">
     <!-- Channel Title -->
-    <text x="0" y="0" font-family="'Space Grotesk', 'Syne', sans-serif" font-size="64" font-weight="900" fill="url(#ogText)" letter-spacing="2">
+    <text x="0" y="0" font-family="'Be Vietnam Pro', 'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif" font-size="64" font-weight="900" fill="url(#ogText)" letter-spacing="2">
       MA GIẢI MÃ
     </text>
 

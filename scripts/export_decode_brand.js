@@ -78,6 +78,10 @@ for (const item of exportsList) {
       mode: 'width',
       value: item.width,
     },
+    font: {
+      loadSystemFonts: true,
+      defaultFontFamily: 'Segoe UI',
+    },
     background: item.transparent ? undefined : '#060913',
   });
 
