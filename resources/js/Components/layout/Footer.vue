@@ -40,7 +40,7 @@ const triggerHeartEasterEgg = (event: MouseEvent) => {
       </div>
       <div>
         <h4 class="mb-3 font-mono text-[11px] uppercase tracking-wider text-slate-400">{{ t('footer.labs') }}</h4>
-        <ul class="space-y-2 text-slate-400"><li><a href="/game" class="hover:text-phantom-mint">{{ t('nav.game') }}</a></li><li><a href="/talisman" class="hover:text-phantom-mint">{{ t('nav.talisman') }}</a></li><li><a href="https://theravada.macatung.dev" target="_blank" rel="noopener" class="hover:text-amber-300 inline-flex items-center gap-1.5" title="Ma Tọa Thiền — Tam Tạng Kinh Điển Theravāda">{{ t('nav.theravada') }} <span class="text-[9px] px-1 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono">↗</span></a></li></ul>
+        <ul class="space-y-2 text-slate-400"><li><a href="/game" class="hover:text-phantom-mint">{{ t('nav.game') }}</a></li><li><a href="/talisman" class="hover:text-phantom-mint">{{ t('nav.talisman') }}</a></li><li><a href="https://theravada.macatung.dev" target="_blank" rel="noopener" class="hover:text-amber-300 inline-flex items-center gap-1.5" title="Ma Tọa Thiền — Tam Tạng Kinh Điển Theravāda">{{ t('nav.theravada') }} <span class="text-[9px] px-1 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono">↗</span></a></li><li><a href="/decode" class="hover:text-[#00f5d4] inline-flex items-center gap-1.5" title="Ma Giải Mã — Mở nắp những hệ thống vô hình">Ma Giải Mã <span class="text-[9px] px-1 py-0.5 rounded bg-[#00f5d4]/20 text-[#00f5d4] font-mono">NEW</span></a></li></ul>
       </div>
       <div>
         <h4 class="mb-3 font-mono text-[11px] uppercase tracking-wider text-slate-400">{{ t('footer.connect') }}</h4>

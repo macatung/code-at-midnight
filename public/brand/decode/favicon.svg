@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="favBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#060913" />
+      <stop offset="100%" stop-color="#0a1224" />
+    </linearGradient>
+    <linearGradient id="favIsoTop" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#favBg)" stroke="#00f5d4" stroke-width="2" />
+  <!-- M Isometric Core -->
+  <g transform="translate(32, 32)">
+    <!-- Left Column -->
+    <polygon points="-16,-2 -8,-8 -8,8 -16,14" fill="#0369a1" />
+    <polygon points="-8,-8 0,-2 0,14 -8,8" fill="#0284c7" />
+    <polygon points="-16,-2 -8,-8 0,-2 -8,4" fill="url(#favIsoTop)" />
+
+    <!-- Right Column -->
+    <polygon points="0,-2 8,-8 8,8 0,14" fill="#0369a1" />
+    <polygon points="8,-8 16,-2 16,14 8,8" fill="#0284c7" />
+    <polygon points="0,-2 8,-8 16,-2 8,4" fill="url(#favIsoTop)" />
+
+    <!-- Apex Core -->
+    <polygon points="-4,-6 0,-10 4,-6 0,-2" fill="#00f5d4" />
+    <circle cx="0" cy="-14" r="2.5" fill="#ffd166" />
+  </g>
+</svg>

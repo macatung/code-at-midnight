@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\AdminTheravadaVideoController;
 use App\Http\Controllers\Admin\AdminSettingController;
 use App\Http\Controllers\Admin\AdminContactController;
 use App\Http\Controllers\SeoController;
+use App\Http\Controllers\Decode\DecodeController;
 
 $baseDomain = config('app.base_domain', 'macatung.dev');
 
@@ -83,10 +84,41 @@ Route::prefix('theravada')->name('theravada.')->group(function () {
     Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('sitemap');
 });
 
-// 3. Global SEO & Asset Endpoints
+// 3. Decode Subdomain Routes (e.g. decode.macatung.dev / decode.localhost)
+Route::domain('decode.' . $baseDomain)->group(function () {
+    Route::get('/', [DecodeController::class, 'index'])->name('decode.domain.index');
+    Route::get('/tap/{slug}', [DecodeController::class, 'show'])->name('decode.domain.show');
+    Route::get('/tap-1-visa-100k', [DecodeController::class, 'episode1'])->name('decode.domain.ep1');
+    Route::get('/brand-kit', [DecodeController::class, 'brand'])->name('decode.domain.brand');
+    Route::get('/sitemap.xml', [DecodeController::class, 'sitemap'])->name('decode.domain.sitemap');
+    Route::get('/robots.txt', [DecodeController::class, 'robots'])->name('decode.domain.robots');
+    Route::get('/favicon.ico', function () {
+        return response()->file(public_path('brand/decode/favicon-decode.ico'), [
+            'Content-Type' => 'image/x-icon',
+            'Cache-Control' => 'public, max-age=604800, immutable',
+        ]);
+    })->name('decode.domain.favicon');
+});
+
+// 4. Decode Path-based Routes (Available on main domain /decode/* & local dev)
+Route::prefix('decode')->name('decode.')->group(function () {
+    Route::get('/', [DecodeController::class, 'index'])->name('index');
+    Route::get('/tap/{slug}', [DecodeController::class, 'show'])->name('show');
+    Route::get('/tap-1-visa-100k', [DecodeController::class, 'episode1'])->name('ep1');
+    Route::get('/brand-kit', [DecodeController::class, 'brand'])->name('brand');
+    Route::get('/sitemap.xml', [DecodeController::class, 'sitemap'])->name('sitemap');
+});
+
+// 5. Global SEO & Asset Endpoints
 Route::get('/favicon.ico', function (\Illuminate\Http\Request $request) {
     if (str_starts_with($request->getHost(), 'theravada.')) {
         return response()->file(public_path('brand/theravada/favicon-theravada.ico'), [
+            'Content-Type' => 'image/x-icon',
+            'Cache-Control' => 'public, max-age=604800, immutable',
+        ]);
+    }
+    if (str_starts_with($request->getHost(), 'decode.')) {
+        return response()->file(public_path('brand/decode/favicon-decode.ico'), [
             'Content-Type' => 'image/x-icon',
             'Cache-Control' => 'public, max-age=604800, immutable',
         ]);

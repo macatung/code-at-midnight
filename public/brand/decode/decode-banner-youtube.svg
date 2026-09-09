@@ -1,0 +1,171 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2560 1440" width="2560" height="1440">
+  <defs>
+    <linearGradient id="bBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#04060c" />
+      <stop offset="30%" stop-color="#060a16" />
+      <stop offset="70%" stop-color="#0a1226" />
+      <stop offset="100%" stop-color="#03050a" />
+    </linearGradient>
+
+    <linearGradient id="bCyan" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="40%" stop-color="#e0f2fe" />
+      <stop offset="80%" stop-color="#00f5d4" />
+      <stop offset="100%" stop-color="#00b4d8" />
+    </linearGradient>
+
+    <linearGradient id="bSafeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#060a17" stop-opacity="0.9" />
+      <stop offset="50%" stop-color="#0d1730" stop-opacity="0.95" />
+      <stop offset="100%" stop-color="#060a17" stop-opacity="0.9" />
+    </linearGradient>
+
+    <pattern id="bGrid" width="60" height="60" patternUnits="userSpaceOnUse">
+      <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#00b4d8" stroke-width="0.75" stroke-opacity="0.1" />
+      <circle cx="0" cy="0" r="1.5" fill="#00f5d4" fill-opacity="0.2" />
+    </pattern>
+
+    <filter id="bBloom" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="10" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Canvas Background -->
+  <rect width="2560" height="1440" fill="url(#bBg)" />
+  <rect width="2560" height="1440" fill="url(#bGrid)" />
+
+  <!-- Ambient Light Halos -->
+  <circle cx="1280" cy="720" r="600" fill="#00b4d8" opacity="0.08" filter="url(#bBloom)" />
+  <circle cx="700" cy="720" r="350" fill="#00f5d4" opacity="0.06" filter="url(#bBloom)" />
+  <circle cx="1860" cy="720" r="400" fill="#0077b6" opacity="0.09" filter="url(#bBloom)" />
+
+  <!-- Background Isometric Schematics (Decorations across TV display area) -->
+  <!-- Global Fiber Cable Waves -->
+  <path d="M 100 1100 Q 600 950 1280 1150 T 2460 1000" fill="none" stroke="#00b4d8" stroke-width="2" stroke-opacity="0.25" stroke-dasharray="12 8" />
+  <path d="M 100 300 Q 800 450 1280 320 T 2460 400" fill="none" stroke="#00f5d4" stroke-width="1.5" stroke-opacity="0.2" stroke-dasharray="8 6" />
+
+  <!-- Orbit Rings for Satellites / GPS -->
+  <ellipse cx="2050" cy="400" rx="320" ry="120" fill="none" stroke="#00b4d8" stroke-width="1.5" stroke-opacity="0.2" transform="rotate(-15 2050 400)" stroke-dasharray="6 6" />
+  <circle cx="2180" cy="350" r="8" fill="#ffd166" filter="url(#bBloom)" />
+  <text x="2200" y="355" font-family="'JetBrains Mono', monospace" font-size="14" fill="#ffd166" opacity="0.7">GPS.SVN // 24 SATS</text>
+
+  <!-- Left Server Rack Blueprint Lines -->
+  <g transform="translate(300, 380)" opacity="0.25">
+    <rect x="0" y="0" width="160" height="260" fill="none" stroke="#00f5d4" stroke-width="1.5" />
+    <line x1="0" y1="50" x2="160" y2="50" stroke="#00f5d4" stroke-width="1" />
+    <line x1="0" y1="100" x2="160" y2="100" stroke="#00f5d4" stroke-width="1" />
+    <line x1="0" y1="150" x2="160" y2="150" stroke="#00f5d4" stroke-width="1" />
+    <line x1="0" y1="200" x2="160" y2="200" stroke="#00f5d4" stroke-width="1" />
+    <text x="10" y="30" font-family="'JetBrains Mono', monospace" font-size="12" fill="#00f5d4">CLUSTER // CLOUD-DC</text>
+  </g>
+
+  <!-- ================================================================= -->
+  <!-- YOUTUBE SAFE AREA (1546 x 423 px centered at X: 507, Y: 508.5) -->
+  <!-- ================================================================= -->
+  <g id="youtube-safe-area">
+    <!-- Safe Area Panel Background -->
+    <rect x="507" y="508" width="1546" height="424" rx="20" fill="url(#bSafeGrad)" stroke="#00b4d8" stroke-width="1.5" stroke-opacity="0.4" />
+
+    <!-- Corner HUD Reticles on Safe Area -->
+    <path d="M 527 548 L 527 528 L 547 528" fill="none" stroke="#00f5d4" stroke-width="3" />
+    <path d="M 2033 548 L 2033 528 L 2013 528" fill="none" stroke="#00f5d4" stroke-width="3" />
+    <path d="M 527 892 L 527 912 L 547 912" fill="none" stroke="#00f5d4" stroke-width="3" />
+    <path d="M 2033 892 L 2033 912 L 2013 912" fill="none" stroke="#00f5d4" stroke-width="3" />
+
+    <!-- Technical Measure Bar -->
+    <g transform="translate(560, 538)" font-family="'JetBrains Mono', monospace" font-size="11" fill="#00f5d4" opacity="0.8">
+      <text x="0" y="0">CHANNEL // MA GIẢI MÃ</text>
+      <text x="400" y="0" fill="#38bdf8">HUD_SPEC: 4K 60FPS ISOMETRIC ANATOMY</text>
+      <text x="1100" y="0" fill="#ffb703">ONLINE // @MaGiaiMa</text>
+    </g>
+
+    <!-- CONTENT WRAPPER -->
+    <g transform="translate(560, 570)">
+      <!-- Left: Big Deconstruction Icon -->
+      <g transform="translate(110, 150)" filter="url(#bBloom)">
+        <circle cx="0" cy="0" r="88" fill="none" stroke="#00b4d8" stroke-width="1.5" stroke-opacity="0.3" stroke-dasharray="6 6" />
+        <circle cx="0" cy="0" r="70" fill="none" stroke="#00f5d4" stroke-width="2" stroke-opacity="0.6" />
+        
+        <!-- Crosshairs -->
+        <line x1="0" y1="-95" x2="0" y2="-75" stroke="#00f5d4" stroke-width="3" />
+        <line x1="0" y1="75" x2="0" y2="95" stroke="#00f5d4" stroke-width="3" />
+        <line x1="-95" y1="0" x2="-75" y2="0" stroke="#00f5d4" stroke-width="3" />
+        <line x1="75" y1="0" x2="95" stroke="#00f5d4" stroke-width="3" />
+
+        <!-- 3D Deconstructed Layers -->
+        <!-- Base Layer -->
+        <polygon points="-46,8 0,-18 46,8 0,34" fill="#0369a1" opacity="0.6" />
+        <!-- Mid Wireframe -->
+        <polygon points="-52,-14 0,-42 52,-14 0,14" fill="none" stroke="#00f5d4" stroke-width="2" stroke-dasharray="4 4" />
+        <!-- Top Core -->
+        <polygon points="-44,-36 0,-60 44,-36 0,-12" fill="#38bdf8" />
+        <polygon points="-44,-36 0,-12 0,18 -44,-6" fill="#0284c7" />
+        <polygon points="0,-12 44,-36 44,-6 0,18" fill="#0369a1" />
+
+        <!-- Amber Kernel Glow -->
+        <circle cx="0" cy="-36" r="8" fill="#ffd166" />
+        <circle cx="0" cy="-36" r="4" fill="#ffffff" />
+      </g>
+
+      <!-- Center-Right: Core Branding Typography -->
+      <g transform="translate(260, 50)">
+        <!-- Badge -->
+        <rect x="0" y="0" width="170" height="28" rx="6" fill="#00f5d4" fill-opacity="0.15" stroke="#00f5d4" stroke-width="1.5" />
+        <text x="85" y="19" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="800" fill="#00f5d4" text-anchor="middle" letter-spacing="1">
+          YOUTUBE CHANNEL
+        </text>
+
+        <rect x="184" y="0" width="180" height="28" rx="6" fill="#0284c7" fill-opacity="0.2" stroke="#38bdf8" stroke-width="1.2" />
+        <text x="274" y="19" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="700" fill="#38bdf8" text-anchor="middle">
+          decode.macatung.dev
+        </text>
+
+        <!-- Main Channel Title -->
+        <text x="0" y="90" font-family="'Space Grotesk', 'Syne', sans-serif" font-size="56" font-weight="900" fill="url(#bCyan)" letter-spacing="2">
+          MA GIẢI MÃ
+        </text>
+
+        <!-- Primary Tagline -->
+        <text x="0" y="132" font-family="'Plus Jakarta Sans', sans-serif" font-size="22" font-weight="600" fill="#f8fafc">
+          Mở nắp những hệ thống vô hình vận hành thế giới.
+        </text>
+
+        <!-- Secondary Description -->
+        <text x="0" y="166" font-family="'Plus Jakarta Sans', sans-serif" font-size="15" font-weight="400" fill="#94a3b8">
+          Giải mã cách thế giới công nghệ thực sự chạy dưới nắp capô qua bản vẽ Isometric 3D &amp; kiến trúc phân tán.
+        </text>
+
+        <!-- Pilot Roadmap Quick Badges -->
+        <g transform="translate(0, 196)" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="600">
+          <rect x="0" y="0" width="128" height="24" rx="4" fill="#0f172a" stroke="#00b4d8" stroke-width="1" />
+          <text x="64" y="16" fill="#38bdf8" text-anchor="middle">01. VISA 100K (2S)</text>
+
+          <rect x="136" y="0" width="138" height="24" rx="4" fill="#0f172a" stroke="#00b4d8" stroke-width="1" />
+          <text x="205" y="16" fill="#38bdf8" text-anchor="middle">02. GOOGLE (0.3S)</text>
+
+          <rect x="282" y="0" width="138" height="24" rx="4" fill="#0f172a" stroke="#00b4d8" stroke-width="1" />
+          <text x="351" y="16" fill="#38bdf8" text-anchor="middle">03. CÁP QUANG BIỂN</text>
+
+          <rect x="428" y="0" width="118" height="24" rx="4" fill="#0f172a" stroke="#00b4d8" stroke-width="1" />
+          <text x="487" y="16" fill="#38bdf8" text-anchor="middle">04. CÂY ATM</text>
+
+          <rect x="554" y="0" width="144" height="24" rx="4" fill="#0f172a" stroke="#00b4d8" stroke-width="1" />
+          <text x="626" y="16" fill="#ffd166" text-anchor="middle">05. GRAB &amp; EINSTEIN</text>
+        </g>
+      </g>
+
+      <!-- Right Callout Button -->
+      <g transform="translate(1220, 120)">
+        <rect x="0" y="0" width="200" height="54" rx="12" fill="#ff0054" filter="url(#bBloom)" />
+        <rect x="0" y="0" width="200" height="54" rx="12" fill="#e11d48" />
+        <text x="100" y="34" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="0.5">
+          SUBSCRIBE ▶
+        </text>
+        <text x="100" y="74" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="600" fill="#f43f5e" text-anchor="middle">
+          @MaGiaiMa
+        </text>
+      </g>
+    </g>
+  </g>
+</svg>

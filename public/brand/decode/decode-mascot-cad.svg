@@ -1,0 +1,253 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 480" width="440" height="480" fill="none">
+  <defs>
+    <!-- Background Gradients -->
+    <linearGradient id="robeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0e172a" />
+      <stop offset="50%" stop-color="#09101f" />
+      <stop offset="100%" stop-color="#040711" />
+    </linearGradient>
+
+    <linearGradient id="hatGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#111c33" />
+      <stop offset="100%" stop-color="#060b16" />
+    </linearGradient>
+
+    <!-- Translucent Cyan PCB Talisman -->
+    <linearGradient id="talismanPcb" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#00f5d4" stop-opacity="0.95" />
+      <stop offset="50%" stop-color="#00b4d8" stop-opacity="0.85" />
+      <stop offset="100%" stop-color="#0077b6" stop-opacity="0.9" />
+    </linearGradient>
+
+    <radialGradient id="chibiSkin" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="65%" stop-color="#e0f2fe" />
+      <stop offset="100%" stop-color="#bae6fd" />
+    </radialGradient>
+
+    <!-- Golden Semiconductor Die -->
+    <linearGradient id="goldDie" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="50%" stop-color="#ffd166" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+
+    <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <filter id="goldGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- 1. Holographic Floor CAD Projection Grid -->
+  <ellipse cx="220" cy="445" rx="130" ry="24" fill="rgba(0, 245, 212, 0.06)" />
+  <ellipse cx="220" cy="445" rx="100" ry="18" fill="none" stroke="#00b4d8" stroke-width="1.2" stroke-opacity="0.3" stroke-dasharray="4 4" />
+  <ellipse cx="220" cy="445" rx="60" ry="11" fill="none" stroke="#00f5d4" stroke-width="1.5" stroke-opacity="0.5" />
+  <line x1="90" y1="445" x2="350" y2="445" stroke="#00f5d4" stroke-width="0.8" stroke-opacity="0.3" stroke-dasharray="2 4" />
+
+  <!-- 2. Main Hopping Feet -->
+  <ellipse cx="180" cy="428" rx="22" ry="11" fill="#060b16" stroke="#00b4d8" stroke-width="2" />
+  <ellipse cx="260" cy="428" rx="22" ry="11" fill="#060b16" stroke="#00b4d8" stroke-width="2" />
+
+  <!-- 3. Jiangshi Scholar Robe with Glowing PCB Circuit Traces -->
+  <g id="robe">
+    <!-- Main Robe Body -->
+    <path d="M140 230 C140 230, 175 220, 220 220 C265 220, 300 230, 300 230 L330 422 C330 422, 220 436, 110 422 Z" fill="url(#robeGrad)" stroke="#00b4d8" stroke-width="2" />
+    
+    <!-- Chest Mandarin Collar Lapels with CAD Ticks -->
+    <path d="M180 232 L220 285 L260 232" stroke="#00f5d4" stroke-width="2.5" fill="none" stroke-linecap="round" />
+    
+    <!-- Robe Circuit Traces (PCB Tracks running vertically) -->
+    <path d="M155 260 L155 350 L170 365 L170 415" stroke="#00f5d4" stroke-width="1.8" stroke-opacity="0.8" fill="none" filter="url(#neonGlow)" />
+    <circle cx="155" cy="260" r="3" fill="#00f5d4" />
+    <circle cx="170" cy="415" r="3" fill="#00f5d4" />
+
+    <path d="M285 260 L285 350 L270 365 L270 415" stroke="#00f5d4" stroke-width="1.8" stroke-opacity="0.8" fill="none" filter="url(#neonGlow)" />
+    <circle cx="285" cy="260" r="3" fill="#00f5d4" />
+    <circle cx="270" cy="415" r="3" fill="#00f5d4" />
+
+    <!-- Center System Core Badge (Processor Socket on Chest) -->
+    <rect x="202" y="295" width="36" height="36" rx="6" fill="#050a16" stroke="#00f5d4" stroke-width="1.8" filter="url(#neonGlow)" />
+    <text x="220" y="318" text-anchor="middle" font-size="12" font-family="'JetBrains Mono', monospace" font-weight="900" fill="#00f5d4">&lt;/&gt;</text>
+    
+    <!-- Bus line from Core to Hem -->
+    <line x1="220" y1="335" x2="220" y2="425" stroke="#00b4d8" stroke-width="1.5" stroke-dasharray="3 3" />
+  </g>
+
+  <!-- 4. Outstretched Hands Performing "Mở Nắp" (Deconstructing Exploded-View Chip) -->
+  <!-- Left Hand / Sleeve -->
+  <g>
+    <path d="M140 248 C85 250, 58 268, 48 278" stroke="#0e172a" stroke-width="26" stroke-linecap="round" fill="none" />
+    <path d="M140 248 C85 250, 58 268, 48 278" stroke="#00f5d4" stroke-width="2" stroke-dasharray="4 4" fill="none" />
+    <circle cx="42" cy="278" r="14" fill="#bae6fd" stroke="#00b4d8" stroke-width="2.5" />
+    <!-- Sleeve Cuff Ring -->
+    <ellipse cx="64" cy="270" rx="6" ry="14" fill="#060b16" stroke="#00f5d4" stroke-width="2" />
+  </g>
+
+  <!-- Right Hand / Sleeve -->
+  <g>
+    <path d="M300 248 C355 250, 382 268, 392 278" stroke="#0e172a" stroke-width="26" stroke-linecap="round" fill="none" />
+    <path d="M300 248 C355 250, 382 268, 392 278" stroke="#00f5d4" stroke-width="2" stroke-dasharray="4 4" fill="none" />
+    <circle cx="398" cy="278" r="14" fill="#bae6fd" stroke="#00b4d8" stroke-width="2.5" />
+    <!-- Sleeve Cuff Ring -->
+    <ellipse cx="376" cy="270" rx="6" ry="14" fill="#060b16" stroke="#00f5d4" stroke-width="2" />
+  </g>
+
+  <!-- 5. THE EXPLODED-VIEW 3D MICROCHIP IN HANDS ("MỞ NẮP") -->
+  <g transform="translate(220, 280)" id="exploded-chip">
+    <!-- Optical Light Beam Bursting Upwards -->
+    <polygon points="-30,30 30,30 50,-50 -50,-50" fill="url(#goldDie)" opacity="0.12" filter="url(#goldGlow)" />
+
+    <!-- Layer 1: Substrate Base & Golden Pins (Bottom) -->
+    <g transform="translate(0, 32)">
+      <!-- Golden Pins Radiating Outward -->
+      <line x1="-48" y1="-8" x2="-62" y2="-14" stroke="#ffd166" stroke-width="2" />
+      <line x1="-36" y1="0" x2="-48" y2="-6" stroke="#ffd166" stroke-width="2" />
+      <line x1="-24" y1="8" x2="-34" y2="2" stroke="#ffd166" stroke-width="2" />
+      <line x1="48" y1="-8" x2="62" y2="-14" stroke="#ffd166" stroke-width="2" />
+      <line x1="36" y1="0" x2="48" y2="-6" stroke="#ffd166" stroke-width="2" />
+      <line x1="24" y1="8" x2="34" y2="2" stroke="#ffd166" stroke-width="2" />
+
+      <!-- Isometric Base Plate -->
+      <polygon points="-46,0 0,-20 46,0 0,20" fill="#0f172a" stroke="#00f5d4" stroke-width="1.8" />
+      <polygon points="-46,0 0,20 0,28 -46,8" fill="#0284c7" />
+      <polygon points="0,20 46,0 46,8 0,28" fill="#0369a1" />
+    </g>
+
+    <!-- Layer 2: Glowing Semiconductor Die (Silicon Wafer with Gold Glow) -->
+    <g transform="translate(0, 4)" filter="url(#goldGlow)">
+      <!-- Silicon Die Block -->
+      <polygon points="-32,0 0,-14 32,0 0,14" fill="url(#goldDie)" stroke="#ffffff" stroke-width="1.5" />
+      <polygon points="-32,0 0,14 0,20 -32,6" fill="#d97706" />
+      <polygon points="0,14 32,0 32,6 0,20" fill="#b45309" />
+      <!-- Wirebond Golden Strands -->
+      <line x1="-22" y1="-4" x2="-36" y2="22" stroke="#fef08a" stroke-width="1" />
+      <line x1="22" y1="-4" x2="36" y2="22" stroke="#fef08a" stroke-width="1" />
+      <circle cx="0" cy="0" r="5" fill="#ffffff" />
+    </g>
+
+    <!-- Layer 3: Wireframe Logical Bus / Data Stream -->
+    <g transform="translate(0, -22)">
+      <polygon points="-38,0 0,-16 38,0 0,16" fill="none" stroke="#00f5d4" stroke-width="1.5" stroke-dasharray="3 3" />
+      <circle cx="-38" cy="0" r="2.5" fill="#00f5d4" />
+      <circle cx="38" cy="0" r="2.5" fill="#00f5d4" />
+      <circle cx="0" cy="-16" r="2.5" fill="#00f5d4" />
+      <circle cx="0" cy="16" r="2.5" fill="#00f5d4" />
+    </g>
+
+    <!-- Layer 4: Top Integrated Heat Spreader / Lid Being Lifted ("Mở Nắp") -->
+    <g transform="translate(0, -48)" filter="url(#neonGlow)">
+      <polygon points="-36,0 0,-16 36,0 0,16" fill="#38bdf8" stroke="#ffffff" stroke-width="1.5" />
+      <polygon points="-36,0 0,16 0,22 -36,6" fill="#0284c7" />
+      <polygon points="0,16 36,0 36,6 0,22" fill="#0369a1" />
+      <text x="0" y="2" text-anchor="middle" font-size="8" font-family="'JetBrains Mono', monospace" font-weight="900" fill="#060b16">SYS.CORE</text>
+    </g>
+
+    <!-- Laser Annotation Caliper -->
+    <text x="56" y="-38" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="700" fill="#00f5d4">[OPEN: 100%]</text>
+    <line x1="38" y1="-44" x2="52" y2="-40" stroke="#00f5d4" stroke-width="1" />
+  </g>
+
+  <!-- 6. Cute Jiangshi Head & Facial Details -->
+  <!-- Cute Ghost Face Contour -->
+  <circle cx="220" cy="160" r="76" fill="url(#chibiSkin)" stroke="#00b4d8" stroke-width="2.5" />
+
+  <!-- Rosy Blush Cheeks -->
+  <ellipse cx="170" cy="182" rx="10" ry="5" fill="#38bdf8" opacity="0.4" />
+  <ellipse cx="270" cy="182" rx="10" ry="5" fill="#38bdf8" opacity="0.4" />
+
+  <!-- Right Eye: Cute Anime Vampire Eye -->
+  <ellipse cx="185" cy="162" rx="8" ry="12" fill="#070e1c" />
+  <circle cx="188" cy="158" r="3.5" fill="#ffffff" />
+  <circle cx="183" cy="167" r="1.5" fill="#38bdf8" />
+
+  <!-- Left Eye: HIGH-TECH CYBER HUD VISOR / AR MONOCLE -->
+  <g id="cyber-monocle" transform="translate(255, 162)" filter="url(#neonGlow)">
+    <!-- Visor Lens Glass -->
+    <rect x="-24" y="-20" width="48" height="40" rx="10" fill="rgba(0, 245, 212, 0.18)" stroke="#00f5d4" stroke-width="2.2" />
+    
+    <!-- Internal Reticle Circles -->
+    <circle cx="0" cy="0" r="14" fill="none" stroke="#38bdf8" stroke-width="1.2" stroke-dasharray="3 3" />
+    <circle cx="0" cy="0" r="6" fill="#070e1c" />
+    <circle cx="1" cy="-1" r="2" fill="#00f5d4" />
+
+    <!-- Crosshair Ticks -->
+    <line x1="0" y1="-18" x2="0" y2="-12" stroke="#00f5d4" stroke-width="1.5" />
+    <line x1="0" y1="12" x2="0" y2="18" stroke="#00f5d4" stroke-width="1.5" />
+    <line x1="-22" y1="0" x2="-16" y2="0" stroke="#00f5d4" stroke-width="1.5" />
+    <line x1="16" y1="0" x2="22" y2="0" stroke="#00f5d4" stroke-width="1.5" />
+
+    <!-- Visor Side Cyber Hinge -->
+    <rect x="23" y="-10" width="10" height="20" rx="4" fill="#070e1c" stroke="#00f5d4" stroke-width="1.5" />
+    
+    <!-- Floating Telemetry HUD Readout beside Monocle -->
+    <g transform="translate(36, -8)" font-family="'JetBrains Mono', monospace" font-size="7" font-weight="700" fill="#00f5d4">
+      <text x="0" y="0">ZOOM:1000X</text>
+      <text x="0" y="9" fill="#ffd166">0x8583</text>
+      <text x="0" y="18" fill="#38bdf8">CLK:4GHz</text>
+    </g>
+  </g>
+
+  <!-- Mischievous Fanged Smirk -->
+  <path d="M208 190 Q220 200 232 190" stroke="#070e1c" stroke-width="2.5" fill="none" stroke-linecap="round" />
+  <polygon points="212,191 214,198 217,191" fill="#ffffff" stroke="#070e1c" stroke-width="0.5" />
+  <polygon points="223,191 226,198 228,191" fill="#ffffff" stroke="#070e1c" stroke-width="0.5" />
+
+  <!-- Jiangshi Braid / Pigtail with Blue Band -->
+  <path d="M290 190 Q320 220 315 260" stroke="#060b16" stroke-width="8" stroke-linecap="round" fill="none" />
+  <circle cx="315" cy="260" r="5" fill="#00f5d4" />
+
+  <!-- 7. Official Qing Hat with Technical Gold Caliper Band -->
+  <g id="hat">
+    <!-- Hat Brim -->
+    <ellipse cx="220" cy="104" rx="95" ry="18" fill="#060b16" stroke="#00b4d8" stroke-width="2.5" />
+    <!-- Hat Dome -->
+    <path d="M155 102 C158 50, 282 50, 285 102 Z" fill="url(#hatGrad)" stroke="#00b4d8" stroke-width="2.5" />
+    
+    <!-- Hat Gold Circuit Band -->
+    <path d="M158 95 Q220 106 282 95" stroke="#ffd166" stroke-width="3.5" fill="none" />
+    
+    <!-- Hat Red Peak Top Dome (Infrared Optical Node) -->
+    <circle cx="220" cy="50" r="11" fill="#ff0054" filter="url(#neonGlow)" />
+    <circle cx="220" cy="50" r="4" fill="#ffffff" />
+    <path d="M 215 50 Q 220 36 225 50" stroke="#ffd166" stroke-width="2" fill="none" />
+  </g>
+
+  <!-- 8. THE ICONIC TRANSLUCENT HOLOGRAPHIC PCB TALISMAN (BÙA MẠCH IN) -->
+  <g id="holo-talisman" transform="translate(196, 85)" filter="url(#neonGlow)">
+    <!-- Translucent PCB Acrylic Ribbon fluttering down over forehead -->
+    <path d="M 0 0 L 48 0 L 44 110 L -4 110 Z" fill="url(#talismanPcb)" opacity="0.9" stroke="#ffffff" stroke-width="1.2" />
+    
+    <!-- Top Gold Fastener Pin -->
+    <circle cx="24" cy="6" r="4" fill="#ffd166" stroke="#060b16" stroke-width="1" />
+    
+    <!-- Etched Logic Gate Circuit Runes on Talisman -->
+    <!-- AND Gate Symbol -->
+    <g transform="translate(14, 20)" stroke="#060b16" stroke-width="1.8" fill="none">
+      <path d="M 0 0 L 10 0 C 18 0, 18 14, 10 14 L 0 14 Z" fill="rgba(6, 11, 22, 0.3)" />
+      <line x1="-4" y1="4" x2="0" y2="4" />
+      <line x1="-4" y1="10" x2="0" y2="10" />
+      <line x1="16" y1="7" x2="22" y2="7" />
+    </g>
+
+    <!-- Microchip Circuit Tracks -->
+    <g stroke="#060b16" stroke-width="1.5" fill="none" transform="translate(8, 42)">
+      <path d="M 4 0 L 4 12 L 14 18 L 14 28" />
+      <circle cx="4" cy="0" r="1.5" fill="#060b16" />
+      <circle cx="14" cy="28" r="1.5" fill="#060b16" />
+
+      <path d="M 28 0 L 28 10 L 18 18 L 18 28" />
+      <circle cx="28" cy="0" r="1.5" fill="#060b16" />
+      <circle cx="18" cy="28" r="1.5" fill="#060b16" />
+    </g>
+
+    <!-- Runes: "DECODE" in Bold Cyber Monospace -->
+    <text x="22" y="88" text-anchor="middle" font-size="8" font-family="'JetBrains Mono', monospace" font-weight="900" fill="#060b16" letter-spacing="1">DECODE</text>
+    <!-- Binary Stream -->
+    <text x="22" y="100" text-anchor="middle" font-size="6" font-family="'JetBrains Mono', monospace" font-weight="800" fill="#060b16">0101.8583</text>
+  </g>
+</svg>
