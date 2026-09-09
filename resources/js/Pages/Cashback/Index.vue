@@ -84,10 +84,24 @@ const filteredOrders = computed(() => {
   return props.orders;
 });
 
-// Client-side quick check
-const isShopeeUrl = (url: string) => {
-  const pattern = /^(https?:\/\/)?([a-zA-Z0-9_-]+\.)?(shopee\.vn|s\.shopee\.vn|shope\.ee|vn\.shp\.ee)(\/.*)?$/i;
-  return pattern.test(url.trim());
+// Client-side URL extractor supporting full URLs, shortlinks, or app share text
+const extractShopeeUrl = (text: string): string | null => {
+  const trimmed = text.trim();
+  const directPattern = /^(https?:\/\/)?([a-zA-Z0-9_-]+\.)?(shopee\.vn|s\.shopee\.vn|shope\.ee|vn\.shp\.ee)(\/.*)?$/i;
+  if (directPattern.test(trimmed)) {
+    return trimmed;
+  }
+  const match = trimmed.match(/(https?:\/\/[^\s]+|s\.shopee\.vn\/[^\s]+|shope\.ee\/[^\s]+|vn\.shp\.ee\/[^\s]+|shopee\.vn\/[^\s]+)/i);
+  return match ? match[0] : null;
+};
+
+// Robust CSRF token retrieval from meta tag or XSRF-TOKEN cookie
+const getCsrfToken = (): string => {
+  if (typeof document === 'undefined') return '';
+  const meta = document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement | null;
+  if (meta?.content) return meta.content;
+  const match = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
+  return match ? decodeURIComponent(match[1]) : '';
 };
 
 // Dynamic API endpoint resolution (subdomain / vs fallback path /hoantien)
@@ -99,28 +113,34 @@ const getApiEndpoint = (endpoint: string) => {
 // Submit Link Generator
 const handleGenerateLink = async () => {
   errorMessage.value = '';
-  const url = inputUrl.value.trim();
+  const rawInput = inputUrl.value.trim();
 
-  if (!url) {
+  if (!rawInput) {
     errorMessage.value = 'Vui lòng dán đường dẫn sản phẩm Shopee.';
     return;
   }
 
-  if (!isShopeeUrl(url)) {
+  const cleanUrl = extractShopeeUrl(rawInput);
+  if (!cleanUrl) {
     errorMessage.value = 'Đường dẫn không hợp lệ. Vui lòng dán link từ Shopee (shopee.vn, s.shopee.vn, shope.ee hoặc vn.shp.ee).';
     return;
   }
 
+  // Normalize input display with extracted clean URL
+  inputUrl.value = cleanUrl;
+
   isGenerating.value = true;
   try {
+    const csrfToken = getCsrfToken();
     const res = await fetch(getApiEndpoint('generate-link'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || '',
+        'X-CSRF-TOKEN': csrfToken,
+        'X-XSRF-TOKEN': csrfToken,
       },
-      body: JSON.stringify({ url }),
+      body: JSON.stringify({ url: cleanUrl }),
     });
 
     const data: GenerateLinkResponse = await res.json();

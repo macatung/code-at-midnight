@@ -56,28 +56,41 @@ class CashbackOrderSyncService
                 $subId = (string) $node['sub_id1'];
             }
 
+            // If sub_id omitted in subsequent status callbacks, match existing order sub_id
+            if (!$subId) {
+                $subId = CashbackOrder::where('shopee_order_id', $orderId)->value('sub_id');
+            }
+
             if (!$subId) {
                 continue;
             }
 
-            // Extract product name, gmv, commission
+            // Extract product name, image, gmv, commission
             $productName = $node['product_name'] ?? null;
+            $productImage = $node['product_image'] ?? $node['imageUrl'] ?? $node['image'] ?? null;
             $gmv = (float) ($node['gmv'] ?? 0);
-            $commission = (float) ($node['totalCommission'] ?? $node['commission'] ?? 0);
+            $commission = (float) ($node['totalCommission'] ?? $node['total_commission'] ?? $node['commission'] ?? 0);
 
             if (!empty($node['items']) && is_array($node['items'])) {
                 $firstItem = $node['items'][0] ?? [];
-                if (!$productName && !empty($firstItem['itemName'])) {
-                    $productName = $firstItem['itemName'];
+                $firstItemName = $firstItem['itemName'] ?? $firstItem['item_name'] ?? $firstItem['name'] ?? null;
+                if (!$productName && !empty($firstItemName)) {
+                    $productName = (string) $firstItemName;
+                    if (count($node['items']) > 1) {
+                        $productName .= ' (+' . (count($node['items']) - 1) . ' sp khác)';
+                    }
+                }
+                if (!$productImage) {
+                    $productImage = $firstItem['imageUrl'] ?? $firstItem['itemImage'] ?? $firstItem['item_image'] ?? $firstItem['image'] ?? null;
                 }
                 if ($gmv <= 0) {
                     foreach ($node['items'] as $item) {
-                        $gmv += (float) ($item['itemPrice'] ?? 0);
+                        $gmv += (float) ($item['itemPrice'] ?? $item['item_price'] ?? $item['price'] ?? 0);
                     }
                 }
                 if ($commission <= 0) {
                     foreach ($node['items'] as $item) {
-                        $commission += (float) ($item['itemCommission'] ?? 0);
+                        $commission += (float) ($item['itemCommission'] ?? $item['item_commission'] ?? $item['commission'] ?? 0);
                     }
                 }
             }
@@ -103,6 +116,7 @@ class CashbackOrderSyncService
                 'sub_id' => $subId,
                 'click_id' => $click?->id,
                 'product_name' => $productName ?: ('Sản phẩm Shopee #' . $orderId),
+                'product_image' => $productImage,
                 'gmv' => $gmv,
                 'commission_shopee' => $commission,
                 'status' => $node['orderStatus'] ?? $node['status'] ?? 'pending',

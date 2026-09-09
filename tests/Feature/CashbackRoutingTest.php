@@ -100,5 +100,34 @@ class CashbackRoutingTest extends TestCase
         $response->assertStatus(200);
         $response->assertInertia(fn (Assert $page) => $page->component('Cashback/Index'));
     }
+
+    /**
+     * Adversarial Test: HTML response contains CSRF token meta tag and Cashback Portal branding metadata.
+     */
+    public function test_subdomain_and_fallback_routes_include_csrf_token_meta_tag_and_cashback_metadata(): void
+    {
+        $response = $this->get('/hoantien');
+        $response->assertStatus(200);
+        $content = $response->getContent();
+
+        $this->assertStringContainsString('<meta name="csrf-token"', $content);
+        $this->assertStringContainsString('Cổng Hoàn Tiền Shopee', $content);
+    }
+
+    /**
+     * Adversarial Test: Subdomain /hoantien prefix routes for webhook and sync return 200 without 404.
+     */
+    public function test_subdomain_prefix_routes_for_webhook_and_sync_return_200(): void
+    {
+        $payload = ['orders' => []];
+
+        $resWebhook = $this->postJson('http://hoantien.localhost:8000/hoantien/webhook', $payload);
+        $resWebhook->assertStatus(200);
+        $this->assertTrue($resWebhook->json('success'));
+
+        $resSync = $this->postJson('http://hoantien.localhost:8000/hoantien/sync', []);
+        $resSync->assertStatus(200);
+        $this->assertTrue($resSync->json('success'));
+    }
 }
 

@@ -63,10 +63,41 @@ class ShopeeAffiliateService
     }
 
     /**
+     * Extract clean Shopee URL from raw user input text (e.g. shared from Shopee mobile app).
+     */
+    public static function extractShopeeUrl(string $text): ?string
+    {
+        $clean = trim($text);
+        if (empty($clean)) {
+            return null;
+        }
+
+        if (self::isValidShopeeUrl($clean)) {
+            return $clean;
+        }
+
+        // Extract URL pattern from mixed text (e.g. "Mua tai nghe https://s.shopee.vn/xyz ngay")
+        $pattern = '/(https?:\/\/[^\s]+|(?:[a-zA-Z0-9_-]+\.)?(?:shopee\.vn|s\.shopee\.vn|shope\.ee|vn\.shp\.ee)\/[^\s]+)/i';
+        if (preg_match($pattern, $clean, $matches)) {
+            $extracted = rtrim($matches[0], '.,;:!?)>"\'');
+            if (self::isValidShopeeUrl($extracted)) {
+                return $extracted;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Generate affiliate tracking short link with custom sub_id.
      */
     public function generateShortLink(string $originUrl, string $subId): string
     {
+        // Ensure originUrl has valid web scheme
+        if (!str_starts_with($originUrl, 'http://') && !str_starts_with($originUrl, 'https://')) {
+            $originUrl = 'https://' . $originUrl;
+        }
+
         if ($this->mockEnabled) {
             return $this->generateMockShortLink($originUrl, $subId);
         }

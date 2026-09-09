@@ -54,6 +54,7 @@ describe('CashbackSubdomainRoutingAndIntegrityTest (Shopee Cashback Module)', ()
     expect(code.includes('function verifySignature(')).toBe(true);
     expect(code.includes('function generateAuthHeader(')).toBe(true);
     expect(code.includes('function isValidShopeeUrl(')).toBe(true);
+    expect(code.includes('function extractShopeeUrl(')).toBe(true);
     expect(code.includes('function generateShortLink(')).toBe(true);
     expect(code.includes('function getConversionReport(')).toBe(true);
   });
@@ -80,6 +81,22 @@ describe('CashbackSubdomainRoutingAndIntegrityTest (Shopee Cashback Module)', ()
     expect(code.includes("'mock_enabled'")).toBe(true);
   });
 
+  it('[SCHEDULE_01] routes/console.php schedules cashback:sync-orders hourly', () => {
+    const consolePath = path.resolve(process.cwd(), 'routes/console.php');
+    expect(fs.existsSync(consolePath)).toBe(true);
+    const code = fs.readFileSync(consolePath, 'utf8');
+    expect(code.includes("cashback:sync-orders")).toBe(true);
+    expect(code.includes("hourly()")).toBe(true);
+  });
+
+  it('[SECURITY_01] bootstrap/app.php exempts webhook and sync from CSRF verification', () => {
+    const bootstrapAppPath = path.resolve(process.cwd(), 'bootstrap/app.php');
+    expect(fs.existsSync(bootstrapAppPath)).toBe(true);
+    const code = fs.readFileSync(bootstrapAppPath, 'utf8');
+    expect(code.includes('validateCsrfTokens')).toBe(true);
+    expect(code.includes('hoantien/webhook')).toBe(true);
+  });
+
   // ==========================================================================
   // TIER 3: FRONTEND COMPONENTS & TYPES
   // ==========================================================================
@@ -104,6 +121,8 @@ describe('CashbackSubdomainRoutingAndIntegrityTest (Shopee Cashback Module)', ()
     const indexCode = fs.readFileSync(indexPath, 'utf8');
     expect(indexCode.includes('handleGenerateLink')).toBe(true);
     expect(indexCode.includes('submitWithdrawal')).toBe(true);
+    expect(indexCode.includes('getCsrfToken')).toBe(true);
+    expect(indexCode.includes('extractShopeeUrl')).toBe(true);
     expect(indexCode.includes('Chờ Duyệt (Pending)')).toBe(true);
     expect(indexCode.includes('Khả Dụng (Available)')).toBe(true);
     expect(indexCode.includes('Đã Rút (Withdrawn)')).toBe(true);

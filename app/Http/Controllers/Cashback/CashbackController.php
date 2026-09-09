@@ -77,9 +77,10 @@ class CashbackController extends Controller
             'url.required' => 'Vui lòng nhập đường dẫn sản phẩm Shopee.',
         ]);
 
-        $url = trim($validated['url']);
+        $rawUrl = trim($validated['url']);
+        $cleanUrl = ShopeeAffiliateService::extractShopeeUrl($rawUrl);
 
-        if (!ShopeeAffiliateService::isValidShopeeUrl($url)) {
+        if (!$cleanUrl) {
             return response()->json([
                 'success' => false,
                 'message' => 'Đường dẫn không hợp lệ. Vui lòng dán link từ Shopee (shopee.vn, s.shopee.vn, shope.ee hoặc vn.shp.ee).',
@@ -87,14 +88,14 @@ class CashbackController extends Controller
         }
 
         $wallet = $this->walletService->getOrCreateWallet($request);
-        $shortLink = $this->shopeeService->generateShortLink($url, $wallet->sub_id);
-        $click = $this->walletService->recordClick($wallet, $url, $shortLink, $request);
+        $shortLink = $this->shopeeService->generateShortLink($cleanUrl, $wallet->sub_id);
+        $click = $this->walletService->recordClick($wallet, $cleanUrl, $shortLink, $request);
 
         return response()->json([
             'success' => true,
             'short_link' => $shortLink,
             'sub_id' => $wallet->sub_id,
-            'original_url' => $url,
+            'original_url' => $cleanUrl,
             'click_id' => $click->id,
             'message' => 'Tạo link hoàn tiền thành công! Hãy bấm mở Shopee và mua hàng để nhận hoàn tiền vào ví.',
         ]);
@@ -158,6 +159,37 @@ class CashbackController extends Controller
      */
     public function webhook(Request $request): JsonResponse
     {
+        $appId = (string) config('cashback.shopee.app_id', '');
+        $secret = (string) config('cashback.shopee.secret', '');
+        $mockEnabled = (bool) config('cashback.shopee.mock_enabled', true);
+
+        // Verify signature if live credentials configured
+        if (!$mockEnabled && !empty($appId) && !empty($secret)) {
+            $authHeader = (string) $request->header('Authorization', '');
+            $timestamp = (string) $request->header('Timestamp', $request->header('X-Shopee-Timestamp', ''));
+            $signature = (string) $request->header('Signature', $request->header('X-Shopee-Signature', ''));
+
+            if (preg_match('/Credential=([^,]+),\s*Timestamp=([^,]+),\s*Signature=([^,\s]+)/i', $authHeader, $matches)) {
+                $timestamp = $matches[2];
+                $signature = $matches[3];
+            }
+
+            if (empty($timestamp) || empty($signature)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Thiếu thông tin xác thực chữ ký Shopee.',
+                ], 401);
+            }
+
+            $isValid = ShopeeAffiliateService::verifySignature($appId, $secret, $timestamp, $request->getContent(), $signature);
+            if (!$isValid) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Chữ ký xác thực Shopee không hợp lệ.',
+                ], 401);
+            }
+        }
+
         $payload = $request->all();
 
         // If order list provided

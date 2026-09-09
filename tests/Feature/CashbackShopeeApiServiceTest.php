@@ -221,5 +221,192 @@ class CashbackShopeeApiServiceTest extends TestCase
         $order2 = $processed[1];
         $this->assertEquals('240909SHP_MS_2', $order2->shopee_order_id);
     }
+
+    /**
+     * Adversarial Test: Webhook POST request passes through HTTP kernel without CSRF token (no 419).
+     */
+    public function test_webhook_and_sync_endpoints_exempt_from_csrf_verification(): void
+    {
+        $wallet = CashbackWallet::create([
+            'sub_id' => 'mt_csrf_exempt_user',
+            'pending_balance' => 0.00,
+            'available_balance' => 0.00,
+            'status' => 'active',
+        ]);
+
+        $payload = json_encode([
+            'orders' => [
+                [
+                    'orderId' => 'CSRF_EXEMPT_001',
+                    'sub_id' => 'mt_csrf_exempt_user',
+                    'orderStatus' => 'COMPLETED',
+                    'totalCommission' => 10000,
+                    'gmv' => 100000,
+                ],
+            ],
+        ]);
+
+        // 1. Path route /hoantien/webhook
+        $req1 = \Illuminate\Http\Request::create('/hoantien/webhook', 'POST', [], [], [], [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_ACCEPT' => 'application/json',
+        ], $payload);
+        $res1 = app()->handle($req1);
+        $this->assertEquals(200, $res1->getStatusCode());
+
+        // 2. Subdomain route hoantien.macatung.dev/webhook
+        $req2 = \Illuminate\Http\Request::create('http://hoantien.macatung.dev/webhook', 'POST', [], [], [], [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_ACCEPT' => 'application/json',
+        ], $payload);
+        $res2 = app()->handle($req2);
+        $this->assertEquals(200, $res2->getStatusCode());
+    }
+
+    /**
+     * Adversarial Test: Webhook enforces Shopee signature authentication when credentials configured.
+     */
+    public function test_webhook_verifies_shopee_signature_when_live_credentials_are_configured(): void
+    {
+        config([
+            'cashback.shopee.app_id' => 'shopee_live_app',
+            'cashback.shopee.secret' => 'super_secret_shopee_key_123',
+            'cashback.shopee.mock_enabled' => false,
+        ]);
+
+        $wallet = CashbackWallet::create([
+            'sub_id' => 'mt_sig_user',
+            'pending_balance' => 0.00,
+            'available_balance' => 0.00,
+            'status' => 'active',
+        ]);
+
+        $body = json_encode([
+            'orders' => [
+                [
+                    'orderId' => 'AUTH_ORDER_01',
+                    'sub_id' => 'mt_sig_user',
+                    'orderStatus' => 'COMPLETED',
+                    'totalCommission' => 10000,
+                ],
+            ],
+        ]);
+
+        $timestamp = time();
+        $validSignature = ShopeeAffiliateService::generateSignature('shopee_live_app', 'super_secret_shopee_key_123', $timestamp, $body);
+
+        // 1. Tampered signature -> 401
+        $tamperedReq = \Illuminate\Http\Request::create('/hoantien/webhook', 'POST', [], [], [], [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_ACCEPT' => 'application/json',
+            'HTTP_AUTHORIZATION' => "SHA256 Credential=shopee_live_app, Timestamp={$timestamp}, Signature=tampered_sig_hash",
+        ], $body);
+        $tamperedRes = app()->handle($tamperedReq);
+        $this->assertEquals(401, $tamperedRes->getStatusCode());
+
+        // 2. Valid signature -> 200
+        $validReq = \Illuminate\Http\Request::create('/hoantien/webhook', 'POST', [], [], [], [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_ACCEPT' => 'application/json',
+            'HTTP_AUTHORIZATION' => "SHA256 Credential=shopee_live_app, Timestamp={$timestamp}, Signature={$validSignature}",
+        ], $body);
+        $validRes = app()->handle($validReq);
+        $this->assertEquals(200, $validRes->getStatusCode());
+    }
+
+    /**
+     * Adversarial Test: Order sync extracts product image and multi-item count summary.
+     */
+    public function test_order_sync_extracts_product_image_and_multi_item_summary(): void
+    {
+        $wallet = CashbackWallet::create([
+            'sub_id' => 'mt_multi_item_user',
+            'pending_balance' => 0.00,
+            'available_balance' => 0.00,
+            'status' => 'active',
+        ]);
+
+        $nodes = [
+            [
+                'orderId' => 'MULTI_ITEM_ORDER_01',
+                'sub_id' => 'mt_multi_item_user',
+                'orderStatus' => 'COMPLETED',
+                'items' => [
+                    [
+                        'itemName' => 'Bàn phím không dây cơ',
+                        'itemPrice' => 500000,
+                        'itemCommission' => 30000,
+                        'imageUrl' => 'https://cf.shopee.vn/file/keyboard.jpg',
+                    ],
+                    [
+                        'itemName' => 'Chuột Gaming RGB',
+                        'itemPrice' => 250000,
+                        'itemCommission' => 15000,
+                        'imageUrl' => 'https://cf.shopee.vn/file/mouse.jpg',
+                    ],
+                ],
+            ],
+        ];
+
+        $syncService = app(CashbackOrderSyncService::class);
+        $processed = $syncService->processReportNodes($nodes);
+
+        $this->assertCount(1, $processed);
+        $order = $processed[0];
+        $this->assertEquals('https://cf.shopee.vn/file/keyboard.jpg', $order->product_image);
+        $this->assertStringContainsString('Bàn phím không dây cơ', $order->product_name);
+        $this->assertStringContainsString('+1 sp khác', $order->product_name);
+        $this->assertEquals(750000, $order->gmv);
+        $this->assertEquals(45000, $order->commission_shopee);
+    }
+
+    /**
+     * Adversarial Test: Subsequent settlement report omitting sub_id still updates the order correctly.
+     */
+    public function test_order_sync_updates_status_even_when_sub_id_is_omitted_in_subsequent_report(): void
+    {
+        $wallet = CashbackWallet::create([
+            'sub_id' => 'mt_no_sub_callback',
+            'pending_balance' => 0.00,
+            'available_balance' => 0.00,
+            'status' => 'active',
+        ]);
+
+        $syncService = app(CashbackOrderSyncService::class);
+
+        // 1. Initial report with sub_id
+        $syncService->processReportNodes([
+            [
+                'orderId' => 'NO_SUB_CALLBACK_01',
+                'sub_id' => 'mt_no_sub_callback',
+                'orderStatus' => 'PENDING',
+                'totalCommission' => 50000,
+                'gmv' => 600000,
+                'product_name' => 'Màn hình 27 inch 4K',
+            ],
+        ]);
+
+        $wallet->refresh();
+        $this->assertEquals(40000.00, $wallet->pending_balance);
+        $this->assertEquals(0.00, $wallet->available_balance);
+
+        // 2. Shopee callback confirms order but omits sub_id
+        $syncService->processReportNodes([
+            [
+                'orderId' => 'NO_SUB_CALLBACK_01',
+                // sub_id is intentionally omitted
+                'orderStatus' => 'COMPLETED',
+                'totalCommission' => 50000,
+                'gmv' => 600000,
+            ],
+        ]);
+
+        $wallet->refresh();
+        $this->assertEquals(0.00, $wallet->pending_balance);
+        $this->assertEquals(40000.00, $wallet->available_balance);
+
+        $order = CashbackOrder::where('shopee_order_id', 'NO_SUB_CALLBACK_01')->first();
+        $this->assertEquals('confirmed', $order->status);
+    }
 }
 

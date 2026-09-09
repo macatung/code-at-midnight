@@ -118,4 +118,32 @@ class CashbackTrackingAndLinkTest extends TestCase
         $response->assertStatus(200);
         $this->assertTrue($response->json('success'));
     }
+
+    /**
+     * Adversarial Test: Pasting Shopee app share message with surrounding promo text extracts clean URL.
+     */
+    public function test_generate_link_extracts_shopee_url_from_app_share_text(): void
+    {
+        $rawShareText = 'Mua Bàn Phím Cơ Không Dây trên Shopee ngay! https://s.shopee.vn/7f8a9b (Áp mã giảm 20k)';
+
+        $response = $this->postJson('/hoantien/generate-link', [
+            'url' => $rawShareText,
+        ]);
+
+        $response->assertStatus(200);
+        $this->assertTrue($response->json('success'));
+        $this->assertEquals('https://s.shopee.vn/7f8a9b', $response->json('original_url'));
+    }
+
+    /**
+     * Adversarial Test: extractShopeeUrl handles multiple variations and rejects pure invalid text.
+     */
+    public function test_extract_shopee_url_helper_variations(): void
+    {
+        $this->assertEquals('https://s.shopee.vn/xyz123', ShopeeAffiliateService::extractShopeeUrl('Check this out https://s.shopee.vn/xyz123!'));
+        $this->assertEquals('https://shopee.vn/product/12/34', ShopeeAffiliateService::extractShopeeUrl('Mua ngay https://shopee.vn/product/12/34.'));
+        $this->assertEquals('https://shope.ee/short1', ShopeeAffiliateService::extractShopeeUrl('https://shope.ee/short1'));
+        $this->assertNull(ShopeeAffiliateService::extractShopeeUrl('Không có link nào ở đây'));
+        $this->assertNull(ShopeeAffiliateService::extractShopeeUrl('https://tiki.vn/san-pham-123'));
+    }
 }

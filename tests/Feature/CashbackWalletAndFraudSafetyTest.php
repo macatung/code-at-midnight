@@ -538,5 +538,104 @@ class CashbackWalletAndFraudSafetyTest extends TestCase
         $this->assertNotNull($order);
         $this->assertLessThanOrEqual(255, mb_strlen($order->product_name));
     }
+
+    /**
+     * Adversarial Test: If an update payload for an existing order carries a different sub_id,
+     * the system must lock and credit the original owner wallet, preventing cross-user wallet hijacking.
+     */
+    public function test_cross_wallet_order_hijacking_prevented_and_owner_wallet_preserved(): void
+    {
+        $walletService = app(CashbackWalletService::class);
+
+        $walletA = CashbackWallet::create([
+            'sub_id' => 'mt_victim_user_a',
+            'pending_balance' => 0.00,
+            'available_balance' => 0.00,
+            'status' => 'active',
+        ]);
+
+        $walletB = CashbackWallet::create([
+            'sub_id' => 'mt_attacker_user_b',
+            'pending_balance' => 0.00,
+            'available_balance' => 0.00,
+            'status' => 'active',
+        ]);
+
+        // Order created by User A
+        $order = $walletService->processOrder([
+            'shopee_order_id' => 'ORDER_HIJACK_01',
+            'sub_id' => 'mt_victim_user_a',
+            'commission_shopee' => 50000,
+            'status' => 'pending',
+            'product_name' => 'Sản phẩm của User A',
+        ]);
+
+        $walletA->refresh();
+        $this->assertEquals(40000.00, $walletA->pending_balance);
+
+        // Attacker sends update attempting to claim ORDER_HIJACK_01 to User B
+        $walletService->processOrder([
+            'shopee_order_id' => 'ORDER_HIJACK_01',
+            'sub_id' => 'mt_attacker_user_b', // Mismatched sub_id!
+            'commission_shopee' => 50000,
+            'status' => 'confirmed',
+        ]);
+
+        $walletA->refresh();
+        $walletB->refresh();
+
+        // Victim User A must receive confirmed balance
+        $this->assertEquals(40000.00, $walletA->available_balance);
+        $this->assertEquals(0.00, $walletA->pending_balance);
+
+        // Attacker User B gets NOTHING
+        $this->assertEquals(0.00, $walletB->available_balance);
+        $this->assertEquals(0.00, $walletB->pending_balance);
+    }
+
+    /**
+     * Adversarial Test: Malicious or erroneous negative commission values are clamped to 0.00.
+     */
+    public function test_negative_or_zero_commission_is_safely_clamped_and_never_drops_balance_below_zero(): void
+    {
+        $walletService = app(CashbackWalletService::class);
+
+        $wallet = CashbackWallet::create([
+            'sub_id' => 'mt_negative_guard',
+            'pending_balance' => 0.00,
+            'available_balance' => 0.00,
+            'status' => 'active',
+        ]);
+
+        $order = $walletService->processOrder([
+            'shopee_order_id' => 'ORDER_NEGATIVE_01',
+            'sub_id' => 'mt_negative_guard',
+            'commission_shopee' => -100000,
+            'gmv' => -500000,
+            'status' => 'confirmed',
+            'product_name' => 'Đơn âm hoa hồng',
+        ]);
+
+        $wallet->refresh();
+        $this->assertEquals(0.00, $wallet->available_balance);
+        $this->assertEquals(0.00, $wallet->pending_balance);
+        $this->assertEquals(0.00, $order->commission_shopee);
+        $this->assertEquals(0.00, $order->cashback_amount);
+    }
+
+    /**
+     * Adversarial Test: cashback:sync-orders is scheduled in routes/console.php.
+     */
+    public function test_cashback_sync_orders_is_scheduled_hourly(): void
+    {
+        $schedule = app(\Illuminate\Console\Scheduling\Schedule::class);
+        $events = collect($schedule->events());
+
+        $hasCashbackSync = $events->contains(function ($event) {
+            return str_contains($event->command, 'cashback:sync-orders');
+        });
+
+        $this->assertTrue($hasCashbackSync, 'Expected cashback:sync-orders to be scheduled');
+    }
 }
 

@@ -124,6 +124,8 @@ if ($localSubdomain !== $prodSubdomain) {
         Route::get('/hoantien', [CashbackController::class, 'index']);
         Route::post('/hoantien/generate-link', [CashbackController::class, 'generateLink']);
         Route::post('/hoantien/withdraw', [CashbackController::class, 'withdraw']);
+        Route::post('/hoantien/webhook', [CashbackController::class, 'webhook']);
+        Route::post('/hoantien/sync', [CashbackController::class, 'sync']);
     });
 }
 
@@ -138,6 +140,8 @@ Route::domain($prodSubdomain)->group(function () {
     Route::get('/hoantien', [CashbackController::class, 'index']);
     Route::post('/hoantien/generate-link', [CashbackController::class, 'generateLink']);
     Route::post('/hoantien/withdraw', [CashbackController::class, 'withdraw']);
+    Route::post('/hoantien/webhook', [CashbackController::class, 'webhook']);
+    Route::post('/hoantien/sync', [CashbackController::class, 'sync']);
 });
 
 // 6. Shopee Cashback Path-based Fallback Routes (Available on main domain /hoantien/* & local dev)

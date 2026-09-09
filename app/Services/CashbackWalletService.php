@@ -101,10 +101,15 @@ class CashbackWalletService
             $shopeeOrderId = (string) $orderData['shopee_order_id'];
             $existingOrder = CashbackOrder::where('shopee_order_id', $shopeeOrderId)->lockForUpdate()->first();
 
-            $commission = (float) ($orderData['commission_shopee'] ?? 0);
-            $gmv = (float) ($orderData['gmv'] ?? 0);
-            $rate = (float) ($orderData['cashback_rate'] ?? config('cashback.rate', 0.80));
-            $cashbackAmount = round($commission * $rate, 2);
+            // Re-bind and lock correct wallet if existing order belongs to a different wallet row
+            if ($existingOrder && $existingOrder->wallet_id !== $wallet->id) {
+                $wallet = CashbackWallet::where('id', $existingOrder->wallet_id)->lockForUpdate()->firstOrFail();
+            }
+
+            $commission = max(0.0, (float) ($orderData['commission_shopee'] ?? 0));
+            $gmv = max(0.0, (float) ($orderData['gmv'] ?? 0));
+            $rate = max(0.0, min(1.0, (float) ($orderData['cashback_rate'] ?? config('cashback.rate', 0.80))));
+            $cashbackAmount = max(0.0, round($commission * $rate, 2));
             $rawStatus = strtolower(trim((string) ($orderData['status'] ?? 'pending')));
 
             // Normalize status to: pending, confirmed, cancelled, refunded
@@ -144,7 +149,7 @@ class CashbackWalletService
                 ]);
 
                 if ($status === 'pending') {
-                    $wallet->pending_balance = round($wallet->pending_balance + $cashbackAmount, 2);
+                    $wallet->pending_balance = max(0.00, round($wallet->pending_balance + $cashbackAmount, 2));
                     $wallet->save();
 
                     CashbackLedger::create([
@@ -157,7 +162,7 @@ class CashbackWalletService
                         'description' => 'Ghi nhận đơn hàng Shopee #' . $shopeeOrderId . ' (Chờ đối soát)',
                     ]);
                 } elseif ($status === 'confirmed') {
-                    $wallet->available_balance = round($wallet->available_balance + $cashbackAmount, 2);
+                    $wallet->available_balance = max(0.00, round($wallet->available_balance + $cashbackAmount, 2));
                     $wallet->save();
 
                     CashbackLedger::create([
@@ -320,6 +325,9 @@ class CashbackWalletService
             $existingOrder->gmv = $gmv;
             $existingOrder->cashback_rate = $rate;
             $existingOrder->product_name = $productName;
+            if (!empty($orderData['product_image'])) {
+                $existingOrder->product_image = $orderData['product_image'];
+            }
             if (!empty($orderData['raw_data'])) {
                 $existingOrder->raw_data = $orderData['raw_data'];
             }

@@ -22,6 +22,13 @@ return Application::configure(basePath: dirname(__DIR__))
             TrackVisitorAnalytics::class,
         ]);
 
+        $middleware->validateCsrfTokens(except: [
+            'hoantien/webhook',
+            'webhook',
+            'hoantien/sync',
+            'sync',
+        ]);
+
         $middleware->alias([
             'admin.auth' => AdminAuthMiddleware::class,
         ]);

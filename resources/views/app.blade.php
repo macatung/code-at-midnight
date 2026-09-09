@@ -5,11 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    
     @php
         $baseDomain = config('app.base_domain', 'macatung.dev');
         $host = request()->getHost();
         $isTheravadaSubdomain = str_starts_with($host, 'theravada.');
         $isTheravadaSite = $isTheravadaSubdomain || request()->is('theravada*');
+        $isCashbackSubdomain = str_starts_with($host, 'hoantien.');
+        $isCashbackSite = $isCashbackSubdomain || request()->is('hoantien*');
 
         if ($isTheravadaSite) {
             $siteUrl = 'https://theravada.' . $baseDomain;
@@ -22,6 +26,17 @@
             $authorName = 'Ma Tọa Thiền • Theravāda';
             $ogImage = $siteUrl . '/brand/theravada/og-theravada-1200x630.jpg';
             $themeColor = '#0c0a09';
+        } elseif ($isCashbackSite) {
+            $siteUrl = 'https://hoantien.' . $baseDomain;
+            $canonicalUrl = $isCashbackSubdomain
+                ? request()->url()
+                : $siteUrl . (request()->path() === 'hoantien' ? '' : '/' . preg_replace('#^hoantien/#', '', request()->path()));
+            $siteName = 'Cổng Hoàn Tiền Shopee • MacaTung';
+            $pageTitle = 'Cổng Hoàn Tiền Shopee — Tích Lũy Tới 80% Hoa Hồng | MacaTung';
+            $pageDescription = 'Hệ thống hoàn tiền Shopee Affiliate tự động. Dán link sản phẩm Shopee, mua hàng và nhận hoàn tiền trực tiếp vào tài khoản ngân hàng.';
+            $authorName = 'MacaTung (macatung.dev)';
+            $ogImage = $siteUrl . '/brand/macatung-logo-horizontal.png';
+            $themeColor = '#0f172a';
         } else {
             $siteUrl = 'https://' . $baseDomain;
             $canonicalUrl = request()->url();
