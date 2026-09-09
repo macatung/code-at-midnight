@@ -190,14 +190,7 @@ class CashbackController extends Controller
             }
         }
 
-        $payload = $request->all();
-
-        // If order list provided
-        $orders = $payload['orders'] ?? $payload['data'] ?? [$payload];
-        if (!is_array($orders)) {
-            $orders = [$orders];
-        }
-
+        $orders = CashbackOrderSyncService::extractOrderNodes($request->all());
         $processed = $this->syncService->processReportNodes($orders);
 
         return response()->json([

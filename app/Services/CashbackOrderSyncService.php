@@ -28,13 +28,73 @@ class CashbackOrderSyncService
     }
 
     /**
+     * Extract and normalize order nodes from diverse API/Webhook payload formats.
+     */
+    public static function extractOrderNodes(mixed $payload): array
+    {
+        if (!is_array($payload) || empty($payload)) {
+            return [];
+        }
+
+        // 1. GraphQL structure: payload.data.conversionReport.nodes
+        if (isset($payload['data']['conversionReport']['nodes']) && is_array($payload['data']['conversionReport']['nodes'])) {
+            return $payload['data']['conversionReport']['nodes'];
+        }
+
+        // 2. GraphQL / API nodes: payload.data.nodes or payload.nodes
+        if (isset($payload['data']['nodes']) && is_array($payload['data']['nodes'])) {
+            return $payload['data']['nodes'];
+        }
+        if (isset($payload['nodes']) && is_array($payload['nodes'])) {
+            return $payload['nodes'];
+        }
+
+        // 3. payload.data could be a single order object or an array of orders
+        if (isset($payload['data']) && is_array($payload['data'])) {
+            if (isset($payload['data']['orderId']) || isset($payload['data']['order_id'])) {
+                return [$payload['data']];
+            }
+            if (array_is_list($payload['data']) || isset($payload['data'][0])) {
+                return $payload['data'];
+            }
+        }
+
+        // 4. payload.orders could be an array of orders or a single order object
+        if (isset($payload['orders']) && is_array($payload['orders'])) {
+            if (isset($payload['orders']['orderId']) || isset($payload['orders']['order_id'])) {
+                return [$payload['orders']];
+            }
+            if (array_is_list($payload['orders']) || isset($payload['orders'][0])) {
+                return $payload['orders'];
+            }
+        }
+
+        // 5. Direct single order object: payload.orderId or payload.order_id
+        if (isset($payload['orderId']) || isset($payload['order_id'])) {
+            return [$payload];
+        }
+
+        // 6. Plain list of order objects: [ {orderId: ...}, {orderId: ...} ]
+        if (array_is_list($payload)) {
+            return $payload;
+        }
+
+        return [$payload];
+    }
+
+    /**
      * Process list of order nodes from API or Webhook payload.
      */
     public function processReportNodes(array $nodes): array
     {
+        $nodes = self::extractOrderNodes($nodes);
         $processed = [];
 
         foreach ($nodes as $node) {
+            if (!is_array($node)) {
+                continue;
+            }
+
             $orderId = (string) ($node['orderId'] ?? $node['order_id'] ?? '');
             if (!$orderId) {
                 continue;
@@ -73,24 +133,30 @@ class CashbackOrderSyncService
 
             if (!empty($node['items']) && is_array($node['items'])) {
                 $firstItem = $node['items'][0] ?? [];
-                $firstItemName = $firstItem['itemName'] ?? $firstItem['item_name'] ?? $firstItem['name'] ?? null;
-                if (!$productName && !empty($firstItemName)) {
-                    $productName = (string) $firstItemName;
-                    if (count($node['items']) > 1) {
-                        $productName .= ' (+' . (count($node['items']) - 1) . ' sp khác)';
+                if (is_array($firstItem)) {
+                    $firstItemName = $firstItem['itemName'] ?? $firstItem['item_name'] ?? $firstItem['name'] ?? null;
+                    if (!$productName && !empty($firstItemName)) {
+                        $productName = (string) $firstItemName;
+                        if (count($node['items']) > 1) {
+                            $productName .= ' (+' . (count($node['items']) - 1) . ' sp khác)';
+                        }
                     }
-                }
-                if (!$productImage) {
-                    $productImage = $firstItem['imageUrl'] ?? $firstItem['itemImage'] ?? $firstItem['item_image'] ?? $firstItem['image'] ?? null;
+                    if (!$productImage) {
+                        $productImage = $firstItem['imageUrl'] ?? $firstItem['itemImage'] ?? $firstItem['item_image'] ?? $firstItem['image'] ?? null;
+                    }
                 }
                 if ($gmv <= 0) {
                     foreach ($node['items'] as $item) {
-                        $gmv += (float) ($item['itemPrice'] ?? $item['item_price'] ?? $item['price'] ?? 0);
+                        if (is_array($item)) {
+                            $gmv += (float) ($item['itemPrice'] ?? $item['item_price'] ?? $item['price'] ?? 0);
+                        }
                     }
                 }
                 if ($commission <= 0) {
                     foreach ($node['items'] as $item) {
-                        $commission += (float) ($item['itemCommission'] ?? $item['item_commission'] ?? $item['commission'] ?? 0);
+                        if (is_array($item)) {
+                            $commission += (float) ($item['itemCommission'] ?? $item['item_commission'] ?? $item['commission'] ?? 0);
+                        }
                     }
                 }
             }

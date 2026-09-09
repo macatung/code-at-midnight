@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\CashbackWallet;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -58,7 +59,7 @@ class ShopeeAffiliateService
         }
 
         // Support formats: https://shopee.vn/..., https://s.shopee.vn/..., https://shope.ee/..., vn.shp.ee/...
-        $pattern = '/^(https?:\/\/)?([a-zA-Z0-9_-]+\.)?(shopee\.vn|s\.shopee\.vn|shope\.ee|vn\.shp\.ee)(\/.*)?$/i';
+        $pattern = '/^(https?:\/\/)?([a-zA-Z0-9_-]+\.)?(shopee\.vn|s\.shopee\.vn|shope\.ee|vn\.shp\.ee)([\/?].*)?$/i';
         return (bool) preg_match($pattern, $clean);
     }
 
@@ -227,11 +228,15 @@ GRAPHQL;
      */
     public function getMockConversionReport(int $startTime, int $endTime): array
     {
+        $demoSubId = CashbackWallet::where('sub_id', 'mt_demo')->value('sub_id')
+            ?? CashbackWallet::latest()->value('sub_id')
+            ?? 'mt_demo';
+
         return [
             [
                 'orderId' => '240909SHP' . rand(100000, 999999),
                 'purchaseTime' => time() - 3600,
-                'subIds' => ['mt_demo'],
+                'subIds' => [$demoSubId],
                 'orderStatus' => 'COMPLETED',
                 'totalCommission' => 45000,
                 'items' => [

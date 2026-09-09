@@ -72,6 +72,14 @@ describe('CashbackSubdomainRoutingAndIntegrityTest (Shopee Cashback Module)', ()
     expect(code.includes('max(0.00')).toBe(true);
   });
 
+  it('[SERVICE_03] CashbackOrderSyncService implements extractOrderNodes to normalize nested/single payload formats', () => {
+    expect(fs.existsSync(syncServicePath)).toBe(true);
+    const code = fs.readFileSync(syncServicePath, 'utf8');
+    expect(code.includes('function extractOrderNodes(')).toBe(true);
+    expect(code.includes('conversionReport')).toBe(true);
+    expect(code.includes('function processReportNodes(')).toBe(true);
+  });
+
   it('[CONFIG_01] config/cashback.php defines rate, min_withdrawal and shopee api configs', () => {
     expect(fs.existsSync(configPath)).toBe(true);
     const code = fs.readFileSync(configPath, 'utf8');

@@ -30,8 +30,9 @@ const formatVND = (num: number) => {
 
 const isSubdomain = typeof window !== 'undefined' && window.location.hostname.startsWith('hoantien.');
 const homeUrl = isSubdomain ? '/' : '/hoantien';
+const port = typeof window !== 'undefined' && window.location.port ? `:${window.location.port}` : '';
 const mainPortfolioUrl = isSubdomain
-  ? (window.location.hostname.includes('localhost') ? `${window.location.protocol}//localhost:8000` : 'https://macatung.dev')
+  ? (typeof window !== 'undefined' && window.location.hostname.includes('localhost') ? `${window.location.protocol}//localhost${port}` : 'https://macatung.dev')
   : '/';
 </script>
 

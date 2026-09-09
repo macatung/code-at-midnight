@@ -637,5 +637,88 @@ class CashbackWalletAndFraudSafetyTest extends TestCase
 
         $this->assertTrue($hasCashbackSync, 'Expected cashback:sync-orders to be scheduled');
     }
+
+    /**
+     * Adversarial Test: Directly calling processOrder on an existing order without providing sub_id
+     * still updates the order and credits the owner wallet.
+     */
+    public function test_existing_order_update_without_sub_id_updates_order_and_credits_owner_wallet(): void
+    {
+        $walletService = app(CashbackWalletService::class);
+
+        $wallet = CashbackWallet::create([
+            'sub_id' => 'mt_no_sub_direct_user',
+            'pending_balance' => 0.00,
+            'available_balance' => 0.00,
+            'status' => 'active',
+        ]);
+
+        // 1. Initial pending order
+        $order = $walletService->processOrder([
+            'shopee_order_id' => 'ORDER_NO_SUB_DIRECT_01',
+            'sub_id' => 'mt_no_sub_direct_user',
+            'commission_shopee' => 50000,
+            'status' => 'pending',
+            'product_name' => 'Sản phẩm thử nghiệm',
+        ]);
+
+        $this->assertNotNull($order);
+        $wallet->refresh();
+        $this->assertEquals(40000.00, $wallet->pending_balance);
+
+        // 2. Shopee callback updates order to confirmed, but omits sub_id completely
+        $updatedOrder = $walletService->processOrder([
+            'shopee_order_id' => 'ORDER_NO_SUB_DIRECT_01',
+            // No sub_id provided!
+            'commission_shopee' => 50000,
+            'status' => 'confirmed',
+        ]);
+
+        $this->assertNotNull($updatedOrder);
+        $this->assertEquals('confirmed', $updatedOrder->status);
+
+        $wallet->refresh();
+        $this->assertEquals(0.00, $wallet->pending_balance);
+        $this->assertEquals(40000.00, $wallet->available_balance);
+    }
+
+    /**
+     * Adversarial Test: Shopee products with extremely long product_image (>500 chars) do not fail DB insertion.
+     */
+    public function test_extremely_long_product_image_url_is_safely_truncated(): void
+    {
+        $walletService = app(CashbackWalletService::class);
+
+        $wallet = CashbackWallet::create([
+            'sub_id' => 'mt_long_img_user',
+            'pending_balance' => 0.00,
+            'available_balance' => 0.00,
+            'status' => 'active',
+        ]);
+
+        $longImage = 'https://cf.shopee.vn/file/' . str_repeat('image_token_query_param_', 30) . '.jpg'; // ~750 chars
+
+        $order = $walletService->processOrder([
+            'shopee_order_id' => 'ORDER_LONG_IMG_01',
+            'sub_id' => 'mt_long_img_user',
+            'commission_shopee' => 50000,
+            'status' => 'pending',
+            'product_image' => $longImage,
+        ]);
+
+        $this->assertNotNull($order);
+        $this->assertLessThanOrEqual(500, mb_strlen($order->product_image));
+
+        // Also test update with long image
+        $updatedOrder = $walletService->processOrder([
+            'shopee_order_id' => 'ORDER_LONG_IMG_01',
+            'status' => 'confirmed',
+            'commission_shopee' => 50000,
+            'product_image' => $longImage . '_updated',
+        ]);
+
+        $this->assertNotNull($updatedOrder);
+        $this->assertLessThanOrEqual(500, mb_strlen($updatedOrder->product_image));
+    }
 }
 

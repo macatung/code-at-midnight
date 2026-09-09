@@ -197,6 +197,15 @@ const copyItemLink = async (id: number, link: string) => {
   }
 };
 
+// Open Withdrawal Modal with fresh balance & clean errors
+const openWithdrawModal = () => {
+  withdrawForm.clearErrors();
+  withdrawForm.amount = props.wallet.available_balance >= props.stats.min_withdrawal
+    ? Math.min(50000, props.wallet.available_balance)
+    : 0;
+  showWithdrawModal.value = true;
+};
+
 // Set preset amount for withdrawal
 const setWithdrawAmount = (amt: number) => {
   withdrawForm.amount = Math.min(amt, props.wallet.available_balance);
@@ -367,7 +376,7 @@ const submitWithdrawal = () => {
           <div class="mt-4 pt-4 border-t border-slate-800/80 flex items-center justify-between">
             <span class="text-xs text-slate-400">Tối thiểu: {{ formatVND(stats.min_withdrawal) }}</span>
             <button
-              @click="showWithdrawModal = true"
+              @click="openWithdrawModal"
               :disabled="wallet.available_balance < stats.min_withdrawal"
               class="px-4 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 disabled:bg-slate-800 text-white disabled:text-slate-500 text-xs font-bold transition-all disabled:cursor-not-allowed shadow-md shadow-emerald-500/20"
             >

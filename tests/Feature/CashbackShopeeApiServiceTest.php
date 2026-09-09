@@ -408,5 +408,86 @@ class CashbackShopeeApiServiceTest extends TestCase
         $order = CashbackOrder::where('shopee_order_id', 'NO_SUB_CALLBACK_01')->first();
         $this->assertEquals('confirmed', $order->status);
     }
+
+    /**
+     * Adversarial Test: Webhook handles single data object dict and nested GraphQL envelopes without dropping orders.
+     */
+    public function test_webhook_handles_nested_data_object_and_graphql_conversion_report_nodes(): void
+    {
+        $wallet = CashbackWallet::create([
+            'sub_id' => 'mt_nested_envelope_user',
+            'pending_balance' => 0.00,
+            'available_balance' => 0.00,
+            'status' => 'active',
+        ]);
+
+        // 1. Single order object nested under "data"
+        $payloadSingle = [
+            'data' => [
+                'orderId' => 'NESTED_OBJ_999',
+                'sub_id' => 'mt_nested_envelope_user',
+                'orderStatus' => 'COMPLETED',
+                'totalCommission' => 50000,
+                'gmv' => 500000,
+                'product_name' => 'Sản phẩm dạng single data object',
+            ],
+        ];
+
+        $res1 = $this->postJson('/hoantien/webhook', $payloadSingle);
+        $res1->assertStatus(200);
+        $this->assertTrue($res1->json('success'));
+        $this->assertEquals(1, $res1->json('processed_count'));
+
+        $wallet->refresh();
+        $this->assertEquals(40000.00, $wallet->available_balance);
+
+        // 2. Full GraphQL response envelope: data.conversionReport.nodes
+        $payloadGql = [
+            'data' => [
+                'conversionReport' => [
+                    'nodes' => [
+                        [
+                            'orderId' => 'GQL_ENVELOPE_888',
+                            'subIds' => ['mt_nested_envelope_user'],
+                            'orderStatus' => 'COMPLETED',
+                            'totalCommission' => 30000,
+                            'gmv' => 300000,
+                            'product_name' => 'Sản phẩm dạng GraphQL nodes',
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $res2 = $this->postJson('/hoantien/webhook', $payloadGql);
+        $res2->assertStatus(200);
+        $this->assertTrue($res2->json('success'));
+        $this->assertEquals(1, $res2->json('processed_count'));
+
+        $wallet->refresh();
+        // 40,000 + (30,000 * 0.8) = 64,000
+        $this->assertEquals(64000.00, $wallet->available_balance);
+    }
+
+    /**
+     * Adversarial Test: Mock sync command dynamically finds and updates active wallet if mt_demo is absent.
+     */
+    public function test_mock_sync_dynamically_resolves_active_wallet_when_demo_not_found(): void
+    {
+        // Create user wallet with random sub_id
+        $wallet = CashbackWallet::create([
+            'sub_id' => 'mt_dynamic_active_user',
+            'pending_balance' => 0.00,
+            'available_balance' => 0.00,
+            'status' => 'active',
+        ]);
+
+        $syncService = app(CashbackOrderSyncService::class);
+        $orders = $syncService->syncFromShopee();
+
+        $this->assertNotEmpty($orders);
+        $wallet->refresh();
+        $this->assertGreaterThan(0.00, $wallet->available_balance);
+    }
 }
 

@@ -35,7 +35,7 @@ class CashbackWalletService
         }
 
         // Guest session / cookie handling
-        $subId = $request->session()->get('cashback_sub_id') ?? $request->cookie('cashback_sub_id');
+        $subId = ($request->hasSession() ? $request->session()->get('cashback_sub_id') : null) ?? $request->cookie('cashback_sub_id');
 
         if ($subId) {
             $wallet = CashbackWallet::where('sub_id', $subId)->first();
@@ -47,7 +47,7 @@ class CashbackWalletService
         // Create new guest wallet
         $newSubId = 'mt_s_' . Str::lower(Str::random(8));
         $wallet = CashbackWallet::create([
-            'session_id' => $request->session()->getId(),
+            'session_id' => $request->hasSession() ? $request->session()->getId() : null,
             'sub_id' => $newSubId,
             'pending_balance' => 0.00,
             'available_balance' => 0.00,
@@ -55,7 +55,9 @@ class CashbackWalletService
             'status' => 'active',
         ]);
 
-        $request->session()->put('cashback_sub_id', $newSubId);
+        if ($request->hasSession()) {
+            $request->session()->put('cashback_sub_id', $newSubId);
+        }
         cookie()->queue('cashback_sub_id', $newSubId, 60 * 24 * 365);
         return $wallet;
     }
@@ -84,26 +86,28 @@ class CashbackWalletService
      */
     public function processOrder(array $orderData): ?CashbackOrder
     {
-        $subId = $orderData['sub_id'] ?? null;
-        if (!$subId) {
+        $shopeeOrderId = isset($orderData['shopee_order_id']) ? trim((string) $orderData['shopee_order_id']) : '';
+        if (!$shopeeOrderId) {
             return null;
         }
 
-        $wallet = CashbackWallet::where('sub_id', $subId)->first();
-        if (!$wallet) {
-            return null;
-        }
-
-        return DB::transaction(function () use ($wallet, $orderData) {
-            // Lock wallet row
-            $wallet = CashbackWallet::where('id', $wallet->id)->lockForUpdate()->firstOrFail();
-
-            $shopeeOrderId = (string) $orderData['shopee_order_id'];
+        return DB::transaction(function () use ($shopeeOrderId, $orderData) {
             $existingOrder = CashbackOrder::where('shopee_order_id', $shopeeOrderId)->lockForUpdate()->first();
 
-            // Re-bind and lock correct wallet if existing order belongs to a different wallet row
-            if ($existingOrder && $existingOrder->wallet_id !== $wallet->id) {
+            if ($existingOrder) {
+                // For existing order, lock the authoritative wallet directly
                 $wallet = CashbackWallet::where('id', $existingOrder->wallet_id)->lockForUpdate()->firstOrFail();
+            } else {
+                // For new order, sub_id is mandatory to identify the wallet
+                $subId = $orderData['sub_id'] ?? null;
+                if (!$subId) {
+                    return null;
+                }
+
+                $wallet = CashbackWallet::where('sub_id', $subId)->lockForUpdate()->first();
+                if (!$wallet) {
+                    return null;
+                }
             }
 
             $commission = max(0.0, (float) ($orderData['commission_shopee'] ?? 0));
@@ -123,11 +127,12 @@ class CashbackWalletService
                 $status = 'pending';
             }
 
-            $productName = \Illuminate\Support\Str::limit(
+            $productName = Str::limit(
                 (string) ($orderData['product_name'] ?? ('Đơn hàng Shopee #' . $shopeeOrderId)),
                 250,
                 '...'
             );
+            $productImage = !empty($orderData['product_image']) ? Str::limit((string) $orderData['product_image'], 495, '') : null;
 
             if (!$existingOrder) {
                 // New Order
@@ -135,10 +140,10 @@ class CashbackWalletService
                     'wallet_id' => $wallet->id,
                     'user_id' => $wallet->user_id,
                     'click_id' => $orderData['click_id'] ?? null,
-                    'shopee_order_id' => $shopeeOrderId,
+                    'shopee_order_id' => Str::limit($shopeeOrderId, 100, ''),
                     'sub_id' => $wallet->sub_id,
                     'product_name' => $productName,
-                    'product_image' => $orderData['product_image'] ?? null,
+                    'product_image' => $productImage,
                     'gmv' => $gmv,
                     'commission_shopee' => $commission,
                     'cashback_rate' => $rate,
@@ -162,6 +167,7 @@ class CashbackWalletService
                         'description' => 'Ghi nhận đơn hàng Shopee #' . $shopeeOrderId . ' (Chờ đối soát)',
                     ]);
                 } elseif ($status === 'confirmed') {
+                    $before = $wallet->available_balance;
                     $wallet->available_balance = max(0.00, round($wallet->available_balance + $cashbackAmount, 2));
                     $wallet->save();
 
@@ -170,7 +176,7 @@ class CashbackWalletService
                         'order_id' => $order->id,
                         'type' => 'order_confirmed',
                         'amount' => $cashbackAmount,
-                        'balance_before' => round($wallet->available_balance - $cashbackAmount, 2),
+                        'balance_before' => $before,
                         'balance_after' => $wallet->available_balance,
                         'description' => 'Cộng tiền hoàn đơn Shopee #' . $shopeeOrderId,
                     ]);
@@ -325,8 +331,8 @@ class CashbackWalletService
             $existingOrder->gmv = $gmv;
             $existingOrder->cashback_rate = $rate;
             $existingOrder->product_name = $productName;
-            if (!empty($orderData['product_image'])) {
-                $existingOrder->product_image = $orderData['product_image'];
+            if ($productImage !== null) {
+                $existingOrder->product_image = $productImage;
             }
             if (!empty($orderData['raw_data'])) {
                 $existingOrder->raw_data = $orderData['raw_data'];
