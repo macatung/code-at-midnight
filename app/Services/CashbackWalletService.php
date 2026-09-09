@@ -17,7 +17,7 @@ class CashbackWalletService
     /**
      * Get or create wallet for current request (User or Session/Cookie).
      */
-    public function getOrCreateWallet(Request $request): CashbackWallet
+    public function getOrCreateWallet(Request $request, ?string $explicitGuestSubId = null): CashbackWallet
     {
         $user = Auth::user();
         if ($user) {
@@ -31,11 +31,23 @@ class CashbackWalletService
                     'status' => 'active',
                 ]
             );
+
+            // If user has an anonymous cookie sub_id, merge it automatically
+            $this->mergeAnonymousWallet($user, $wallet, $request, $explicitGuestSubId);
+
+            if ($request->hasSession()) {
+                $request->session()->put('cashback_sub_id', $wallet->sub_id);
+            }
+            cookie()->queue('cashback_sub_id', $wallet->sub_id, 60 * 24 * 365);
             return $wallet;
         }
 
         // Guest session / cookie handling
-        $subId = ($request->hasSession() ? $request->session()->get('cashback_sub_id') : null) ?? $request->cookie('cashback_sub_id');
+        $subId = ($request->hasSession() ? $request->session()->get('cashback_sub_id') : null)
+            ?? $request->cookie('cashback_sub_id')
+            ?? ($request->cookies ? $request->cookies->get('cashback_sub_id') : null)
+            ?? $request->input('guest_sub_id')
+            ?? $request->header('X-Cashback-Sub-Id');
 
         if ($subId) {
             $wallet = CashbackWallet::where('sub_id', $subId)->first();
@@ -398,11 +410,101 @@ class CashbackWalletService
     }
 
     /**
-     * Approve and mark withdrawal as completed.
+     * Merge guest/anonymous wallet into user wallet upon login or registration.
      */
-    public function approveWithdrawal(CashbackWithdrawal $withdrawal): void
+    public function mergeAnonymousWallet($user, CashbackWallet $userWallet, Request $request, ?string $explicitGuestSubId = null): void
     {
-        DB::transaction(function () use ($withdrawal) {
+        $subId = $explicitGuestSubId
+            ?? ($request->hasSession() ? $request->session()->get('cashback_sub_id') : null)
+            ?? $request->cookie('cashback_sub_id')
+            ?? ($request->cookies ? $request->cookies->get('cashback_sub_id') : null)
+            ?? $request->input('guest_sub_id')
+            ?? $request->header('X-Cashback-Sub-Id');
+        if (!$subId || $subId === $userWallet->sub_id) {
+            return;
+        }
+
+        $guestWallet = CashbackWallet::where('sub_id', $subId)->whereNull('user_id')->first();
+        if (!$guestWallet || $guestWallet->id === $userWallet->id) {
+            return;
+        }
+
+        DB::transaction(function () use ($guestWallet, $userWallet, $user) {
+            $guest = CashbackWallet::where('id', $guestWallet->id)->lockForUpdate()->first();
+            $target = CashbackWallet::where('id', $userWallet->id)->lockForUpdate()->first();
+
+            if (!$guest || !$target) {
+                return;
+            }
+
+            // Transfer clicks, orders and withdrawals
+            CashbackClick::where('wallet_id', $guest->id)->update([
+                'wallet_id' => $target->id,
+                'user_id' => $user->id,
+            ]);
+
+            CashbackOrder::where('wallet_id', $guest->id)->update([
+                'wallet_id' => $target->id,
+                'user_id' => $user->id,
+            ]);
+
+            CashbackWithdrawal::where('wallet_id', $guest->id)->update([
+                'wallet_id' => $target->id,
+                'user_id' => $user->id,
+            ]);
+
+            // Merge balances
+            if ($guest->pending_balance > 0 || $guest->available_balance > 0 || $guest->withdrawn_balance > 0) {
+                $before = $target->available_balance;
+                $target->pending_balance = round($target->pending_balance + $guest->pending_balance, 2);
+                $target->available_balance = round($target->available_balance + $guest->available_balance, 2);
+                $target->withdrawn_balance = round($target->withdrawn_balance + $guest->withdrawn_balance, 2);
+
+                CashbackLedger::create([
+                    'wallet_id' => $target->id,
+                    'type' => 'wallet_merged',
+                    'amount' => $guest->available_balance,
+                    'balance_before' => $before,
+                    'balance_after' => $target->available_balance,
+                    'description' => 'Sáp nhập số dư từ phiên ẩn danh (' . $guest->sub_id . ')',
+                ]);
+            }
+
+            // Copy default bank if target does not have one
+            if (!$target->default_bank_account_number && $guest->default_bank_account_number) {
+                $target->default_bank_name = $guest->default_bank_name;
+                $target->default_bank_account_number = $guest->default_bank_account_number;
+                $target->default_bank_account_name = $guest->default_bank_account_name;
+            }
+
+            $target->save();
+
+            // Zero out guest wallet and mark merged
+            $guest->pending_balance = 0.00;
+            $guest->available_balance = 0.00;
+            $guest->withdrawn_balance = 0.00;
+            $guest->status = 'merged';
+            $guest->save();
+        });
+    }
+
+    /**
+     * Save or update default bank information for wallet.
+     */
+    public function saveDefaultBank(CashbackWallet $wallet, string $bankName, string $accountNumber, string $accountName): void
+    {
+        $wallet->default_bank_name = trim($bankName);
+        $wallet->default_bank_account_number = trim($accountNumber);
+        $wallet->default_bank_account_name = mb_strtoupper(trim($accountName), 'UTF-8');
+        $wallet->save();
+    }
+
+    /**
+     * Approve and mark withdrawal as completed with optional bank ref code and admin note.
+     */
+    public function approveWithdrawal(CashbackWithdrawal $withdrawal, ?string $bankRefCode = null, ?string $adminNote = null): void
+    {
+        DB::transaction(function () use ($withdrawal, $bankRefCode, $adminNote) {
             $withdrawal = CashbackWithdrawal::where('id', $withdrawal->id)->lockForUpdate()->firstOrFail();
             if ($withdrawal->status !== 'pending') {
                 return;
@@ -413,6 +515,8 @@ class CashbackWalletService
             $wallet->save();
 
             $withdrawal->status = 'completed';
+            $withdrawal->bank_ref_code = $bankRefCode;
+            $withdrawal->admin_note = $adminNote;
             $withdrawal->processed_at = now();
             $withdrawal->save();
 
@@ -423,7 +527,7 @@ class CashbackWalletService
                 'amount' => $withdrawal->amount,
                 'balance_before' => $wallet->available_balance,
                 'balance_after' => $wallet->available_balance,
-                'description' => 'Hoàn tất chi trả yêu cầu rút tiền #' . $withdrawal->id,
+                'description' => 'Hoàn tất chi trả yêu cầu rút tiền #' . $withdrawal->id . ($bankRefCode ? ' (Ref: ' . $bankRefCode . ')' : ''),
             ]);
         });
     }
@@ -445,6 +549,7 @@ class CashbackWalletService
             $wallet->save();
 
             $withdrawal->status = 'rejected';
+            $withdrawal->admin_note = $reason;
             $withdrawal->note = $reason;
             $withdrawal->processed_at = now();
             $withdrawal->save();

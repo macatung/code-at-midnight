@@ -51,12 +51,20 @@ class CashbackController extends Controller
         ];
 
         return Inertia::render('Cashback/Index', [
+            'auth_user' => \Illuminate\Support\Facades\Auth::check() ? [
+                'id' => \Illuminate\Support\Facades\Auth::id(),
+                'name' => \Illuminate\Support\Facades\Auth::user()->name,
+                'email' => \Illuminate\Support\Facades\Auth::user()->email,
+            ] : null,
             'wallet' => [
                 'id' => $wallet->id,
                 'sub_id' => $wallet->sub_id,
                 'pending_balance' => (float) $wallet->pending_balance,
                 'available_balance' => (float) $wallet->available_balance,
                 'withdrawn_balance' => (float) $wallet->withdrawn_balance,
+                'default_bank_name' => $wallet->default_bank_name,
+                'default_bank_account_number' => $wallet->default_bank_account_number,
+                'default_bank_account_name' => $wallet->default_bank_account_name,
                 'status' => $wallet->status,
             ],
             'clicks' => $clicks,
@@ -122,6 +130,25 @@ class CashbackController extends Controller
             'bank_account_name.required' => 'Vui lòng nhập tên chủ tài khoản.',
         ]);
 
+        // If user is authenticated, verify their password for withdrawal safety
+        if (\Illuminate\Support\Facades\Auth::check()) {
+            $request->validate([
+                'password' => ['required', 'string'],
+            ], [
+                'password.required' => 'Vui lòng nhập mật khẩu tài khoản để xác nhận rút tiền.',
+            ]);
+
+            if (!\Illuminate\Support\Facades\Hash::check((string) $request->input('password'), \Illuminate\Support\Facades\Auth::user()->password)) {
+                if ($request->wantsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Mật khẩu xác thực tài khoản không chính xác. Vui lòng thử lại.',
+                    ], 422);
+                }
+                return back()->withErrors(['password' => 'Mật khẩu xác thực không chính xác.']);
+            }
+        }
+
         try {
             $withdrawal = $this->walletService->requestWithdrawal(
                 $wallet,
@@ -132,6 +159,16 @@ class CashbackController extends Controller
                     'bank_account_name' => $validated['bank_account_name'],
                 ]
             );
+
+            // Optionally remember default bank details
+            if ($request->boolean('save_default_bank')) {
+                $this->walletService->saveDefaultBank(
+                    $wallet,
+                    $validated['bank_name'],
+                    $validated['bank_account_number'],
+                    $validated['bank_account_name']
+                );
+            }
 
             if ($request->wantsJson()) {
                 return response()->json([

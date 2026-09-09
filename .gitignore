@@ -40,6 +40,7 @@ dist-ssr
 ORIGINAL_REQUEST.md
 *.mp3
 /video_render_work/
+/storage/runs/
 PROJECT.md
 TEST_INFRA.md
 TEST_READY.md

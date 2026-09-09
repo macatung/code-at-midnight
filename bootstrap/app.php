@@ -17,6 +17,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->trustProxies(at: '*');
 
+        $middleware->encryptCookies(except: [
+            'cashback_sub_id',
+        ]);
+
         $middleware->web(append: [
             HandleInertiaRequests::class,
             TrackVisitorAnalytics::class,

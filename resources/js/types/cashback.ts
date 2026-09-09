@@ -1,9 +1,18 @@
+export interface AuthUserData {
+  id: number;
+  name: string;
+  email: string;
+}
+
 export interface CashbackWalletData {
   id: number;
   sub_id: string;
   pending_balance: number;
   available_balance: number;
   withdrawn_balance: number;
+  default_bank_name?: string | null;
+  default_bank_account_number?: string | null;
+  default_bank_account_name?: string | null;
   status: string;
 }
 
@@ -39,7 +48,9 @@ export interface CashbackWithdrawalData {
   bank_name: string;
   bank_account_number: string;
   bank_account_name: string;
-  status: 'pending' | 'completed' | 'rejected';
+  status: 'pending' | 'completed' | 'paid' | 'rejected';
+  bank_ref_code?: string | null;
+  admin_note?: string | null;
   note: string | null;
   processed_at: string | null;
   created_at: string;

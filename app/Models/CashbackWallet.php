@@ -21,6 +21,9 @@ class CashbackWallet extends Model
         'available_balance',
         'withdrawn_balance',
         'status',
+        'default_bank_name',
+        'default_bank_account_number',
+        'default_bank_account_name',
     ];
 
     protected $casts = [

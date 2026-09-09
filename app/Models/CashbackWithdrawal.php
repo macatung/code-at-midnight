@@ -21,6 +21,8 @@ class CashbackWithdrawal extends Model
         'bank_account_number',
         'bank_account_name',
         'status',
+        'bank_ref_code',
+        'admin_note',
         'note',
         'processed_at',
     ];

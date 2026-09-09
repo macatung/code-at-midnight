@@ -19,6 +19,8 @@ use App\Http\Controllers\Admin\AdminContactController;
 use App\Http\Controllers\SeoController;
 use App\Http\Controllers\Decode\DecodeController;
 use App\Http\Controllers\Cashback\CashbackController;
+use App\Http\Controllers\Cashback\CashbackAuthController;
+use App\Http\Controllers\Admin\AdminCashbackController;
 
 $baseDomain = config('app.base_domain', 'macatung.dev');
 
@@ -120,12 +122,20 @@ if ($localSubdomain !== $prodSubdomain) {
         Route::post('/withdraw', [CashbackController::class, 'withdraw']);
         Route::post('/webhook', [CashbackController::class, 'webhook']);
         Route::post('/sync', [CashbackController::class, 'sync']);
+        Route::post('/auth/register', [CashbackAuthController::class, 'register']);
+        Route::post('/auth/login', [CashbackAuthController::class, 'login']);
+        Route::post('/auth/logout', [CashbackAuthController::class, 'logout']);
+        Route::post('/profile/bank', [CashbackAuthController::class, 'updateBankProfile']);
         // Subdomain compatibility with /hoantien prefix
         Route::get('/hoantien', [CashbackController::class, 'index']);
         Route::post('/hoantien/generate-link', [CashbackController::class, 'generateLink']);
         Route::post('/hoantien/withdraw', [CashbackController::class, 'withdraw']);
         Route::post('/hoantien/webhook', [CashbackController::class, 'webhook']);
         Route::post('/hoantien/sync', [CashbackController::class, 'sync']);
+        Route::post('/hoantien/auth/register', [CashbackAuthController::class, 'register']);
+        Route::post('/hoantien/auth/login', [CashbackAuthController::class, 'login']);
+        Route::post('/hoantien/auth/logout', [CashbackAuthController::class, 'logout']);
+        Route::post('/hoantien/profile/bank', [CashbackAuthController::class, 'updateBankProfile']);
     });
 }
 
@@ -136,12 +146,20 @@ Route::domain($prodSubdomain)->group(function () {
     Route::post('/withdraw', [CashbackController::class, 'withdraw'])->name('cashback.domain.withdraw');
     Route::post('/webhook', [CashbackController::class, 'webhook'])->name('cashback.domain.webhook');
     Route::post('/sync', [CashbackController::class, 'sync'])->name('cashback.domain.sync');
+    Route::post('/auth/register', [CashbackAuthController::class, 'register'])->name('cashback.domain.auth.register');
+    Route::post('/auth/login', [CashbackAuthController::class, 'login'])->name('cashback.domain.auth.login');
+    Route::post('/auth/logout', [CashbackAuthController::class, 'logout'])->name('cashback.domain.auth.logout');
+    Route::post('/profile/bank', [CashbackAuthController::class, 'updateBankProfile'])->name('cashback.domain.profile.bank');
     // Subdomain compatibility with /hoantien prefix
     Route::get('/hoantien', [CashbackController::class, 'index']);
     Route::post('/hoantien/generate-link', [CashbackController::class, 'generateLink']);
     Route::post('/hoantien/withdraw', [CashbackController::class, 'withdraw']);
     Route::post('/hoantien/webhook', [CashbackController::class, 'webhook']);
     Route::post('/hoantien/sync', [CashbackController::class, 'sync']);
+    Route::post('/hoantien/auth/register', [CashbackAuthController::class, 'register']);
+    Route::post('/hoantien/auth/login', [CashbackAuthController::class, 'login']);
+    Route::post('/hoantien/auth/logout', [CashbackAuthController::class, 'logout']);
+    Route::post('/hoantien/profile/bank', [CashbackAuthController::class, 'updateBankProfile']);
 });
 
 // 6. Shopee Cashback Path-based Fallback Routes (Available on main domain /hoantien/* & local dev)
@@ -151,6 +169,10 @@ Route::prefix('hoantien')->name('cashback.')->group(function () {
     Route::post('/withdraw', [CashbackController::class, 'withdraw'])->name('withdraw');
     Route::post('/webhook', [CashbackController::class, 'webhook'])->name('webhook');
     Route::post('/sync', [CashbackController::class, 'sync'])->name('sync');
+    Route::post('/auth/register', [CashbackAuthController::class, 'register'])->name('auth.register');
+    Route::post('/auth/login', [CashbackAuthController::class, 'login'])->name('auth.login');
+    Route::post('/auth/logout', [CashbackAuthController::class, 'logout'])->name('auth.logout');
+    Route::post('/profile/bank', [CashbackAuthController::class, 'updateBankProfile'])->name('profile.bank');
 });
 
 // 7. Global SEO & Asset Endpoints
@@ -251,4 +273,10 @@ Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function
     // Summoning Inquiries Inbox
     Route::get('/contacts', [AdminContactController::class, 'index'])->name('contacts.index');
     Route::delete('/contacts/{contact}', [AdminContactController::class, 'destroy'])->name('contacts.destroy');
+
+    // Shopee Cashback & Withdrawal Management CMS
+    Route::get('/cashback', [AdminCashbackController::class, 'index'])->name('cashback.index');
+    Route::post('/cashback/withdrawals/{withdrawal}/approve', [AdminCashbackController::class, 'approve'])->name('cashback.withdrawals.approve');
+    Route::post('/cashback/withdrawals/{withdrawal}/reject', [AdminCashbackController::class, 'reject'])->name('cashback.withdrawals.reject');
+    Route::post('/cashback/sync', [AdminCashbackController::class, 'sync'])->name('cashback.sync');
 });

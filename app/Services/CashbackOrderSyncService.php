@@ -28,6 +28,14 @@ class CashbackOrderSyncService
     }
 
     /**
+     * Alias for syncFromShopee.
+     */
+    public function syncOrders(?int $startTime = null, ?int $endTime = null): array
+    {
+        return $this->syncFromShopee($startTime, $endTime);
+    }
+
+    /**
      * Extract and normalize order nodes from diverse API/Webhook payload formats.
      */
     public static function extractOrderNodes(mixed $payload): array
