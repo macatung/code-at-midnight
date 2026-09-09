@@ -106,27 +106,27 @@ describe('DecodeSubdomainRoutingAndBrandTest (Ma Giải Mã Brand Kit & Routing)
     expect(code.includes('1.85s')).toBe(true);
   });
 
-  it('[CONTROLLER_03] Controller implements index, show, episode1, brand, sitemap, robots', () => {
+  it('[CONTROLLER_03] Controller implements index, show, episode1, sitemap, robots (no redundant brand method)', () => {
     const code = fs.readFileSync(controllerPath, 'utf8');
     expect(code.includes('public function index()')).toBe(true);
     expect(code.includes('public function show(')).toBe(true);
     expect(code.includes('public function episode1()')).toBe(true);
-    expect(code.includes('public function brand()')).toBe(true);
     expect(code.includes('public function sitemap()')).toBe(true);
     expect(code.includes('public function robots()')).toBe(true);
+    expect(code.includes('public function brand()')).toBe(false);
   });
 
   // ==========================================================================
   // TIER 3: SUBDOMAIN & ROUTING INTEGRITY
   // ==========================================================================
-  it('[ROUTING_01] routes/web.php defines decode subdomain and path fallback', () => {
+  it('[ROUTING_01] routes/web.php defines decode subdomain and path fallback without redundant routes', () => {
     expect(fs.existsSync(webPhpPath)).toBe(true);
     const code = fs.readFileSync(webPhpPath, 'utf8');
     expect(code.includes("Route::domain('decode.' . $baseDomain)")).toBe(true);
     expect(code.includes("Route::prefix('decode')->name('decode.')")).toBe(true);
     expect(code.includes("DecodeController::class, 'index'")).toBe(true);
     expect(code.includes("DecodeController::class, 'show'")).toBe(true);
-    expect(code.includes("DecodeController::class, 'brand'")).toBe(true);
+    expect(code.includes("DecodeController::class, 'brand'")).toBe(false);
   });
 
   it('[ROUTING_02] Favicon endpoint serves decode-specific favicon for decode subdomain', () => {
@@ -146,17 +146,20 @@ describe('DecodeSubdomainRoutingAndBrandTest (Ma Giải Mã Brand Kit & Routing)
     expect(code.includes('decode.macatung.dev')).toBe(true);
   });
 
-  it('[FRONTEND_02] Decode/Index.vue, Show.vue, Brand.vue exist and are valid components', () => {
+  it('[FRONTEND_02] Decode strictly contains 2 pages: Index.vue (article list) and Show.vue (detail) (Brand.vue removed)', () => {
     expect(fs.existsSync(indexPath)).toBe(true);
     expect(fs.existsSync(showPath)).toBe(true);
-    expect(fs.existsSync(brandPath)).toBe(true);
+    expect(fs.existsSync(brandPath)).toBe(false);
 
     const indexCode = fs.readFileSync(indexPath, 'utf8');
     expect(indexCode.includes('anatomy-visualizer')).toBe(true);
-    expect(indexCode.includes('mascot-ma-giai-ma-3d.png')).toBe(true);
+    expect(indexCode.includes('danh-sach-bai-viet')).toBe(true);
+    expect(indexCode.includes('searchQuery')).toBe(true);
+    expect(indexCode.includes('filteredEpisodes')).toBe(true);
+    expect(indexCode.includes('decode-badge-avatar.svg')).toBe(true);
 
-    const brandCode = fs.readFileSync(brandPath, 'utf8');
-    expect(brandCode.includes('The Systems Anatomist')).toBe(true);
-    expect(brandCode.includes('copyColor')).toBe(true);
+    const showCode = fs.readFileSync(showPath, 'utf8');
+    expect(showCode.includes('allEpisodes')).toBe(true);
+    expect(showCode.includes('danh-sach-bai-viet')).toBe(true);
   });
 });

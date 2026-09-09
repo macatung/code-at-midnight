@@ -56,10 +56,14 @@ defineProps<{
         <div class="flex items-center gap-2 font-mono text-xs text-slate-400">
           <Link href="/decode" class="text-[#00f5d4] hover:underline flex items-center gap-1">
             <Icons name="ChevronRight" :size="14" class="rotate-180" />
-            <span>Pilot Season</span>
+            <span>Trang Chủ</span>
           </Link>
           <span>/</span>
-          <span class="text-white">Tập {{ episode.episode_number }}</span>
+          <a href="/decode#danh-sach-bai-viet" class="text-slate-300 hover:text-[#00f5d4] hover:underline">
+            Danh Sách Bài Viết
+          </a>
+          <span>/</span>
+          <span class="text-white font-bold">Tập {{ episode.episode_number }}</span>
         </div>
 
         <!-- Meta Tags Row -->

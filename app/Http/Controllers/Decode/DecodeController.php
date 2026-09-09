@@ -358,43 +358,6 @@ class DecodeController extends Controller
     }
 
     /**
-     * Interactive Brand Identity Kit
-     */
-    public function brand(): Response
-    {
-        return Inertia::render('Decode/Brand', [
-            'brand' => [
-                'name' => 'Ma Giải Mã',
-                'handle' => '@MaGiaiMa',
-                'subdomain' => 'decode.macatung.dev',
-                'tagline' => 'Mở nắp những hệ thống vô hình vận hành thế giới.',
-                'sub_tagline' => 'Giải mã cách thế giới công nghệ thực sự chạy dưới nắp capô.',
-                'colors' => [
-                    ['name' => 'Cyber Obsidian', 'hex' => '#060913', 'desc' => 'Nền tối sâu thẳm chuẩn studio đồ họa'],
-                    ['name' => 'Blueprint Slate', 'hex' => '#0a1122', 'desc' => 'Nền panel HUD, thẻ bài và container CAD'],
-                    ['name' => 'Laser Cyan', 'hex' => '#00f5d4', 'desc' => 'Tia laser soi vi mạch và bùa mạch in'],
-                    ['name' => 'Optical Blue', 'hex' => '#00b4d8', 'desc' => 'Màu xanh thấu kính quang học hiển vi'],
-                    ['name' => 'Blueprint Navy', 'hex' => '#0077b6', 'desc' => 'Đường nét kết cấu bản vẽ kỹ thuật'],
-                    ['name' => 'Laser Amber', 'hex' => '#ffb703', 'desc' => 'Điểm nóng dữ liệu & hạt nhân vi xử lý'],
-                    ['name' => 'Glitch Red', 'hex' => '#ff0054', 'desc' => 'Cảnh báo lỗi & nút Subscribe YouTube'],
-                ],
-                'typography' => [
-                    ['role' => 'Display & Headlines', 'font' => 'Space Grotesk / Syne', 'usage' => 'Tiêu đề video, tên kênh, số tập nổi bật'],
-                    ['role' => 'Telemetry & HUD Data', 'font' => 'JetBrains Mono', 'usage' => 'Thời gian mili-giây, giao thức, địa chỉ hex, thông số'],
-                    ['role' => 'Body & Prose', 'font' => 'Plus Jakarta Sans / Inter', 'usage' => 'Lời bình, kịch bản thuyết minh, chú giải'],
-                ],
-                'mascot_concept' => [
-                    'title' => 'The Systems Anatomist (Kỹ Sư Mổ Xẻ Hệ Thống)',
-                    'action' => 'Tư thế bóc tách mở nắp vi xử lý 3D trong suốt, giải phóng dòng ánh sáng dữ liệu',
-                    'talisman' => 'Bùa mạch in mica trong suốt (PCB Ribbon) phát quang neon xanh, khắc cổng logic AND/OR & mã DECODE',
-                    'gear' => 'Kính vi phân quang học HUD Monocle phóng đại 1000X có tâm ngắm laser và thông số telemetry trực tiếp',
-                    'robe' => 'Áo gấm Đạo sĩ vi mạch thêu vệt mạch in bán dẫn và thước đo kỹ thuật CAD',
-                ]
-            ],
-        ]);
-    }
-
-    /**
      * XML Sitemap
      */
     public function sitemap()
@@ -405,8 +368,6 @@ class DecodeController extends Controller
         
         // Home
         $xml .= '<url><loc>' . $baseUrl . '/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>';
-        // Brand Kit
-        $xml .= '<url><loc>' . $baseUrl . '/brand-kit</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>';
         
         // Episodes
         foreach ($this->pilotEpisodes as $ep) {

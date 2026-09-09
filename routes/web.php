@@ -89,7 +89,6 @@ Route::domain('decode.' . $baseDomain)->group(function () {
     Route::get('/', [DecodeController::class, 'index'])->name('decode.domain.index');
     Route::get('/tap/{slug}', [DecodeController::class, 'show'])->name('decode.domain.show');
     Route::get('/tap-1-visa-100k', [DecodeController::class, 'episode1'])->name('decode.domain.ep1');
-    Route::get('/brand-kit', [DecodeController::class, 'brand'])->name('decode.domain.brand');
     Route::get('/sitemap.xml', [DecodeController::class, 'sitemap'])->name('decode.domain.sitemap');
     Route::get('/robots.txt', [DecodeController::class, 'robots'])->name('decode.domain.robots');
     Route::get('/favicon.ico', function () {
@@ -105,7 +104,6 @@ Route::prefix('decode')->name('decode.')->group(function () {
     Route::get('/', [DecodeController::class, 'index'])->name('index');
     Route::get('/tap/{slug}', [DecodeController::class, 'show'])->name('show');
     Route::get('/tap-1-visa-100k', [DecodeController::class, 'episode1'])->name('ep1');
-    Route::get('/brand-kit', [DecodeController::class, 'brand'])->name('brand');
     Route::get('/sitemap.xml', [DecodeController::class, 'sitemap'])->name('sitemap');
 });
 

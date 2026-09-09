@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import DecodeLayout from '@/Layouts/DecodeLayout.vue';
 import Icons from '@/Components/ui/Icons.vue';
@@ -69,6 +69,33 @@ const toggleAutoPlay = () => {
     clearInterval(autoPlayTimer);
   }
 };
+
+// Article Filtering & Search
+const searchQuery = ref('');
+const selectedCategory = ref('ALL');
+
+const categories = [
+  { id: 'ALL', label: 'Tất Cả Bài Viết' },
+  { id: 'Fintech & Payment Systems', label: 'Fintech' },
+  { id: 'Search Infrastructure & Distributed Systems', label: 'Hạ Tầng Tìm Kiếm' },
+  { id: 'Telecommunications & Submarine Cables', label: 'Cáp Biển' },
+  { id: 'Banking Hardware & Distributed Consensus', label: 'ATM' },
+  { id: 'Relativistic Physics & Satellite Systems', label: 'GPS' },
+];
+
+const filteredEpisodes = computed(() => {
+  return props.episodes.filter((ep) => {
+    const matchesCategory = selectedCategory.value === 'ALL' || ep.category === selectedCategory.value;
+    const query = searchQuery.value.trim().toLowerCase();
+    const matchesQuery = !query || 
+      ep.title.toLowerCase().includes(query) ||
+      ep.short_title.toLowerCase().includes(query) ||
+      ep.hook.toLowerCase().includes(query) ||
+      ep.summary.toLowerCase().includes(query) ||
+      ep.tags.some((t) => t.toLowerCase().includes(query));
+    return matchesCategory && matchesQuery;
+  });
+});
 </script>
 
 <template>
@@ -133,13 +160,13 @@ const toggleAutoPlay = () => {
                 <span>Mở Nắp Hệ Thống Visa 100k</span>
               </a>
 
-              <Link
-                href="/decode/brand-kit"
+              <a
+                href="#danh-sach-bai-viet"
                 class="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl border border-[#00b4d8]/30 bg-[#0a1426] hover:bg-[#0f1e38] text-slate-200 text-sm font-semibold transition-all"
               >
-                <Icons name="Sparkles" :size="18" class="text-[#00f5d4]" />
-                <span>Bộ Nhận Diện Brand Kit</span>
-              </Link>
+                <Icons name="FileText" :size="18" class="text-[#00f5d4]" />
+                <span>Danh Sách Bài Viết ({{ episodes.length }})</span>
+              </a>
 
               <a
                 href="https://youtube.com/@MaGiaiMa"
@@ -153,40 +180,40 @@ const toggleAutoPlay = () => {
             </div>
           </div>
 
-          <!-- Hero Mascot 3D Showcase (The Distinct Systems Anatomist) -->
+          <!-- Hero Isometric 2D Core Visual (The Systems Anatomist) -->
           <div class="lg:col-span-5 relative flex justify-center">
-            <!-- Glowing CAD Projection Disc beneath mascot -->
-            <div class="relative w-full max-w-[420px] aspect-square rounded-3xl p-4 bg-gradient-to-b from-[#0a162c] to-[#050a14] border border-[#00f5d4]/30 shadow-2xl shadow-[#00b4d8]/20 group">
+            <!-- Glowing CAD Projection Box -->
+            <div class="relative w-full max-w-[420px] aspect-square rounded-3xl p-6 bg-gradient-to-b from-[#0a162c] to-[#050a14] border border-[#00f5d4]/30 shadow-2xl shadow-[#00b4d8]/20 group flex flex-col items-center justify-between">
               <!-- HUD Reticles -->
-              <div class="absolute top-3 left-3 text-[9px] font-mono text-[#00f5d4]/80 flex items-center gap-1.5">
-                <span class="w-1.5 h-1.5 bg-[#00f5d4] rounded-full animate-ping" />
-                MASCOT // THE_SYSTEMS_ANATOMIST
-              </div>
-              <div class="absolute top-3 right-3 text-[9px] font-mono text-amber-400">
-                HUD.ZOOM: 1000X
+              <div class="w-full flex items-center justify-between text-[10px] font-mono text-[#00f5d4]/80">
+                <span class="flex items-center gap-1.5">
+                  <span class="w-1.5 h-1.5 bg-[#00f5d4] rounded-full animate-ping" />
+                  ISOMETRIC // 2D_SYSTEMS_ANATOMY
+                </span>
+                <span class="text-amber-400 font-semibold">CAD.LAYER: 4K</span>
               </div>
 
-              <!-- 3D Mascot Image with Border Glow -->
-              <div class="w-full h-full rounded-2xl overflow-hidden relative flex items-center justify-center bg-[#060913]">
+              <!-- 2D Exploded Isometric Graphic -->
+              <div class="w-full flex-1 rounded-2xl overflow-hidden relative flex items-center justify-center p-4 bg-[#060913]/60 my-3 border border-[#00b4d8]/20">
                 <img
-                  src="/brand/decode/mascot-ma-giai-ma-3d.png"
-                  alt="Ma Giải Mã Mascot - The Systems Anatomist"
-                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  src="/brand/decode/decode-badge-avatar.svg"
+                  alt="Ma Giải Mã - 2D Exploded Isometric Core"
+                  class="w-4/5 h-4/5 object-contain group-hover:scale-105 transition-transform duration-500 drop-shadow-[0_0_25px_rgba(0,245,212,0.3)]"
                 />
 
-                <!-- Scanline Effect Overlay -->
-                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[#00f5d4]/5 to-transparent pointer-events-none opacity-40 animate-shimmer" />
+                <!-- Subtle Grid lines overlay -->
+                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[#00f5d4]/5 to-transparent pointer-events-none opacity-30" />
+              </div>
 
-                <!-- Deconstruction Callout Badges -->
-                <div class="absolute bottom-3 left-3 right-3 p-3 rounded-xl bg-[#060913]/90 backdrop-blur-md border border-[#00f5d4]/30 text-left">
-                  <div class="flex items-center justify-between text-[11px] font-mono mb-1">
-                    <span class="text-[#00f5d4] font-bold">KHÁC BIỆT THƯƠNG HIỆU:</span>
-                    <span class="text-amber-400 font-semibold">Tư thế "Mở Nắp Chip"</span>
-                  </div>
-                  <p class="text-[11px] text-slate-300 font-sans leading-tight">
-                    Bùa mica mạch in trong suốt (PCB) • Kính AR Monocle soi vi phân • Áo đạo sĩ thêu đường mạch bán dẫn.
-                  </p>
+              <!-- Deconstruction Callout Badges -->
+              <div class="w-full p-3 rounded-xl bg-[#060913]/90 backdrop-blur-md border border-[#00f5d4]/30 text-left">
+                <div class="flex items-center justify-between text-[11px] font-mono mb-1">
+                  <span class="text-[#00f5d4] font-bold">MÔ HÌNH THƯƠNG HIỆU 2D:</span>
+                  <span class="text-amber-400 font-semibold">"Mở Nắp Hệ Thống"</span>
                 </div>
+                <p class="text-[11px] text-slate-300 font-sans leading-tight">
+                  Khối Isometric M-Core phân rã 3 tầng • Bản vẽ kỹ thuật CAD sắc nét • Không mascot, tập trung 100% vào giải phẫu kiến trúc ngầm.
+                </p>
               </div>
             </div>
           </div>
@@ -323,31 +350,105 @@ const toggleAutoPlay = () => {
       </div>
     </section>
 
-    <!-- SECTION 3: PILOT SEASON 5 EPISODES ROADMAP -->
-    <section class="py-20">
+    <!-- SECTION 3: DANH SÁCH BÀI VIẾT (EPISODES & ARTICLES LIST) -->
+    <section id="danh-sach-bai-viet" class="py-20 border-t border-[#00b4d8]/20 bg-[#060a16]">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Section Header -->
-        <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4 text-left">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4 text-left">
           <div class="space-y-2">
-            <div class="text-xs font-mono text-[#00f5d4] uppercase font-bold tracking-widest">
-              Lộ Trình Mở Màn • Pilot Season (5 Tập Đầu)
+            <div class="text-xs font-mono text-[#00f5d4] uppercase font-bold tracking-widest flex items-center gap-2">
+              <Icons name="FileText" :size="16" />
+              <span>Kho Tàng Khảo Cứu • Danh Sách Bài Viết (Pilot Season)</span>
             </div>
             <h2 class="font-display text-3xl sm:text-4xl font-extrabold text-white">
-              5 Hệ Thống Vô Hình Vận Hành Thế Giới
+              Danh Sách Bài Viết &amp; Phân Tích Hệ Thống
             </h2>
-            <p class="text-slate-400 text-sm max-w-2xl">
-              Những câu hỏi đời thường đánh thẳng vào sự tò mò của hàng triệu người dùng, phân rã theo phong cách Isometric 3D sống động.
+            <p class="text-slate-400 text-sm sm:text-base max-w-2xl font-sans">
+              Mỗi bài viết là một chuyên án giải phẫu chi tiết: Từ tín hiệu điện trên chip, gói tin du hành đáy biển đến vệ tinh không gian.
             </p>
           </div>
-          <div class="font-mono text-xs text-slate-400">
-            KÊNH CHÍNH THỨC: <a href="https://youtube.com/@MaGiaiMa" target="_blank" class="text-[#00f5d4] font-bold hover:underline">@MaGiaiMa ↗</a>
+          <div class="font-mono text-xs text-slate-400 flex items-center gap-2 self-start md:self-end">
+            <span class="px-2.5 py-1 rounded bg-[#00f5d4]/10 text-[#00f5d4] border border-[#00f5d4]/20 font-bold">
+              {{ filteredEpisodes.length }} / {{ episodes.length }} Bài Viết
+            </span>
           </div>
         </div>
 
-        <!-- 5 Episodes Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
+        <!-- Filter & Search Toolbar -->
+        <div class="p-4 rounded-2xl bg-[#091224] border border-[#00b4d8]/20 mb-10 space-y-4">
+          <div class="flex flex-col sm:flex-row gap-3">
+            <!-- Search Bar -->
+            <div class="relative flex-1">
+              <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <Icons name="Search" :size="16" />
+              </div>
+              <input
+                v-model="searchQuery"
+                type="text"
+                placeholder="Tìm kiếm theo chủ đề, tiêu đề, giao thức (Visa, ISO 8583, Google, GPS...)..."
+                class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-[#040711] border border-white/10 text-white placeholder-slate-400 text-sm focus:outline-none focus:border-[#00f5d4] focus:ring-1 focus:ring-[#00f5d4] transition-all font-sans"
+              />
+              <button
+                v-if="searchQuery"
+                type="button"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-white"
+                @click="searchQuery = ''"
+              >
+                <Icons name="X" :size="16" />
+              </button>
+            </div>
+
+            <!-- Reset Filters (if search or non-all filter active) -->
+            <button
+              v-if="searchQuery || selectedCategory !== 'ALL'"
+              type="button"
+              class="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-mono text-slate-300 border border-white/10 transition-colors whitespace-nowrap"
+              @click="searchQuery = ''; selectedCategory = 'ALL'"
+            >
+              Đặt lại bộ lọc
+            </button>
+          </div>
+
+          <!-- Category Chips -->
+          <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs font-mono">
+            <button
+              v-for="cat in categories"
+              :key="cat.id"
+              type="button"
+              class="px-3 py-1.5 rounded-lg whitespace-nowrap transition-all border font-semibold"
+              :class="selectedCategory === cat.id ? 'bg-[#00f5d4] text-[#060913] border-[#00f5d4] shadow-md shadow-[#00f5d4]/20' : 'bg-[#040711] text-slate-300 border-white/5 hover:border-[#00b4d8]/40 hover:text-white'"
+              @click="selectedCategory = cat.id"
+            >
+              {{ cat.label }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div
+          v-if="filteredEpisodes.length === 0"
+          class="p-12 rounded-2xl bg-[#091122] border border-white/10 text-center space-y-4 max-w-lg mx-auto"
+        >
+          <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mx-auto text-slate-400">
+            <Icons name="Search" :size="24" />
+          </div>
+          <h3 class="font-display font-bold text-lg text-white">Không tìm thấy bài viết phù hợp</h3>
+          <p class="text-xs text-slate-400 font-sans">
+            Thử tìm kiếm với từ khóa khác như "Visa", "Google", "GPS", "Cáp", "ATM".
+          </p>
+          <button
+            type="button"
+            class="px-4 py-2 rounded-xl bg-[#00f5d4]/20 text-[#00f5d4] text-xs font-bold font-mono hover:bg-[#00f5d4]/30 transition-colors"
+            @click="searchQuery = ''; selectedCategory = 'ALL'"
+          >
+            Hiện tất cả 5 bài viết
+          </button>
+        </div>
+
+        <!-- Episodes & Articles Grid -->
+        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
           <div
-            v-for="ep in episodes"
+            v-for="ep in filteredEpisodes"
             :key="ep.id"
             class="rounded-2xl bg-[#091122] border border-[#00b4d8]/20 hover:border-[#00f5d4]/50 transition-all duration-300 p-6 flex flex-col justify-between group shadow-xl hover:shadow-2xl hover:shadow-[#00b4d8]/10"
           >
@@ -364,7 +465,9 @@ const toggleAutoPlay = () => {
 
               <!-- Title -->
               <h3 class="font-display font-bold text-lg text-white group-hover:text-[#00f5d4] transition-colors line-clamp-2">
-                {{ ep.title }}
+                <Link :href="`/decode/tap/${ep.slug}`">
+                  {{ ep.title }}
+                </Link>
               </h3>
 
               <!-- Hook / Story -->
@@ -395,16 +498,17 @@ const toggleAutoPlay = () => {
             </div>
 
             <!-- Bottom Action Link -->
-            <div class="pt-6 mt-4 border-t border-white/5 flex items-center justify-between">
-              <span class="text-[11px] font-mono text-amber-400">
-                Độ trễ: {{ ep.total_latency }}
-              </span>
+            <div class="pt-6 mt-4 border-t border-white/5 space-y-3">
+              <div class="flex items-center justify-between text-[11px] font-mono">
+                <span class="text-slate-400">Độ trễ khảo cứu:</span>
+                <span class="text-amber-400 font-bold">{{ ep.total_latency }}</span>
+              </div>
               <Link
                 :href="`/decode/tap/${ep.slug}`"
-                class="inline-flex items-center gap-1 text-xs font-bold text-[#00f5d4] group-hover:translate-x-1 transition-all"
+                class="w-full py-2.5 rounded-xl bg-[#00f5d4]/10 hover:bg-[#00f5d4] hover:text-[#060913] border border-[#00f5d4]/30 text-[#00f5d4] text-xs font-bold font-mono flex items-center justify-center gap-1.5 transition-all shadow-md group-hover:border-[#00f5d4]"
               >
-                <span>Xem Bản Vẽ</span>
-                <Icons name="ChevronRight" :size="14" />
+                <span>Đọc Bài Viết Chi Tiết</span>
+                <Icons name="ChevronRight" :size="14" class="group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
           </div>
@@ -513,13 +617,13 @@ const toggleAutoPlay = () => {
               <span>Theo Dõi @MaGiaiMa Trên YouTube</span>
             </a>
 
-            <Link
-              href="/decode/brand-kit"
+            <a
+              href="#danh-sach-bai-viet"
               class="inline-flex items-center gap-2 px-6 py-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 text-slate-200 text-sm font-semibold transition-all"
             >
-              <span>Xem Bộ Nhận Diện Thương Hiệu</span>
-              <Icons name="ChevronRight" :size="16" />
-            </Link>
+              <Icons name="FileText" :size="18" class="text-[#00f5d4]" />
+              <span>Khám Phá Danh Sách Bài Viết</span>
+            </a>
           </div>
         </div>
       </div>

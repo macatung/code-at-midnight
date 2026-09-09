@@ -132,14 +132,13 @@ const isLinkActive = (path: string): boolean => {
             Tập 01: Visa 100k
           </Link>
 
-          <Link
-            href="/decode/brand-kit"
-            class="px-3.5 py-2 rounded-lg transition-colors flex items-center gap-1.5"
-            :class="page.url.includes('/brand') ? 'bg-[#00f5d4]/15 text-[#00f5d4] font-semibold border border-[#00f5d4]/30' : 'text-slate-300 hover:text-white hover:bg-white/5'"
+          <a
+            href="/decode#danh-sach-bai-viet"
+            class="px-3.5 py-2 rounded-lg transition-colors flex items-center gap-1.5 text-slate-300 hover:text-white hover:bg-white/5"
           >
-            <Icons name="Sparkles" :size="14" />
-            Brand Kit
-          </Link>
+            <Icons name="FileText" :size="14" />
+            Danh Sách Bài Viết
+          </a>
         </nav>
 
         <!-- Channel Subscribe CTA Action -->
@@ -184,14 +183,13 @@ const isLinkActive = (path: string): boolean => {
         >
           Tập 01: Quẹt thẻ Visa 100k
         </Link>
-        <Link
-          href="/decode/brand-kit"
-          class="block px-3 py-2 rounded-lg text-sm font-mono"
-          :class="page.url.includes('/brand') ? 'bg-[#00f5d4]/15 text-[#00f5d4]' : 'text-slate-300'"
+        <a
+          href="/decode#danh-sach-bai-viet"
+          class="block px-3 py-2 rounded-lg text-sm font-mono text-slate-300 hover:text-white hover:bg-white/5"
           @click="isMobileMenuOpen = false"
         >
-          Bộ Nhận Diện Brand Kit
-        </Link>
+          Danh Sách Bài Viết
+        </a>
         <div class="pt-2 border-t border-white/10 flex items-center justify-between">
           <a
             href="https://youtube.com/@MaGiaiMa"
@@ -246,7 +244,7 @@ const isLinkActive = (path: string): boolean => {
             <ul class="space-y-2 text-xs font-sans">
               <li><a href="https://macatung.dev" class="hover:text-[#00f5a0] transition-colors">🧛‍♂️ Ma Cà Tưng (Portfolio) ↗</a></li>
               <li><a href="https://theravada.macatung.dev" class="hover:text-amber-300 transition-colors">☸️ Ma Tọa Thiền (Pāḷi Dhamma) ↗</a></li>
-              <li><Link href="/decode/brand-kit" class="hover:text-white transition-colors">🎨 Bộ Nhận Diện Brand Kit</Link></li>
+              <li><a href="/decode#danh-sach-bai-viet" class="hover:text-[#00f5d4] transition-colors">📚 Danh Sách Bài Viết</a></li>
               <li><a href="https://youtube.com/@MaGiaiMa" target="_blank" rel="noopener noreferrer" class="hover:text-rose-400 transition-colors">▶ Kênh YouTube @MaGiaiMa</a></li>
             </ul>
           </div>
