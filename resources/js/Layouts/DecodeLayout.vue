@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref } from 'vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import Icons from '@/Components/ui/Icons.vue';
 
@@ -11,34 +11,10 @@ defineProps<{
 
 const page = usePage();
 const isMobileMenuOpen = ref(false);
-const latencyDisplay = ref('0.3s');
 
-// Simulation of telemetry clock
-const systemClock = ref('00:00:00.000');
-let timer: any = null;
-
-const updateClock = () => {
-  const now = new Date();
-  const h = String(now.getHours()).padStart(2, '0');
-  const m = String(now.getMinutes()).padStart(2, '0');
-  const s = String(now.getSeconds()).padStart(2, '0');
-  const ms = String(now.getMilliseconds()).padStart(3, '0');
-  systemClock.value = `${h}:${m}:${s}.${ms}`;
-};
-
-onMounted(() => {
-  updateClock();
-  timer = setInterval(updateClock, 50);
-});
-
-onUnmounted(() => {
-  if (timer) clearInterval(timer);
-});
-
-const isLinkActive = (path: string): boolean => {
+const isHomeActive = (): boolean => {
   const currentUrl = page.url;
-  if (path === '/decode') return currentUrl === '/decode' || currentUrl === '/';
-  return currentUrl.startsWith(path);
+  return currentUrl === '/decode' || currentUrl === '/' || currentUrl.startsWith('/decode#');
 };
 </script>
 
@@ -66,98 +42,70 @@ const isLinkActive = (path: string): boolean => {
       <div class="absolute top-[40%] right-0 w-[500px] h-[500px] bg-[#00f5d4]/5 blur-[120px] rounded-full" />
     </div>
 
-    <!-- HUD Telemetry Top Bar -->
-    <header class="sticky top-0 z-50 border-b border-[#00b4d8]/20 bg-[#060913]/90 backdrop-blur-md">
-      <!-- Topmost Telemetry Stream -->
-      <div class="border-b border-[#00b4d8]/10 px-4 py-1 text-[11px] font-mono text-[#00b4d8]/70 flex items-center justify-between overflow-x-auto">
-        <div class="flex items-center gap-3 shrink-0">
-          <span class="inline-flex items-center gap-1.5 text-[#00f5d4]">
-            <span class="w-1.5 h-1.5 rounded-full bg-[#00f5d4] animate-ping" />
-            SYS.ONLINE
-          </span>
-          <span>•</span>
-          <span>SUBDOMAIN: <span class="text-white font-semibold">decode.macatung.dev</span></span>
-          <span class="hidden sm:inline">•</span>
-          <span class="hidden sm:inline">LATENCY: <span class="text-amber-400 font-semibold">{{ latencyDisplay }}</span></span>
-        </div>
-        <div class="flex items-center gap-3 shrink-0 font-mono text-[10px]">
-          <span class="hidden md:inline text-slate-400">UTC CLK: {{ systemClock }}</span>
-          <span>•</span>
-          <a href="https://macatung.dev" class="hover:text-white transition-colors">🧛‍♂️ macatung.dev ↗</a>
-          <span>•</span>
-          <a href="https://theravada.macatung.dev" class="hover:text-amber-300 transition-colors">☸️ Ma Tọa Thiền ↗</a>
-        </div>
-      </div>
-
-      <!-- Main Navigation Header -->
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        <!-- Logo Brand -->
+    <!-- Clean Engineering Publication Header -->
+    <header class="sticky top-0 z-50 border-b border-slate-800/80 bg-[#070a12]/95 backdrop-blur-md">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <!-- Logo & Masthead -->
         <Link href="/decode" class="flex items-center gap-3 group">
-          <div class="relative w-10 h-10 rounded-xl bg-[#0a1426] border border-[#00f5d4]/40 flex items-center justify-center shadow-lg shadow-[#00f5d4]/10 group-hover:border-[#00f5d4] transition-all">
-            <img src="/brand/decode/favicon.svg" alt="Ma Giải Mã" class="w-6 h-6 object-contain" />
-            <div class="absolute -inset-0.5 rounded-xl bg-gradient-to-br from-[#00f5d4] to-[#0077b6] opacity-0 group-hover:opacity-30 blur transition-opacity" />
+          <div class="w-9 h-9 rounded-lg bg-slate-900 border border-slate-700/80 flex items-center justify-center shadow-sm group-hover:border-[#00f5d4] transition-colors">
+            <img src="/brand/decode/decode-badge-avatar.svg" alt="Ma Giải Mã" class="w-6 h-6 object-contain" />
           </div>
-          <div class="flex flex-col">
+          <div class="flex flex-col text-left">
             <div class="flex items-center gap-2">
-              <span class="font-display font-extrabold text-lg text-white tracking-wider group-hover:text-[#00f5d4] transition-colors">
+              <span class="font-display font-extrabold text-base tracking-wide text-white group-hover:text-[#00f5d4] transition-colors">
                 MA GIẢI MÃ
               </span>
-              <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#00f5d4]/15 text-[#00f5d4] border border-[#00f5d4]/30 font-bold">
-                PILOT
+              <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                BLOG
               </span>
             </div>
-            <span class="text-[11px] font-mono text-slate-400 tracking-tight">
-              The Systems Anatomist • @MaGiaiMa
+            <span class="text-[11px] text-slate-400 font-sans tracking-tight">
+              Khảo Cứu Kiến Trúc Hệ Thống • by Ma Cà Tưng
             </span>
           </div>
         </Link>
 
         <!-- Desktop Navigation Items -->
-        <nav class="hidden md:flex items-center gap-1 font-mono text-xs">
+        <nav class="hidden md:flex items-center gap-6 text-sm font-sans">
           <Link
             href="/decode"
-            class="px-3.5 py-2 rounded-lg transition-colors flex items-center gap-1.5"
-            :class="isLinkActive('/decode') && !page.url.includes('/brand') && !page.url.includes('/tap') ? 'bg-[#00f5d4]/15 text-[#00f5d4] font-semibold border border-[#00f5d4]/30' : 'text-slate-300 hover:text-white hover:bg-white/5'"
+            class="transition-colors hover:text-[#00f5d4]"
+            :class="isHomeActive() && !page.url.includes('/tap') ? 'text-[#00f5d4] font-semibold' : 'text-slate-300'"
           >
-            <Icons name="Layout" :size="14" />
-            Pilot Season
-          </Link>
-
-          <Link
-            href="/decode/tap-1-visa-100k"
-            class="px-3.5 py-2 rounded-lg transition-colors flex items-center gap-1.5"
-            :class="page.url.includes('/tap') ? 'bg-[#00f5d4]/15 text-[#00f5d4] font-semibold border border-[#00f5d4]/30' : 'text-slate-300 hover:text-white hover:bg-white/5'"
-          >
-            <Icons name="Zap" :size="14" />
-            Tập 01: Visa 100k
+            Tất Cả Bài Viết
           </Link>
 
           <a
-            href="/decode#danh-sach-bai-viet"
-            class="px-3.5 py-2 rounded-lg transition-colors flex items-center gap-1.5 text-slate-300 hover:text-white hover:bg-white/5"
+            href="/decode#series-pilot"
+            class="text-slate-300 hover:text-[#00f5d4] transition-colors"
           >
-            <Icons name="FileText" :size="14" />
-            Danh Sách Bài Viết
+            Series Pilot Season
           </a>
-        </nav>
 
-        <!-- Channel Subscribe CTA Action -->
-        <div class="hidden sm:flex items-center gap-3">
+          <a
+            href="https://macatung.dev"
+            target="_blank"
+            class="text-slate-300 hover:text-white transition-colors flex items-center gap-1"
+          >
+            <span>Về Tác Giả</span>
+            <span class="text-xs text-slate-400">↗</span>
+          </a>
+
           <a
             href="https://youtube.com/@MaGiaiMa"
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-[#ff0054] to-[#e11d48] text-white text-xs font-bold shadow-lg shadow-[#ff0054]/20 hover:shadow-[#ff0054]/40 hover:scale-[1.02] active:scale-[0.98] transition-all"
+            class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#ff0054]/10 hover:bg-[#ff0054]/20 border border-[#ff0054]/30 text-[#ff0054] text-xs font-bold font-mono transition-all"
           >
-            <Icons name="Play" :size="14" />
+            <Icons name="Play" :size="12" />
             <span>Kênh @MaGiaiMa</span>
           </a>
-        </div>
+        </nav>
 
         <!-- Mobile Menu Toggle Button -->
         <button
           type="button"
-          class="md:hidden p-2 rounded-lg border border-[#00b4d8]/20 bg-[#0a1222] text-slate-300 hover:text-white"
+          class="md:hidden p-2 rounded-lg border border-slate-800 bg-slate-900/60 text-slate-300 hover:text-white"
           @click="isMobileMenuOpen = !isMobileMenuOpen"
           aria-label="Toggle Navigation"
         >
@@ -166,40 +114,38 @@ const isLinkActive = (path: string): boolean => {
       </div>
 
       <!-- Mobile Dropdown Menu -->
-      <div v-if="isMobileMenuOpen" class="md:hidden border-t border-[#00b4d8]/20 bg-[#060913]/98 px-4 py-4 space-y-2">
+      <div v-if="isMobileMenuOpen" class="md:hidden border-t border-slate-800 bg-[#070a12] px-4 py-4 space-y-3 text-left">
         <Link
           href="/decode"
-          class="block px-3 py-2 rounded-lg text-sm font-mono"
-          :class="isLinkActive('/decode') ? 'bg-[#00f5d4]/15 text-[#00f5d4]' : 'text-slate-300'"
+          class="block py-2 text-sm font-sans text-slate-200 hover:text-[#00f5d4]"
           @click="isMobileMenuOpen = false"
         >
-          Roadmap 5 Tập Pilot
-        </Link>
-        <Link
-          href="/decode/tap-1-visa-100k"
-          class="block px-3 py-2 rounded-lg text-sm font-mono"
-          :class="page.url.includes('/tap') ? 'bg-[#00f5d4]/15 text-[#00f5d4]' : 'text-slate-300'"
-          @click="isMobileMenuOpen = false"
-        >
-          Tập 01: Quẹt thẻ Visa 100k
+          Tất Cả Bài Viết
         </Link>
         <a
-          href="/decode#danh-sach-bai-viet"
-          class="block px-3 py-2 rounded-lg text-sm font-mono text-slate-300 hover:text-white hover:bg-white/5"
+          href="/decode#series-pilot"
+          class="block py-2 text-sm font-sans text-slate-300 hover:text-[#00f5d4]"
           @click="isMobileMenuOpen = false"
         >
-          Danh Sách Bài Viết
+          Series: Pilot Season (5 Tập)
         </a>
-        <div class="pt-2 border-t border-white/10 flex items-center justify-between">
+        <a
+          href="https://macatung.dev"
+          target="_blank"
+          class="block py-2 text-sm font-sans text-slate-300 hover:text-white"
+        >
+          Về Tác Giả (macatung.dev) ↗
+        </a>
+        <div class="pt-3 border-t border-slate-800 flex items-center justify-between">
           <a
             href="https://youtube.com/@MaGiaiMa"
             target="_blank"
             rel="noopener noreferrer"
             class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#ff0054] text-white text-xs font-bold"
           >
-            <Icons name="Play" :size="12" /> Subscribe @MaGiaiMa
+            <Icons name="Play" :size="12" /> Kênh @MaGiaiMa
           </a>
-          <a href="https://theravada.macatung.dev" class="text-xs font-mono text-amber-300">☸️ Ma Tọa Thiền ↗</a>
+          <a href="https://theravada.macatung.dev" class="text-xs text-amber-300 font-sans">☸️ Ma Tọa Thiền ↗</a>
         </div>
       </div>
     </header>
@@ -229,34 +175,34 @@ const isLinkActive = (path: string): boolean => {
           </div>
 
           <div>
-            <h4 class="font-mono text-xs uppercase tracking-widest text-[#00f5d4] font-bold mb-3">Pilot Season</h4>
+            <h4 class="font-mono text-xs uppercase tracking-wider text-[#00f5d4] font-bold mb-3">Series: Pilot Season</h4>
             <ul class="space-y-2 text-xs font-sans">
-              <li><Link href="/decode/tap-1-visa-100k" class="hover:text-white transition-colors">01. Quẹt thẻ Visa 100k (2s)</Link></li>
-              <li><Link href="/decode/tap/tap-02-google-tim-kiem-50-ty-trang-web-0-3-giay" class="hover:text-white transition-colors">02. Google Search 50 tỷ trang (0.3s)</Link></li>
+              <li><Link href="/decode/tap/tap-01-quet-the-visa-100k-2-giay-du-hanh" class="hover:text-white transition-colors">01. Quẹt thẻ Visa 100k</Link></li>
+              <li><Link href="/decode/tap/tap-02-google-tim-kiem-50-ty-trang-web-0-3-giay" class="hover:text-white transition-colors">02. Google Search 0.3s</Link></li>
               <li><Link href="/decode/tap/tap-03-cuoc-goi-xuyen-luc-dia-cap-quang-day-bien" class="hover:text-white transition-colors">03. Cáp quang đáy biển</Link></li>
-              <li><Link href="/decode/tap/tap-04-cay-atm-khong-bao-gio-nha-nham-tien" class="hover:text-white transition-colors">04. Cây ATM nhả tiền chuẩn</Link></li>
-              <li><Link href="/decode/tap/tap-05-bam-dat-grab-ve-tinh-gps-thuyet-tuong-doi-einstein" class="hover:text-white transition-colors">05. Đặt Grab &amp; Thuyết tương đối</Link></li>
+              <li><Link href="/decode/tap/tap-04-cay-atm-khong-bao-gio-nha-nham-tien" class="hover:text-white transition-colors">04. Cây ATM rút tiền</Link></li>
+              <li><Link href="/decode/tap/tap-05-bam-dat-grab-ve-tinh-gps-thuyet-tuong-doi-einstein" class="hover:text-white transition-colors">05. Grab, GPS &amp; Einstein</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 class="font-mono text-xs uppercase tracking-widest text-[#00f5d4] font-bold mb-3">Hệ Sinh Thái</h4>
+            <h4 class="font-mono text-xs uppercase tracking-wider text-slate-300 font-bold mb-3">Hệ Sinh Thái</h4>
             <ul class="space-y-2 text-xs font-sans">
               <li><a href="https://macatung.dev" class="hover:text-[#00f5a0] transition-colors">🧛‍♂️ Ma Cà Tưng (Portfolio) ↗</a></li>
               <li><a href="https://theravada.macatung.dev" class="hover:text-amber-300 transition-colors">☸️ Ma Tọa Thiền (Pāḷi Dhamma) ↗</a></li>
-              <li><a href="/decode#danh-sach-bai-viet" class="hover:text-[#00f5d4] transition-colors">📚 Danh Sách Bài Viết</a></li>
+              <li><a href="/decode#series-pilot" class="hover:text-[#00f5d4] transition-colors">📚 Series Pilot Season</a></li>
               <li><a href="https://youtube.com/@MaGiaiMa" target="_blank" rel="noopener noreferrer" class="hover:text-rose-400 transition-colors">▶ Kênh YouTube @MaGiaiMa</a></li>
             </ul>
           </div>
         </div>
 
         <!-- Bottom Copyright -->
-        <div class="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs font-mono text-slate-400 gap-4">
-          <p>© 2026 Ma Giải Mã • Subdomain chính thức của macatung.dev</p>
-          <div class="flex items-center gap-4">
-            <span class="text-[#00f5d4]">CAD // ISOMETRIC ANATOMY</span>
+        <div class="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs font-sans text-slate-400 gap-4">
+          <p>© 2026 Ma Giải Mã • decode.macatung.dev</p>
+          <div class="flex items-center gap-4 text-xs font-mono text-slate-400">
+            <span>ENGINEERING PUBLICATION</span>
             <span>•</span>
-            <span>BYTEBYTEGO-INSPIRED</span>
+            <span>SYSTEMS ANATOMY</span>
           </div>
         </div>
       </div>

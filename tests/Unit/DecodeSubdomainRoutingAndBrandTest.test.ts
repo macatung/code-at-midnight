@@ -162,4 +162,39 @@ describe('DecodeSubdomainRoutingAndBrandTest (Ma Giải Mã Brand Kit & Routing)
     expect(showCode.includes('allEpisodes')).toBe(true);
     expect(showCode.includes('danh-sach-bai-viet')).toBe(true);
   });
+
+  it('[CONTROLLER_04] All 5 episodes define full rich article content, takeaways, sections and author', () => {
+    const code = fs.readFileSync(controllerPath, 'utf8');
+    expect(code.includes("'takeaways' => [")).toBe(true);
+    expect(code.includes("'sections' => [")).toBe(true);
+    expect(code.includes('emv-chip-pos')).toBe(true);
+    expect(code.includes('googlebot-crawling')).toBe(true);
+    expect(code.includes('fiber-physics')).toBe(true);
+    expect(code.includes('mechanical-dispenser')).toBe(true);
+    expect(code.includes('einstein-time-drift')).toBe(true);
+    expect(code.includes("'reading_time' =>")).toBe(true);
+    expect(code.includes("'author' => 'Ma Cà Tưng (@macatung)'")).toBe(true);
+    expect(code.includes('$prevEpisode')).toBe(true);
+    expect(code.includes('$nextEpisode')).toBe(true);
+  });
+
+  it('[FRONTEND_03] Show.vue implements sticky progress bar, Table of Contents, takeaways and prev/next navigation', () => {
+    const showCode = fs.readFileSync(showPath, 'utf8');
+    expect(showCode.includes('readingProgress')).toBe(true);
+    expect(showCode.includes('Mục Lục Bài Viết')).toBe(true);
+    expect(showCode.includes('takeaways')).toBe(true);
+    expect(showCode.includes('copyCode')).toBe(true);
+    expect(showCode.includes('prevEpisode')).toBe(true);
+    expect(showCode.includes('nextEpisode')).toBe(true);
+    expect(showCode.includes('series-navigation')).toBe(true);
+  });
+
+  it('[FRONTEND_04] Index.vue features clean publication lead story, categories filter and architecture roadmap matrix', () => {
+    const indexCode = fs.readFileSync(indexPath, 'utf8');
+    expect(indexCode.includes('BÀI KHẢO CỨU NỔI BẬT TRONG SERIES')).toBe(true);
+    expect(indexCode.includes('Bản Đồ Kiến Trúc Pilot Season')).toBe(true);
+    expect(indexCode.includes('categories')).toBe(true);
+    expect(indexCode.includes('Bộ Ba Bản Sắc macatung.dev')).toBe(true);
+  });
 });
+
