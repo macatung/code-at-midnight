@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\AdminSettingController;
 use App\Http\Controllers\Admin\AdminContactController;
 use App\Http\Controllers\SeoController;
 use App\Http\Controllers\Decode\DecodeController;
+use App\Http\Controllers\Cashback\CashbackController;
 
 $baseDomain = config('app.base_domain', 'macatung.dev');
 
@@ -107,7 +108,31 @@ Route::prefix('decode')->name('decode.')->group(function () {
     Route::get('/sitemap.xml', [DecodeController::class, 'sitemap'])->name('sitemap');
 });
 
-// 5. Global SEO & Asset Endpoints
+// 5. Shopee Cashback Subdomain Routes (e.g. hoantien.macatung.dev / hoantien.localhost)
+$cashbackDomains = array_unique(array_filter([
+    'hoantien.' . $baseDomain,
+    'hoantien.localhost',
+]));
+foreach ($cashbackDomains as $domain) {
+    Route::domain($domain)->group(function () {
+        Route::get('/', [CashbackController::class, 'index'])->name('cashback.domain.index');
+        Route::post('/generate-link', [CashbackController::class, 'generateLink'])->name('cashback.domain.generate-link');
+        Route::post('/withdraw', [CashbackController::class, 'withdraw'])->name('cashback.domain.withdraw');
+        Route::post('/webhook', [CashbackController::class, 'webhook'])->name('cashback.domain.webhook');
+        Route::post('/sync', [CashbackController::class, 'sync'])->name('cashback.domain.sync');
+    });
+}
+
+// 6. Shopee Cashback Path-based Fallback Routes (Available on main domain /hoantien/* & local dev)
+Route::prefix('hoantien')->name('cashback.')->group(function () {
+    Route::get('/', [CashbackController::class, 'index'])->name('index');
+    Route::post('/generate-link', [CashbackController::class, 'generateLink'])->name('generate-link');
+    Route::post('/withdraw', [CashbackController::class, 'withdraw'])->name('withdraw');
+    Route::post('/webhook', [CashbackController::class, 'webhook'])->name('webhook');
+    Route::post('/sync', [CashbackController::class, 'sync'])->name('sync');
+});
+
+// 7. Global SEO & Asset Endpoints
 Route::get('/favicon.ico', function (\Illuminate\Http\Request $request) {
     if (str_starts_with($request->getHost(), 'theravada.')) {
         return response()->file(public_path('brand/theravada/favicon-theravada.ico'), [
