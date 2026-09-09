@@ -38,7 +38,11 @@ class AdminTheravadaVideoController extends Controller
             });
         }
 
-        $articles = $query->orderBy('id', 'desc')->paginate(12)->withQueryString();
+        $articles = $query
+            ->orderByRaw("CASE WHEN video_long_url IS NOT NULL OR video_status IN ('completed', 'published', 'processing') THEN 0 ELSE 1 END ASC")
+            ->orderBy('id', 'desc')
+            ->paginate(12)
+            ->withQueryString();
 
         // Compute tab counts
         $baseTheravada = Article::where('site_domain', 'theravada');

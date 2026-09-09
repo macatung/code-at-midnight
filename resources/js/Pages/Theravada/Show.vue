@@ -12,6 +12,8 @@ import DualPerspectiveFooterCard from '@/Components/common/DualPerspectiveFooter
 import DualPerspectiveFloatingPill from '@/Components/common/DualPerspectiveFloatingPill.vue';
 import { parsePerspectiveBlocks, initPerspectiveWidgets } from '@/utils/dualPerspectiveParser';
 
+import { Film, Play, Clock, Sparkles } from 'lucide-vue-next';
+
 const props = defineProps<{
   article: {
     id: number;
@@ -26,6 +28,13 @@ const props = defineProps<{
     pali_terms?: { term: string; meaning: string }[];
     reading_time_min: number;
     published_at: string;
+    video_long_url?: string;
+    youtube_url?: string;
+    video_thumbnail_url?: string;
+    video_long_duration?: string;
+    video_status?: string;
+    video_seo_title?: string;
+    video_seo_description?: string;
   };
   paired_article?: {
     id?: number;
@@ -107,8 +116,18 @@ const categoryLabel = (category: string) => {
   return t(key);
 };
 
+const hasActiveVideo = computed(() => {
+  return !!(props.article.video_long_url || props.article.youtube_url);
+});
+
+const youtubeEmbedUrl = computed(() => {
+  if (!props.article.youtube_url) return null;
+  const match = props.article.youtube_url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+  return match ? `https://www.youtube-nocookie.com/embed/${match[1]}?rel=0` : null;
+});
+
 const hasMediaAttachment = computed(() => {
-  return props.article.content?.includes('phap-am-dinh-kem') || props.article.content?.includes('iframe') || props.article.category === 'phap-thoai';
+  return hasActiveVideo.value || props.article.content?.includes('phap-am-dinh-kem') || props.article.content?.includes('iframe') || props.article.category === 'phap-thoai';
 });
 
 // Social Share Methods
@@ -1200,6 +1219,56 @@ const suttaJsonLd = computed(() => ({
           </div>
         </div>
       </header>
+
+      <!-- Zen Video Masterclass Player Banner -->
+      <section
+        v-if="hasActiveVideo"
+        id="phap-am-dinh-kem"
+        class="mb-8 rounded-2xl sm:rounded-3xl border border-amber-500/30 bg-stone-900/95 backdrop-blur-md overflow-hidden shadow-2xl transition-all"
+      >
+        <div class="px-4 sm:px-6 py-3.5 bg-gradient-to-r from-amber-950/70 via-stone-900 to-amber-950/50 border-b border-amber-500/20 flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-300 shrink-0">
+              <Film class="w-4 h-4 shrink-0" />
+            </div>
+            <div>
+              <h2 class="text-sm sm:text-base font-serif font-bold text-amber-200 flex items-center gap-1.5">
+                <span>Pháp Thoại & Video Masterclass</span>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-sans font-medium bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                  <Play class="w-2.5 h-2.5 shrink-0 fill-amber-300" /> Chuẩn Mẫu 3
+                </span>
+              </h2>
+              <p class="text-[11px] text-stone-400 font-sans">
+                Giọng đọc Vbee Anh Khôi Nâng Cao • Hòa âm nhạc thiền 432Hz
+              </p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 text-xs font-serif text-amber-300">
+            <span v-if="article.video_long_duration" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/30">
+              <Clock class="w-3.5 h-3.5 shrink-0" />
+              <span>{{ article.video_long_duration }}</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="relative aspect-video w-full bg-black">
+          <iframe
+            v-if="youtubeEmbedUrl"
+            :src="youtubeEmbedUrl"
+            class="w-full h-full border-0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          />
+          <video
+            v-else-if="article.video_long_url"
+            :src="article.video_long_url"
+            :poster="article.video_thumbnail_url"
+            controls
+            preload="metadata"
+            class="w-full h-full object-contain"
+          />
+        </div>
+      </section>
 
       <!-- Main Text Body (Full-bleed on mobile, elegant card on desktop) -->
       <article

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, useForm, router } from '@inertiajs/vue3';
+import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import Icons from '@/Components/ui/Icons.vue';
@@ -166,6 +166,15 @@ const deleteArticle = (article: ArticleItem) => {
               </td>
               <td class="p-3 text-right">
                 <div class="flex items-center justify-end gap-2">
+                  <Link
+                    v-if="(a as any).site_domain === 'theravada'"
+                    :href="`/admin/theravada/videos/${a.id}`"
+                    class="px-2.5 py-1 rounded-lg bg-teal-500/10 hover:bg-teal-500/20 text-teal-300 text-xs font-mono transition-all border border-teal-500/20 flex items-center gap-1"
+                    title="Mở Video Studio & Phát Hành"
+                  >
+                    <Icons name="Video" :size="12" />
+                    <span>Video Studio</span>
+                  </Link>
                   <button
                     type="button"
                     class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-mono transition-all"
