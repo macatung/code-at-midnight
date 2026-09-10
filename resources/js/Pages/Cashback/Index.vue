@@ -279,60 +279,57 @@ const handleManualSync = async () => {
     :auth-user="auth_user"
   >
     <!-- Top Hero Header Section -->
-    <section class="relative overflow-hidden pt-8 pb-6 sm:pt-12 sm:pb-8 border-b border-white/10 bg-gradient-to-b from-orange-950/20 via-black to-[#04070d]">
-      <div class="max-w-5xl mx-auto px-4 sm:px-6 text-center space-y-4 relative z-10">
+    <section class="relative overflow-hidden pt-6 pb-4 sm:pt-8 sm:pb-5 border-b border-white/10 bg-midnight-950/60">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 text-center space-y-3 relative z-10">
         <!-- Floating Badge -->
-        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-semibold text-slate-300">
-          <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-slate-300">
+          <span class="w-2 h-2 rounded-full bg-phantom-mint animate-pulse"></span>
           <span>Shopee Affiliate Open API v2</span>
           <span class="text-phantom-mint font-bold">• Chia lại {{ stats.cashback_rate_percent }}% hoa hồng</span>
         </div>
 
-        <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight font-display text-white">
-          Mua Shopee Giá Gốc, <br class="hidden sm:inline" />
-          <span class="bg-gradient-to-r from-orange-400 via-amber-300 to-phantom-mint bg-clip-text text-transparent">
-            Nhận Lại Tới {{ stats.cashback_rate_percent }}% Tiền Hoàn
-          </span>
+        <h1 class="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight font-display text-white max-w-4xl mx-auto">
+          Mua Shopee Giá Gốc, <span class="bg-gradient-to-r from-phantom-mint via-emerald-300 to-amber-300 bg-clip-text text-transparent">Nhận Lại Tới {{ stats.cashback_rate_percent }}% Tiền Hoàn</span>
         </h1>
 
-        <p class="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto leading-relaxed">
+        <p class="text-xs sm:text-sm text-slate-400 max-w-3xl mx-auto leading-normal">
           Chỉ cần dán link sản phẩm Shopee, nhận link mua hàng đã gắn tracking và tiền hoàn sẽ tự động chảy về ví cá nhân của bạn sau khi giao hàng thành công.
         </p>
 
         <!-- Main Navigation Tabs Bar -->
-        <div class="pt-4 flex justify-center">
-          <div class="p-1.5 bg-white/5 border border-white/10 rounded-2xl inline-flex items-center gap-1 sm:gap-2 shadow-2xl backdrop-blur-xl">
+        <div class="pt-2 flex justify-center">
+          <div class="p-1 bg-midnight-900/80 border border-white/10 rounded-2xl inline-flex items-center gap-1 sm:gap-1.5 shadow-xl backdrop-blur-xl">
             <button
               type="button"
-              class="px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all"
-              :class="activeTab === 'shopping' ? 'bg-phantom-mint text-midnight-950 shadow-lg shadow-phantom-mint/20' : 'text-slate-400 hover:text-white'"
+              class="px-4 sm:px-5 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all"
+              :class="activeTab === 'shopping' ? 'bg-phantom-mint text-midnight-950 shadow-glow-mint' : 'text-slate-400 hover:text-white'"
               @click="activeTab = 'shopping'"
             >
-              <Icons name="Zap" :size="16" />
+              <Icons name="Zap" :size="15" />
               <span>Sinh Link Mua Sắm</span>
             </button>
 
             <button
               type="button"
-              class="px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all relative"
-              :class="activeTab === 'wallet' ? 'bg-phantom-mint text-midnight-950 shadow-lg shadow-phantom-mint/20' : 'text-slate-400 hover:text-white'"
+              class="px-4 sm:px-5 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all relative"
+              :class="activeTab === 'wallet' ? 'bg-phantom-mint text-midnight-950 shadow-glow-mint' : 'text-slate-400 hover:text-white'"
               @click="activeTab = 'wallet'"
             >
-              <Icons name="Lock" :size="16" />
+              <Icons name="Lock" :size="15" />
               <span>Ví & Rút Tiền</span>
               <span
                 v-if="wallet.available_balance >= 50000"
-                class="w-2 h-2 rounded-full bg-emerald-400 absolute top-2 right-2 animate-ping"
+                class="w-2 h-2 rounded-full bg-emerald-400 absolute top-1.5 right-1.5 animate-ping"
               ></span>
             </button>
 
             <button
               type="button"
-              class="px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all"
-              :class="activeTab === 'orders' ? 'bg-phantom-mint text-midnight-950 shadow-lg shadow-phantom-mint/20' : 'text-slate-400 hover:text-white'"
+              class="px-4 sm:px-5 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all"
+              :class="activeTab === 'orders' ? 'bg-phantom-mint text-midnight-950 shadow-glow-mint' : 'text-slate-400 hover:text-white'"
               @click="activeTab = 'orders'"
             >
-              <Icons name="RotateCcw" :size="16" />
+              <Icons name="RotateCcw" :size="15" />
               <span>Đơn Hàng ({{ orders.length }})</span>
             </button>
           </div>
@@ -341,18 +338,18 @@ const handleManualSync = async () => {
     </section>
 
     <!-- Main Container -->
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-5 sm:py-6">
       <!-- ================================================================= -->
       <!-- TAB 1: SHOPPING & LINK GENERATOR -->
       <!-- ================================================================= -->
-      <div v-if="activeTab === 'shopping'" class="space-y-8 animate-in fade-in duration-200">
+      <div v-if="activeTab === 'shopping'" class="space-y-5 animate-in fade-in duration-200">
         <!-- Main Link Generator Card -->
-        <div class="bg-gradient-to-b from-white/10 to-white/5 border border-white/15 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-xl relative overflow-hidden">
-          <div class="space-y-4">
+        <div class="bg-midnight-900/70 border border-white/10 rounded-2xl p-4 sm:p-5 shadow-xl backdrop-blur-md relative overflow-hidden">
+          <div class="space-y-3.5">
             <div class="flex items-center justify-between">
-              <label class="text-sm font-bold text-white flex items-center gap-2">
-                <span class="p-1.5 rounded-lg bg-orange-500/20 text-orange-400">
-                  <Icons name="Zap" :size="16" />
+              <label class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+                <span class="p-1 rounded-lg bg-orange-500/15 text-orange-400">
+                  <Icons name="Zap" :size="15" />
                 </span>
                 <span>Dán link sản phẩm Shopee cần mua:</span>
               </label>
@@ -369,13 +366,13 @@ const handleManualSync = async () => {
             </div>
 
             <!-- Input & Generate CTA -->
-            <div class="flex flex-col sm:flex-row items-stretch gap-3">
+            <div class="flex flex-col sm:flex-row items-stretch gap-2.5">
               <div class="relative flex-grow">
                 <input
                   v-model="inputUrl"
                   type="text"
                   placeholder="https://shopee.vn/product/... hoặc https://s.shopee.vn/..."
-                  class="w-full h-12 sm:h-14 pl-4 pr-10 rounded-2xl bg-black/40 border border-white/20 text-white text-xs sm:text-sm placeholder:text-slate-500 focus:outline-none focus:border-phantom-mint transition-colors"
+                  class="w-full h-11 sm:h-12 pl-3.5 pr-10 rounded-xl bg-black/50 border border-white/15 text-white text-xs sm:text-sm placeholder:text-slate-500 focus:outline-none focus:border-phantom-mint transition-colors"
                   @keyup.enter="handleGenerateLink"
                 />
                 <button
@@ -384,17 +381,17 @@ const handleManualSync = async () => {
                   class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white p-1"
                   @click="inputUrl = ''; generatedResult = null; errorMessage = ''"
                 >
-                  <Icons name="X" :size="16" />
+                  <Icons name="X" :size="15" />
                 </button>
               </div>
 
               <button
                 type="button"
-                class="h-12 sm:h-14 px-8 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-midnight-950 font-bold text-sm tracking-wide transition-all shadow-xl shadow-orange-500/20 disabled:opacity-50 flex items-center justify-center gap-2 shrink-0"
+                class="h-11 sm:h-12 px-6 rounded-xl bg-phantom-mint hover:bg-phantom-mint/90 text-midnight-950 font-bold text-xs sm:text-sm tracking-wide transition-all shadow-glow-mint disabled:opacity-50 flex items-center justify-center gap-2 shrink-0"
                 :disabled="isGenerating"
                 @click="handleGenerateLink"
               >
-                <Icons v-if="isGenerating" name="RotateCcw" :size="18" class="animate-spin" />
+                <Icons v-if="isGenerating" name="RotateCcw" :size="16" class="animate-spin" />
                 <span>{{ isGenerating ? 'Đang tạo link...' : 'Tạo Link Hoàn Tiền Ngay' }}</span>
               </button>
             </div>
@@ -402,38 +399,38 @@ const handleManualSync = async () => {
             <!-- Error Banner -->
             <div
               v-if="errorMessage"
-              class="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs flex items-center gap-2"
+              class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs flex items-center gap-2"
             >
-              <Icons name="X" :size="16" class="shrink-0" />
+              <Icons name="X" :size="15" class="shrink-0" />
               <span>{{ errorMessage }}</span>
             </div>
 
             <!-- Generated Result Success Card -->
             <div
               v-if="generatedResult && generatedResult.short_link"
-              class="mt-6 p-6 rounded-2xl bg-gradient-to-br from-phantom-mint/15 via-black/60 to-black/80 border border-phantom-mint/40 shadow-2xl space-y-4 animate-in zoom-in-95 duration-200"
+              class="mt-4 p-4 rounded-xl bg-midnight-950/80 border border-phantom-mint/30 shadow-lg space-y-3 animate-in zoom-in-95 duration-200"
             >
               <div class="flex items-center justify-between">
                 <span class="text-xs font-bold uppercase text-phantom-mint tracking-wider flex items-center gap-1.5">
-                  <span class="w-2 h-2 rounded-full bg-phantom-mint animate-pulse"></span>
+                  <span class="w-1.5 h-1.5 rounded-full bg-phantom-mint animate-pulse"></span>
                   Link Hoàn Tiền Đã Sẵn Sàng!
                 </span>
                 <span class="text-[11px] font-mono text-slate-400">Tracking: {{ generatedResult.sub_id }}</span>
               </div>
 
               <!-- Link Box -->
-              <div class="flex flex-col sm:flex-row items-center gap-3 bg-black/60 p-3.5 rounded-xl border border-white/10">
-                <div class="font-mono text-xs sm:text-sm text-emerald-300 truncate w-full flex-grow select-all">
+              <div class="flex flex-col sm:flex-row items-center gap-2.5 bg-black/60 p-2.5 sm:p-3 rounded-lg border border-white/10">
+                <div class="font-mono text-xs sm:text-sm text-phantom-mint truncate w-full flex-grow select-all">
                   {{ generatedResult.short_link }}
                 </div>
 
                 <div class="flex items-center gap-2 w-full sm:w-auto shrink-0">
                   <button
                     type="button"
-                    class="flex-1 sm:flex-none px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-all"
+                    class="flex-1 sm:flex-none px-3.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/15 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-all"
                     @click="copyGeneratedLink"
                   >
-                    <Icons :name="copiedResultLink ? 'Check' : 'Copy'" :size="14" />
+                    <Icons :name="copiedResultLink ? 'Check' : 'Copy'" :size="13" />
                     <span>{{ copiedResultLink ? 'Đã sao chép!' : 'Sao chép' }}</span>
                   </button>
 
@@ -441,10 +438,10 @@ const handleManualSync = async () => {
                     :href="generatedResult.short_link"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="flex-1 sm:flex-none px-5 py-2 rounded-xl bg-phantom-mint hover:bg-phantom-mint/90 text-midnight-950 text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-md shadow-phantom-mint/20"
+                    class="flex-1 sm:flex-none px-4 py-1.5 rounded-lg bg-phantom-mint hover:bg-phantom-mint/90 text-midnight-950 text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-glow-mint"
                   >
                     <span>Mở Shopee Mua Ngay</span>
-                    <Icons name="ChevronRight" :size="14" />
+                    <Icons name="ChevronRight" :size="13" />
                   </a>
                 </div>
               </div>
@@ -456,54 +453,34 @@ const handleManualSync = async () => {
           </div>
         </div>
 
-        <!-- 3-Step Visual Infographic Guide -->
-        <div class="space-y-4">
-          <div class="text-center space-y-1">
-            <h2 class="text-lg sm:text-xl font-bold font-display text-white">Quy Trình Hoàn Tiền Trong 3 Bước</h2>
-            <p class="text-xs text-slate-400">Hoàn toàn tự động, minh bạch và miễn phí 100%</p>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Compact 3-Step Horizontal Stepper Guide -->
+        <div class="rounded-2xl border border-white/10 bg-midnight-900/50 p-3 sm:p-4 backdrop-blur-md">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 divide-y md:divide-y-0 md:divide-x divide-white/5">
             <!-- Step 1 -->
-            <div class="bg-white/5 border border-white/10 rounded-2xl p-5 space-y-3 relative group hover:border-white/20 transition-all">
-              <div class="flex items-center justify-between">
-                <span class="w-8 h-8 rounded-xl bg-orange-500/20 text-orange-400 font-bold text-sm flex items-center justify-center border border-orange-500/30">
-                  1
-                </span>
-                <span class="text-xs text-slate-500 font-mono">Dán Link</span>
+            <div class="flex items-center gap-3 px-2 py-1">
+              <span class="w-8 h-8 rounded-xl bg-phantom-mint/10 border border-phantom-mint/30 text-phantom-mint font-mono font-bold text-xs flex items-center justify-center shrink-0">01</span>
+              <div class="min-w-0">
+                <h4 class="text-xs font-bold text-white tracking-wide">Dán Link Shopee</h4>
+                <p class="text-[11px] text-slate-400 truncate">Sao chép & dán link món đồ cần mua</p>
               </div>
-              <h3 class="font-bold text-sm text-white">Copy & Tạo Link Hoàn Tiền</h3>
-              <p class="text-xs text-slate-400 leading-relaxed">
-                Mở Shopee, sao chép link món đồ bạn muốn mua và dán vào ô tìm kiếm ở trên để tạo link có mã theo dõi riêng.
-              </p>
             </div>
 
             <!-- Step 2 -->
-            <div class="bg-white/5 border border-white/10 rounded-2xl p-5 space-y-3 relative group hover:border-white/20 transition-all">
-              <div class="flex items-center justify-between">
-                <span class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 font-bold text-sm flex items-center justify-center border border-amber-500/30">
-                  2
-                </span>
-                <span class="text-xs text-slate-500 font-mono">Mua Hàng</span>
+            <div class="flex items-center gap-3 px-2 md:pl-4 py-1">
+              <span class="w-8 h-8 rounded-xl bg-amber-400/10 border border-amber-400/30 text-amber-300 font-mono font-bold text-xs flex items-center justify-center shrink-0">02</span>
+              <div class="min-w-0">
+                <h4 class="text-xs font-bold text-white tracking-wide">Mở Shopee Mua Hàng</h4>
+                <p class="text-[11px] text-slate-400 truncate">Vào Shopee thanh toán như bình thường</p>
               </div>
-              <h3 class="font-bold text-sm text-white">Bấm Mở Shopee & Thanh Toán</h3>
-              <p class="text-xs text-slate-400 leading-relaxed">
-                Bấm vào liên kết vừa tạo để vào Shopee, thêm sản phẩm vào giỏ và đặt hàng như bình thường.
-              </p>
             </div>
 
             <!-- Step 3 -->
-            <div class="bg-white/5 border border-white/10 rounded-2xl p-5 space-y-3 relative group hover:border-white/20 transition-all">
-              <div class="flex items-center justify-between">
-                <span class="w-8 h-8 rounded-xl bg-phantom-mint/20 text-phantom-mint font-bold text-sm flex items-center justify-center border border-phantom-mint/30">
-                  3
-                </span>
-                <span class="text-xs text-slate-500 font-mono">Nhận Tiền</span>
+            <div class="flex items-center gap-3 px-2 md:pl-4 py-1">
+              <span class="w-8 h-8 rounded-xl bg-emerald-400/10 border border-emerald-400/30 text-emerald-400 font-mono font-bold text-xs flex items-center justify-center shrink-0">03</span>
+              <div class="min-w-0">
+                <h4 class="text-xs font-bold text-white tracking-wide">Nhận Tiền Về Ví</h4>
+                <p class="text-[11px] text-slate-400 truncate">Tiền hoàn tự động cộng vào ví rút ngay</p>
               </div>
-              <h3 class="font-bold text-sm text-white">Rút Tiền Về Ngân Hàng</h3>
-              <p class="text-xs text-slate-400 leading-relaxed">
-                Sau khi đơn hàng giao thành công, tiền hoa hồng được cộng vào ví. Bạn có thể rút ngay về tài khoản ngân hàng bất kỳ lúc nào.
-              </p>
             </div>
           </div>
         </div>
@@ -512,59 +489,59 @@ const handleManualSync = async () => {
       <!-- ================================================================= -->
       <!-- TAB 2: WALLET & WITHDRAWAL MANAGEMENT -->
       <!-- ================================================================= -->
-      <div v-if="activeTab === 'wallet'" class="space-y-8 animate-in fade-in duration-200">
+      <div v-if="activeTab === 'wallet'" class="space-y-5 animate-in fade-in duration-200">
         <!-- 3 Balance Summary Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
           <!-- Card 1: Available Balance -->
-          <div class="bg-gradient-to-br from-phantom-mint/20 via-phantom-mint/5 to-transparent border border-phantom-mint/30 rounded-3xl p-6 shadow-xl relative overflow-hidden">
-            <div class="flex items-center justify-between mb-2">
+          <div class="bg-midnight-900/70 border border-phantom-mint/30 rounded-2xl p-4 sm:p-5 shadow-lg relative overflow-hidden backdrop-blur-md">
+            <div class="flex items-center justify-between mb-1.5">
               <span class="text-xs font-bold uppercase tracking-wider text-phantom-mint">Số Dư Khả Dụng</span>
-              <span class="w-2.5 h-2.5 rounded-full bg-phantom-mint animate-pulse"></span>
+              <span class="w-2 h-2 rounded-full bg-phantom-mint animate-pulse"></span>
             </div>
-            <div class="text-3xl font-extrabold font-mono text-white">
+            <div class="text-2xl sm:text-3xl font-extrabold font-mono text-phantom-mint">
               {{ formatVND(wallet.available_balance) }}
             </div>
-            <p class="text-[11px] text-slate-400 mt-2">
+            <p class="text-[11px] text-slate-400 mt-1.5">
               Có thể rút ngay về tài khoản ngân hàng (tối thiểu 50.000 ₫).
             </p>
           </div>
 
           <!-- Card 2: Pending Balance -->
-          <div class="bg-gradient-to-br from-amber-500/15 via-amber-500/5 to-transparent border border-amber-500/30 rounded-3xl p-6 shadow-xl relative overflow-hidden">
-            <div class="flex items-center justify-between mb-2">
+          <div class="bg-midnight-900/70 border border-amber-400/30 rounded-2xl p-4 sm:p-5 shadow-lg relative overflow-hidden backdrop-blur-md">
+            <div class="flex items-center justify-between mb-1.5">
               <span class="text-xs font-bold uppercase tracking-wider text-amber-300">Chờ Shopee Đối Soát</span>
               <span class="text-amber-400 text-xs">⏳ Đang xử lý</span>
             </div>
-            <div class="text-3xl font-extrabold font-mono text-white">
+            <div class="text-2xl sm:text-3xl font-extrabold font-mono text-amber-300">
               {{ formatVND(wallet.pending_balance) }}
             </div>
-            <p class="text-[11px] text-slate-400 mt-2">
+            <p class="text-[11px] text-slate-400 mt-1.5">
               Tiền hoàn từ các đơn hàng mới mua, sẽ mở khóa khi đơn hoàn thành.
             </p>
           </div>
 
           <!-- Card 3: Total Withdrawn -->
-          <div class="bg-gradient-to-br from-blue-500/15 via-blue-500/5 to-transparent border border-blue-500/30 rounded-3xl p-6 shadow-xl relative overflow-hidden">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-bold uppercase tracking-wider text-blue-300">Đã Rút Thành Công</span>
-              <span class="text-blue-400 text-xs">✓ Hoàn tất</span>
+          <div class="bg-midnight-900/70 border border-white/10 rounded-2xl p-4 sm:p-5 shadow-lg relative overflow-hidden backdrop-blur-md">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Đã Rút Thành Công</span>
+              <span class="text-emerald-400 text-xs">✓ Hoàn tất</span>
             </div>
-            <div class="text-3xl font-extrabold font-mono text-white">
+            <div class="text-2xl sm:text-3xl font-extrabold font-mono text-white">
               {{ formatVND(wallet.withdrawn_balance) }}
             </div>
-            <p class="text-[11px] text-slate-400 mt-2">
+            <p class="text-[11px] text-slate-400 mt-1.5">
               Tổng số tiền đã được chuyển thành công vào tài khoản ngân hàng.
             </p>
           </div>
         </div>
 
         <!-- Withdrawal Form & Account Card -->
-        <div class="bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 backdrop-blur-xl space-y-6">
-          <div class="border-b border-white/10 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div class="bg-midnight-900/70 border border-white/10 rounded-2xl p-4 sm:p-5 backdrop-blur-xl space-y-4 shadow-xl">
+          <div class="border-b border-white/10 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
-              <h2 class="text-lg font-bold font-display text-white flex items-center gap-2">
-                <span class="p-1.5 rounded-lg bg-phantom-mint/20 text-phantom-mint">
-                  <Icons name="Zap" :size="18" />
+              <h2 class="text-base sm:text-lg font-bold font-display text-white flex items-center gap-2">
+                <span class="p-1 rounded-lg bg-phantom-mint/15 text-phantom-mint">
+                  <Icons name="Zap" :size="16" />
                 </span>
                 <span>Yêu Cầu Rút Tiền Về Ngân Hàng</span>
               </h2>
@@ -581,24 +558,24 @@ const handleManualSync = async () => {
           <!-- Feedback Alerts -->
           <div
             v-if="withdrawSuccessMessage"
-            class="p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs flex items-center gap-2"
+            class="p-3 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs flex items-center gap-2"
           >
-            <Icons name="Check" :size="18" class="shrink-0" />
+            <Icons name="Check" :size="16" class="shrink-0" />
             <span>{{ withdrawSuccessMessage }}</span>
           </div>
 
           <div
             v-if="withdrawErrorMessage"
-            class="p-4 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2"
+            class="p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2"
           >
-            <Icons name="X" :size="18" class="shrink-0" />
+            <Icons name="X" :size="16" class="shrink-0" />
             <span>{{ withdrawErrorMessage }}</span>
           </div>
 
           <!-- Withdrawal Form -->
-          <form @submit.prevent="handleWithdraw" class="space-y-5">
+          <form @submit.prevent="handleWithdraw" class="space-y-4">
             <!-- Amount Input & Quick Preset Pills -->
-            <div class="space-y-2">
+            <div class="space-y-1.5">
               <div class="flex items-center justify-between">
                 <label class="text-xs font-semibold text-slate-300">Số tiền muốn rút (VNĐ)</label>
                 <span class="text-[11px] text-slate-400">
@@ -615,18 +592,18 @@ const handleManualSync = async () => {
                   :max="wallet.available_balance"
                   required
                   placeholder="50000"
-                  class="w-full h-12 pl-4 pr-16 rounded-2xl bg-black/40 border border-white/10 text-white font-mono font-bold text-base focus:outline-none focus:border-phantom-mint transition-colors"
+                  class="w-full h-11 pl-3.5 pr-16 rounded-xl bg-black/50 border border-white/15 text-white font-mono font-bold text-sm sm:text-base focus:outline-none focus:border-phantom-mint transition-colors"
                 />
-                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">VNĐ</span>
+                <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">VNĐ</span>
               </div>
 
               <!-- Quick Presets -->
-              <div class="flex items-center gap-2 overflow-x-auto pt-1">
+              <div class="flex items-center gap-2 overflow-x-auto pt-0.5">
                 <button
                   v-for="amt in presetAmounts"
                   :key="amt"
                   type="button"
-                  class="px-3 py-1 rounded-xl text-xs font-mono font-semibold transition-all border"
+                  class="px-2.5 py-1 rounded-lg text-xs font-mono font-semibold transition-all border"
                   :class="withdrawForm.amount === amt ? 'bg-phantom-mint text-midnight-950 border-phantom-mint' : 'bg-white/5 text-slate-300 border-white/10 hover:border-white/20'"
                   @click="setAmount(amt)"
                 >
@@ -635,7 +612,7 @@ const handleManualSync = async () => {
 
                 <button
                   type="button"
-                  class="px-3 py-1 rounded-xl text-xs font-mono font-semibold transition-all border border-phantom-mint/40 text-phantom-mint hover:bg-phantom-mint/10"
+                  class="px-2.5 py-1 rounded-lg text-xs font-mono font-semibold transition-all border border-phantom-mint/40 text-phantom-mint hover:bg-phantom-mint/10"
                   @click="setMaxAmount"
                 >
                   Rút tất cả ({{ formatVND(wallet.available_balance) }})
@@ -644,14 +621,14 @@ const handleManualSync = async () => {
             </div>
 
             <!-- Bank Selection & Details -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <!-- Bank Name -->
-              <div class="space-y-1.5">
+              <div class="space-y-1">
                 <label class="text-xs font-semibold text-slate-300">Ngân hàng thụ hưởng</label>
                 <select
                   v-model="withdrawForm.bank_name"
                   required
-                  class="w-full h-12 px-3.5 rounded-2xl bg-black/40 border border-white/10 text-white text-xs focus:outline-none focus:border-phantom-mint"
+                  class="w-full h-11 px-3 rounded-xl bg-black/50 border border-white/15 text-white text-xs focus:outline-none focus:border-phantom-mint"
                 >
                   <option v-for="b in bankList" :key="b" :value="b" class="bg-midnight-950 text-white">
                     {{ b }}
@@ -660,36 +637,36 @@ const handleManualSync = async () => {
               </div>
 
               <!-- Account Number -->
-              <div class="space-y-1.5">
+              <div class="space-y-1">
                 <label class="text-xs font-semibold text-slate-300">Số tài khoản ngân hàng</label>
                 <input
                   v-model="withdrawForm.bank_account_number"
                   type="text"
                   required
                   placeholder="VD: 1903652881..."
-                  class="w-full h-12 px-4 rounded-2xl bg-black/40 border border-white/10 text-white font-mono text-xs focus:outline-none focus:border-phantom-mint"
+                  class="w-full h-11 px-3.5 rounded-xl bg-black/50 border border-white/15 text-white font-mono text-xs focus:outline-none focus:border-phantom-mint"
                 />
               </div>
 
               <!-- Account Name -->
-              <div class="space-y-1.5">
+              <div class="space-y-1">
                 <label class="text-xs font-semibold text-slate-300">Tên chủ tài khoản (Viết hoa)</label>
                 <input
                   v-model="withdrawForm.bank_account_name"
                   type="text"
                   required
                   placeholder="NGUYEN VAN A"
-                  class="w-full h-12 px-4 rounded-2xl bg-black/40 border border-white/10 text-white uppercase text-xs focus:outline-none focus:border-phantom-mint"
+                  class="w-full h-11 px-3.5 rounded-xl bg-black/50 border border-white/15 text-white uppercase text-xs focus:outline-none focus:border-phantom-mint"
                   @input="withdrawForm.bank_account_name = (withdrawForm.bank_account_name || '').toUpperCase()"
                 />
               </div>
             </div>
 
             <!-- Security: Password Verification (Required if Logged In) -->
-            <div v-if="auth_user" class="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-2">
+            <div v-if="auth_user" class="p-3.5 rounded-xl bg-black/40 border border-white/10 space-y-1.5">
               <div class="flex items-center justify-between">
                 <label class="text-xs font-bold text-white flex items-center gap-1.5">
-                  <Icons name="Lock" :size="14" class="text-phantom-mint" />
+                  <Icons name="Lock" :size="13" class="text-phantom-mint" />
                   <span>Xác nhận mật khẩu tài khoản của bạn:</span>
                 </label>
                 <span class="text-[10px] text-slate-400">Bảo mật giao dịch</span>
@@ -699,12 +676,12 @@ const handleManualSync = async () => {
                 type="password"
                 required
                 placeholder="Nhập mật khẩu tài khoản để duyệt lệnh rút..."
-                class="w-full h-11 px-4 rounded-xl bg-black/50 border border-white/10 text-white text-xs placeholder:text-slate-600 focus:outline-none focus:border-phantom-mint"
+                class="w-full h-10 px-3.5 rounded-lg bg-black/60 border border-white/15 text-white text-xs placeholder:text-slate-600 focus:outline-none focus:border-phantom-mint"
               />
             </div>
 
             <!-- Save Default Bank Checkbox -->
-            <div class="flex items-center gap-2 pt-1">
+            <div class="flex items-center gap-2 pt-0.5">
               <input
                 id="save_bank"
                 v-model="withdrawForm.save_default_bank"
@@ -717,13 +694,13 @@ const handleManualSync = async () => {
             </div>
 
             <!-- Submit Button -->
-            <div class="pt-2">
+            <div class="pt-1">
               <button
                 type="submit"
-                class="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-phantom-mint hover:bg-phantom-mint/90 text-midnight-950 font-bold text-xs sm:text-sm transition-all shadow-lg shadow-phantom-mint/20 disabled:opacity-50 flex items-center justify-center gap-2"
+                class="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-phantom-mint hover:bg-phantom-mint/90 text-midnight-950 font-bold text-xs sm:text-sm transition-all shadow-glow-mint disabled:opacity-50 flex items-center justify-center gap-2"
                 :disabled="withdrawForm.processing || wallet.available_balance < 50000"
               >
-                <Icons v-if="withdrawForm.processing" name="RotateCcw" :size="16" class="animate-spin" />
+                <Icons v-if="withdrawForm.processing" name="RotateCcw" :size="15" class="animate-spin" />
                 <span>{{ withdrawForm.processing ? 'Đang gửi yêu cầu...' : 'Gửi Yêu Cầu Rút Tiền Về Ngân Hàng' }}</span>
               </button>
             </div>
@@ -731,66 +708,66 @@ const handleManualSync = async () => {
         </div>
 
         <!-- Withdrawal History Table -->
-        <div class="space-y-3">
-          <h3 class="text-base font-bold font-display text-white flex items-center gap-2">
-            <Icons name="Clock" :size="16" class="text-slate-400" />
+        <div class="space-y-2.5">
+          <h3 class="text-sm font-bold font-display text-white flex items-center gap-2">
+            <Icons name="Clock" :size="15" class="text-slate-400" />
             <span>Lịch Sử Các Lệnh Rút Tiền</span>
           </h3>
 
-          <div class="bg-white/5 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-xl">
+          <div class="bg-midnight-900/60 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-xl">
             <div class="overflow-x-auto">
               <table class="w-full text-left text-xs">
                 <thead class="bg-white/5 border-b border-white/10 text-slate-400 uppercase tracking-wider font-semibold">
                   <tr>
-                    <th class="p-3.5">Mã Lệnh</th>
-                    <th class="p-3.5">Thời Gian</th>
-                    <th class="p-3.5">Số Tiền</th>
-                    <th class="p-3.5">Ngân Hàng & STK</th>
-                    <th class="p-3.5">Trạng Thái</th>
-                    <th class="p-3.5">Ghi Chú</th>
+                    <th class="p-3">Mã Lệnh</th>
+                    <th class="p-3">Thời Gian</th>
+                    <th class="p-3">Số Tiền</th>
+                    <th class="p-3">Ngân Hàng & STK</th>
+                    <th class="p-3">Trạng Thái</th>
+                    <th class="p-3">Ghi Chú</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-white/5">
                   <tr v-if="withdrawals.length === 0">
-                    <td colspan="6" class="p-8 text-center text-slate-500">
+                    <td colspan="6" class="p-6 text-center text-slate-500">
                       Chưa có lệnh rút tiền nào. Số dư từ 50.000 ₫ là bạn có thể tạo lệnh rút đầu tiên.
                     </td>
                   </tr>
                   <tr v-for="w in withdrawals" :key="w.id" class="hover:bg-white/5 transition-colors">
-                    <td class="p-3.5 font-mono font-semibold text-white">#WD-{{ w.id }}</td>
-                    <td class="p-3.5 text-slate-400">{{ formatDate(w.created_at) }}</td>
-                    <td class="p-3.5 font-mono font-bold text-emerald-400 text-sm">
+                    <td class="p-3 font-mono font-semibold text-white">#WD-{{ w.id }}</td>
+                    <td class="p-3 text-slate-400">{{ formatDate(w.created_at) }}</td>
+                    <td class="p-3 font-mono font-bold text-phantom-mint text-xs sm:text-sm">
                       {{ formatVND(w.amount) }}
                     </td>
-                    <td class="p-3.5">
+                    <td class="p-3">
                       <div class="font-semibold text-white">{{ w.bank_name }}</div>
-                      <div class="font-mono text-slate-300">{{ w.bank_account_number }} ({{ w.bank_account_name }})</div>
+                      <div class="font-mono text-slate-400 text-[11px]">{{ w.bank_account_number }} ({{ w.bank_account_name }})</div>
                     </td>
-                    <td class="p-3.5">
+                    <td class="p-3">
                       <span
-                        v-if="w.status === 'pending'"
-                        class="px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-300 text-[11px] font-semibold"
-                      >
-                        Chờ duyệt
-                      </span>
-                      <span
-                        v-else-if="w.status === 'paid' || w.status === 'completed'"
-                        class="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-[11px] font-semibold"
+                        v-if="w.status === 'completed' || w.status === 'paid'"
+                        class="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-[10px] font-semibold"
                       >
                         Đã chuyển tiền
                       </span>
                       <span
-                        v-else
-                        class="px-2.5 py-0.5 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-300 text-[11px] font-semibold"
+                        v-else-if="w.status === 'pending'"
+                        class="px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-300 text-[10px] font-semibold"
                       >
-                        Từ chối
+                        Đang chờ duyệt
+                      </span>
+                      <span
+                        v-else
+                        class="px-2 py-0.5 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-300 text-[10px] font-semibold"
+                      >
+                        Bị từ chối
                       </span>
                     </td>
-                    <td class="p-3.5 text-slate-400 text-[11px]">
-                      <span v-if="w.bank_ref_code" class="text-emerald-400 font-mono block">Mã GD: {{ w.bank_ref_code }}</span>
+                    <td class="p-3 text-[11px]">
+                      <span v-if="w.bank_ref_code" class="text-phantom-mint font-mono block">Mã GD: {{ w.bank_ref_code }}</span>
                       <span v-if="w.admin_note" class="text-slate-300 block">{{ w.admin_note }}</span>
                       <span v-if="w.note && !w.admin_note" class="text-slate-400 block">{{ w.note }}</span>
-                      <span v-if="!w.bank_ref_code && !w.admin_note && !w.note">—</span>
+                      <span v-if="!w.bank_ref_code && !w.admin_note && !w.note" class="text-slate-600">—</span>
                     </td>
                   </tr>
                 </tbody>
@@ -803,9 +780,9 @@ const handleManualSync = async () => {
       <!-- ================================================================= -->
       <!-- TAB 3: ORDER TRACKING & SYNC -->
       <!-- ================================================================= -->
-      <div v-if="activeTab === 'orders'" class="space-y-6 animate-in fade-in duration-200">
+      <div v-if="activeTab === 'orders'" class="space-y-4 animate-in fade-in duration-200">
         <!-- Controls & Filter Toolbar -->
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <!-- Status Pills -->
           <div class="flex items-center gap-1.5 overflow-x-auto">
             <button
@@ -817,8 +794,8 @@ const handleManualSync = async () => {
               ]"
               :key="st.val"
               type="button"
-              class="px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all"
-              :class="orderFilter === st.val ? 'bg-phantom-mint text-midnight-950 shadow-md' : 'bg-white/5 text-slate-400 hover:text-white'"
+              class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all"
+              :class="orderFilter === st.val ? 'bg-phantom-mint text-midnight-950 shadow-glow-mint' : 'bg-white/5 text-slate-400 hover:text-white'"
               @click="orderFilter = st.val as any"
             >
               {{ st.label }}
@@ -831,81 +808,81 @@ const handleManualSync = async () => {
               v-model="searchQuery"
               type="text"
               placeholder="Tìm mã đơn hoặc tên sản phẩm..."
-              class="px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-xs focus:outline-none focus:border-phantom-mint w-full sm:w-64"
+              class="px-3.5 py-1.5 rounded-xl bg-black/40 border border-white/15 text-white text-xs focus:outline-none focus:border-phantom-mint w-full sm:w-60 h-9"
             />
 
             <button
               type="button"
-              class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold flex items-center gap-1.5 shrink-0 transition-all disabled:opacity-50"
+              class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold flex items-center gap-1.5 shrink-0 transition-all disabled:opacity-50 h-9"
               :disabled="isSyncingOrders"
               @click="handleManualSync"
             >
-              <Icons name="RotateCcw" :size="14" :class="{ 'animate-spin': isSyncingOrders }" />
+              <Icons name="RotateCcw" :size="13" :class="{ 'animate-spin': isSyncingOrders }" />
               <span>{{ isSyncingOrders ? 'Đang kiểm tra...' : 'Kiểm tra đơn mới' }}</span>
             </button>
           </div>
         </div>
 
-        <div v-if="syncFeedback" class="text-xs text-phantom-mint bg-phantom-mint/10 p-3 rounded-xl border border-phantom-mint/20">
+        <div v-if="syncFeedback" class="text-xs text-phantom-mint bg-phantom-mint/10 p-2.5 rounded-xl border border-phantom-mint/20">
           {{ syncFeedback }}
         </div>
 
         <!-- Orders Table / List -->
-        <div class="bg-white/5 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-xl">
+        <div class="bg-midnight-900/60 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-xl">
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
               <thead class="bg-white/5 border-b border-white/10 text-slate-400 uppercase tracking-wider font-semibold">
                 <tr>
-                  <th class="p-3.5">Mã Đơn Shopee</th>
-                  <th class="p-3.5">Sản Phẩm</th>
-                  <th class="p-3.5">Giá Trị Đơn (GMV)</th>
-                  <th class="p-3.5">Tiền Hoàn Về Ví</th>
-                  <th class="p-3.5">Trạng Thái</th>
+                  <th class="p-3">Mã Đơn Shopee</th>
+                  <th class="p-3">Sản Phẩm</th>
+                  <th class="p-3">Giá Trị Đơn (GMV)</th>
+                  <th class="p-3">Tiền Hoàn Về Ví</th>
+                  <th class="p-3">Trạng Thái</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-white/5">
                 <tr v-if="filteredOrders.length === 0">
-                  <td colspan="5" class="p-8 text-center text-slate-500">
+                  <td colspan="5" class="p-6 text-center text-slate-500">
                     Không tìm thấy đơn hàng nào phù hợp. Hãy dán link Shopee ở tab "Sinh Link Mua Sắm" và đặt hàng để nhận hoàn tiền!
                   </td>
                 </tr>
                 <tr v-for="o in filteredOrders" :key="o.id" class="hover:bg-white/5 transition-colors">
-                  <td class="p-3.5">
+                  <td class="p-3">
                     <span class="font-mono font-bold text-white">#{{ o.shopee_order_id }}</span>
                     <div class="text-[10px] text-slate-500 mt-0.5">{{ formatDate(o.order_time || o.created_at) }}</div>
                   </td>
 
-                  <td class="p-3.5 max-w-sm">
+                  <td class="p-3 max-w-sm">
                     <div class="truncate font-semibold text-slate-200" :title="o.product_name">
                       {{ o.product_name }}
                     </div>
                   </td>
 
-                  <td class="p-3.5 font-mono text-slate-300">
+                  <td class="p-3 font-mono text-slate-300">
                     {{ formatVND(o.gmv) }}
                   </td>
 
-                  <td class="p-3.5 font-mono font-bold text-sm text-emerald-400">
+                  <td class="p-3 font-mono font-bold text-xs sm:text-sm text-phantom-mint">
                     +{{ formatVND(o.cashback_amount) }}
                     <span class="text-[10px] text-slate-500 font-normal">({{ Math.round(o.cashback_rate * 100) }}%)</span>
                   </td>
 
-                  <td class="p-3.5">
+                  <td class="p-3">
                     <span
                       v-if="o.status === 'confirmed'"
-                      class="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-[11px] font-semibold"
+                      class="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-[10px] font-semibold"
                     >
                       Đã cộng tiền
                     </span>
                     <span
                       v-else-if="o.status === 'pending'"
-                      class="px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-300 text-[11px] font-semibold"
+                      class="px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-300 text-[10px] font-semibold"
                     >
                       Chờ Shopee duyệt
                     </span>
                     <span
                       v-else
-                      class="px-2.5 py-0.5 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-300 text-[11px] font-semibold"
+                      class="px-2 py-0.5 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-300 text-[10px] font-semibold"
                     >
                       Đã hủy/hoàn trả
                     </span>

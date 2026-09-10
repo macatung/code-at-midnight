@@ -68,7 +68,7 @@ const handleLogout = () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#04070d] text-slate-100 flex flex-col font-sans selection:bg-phantom-mint selection:text-midnight-950 relative antialiased">
+  <div class="min-h-screen bg-midnight-950 text-slate-100 flex flex-col font-sans selection:bg-phantom-mint selection:text-midnight-950 relative antialiased bg-grid-pattern">
     <Head>
       <title>{{ title ? `${title} — Hoàn Tiền Shopee | MacaTung` : 'Cổng Hoàn Tiền Shopee — Hoàn Tới 80% Hoa Hồng | MacaTung' }}</title>
       <meta name="description" :content="description || 'Hệ thống hoàn tiền Shopee Affiliate tự động. Dán link, mua sắm và nhận hoàn tiền trực tiếp vào tài khoản ngân hàng.'" />
@@ -77,36 +77,36 @@ const handleLogout = () => {
     </Head>
 
     <!-- Top Navigation Bar -->
-    <header class="sticky top-0 z-40 bg-[#04070d]/90 backdrop-blur-xl border-b border-white/10">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <header class="sticky top-0 z-40 bg-midnight-950/90 backdrop-blur-xl border-b border-white/10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between">
         <!-- Brand / Logo -->
         <div class="flex items-center gap-3">
           <Link :href="homeUrl" class="flex items-center gap-2.5 group">
-            <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-orange-600 via-orange-500 to-amber-400 flex items-center justify-center shadow-lg shadow-orange-500/20 group-hover:scale-105 transition-transform">
-              <span class="text-white font-black text-xl tracking-tight">S</span>
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-orange-600 to-orange-500 flex items-center justify-center shadow-md shadow-orange-500/10 group-hover:scale-105 transition-transform">
+              <span class="text-white font-black text-lg tracking-tight">S</span>
             </div>
             <div>
               <div class="flex items-center gap-2">
-                <span class="font-bold text-base sm:text-lg text-white tracking-tight group-hover:text-orange-400 transition-colors">
+                <span class="font-bold text-sm sm:text-base text-white tracking-tight group-hover:text-phantom-mint transition-colors">
                   Hoàn Tiền Shopee
                 </span>
-                <span class="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full bg-phantom-mint/15 text-phantom-mint border border-phantom-mint/30 hidden xs:inline-block">
+                <span class="text-[10px] font-mono font-semibold uppercase px-2 py-0.5 rounded-full bg-phantom-mint/10 text-phantom-mint border border-phantom-mint/20 hidden xs:inline-block">
                   80% Cashback
                 </span>
               </div>
-              <p class="text-[11px] text-slate-400 font-mono">hoantien.macatung.dev</p>
+              <p class="text-[10px] text-slate-400 font-mono">hoantien.macatung.dev</p>
             </div>
           </Link>
         </div>
 
         <!-- Right Side Navigation & Auth Actions -->
-        <div class="flex items-center gap-3 sm:gap-4">
+        <div class="flex items-center gap-2.5 sm:gap-3">
           <!-- Balance Pill -->
-          <div v-if="wallet" class="flex items-center gap-2.5 bg-phantom-mint/10 border border-phantom-mint/30 rounded-xl px-3 py-1.5 shadow-sm">
-            <span class="w-2 h-2 rounded-full bg-phantom-mint animate-pulse"></span>
+          <div v-if="wallet" class="flex items-center gap-2 bg-phantom-mint/10 border border-phantom-mint/30 rounded-xl px-2.5 py-1 shadow-sm">
+            <span class="w-1.5 h-1.5 rounded-full bg-phantom-mint animate-pulse"></span>
             <div class="text-right">
-              <span class="text-[9px] uppercase text-phantom-mint block font-bold tracking-wider leading-tight">Khả dụng</span>
-              <span class="text-xs sm:text-sm font-bold text-white font-mono leading-tight">
+              <span class="text-[8px] uppercase text-phantom-mint block font-bold tracking-wider leading-none">Khả dụng</span>
+              <span class="text-xs sm:text-sm font-bold text-white font-mono leading-none mt-0.5 block">
                 {{ formatVND(wallet.available_balance) }}
               </span>
             </div>
@@ -138,7 +138,7 @@ const handleLogout = () => {
 
               <div class="px-3 py-1.5 text-[11px] text-slate-400 flex items-center justify-between">
                 <span>Mã Tracking:</span>
-                <span class="font-mono text-orange-400 font-semibold">{{ wallet?.sub_id }}</span>
+                <span class="font-mono text-phantom-mint font-semibold">{{ wallet?.sub_id }}</span>
               </div>
 
               <button
@@ -163,7 +163,7 @@ const handleLogout = () => {
             </button>
             <button
               type="button"
-              class="px-3.5 py-1.5 rounded-xl bg-phantom-mint hover:bg-phantom-mint/90 text-midnight-950 text-xs font-bold transition-all shadow-md shadow-phantom-mint/10"
+              class="px-3.5 py-1.5 rounded-xl bg-phantom-mint hover:bg-phantom-mint/90 text-midnight-950 text-xs font-bold transition-all shadow-glow-mint"
               @click="openRegister"
             >
               Đăng Ký
@@ -173,7 +173,7 @@ const handleLogout = () => {
           <!-- Main Portfolio Backlink -->
           <a
             :href="mainPortfolioUrl"
-            class="text-xs text-slate-400 hover:text-white transition-colors border border-white/10 hover:border-white/20 rounded-xl px-3 py-1.5 hidden md:inline-flex items-center gap-1.5"
+            class="text-xs text-slate-400 hover:text-white transition-colors border border-white/10 hover:border-white/20 rounded-xl px-2.5 py-1.5 hidden md:inline-flex items-center gap-1.5"
             title="Trở về website chính macatung.dev"
           >
             <span>← macatung.dev</span>
