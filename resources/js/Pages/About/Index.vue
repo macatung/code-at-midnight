@@ -19,24 +19,24 @@ const { t } = useI18n();
 
 const aboutJsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'ProfilePage',
-  'name': 'Hồ Sơ Năng Lực & Kỹ Năng Kỹ Thuật (Ma Cà Tưng)',
-  'description': 'Hồ sơ chuyên môn, kinh nghiệm thực chiến và bộ kỹ năng công nghệ Full-Stack & Creative Engineering của Ma Cà Tưng.',
+  '@type': 'AboutPage',
+  'name': 'MacaTung Studio — Triết Lý Kiến Trúc & Sứ Mệnh Hệ Sinh Thái',
+  'description': 'Tìm hiểu về triết lý kỹ nghệ, sứ mệnh kiến tạo 5 trụ cột sản phẩm kỹ thuật số và năng lực hệ thống của MacaTung.',
   'url': 'https://macatung.dev/about',
   'mainEntity': {
-    '@type': 'Person',
-    'name': 'Ma Cà Tưng',
-    'jobTitle': 'Senior Full-Stack Engineer',
-    'url': 'https://macatung.dev'
+    '@type': 'Organization',
+    'name': 'MacaTung',
+    'url': 'https://macatung.dev',
+    'logo': 'https://macatung.dev/brand/macatung-logo-horizontal.png'
   }
 };
 </script>
 
 <template>
   <SeoHead
-    :title="t('page.aboutTitle')"
-    :description="t('page.aboutDescription')"
-    keywords="Kỹ năng Lập trình, Hồ sơ Lập trình viên, Full-Stack Developer Profile, Laravel, Vue.js, System Architecture"
+    title="Triết Lý &amp; Sứ Mệnh Hệ Sinh Thái | MacaTung Studio"
+    description="Tìm hiểu về triết lý kỹ nghệ, sứ mệnh kiến tạo 5 trụ cột sản phẩm kỹ thuật số và năng lực hệ thống của MacaTung."
+    keywords="MacaTung, Triết lý kỹ nghệ, Hệ sinh thái phần mềm, Theravada, Decode, Task Companion, Kiến trúc hệ thống"
     canonical="https://macatung.dev/about"
     :json-ld="aboutJsonLd"
   />
@@ -53,7 +53,7 @@ const aboutJsonLd = {
         <span class="text-phantom-mint font-bold">{{ t('about.breadcrumb') }}</span>
       </nav>
 
-      <!-- Professional profile -->
+      <!-- Studio Architecture & Ecosystem Overview -->
       <AboutSection :stats="stats" />
 
       <ExperienceSection :experiences="experiences" />

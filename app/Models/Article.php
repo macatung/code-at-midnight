@@ -35,6 +35,8 @@ class Article extends Model
         'video_long_url',
         'video_short_url',
         'youtube_url',
+        'playlist',
+        'episode_number',
         'thumbnail_long_url',
         'thumbnail_short_url',
         'video_long_duration',
@@ -58,6 +60,7 @@ class Article extends Model
 
     protected $casts = [
         'paired_article_id' => 'integer',
+        'episode_number' => 'integer',
         'tags' => 'array',
         'pali_terms' => 'array',
         'hashtags' => 'array',
@@ -92,6 +95,19 @@ class Article extends Model
     {
         if ($status && $status !== 'all') {
             return $query->where('video_status', $status);
+        }
+
+        return $query;
+    }
+
+    public function scopeInPlaylist($query, ?string $playlist)
+    {
+        if ($playlist && $playlist !== 'all') {
+            if ($playlist === 'unassigned') {
+                return $query->whereNull('playlist');
+            }
+
+            return $query->where('playlist', $playlist);
         }
 
         return $query;

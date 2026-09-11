@@ -244,27 +244,27 @@ const pillars = [
       </div>
     </div>
 
-    <!-- Bio Origin Story Card & 3 Architectural Pillars Grid -->
+    <!-- Studio Philosophy Card & 3 Architectural Pillars Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-      <!-- Bio Origin Card (5 Columns) -->
+      <!-- Studio Philosophy Card (5 Columns) -->
       <div class="about-bio-card glass-panel lg:col-span-5 p-6 sm:p-7 rounded-2xl border border-white/10 flex flex-col justify-between relative overflow-hidden bg-gradient-to-b from-midnight-900/90 to-midnight-950">
         <div class="relative z-10">
-          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-talisman-gold/10 text-talisman-gold border border-talisman-gold/30 text-xs font-mono mb-4 font-bold">
-            ⚡ {{ t('about.badge') }}
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-phantom-mint/10 text-phantom-mint border border-phantom-mint/30 text-xs font-mono mb-4 font-bold">
+            🌿 Studio Philosophy
           </div>
           <h3 class="font-display font-bold text-white text-xl mb-1">
-            {{ t('about.origin') }}
+            Triết Lý Kỹ Nghệ MacaTung
           </h3>
           <p class="text-xs font-mono text-phantom-mint mb-3">
-            🏆 {{ t('about.award') }}
+            ✨ Sứ Mệnh Hệ Sinh Thái &amp; Kỹ Nghệ Phần Mềm
           </p>
           <p class="text-slate-300 text-sm leading-relaxed font-sans mb-4">
-            {{ t('about.description') }}
+            Xây dựng và phát triển hệ sinh thái kỹ thuật số đa nền tảng gồm 5 trụ cột: Nền tảng Phật giáo Theravāda, khảo cứu công nghệ Ma Giải Mã, Cổng Hoàn Tiền Shopee, Task Companion Desktop và các công cụ tương tác phục vụ cộng đồng.
           </p>
         </div>
         <div class="pt-4 border-t border-white/5 flex items-center justify-between text-xs font-mono text-slate-400 relative z-10">
-          <span>📍 {{ t('about.location') }}</span>
-          <span class="text-phantom-mint font-bold">{{ t('about.principle') }}</span>
+          <span>🌐 MacaTung Ecosystem</span>
+          <span class="text-phantom-mint font-bold">🌿 Kỹ Nghệ Vị Nhân Sinh</span>
         </div>
       </div>
 

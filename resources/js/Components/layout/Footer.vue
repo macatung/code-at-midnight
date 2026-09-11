@@ -31,23 +31,85 @@ const triggerHeartEasterEgg = (event: MouseEvent) => {
 
     <div class="grid grid-cols-2 gap-8 border-b border-white/5 py-10 text-xs font-sans md:grid-cols-4">
       <div>
-        <h4 class="mb-3 font-mono text-[11px] uppercase tracking-wider text-slate-400">{{ t('footer.product') }}</h4>
-        <ul class="space-y-2 text-slate-400"><li><a href="/" class="hover:text-phantom-mint">{{ t('nav.home') }}</a></li><li><a href="/desktop" class="hover:text-phantom-mint">Task Companion</a></li><li><a href="/contact" class="hover:text-phantom-mint">{{ t('nav.contact') }}</a></li></ul>
+        <h4 class="mb-3 font-mono text-[11px] uppercase tracking-wider text-slate-400">{{ t('footer.platforms') }}</h4>
+        <ul class="space-y-2 text-slate-400">
+          <li>
+            <a href="/theravada" class="hover:text-amber-300 inline-flex items-center gap-1.5" title="Theravāda Buddhist Platform">
+              {{ t('footer.theravadaPlatform') }}
+              <span class="text-[9px] px-1 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono">ZEN</span>
+            </a>
+          </li>
+          <li>
+            <a href="/decode" class="hover:text-[#00f5d4] inline-flex items-center gap-1.5" title="Decode Media Series">
+              {{ t('footer.decodeSeries') }}
+              <span class="text-[9px] px-1 py-0.5 rounded bg-[#00f5d4]/20 text-[#00f5d4] font-mono">NEW</span>
+            </a>
+          </li>
+          <li>
+            <a href="/hoantien" class="hover:text-phantom-mint inline-flex items-center gap-1.5" title="Shopee Cashback Utility">
+              {{ t('footer.cashbackPlatform') }}
+              <span class="text-[9px] px-1 py-0.5 rounded bg-phantom-mint/20 text-phantom-mint font-mono">80%</span>
+            </a>
+          </li>
+        </ul>
       </div>
       <div>
-        <h4 class="mb-3 font-mono text-[11px] uppercase tracking-wider text-slate-400">{{ t('footer.discover') }}</h4>
-        <ul class="space-y-2 text-slate-400"><li><a href="/projects" class="hover:text-phantom-mint">{{ t('nav.projects') }}</a></li><li><a href="/about" class="hover:text-phantom-mint">{{ t('nav.about') }}</a></li><li><a href="/blog" class="hover:text-phantom-mint">{{ t('nav.blog') }}</a></li></ul>
+        <h4 class="mb-3 font-mono text-[11px] uppercase tracking-wider text-slate-400">{{ t('footer.softwareTools') }}</h4>
+        <ul class="space-y-2 text-slate-400">
+          <li>
+            <a href="/desktop" class="hover:text-sky-300 inline-flex items-center gap-1.5" title="Task Companion Windows Desktop">
+              {{ t('footer.taskCompanion') }}
+              <span class="text-[9px] px-1 py-0.5 rounded bg-blue-500/20 text-sky-300 font-mono">Win</span>
+            </a>
+          </li>
+          <li>
+            <a href="/talisman" class="hover:text-phantom-mint">{{ t('footer.talismanForge') }}</a>
+          </li>
+          <li>
+            <a href="/game" class="hover:text-phantom-mint">{{ t('footer.runeTyper') }}</a>
+          </li>
+        </ul>
       </div>
       <div>
-        <h4 class="mb-3 font-mono text-[11px] uppercase tracking-wider text-slate-400">{{ t('footer.labs') }}</h4>
-        <ul class="space-y-2 text-slate-400"><li><a href="/hoantien" class="hover:text-phantom-mint inline-flex items-center gap-1.5" title="Cổng Hoàn Tiền Shopee">Hoàn Tiền Shopee <span class="text-[9px] px-1 py-0.5 rounded bg-phantom-mint/20 text-phantom-mint font-mono">80% HOT</span></a></li><li><a href="/game" class="hover:text-phantom-mint">{{ t('nav.game') }}</a></li><li><a href="/talisman" class="hover:text-phantom-mint">{{ t('nav.talisman') }}</a></li><li><a href="https://theravada.macatung.dev" target="_blank" rel="noopener" class="hover:text-amber-300 inline-flex items-center gap-1.5" title="Ma Tọa Thiền — Tam Tạng Kinh Điển Theravāda">{{ t('nav.theravada') }} <span class="text-[9px] px-1 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono">↗</span></a></li><li><a href="/decode" class="hover:text-[#00f5d4] inline-flex items-center gap-1.5" title="Ma Giải Mã — Mở nắp những hệ thống vô hình">Ma Giải Mã <span class="text-[9px] px-1 py-0.5 rounded bg-[#00f5d4]/20 text-[#00f5d4] font-mono">NEW</span></a></li></ul>
+        <h4 class="mb-3 font-mono text-[11px] uppercase tracking-wider text-slate-400">{{ t('footer.architecture') }}</h4>
+        <ul class="space-y-2 text-slate-400">
+          <li>
+            <a href="/projects" class="hover:text-phantom-mint">{{ t('projects.title') }}</a>
+          </li>
+          <li>
+            <a href="/blog" class="hover:text-phantom-mint">{{ t('footer.engineeringLog') }}</a>
+          </li>
+          <li>
+            <a href="/contact" class="hover:text-phantom-mint">{{ t('footer.systemStatus') }}</a>
+          </li>
+        </ul>
       </div>
       <div>
-        <h4 class="mb-3 font-mono text-[11px] uppercase tracking-wider text-slate-400">{{ t('footer.connect') }}</h4>
-        <ul class="space-y-2 text-slate-400"><li><a href="https://github.com/macatung" target="_blank" rel="noopener noreferrer" class="hover:text-phantom-mint">GitHub</a></li><li><a href="/admin" class="hover:text-phantom-mint">{{ t('footer.admin') }}</a></li></ul>
+        <h4 class="mb-3 font-mono text-[11px] uppercase tracking-wider text-slate-400">{{ t('footer.studioCommunity') }}</h4>
+        <ul class="space-y-2 text-slate-400">
+          <li>
+            <a href="/contact" class="hover:text-phantom-mint">{{ t('footer.community') }}</a>
+          </li>
+          <li>
+            <a href="https://github.com/macatung" target="_blank" rel="noopener noreferrer" class="hover:text-phantom-mint inline-flex items-center gap-1">
+              GitHub
+              <span class="text-[9px] font-mono opacity-60">↗</span>
+            </a>
+          </li>
+          <li>
+            <a href="/admin" class="hover:text-phantom-mint">{{ t('footer.admin') }}</a>
+          </li>
+        </ul>
       </div>
     </div>
 
-    <div class="flex flex-col items-center justify-between gap-4 pt-8 text-xs font-mono text-slate-500 sm:flex-row"><p>© 2026 macatung.dev</p><div class="flex items-center gap-1.5"><span>{{ t('footer.crafted') }}</span><button type="button" class="flex min-h-[32px] min-w-[32px] items-center justify-center p-1 text-rose-400" :title="t('footer.heartTitle')" @click="triggerHeartEasterEgg">❤️</button><span v-if="heartClicks" class="font-bold text-phantom-mint">({{ heartClicks }})</span></div></div>
+    <div class="flex flex-col items-center justify-between gap-4 pt-8 text-xs font-mono text-slate-500 sm:flex-row">
+      <p>{{ t('footer.copyright') }}</p>
+      <div class="flex items-center gap-1.5">
+        <span>{{ t('footer.crafted') }}</span>
+        <button type="button" class="flex min-h-[32px] min-w-[32px] items-center justify-center p-1 text-rose-400" :title="t('footer.heartTitle')" @click="triggerHeartEasterEgg">❤️</button>
+        <span v-if="heartClicks" class="font-bold text-phantom-mint">({{ heartClicks }})</span>
+      </div>
+    </div>
   </footer>
 </template>

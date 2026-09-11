@@ -258,4 +258,124 @@ class AdminTheravadaVideoTest extends TestCase
         $article4 = new Article(['youtube_url' => null]);
         $this->assertNull($article4->youtube_id);
     }
+
+    public function test_admin_can_filter_by_playlist_and_ordered_by_episode_number(): void
+    {
+        $this->authenticateAdmin();
+
+        Article::create([
+            'site_domain' => 'theravada',
+            'title' => 'Tập 2 Phật Pháp Ứng Dụng',
+            'slug' => 'tap-2-phat-phap-ung-dung',
+            'content' => 'Nội dung...',
+            'playlist' => 'phat-phap-ung-dung',
+            'episode_number' => 2,
+            'video_status' => 'completed',
+        ]);
+
+        Article::create([
+            'site_domain' => 'theravada',
+            'title' => 'Tập 1 Phật Pháp Ứng Dụng',
+            'slug' => 'tap-1-phat-phap-ung-dung',
+            'content' => 'Nội dung...',
+            'playlist' => 'phat-phap-ung-dung',
+            'episode_number' => 1,
+            'video_status' => 'completed',
+        ]);
+
+        Article::create([
+            'site_domain' => 'theravada',
+            'title' => 'Bài Viết Khác',
+            'slug' => 'bai-viet-khac',
+            'content' => 'Nội dung...',
+            'playlist' => 'tam-an-van-su-an',
+            'episode_number' => 1,
+            'video_status' => 'completed',
+        ]);
+
+        $response = $this->get('/admin/theravada/videos?playlist=phat-phap-ung-dung');
+        $response->assertStatus(200);
+
+        $response->assertInertia(fn ($page) => $page
+            ->component('Admin/Theravada/Videos/Index')
+            ->has('playlistTabs')
+            ->has('playlistsMetadata')
+            ->where('filters.playlist', 'phat-phap-ung-dung')
+            ->has('articles.data', 2)
+            ->where('articles.data.0.episode_number', 1)
+            ->where('articles.data.1.episode_number', 2)
+        );
+    }
+
+    public function test_admin_can_update_playlist_and_episode_number(): void
+    {
+        $this->authenticateAdmin();
+
+        $article = Article::create([
+            'site_domain' => 'theravada',
+            'title' => 'Bài Pháp Cần Gán Playlist',
+            'slug' => 'bai-phap-can-gan-playlist',
+            'content' => 'Nội dung...',
+            'video_status' => 'completed',
+        ]);
+
+        $response = $this->from("/admin/theravada/videos/{$article->id}")
+            ->put("/admin/theravada/videos/{$article->id}", [
+                'playlist' => 'phat-phap-ung-dung',
+                'episode_number' => 3,
+                'seo_title' => 'Tập 3: Phật Pháp Ứng Dụng',
+            ]);
+
+        $response->assertRedirect("/admin/theravada/videos/{$article->id}");
+        $article->refresh();
+
+        $this->assertSame('phat-phap-ung-dung', $article->playlist);
+        $this->assertSame(3, $article->episode_number);
+    }
+
+    public function test_show_provides_prev_and_next_episodes_in_playlist(): void
+    {
+        $this->authenticateAdmin();
+
+        $ep1 = Article::create([
+            'site_domain' => 'theravada',
+            'title' => 'Tập 1: Mở Đầu',
+            'slug' => 'tap-1-mo-dau',
+            'content' => 'Nội dung...',
+            'playlist' => 'tam-an-van-su-an',
+            'episode_number' => 1,
+            'video_status' => 'completed',
+        ]);
+
+        $ep2 = Article::create([
+            'site_domain' => 'theravada',
+            'title' => 'Tập 2: Quán Tâm',
+            'slug' => 'tap-2-quan-tam',
+            'content' => 'Nội dung...',
+            'playlist' => 'tam-an-van-su-an',
+            'episode_number' => 2,
+            'video_status' => 'completed',
+        ]);
+
+        $ep3 = Article::create([
+            'site_domain' => 'theravada',
+            'title' => 'Tập 3: Buông Xả',
+            'slug' => 'tap-3-buong-xa',
+            'content' => 'Nội dung...',
+            'playlist' => 'tam-an-van-su-an',
+            'episode_number' => 3,
+            'video_status' => 'completed',
+        ]);
+
+        $response = $this->get("/admin/theravada/videos/{$ep2->id}");
+        $response->assertStatus(200);
+
+        $response->assertInertia(fn ($page) => $page
+            ->component('Admin/Theravada/Videos/Show')
+            ->where('article.id', $ep2->id)
+            ->where('prevEpisode.id', $ep1->id)
+            ->where('nextEpisode.id', $ep3->id)
+        );
+    }
 }
+

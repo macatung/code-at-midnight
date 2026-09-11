@@ -116,6 +116,14 @@ const handleCtaClick = (soundType: 'click' | 'talisman', eventName?: string) => 
             <span>📜</span>
           </Link>
           <Link
+            href="/desktop"
+            class="px-4 py-3.5 rounded-2xl bg-midnight-900/80 border border-white/10 hover:border-phantom-mint/40 text-slate-300 hover:text-white font-mono text-xs sm:text-sm transition-all flex items-center gap-2 min-h-[48px] whitespace-nowrap cursor-pointer"
+            @click="handleCtaClick('click', 'desktop')"
+          >
+            <Icons name="Monitor" :size="16" class="text-phantom-mint" />
+            <span>Task Companion</span>
+          </Link>
+          <Link
             href="/game"
             class="px-4 py-3.5 rounded-2xl bg-amber-500/10 border border-talisman-gold/40 text-talisman-gold hover:bg-talisman-gold/20 font-display font-bold text-xs sm:text-sm transition-all flex items-center gap-2 min-h-[48px] whitespace-nowrap shadow-glow-talisman cursor-pointer"
             @click="handleCtaClick('click', 'game')"
@@ -123,30 +131,13 @@ const handleCtaClick = (soundType: 'click' | 'talisman', eventName?: string) => 
             <span>🎮</span>
             <span>{{ t('hero.game') }}</span>
           </Link>
-          <Link
-            href="/about"
-            class="px-4 py-3.5 rounded-2xl bg-midnight-900/80 border border-white/10 hover:border-phantom-mint/40 text-slate-300 hover:text-white font-mono text-xs sm:text-sm transition-all flex items-center gap-2 min-h-[48px] whitespace-nowrap cursor-pointer"
-            @click="handleCtaClick('click', 'about')"
-          >
-            <Icons name="Zap" :size="16" class="text-phantom-mint" />
-            <span>{{ t('hero.profile') }}</span>
-          </Link>
-          <Link
-            href="/contact"
-            class="px-4 py-3.5 rounded-2xl bg-white/5 border border-white/10 hover:border-talisman-gold/40 text-slate-300 hover:text-talisman-gold font-mono text-xs sm:text-sm transition-all flex items-center gap-2 min-h-[48px] whitespace-nowrap cursor-pointer"
-            :title="t('hero.cvTitle')"
-            @click="handleCtaClick('click', 'cv_download')"
-          >
-            <Icons name="FileText" :size="16" />
-            <span>{{ t('hero.cv') }}</span>
-          </Link>
         </div>
 
         <!-- Trust Badges with Subtle Glow -->
         <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-4 text-xs font-mono text-slate-300">
           <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-midnight-900/60 border border-white/5 whitespace-nowrap">
             <Icons name="Zap" :size="14" class="text-phantom-mint" />
-            <span>{{ t('hero.years') }}</span>
+            <span>5 Live Platforms</span>
           </div>
           <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-midnight-900/60 border border-white/5 whitespace-nowrap">
             <Icons name="Activity" :size="14" class="text-phantom-mint" />

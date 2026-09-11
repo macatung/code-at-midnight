@@ -15,6 +15,8 @@ interface ArticleDetail {
   content: string;
   tags?: string[];
   pali_terms?: string[] | Record<string, string>;
+  playlist?: string | null;
+  episode_number?: number | null;
   video_status: 'draft' | 'processing' | 'completed' | 'published' | 'failed' | string;
   video_long_url?: string | null;
   video_short_url?: string | null;
@@ -41,8 +43,19 @@ interface ArticleDetail {
   updated_at: string;
 }
 
+interface AdjacentEpisode {
+  id: number;
+  title: string;
+  slug: string;
+  episode_number?: number | null;
+  video_status: string;
+  thumbnail_long_url?: string | null;
+}
+
 const props = defineProps<{
   article: ArticleDetail;
+  prevEpisode?: AdjacentEpisode | null;
+  nextEpisode?: AdjacentEpisode | null;
 }>();
 
 // Media Canvas Mode: 'player_16_9' | 'player_9_16' | 'thumb_16_9' | 'thumb_9_16'
@@ -64,6 +77,8 @@ const isCaptionExpanded = ref(false);
 
 // Form
 const form = useForm({
+  playlist: props.article.playlist || '',
+  episode_number: props.article.episode_number ?? '',
   youtube_url: props.article.youtube_url || '',
   seo_title: props.article.seo_title || props.article.title || '',
   seo_description: props.article.seo_description || props.article.excerpt || '',
@@ -78,6 +93,8 @@ watch(
   () => props.article,
   (newArticle) => {
     if (newArticle && !form.isDirty) {
+      form.playlist = newArticle.playlist || '';
+      form.episode_number = newArticle.episode_number ?? '';
       form.youtube_url = newArticle.youtube_url || '';
       form.seo_title = newArticle.seo_title || newArticle.title || '';
       form.seo_description = newArticle.seo_description || newArticle.excerpt || '';
@@ -398,6 +415,19 @@ const getStatusDotClass = (status: string) => {
               <span>Trạm Video</span>
             </Link>
             <span>/</span>
+            <template v-if="article.playlist">
+              <Link
+                :href="`/admin/theravada/videos?playlist=${article.playlist}`"
+                class="text-amber-400/90 hover:text-amber-300 transition-colors"
+              >
+                {{ article.playlist === 'phat-phap-ung-dung' ? 'Phật Pháp Ứng Dụng' : article.playlist === 'tam-an-van-su-an' ? 'Tâm An Vạn Sự An' : article.playlist }}
+              </Link>
+              <span>/</span>
+            </template>
+            <span v-if="article.episode_number" class="px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 font-mono text-[10px] font-semibold border border-amber-500/20">
+              Tập {{ article.episode_number }}
+            </span>
+            <span v-if="article.episode_number">•</span>
             <span class="text-slate-300">#{{ article.id }}</span>
             <span>•</span>
             <span class="flex items-center gap-1.5 font-sans font-medium" :class="getStatusColor(article.video_status)">
@@ -807,6 +837,64 @@ const getStatusDotClass = (status: string) => {
         <!-- RIGHT COLUMN: PLATFORM PUBLISHING FORMS (5 COLS)         -->
         <!-- ======================================================== -->
         <div class="lg:col-span-5 space-y-4">
+          <!-- Card: Thiết lập Playlist & Số Tập -->
+          <div class="p-4 sm:p-5 rounded-2xl bg-slate-900/40 border border-white/[0.08] space-y-3.5 shadow-sm">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-300">
+                <Icons name="List" :size="14" class="text-amber-400" />
+                <span>Playlist & Thứ Tự Series</span>
+              </div>
+              <span
+                v-if="form.playlist"
+                class="text-[11px] font-mono px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-300 border border-amber-500/20 font-medium"
+              >
+                {{ form.episode_number ? `Tập ${form.episode_number}` : 'Chưa có số tập' }}
+              </span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div class="sm:col-span-2 space-y-1.5">
+                <label class="text-[11px] font-mono text-slate-400 flex items-center gap-1">
+                  <span>Thuộc Playlist:</span>
+                </label>
+                <select
+                  v-model="form.playlist"
+                  class="w-full px-3 py-2 rounded-lg bg-black/40 border border-white/[0.08] text-xs text-slate-200 focus:outline-none focus:border-white/20 transition-all cursor-pointer"
+                >
+                  <option value="">— Chưa phân loại —</option>
+                  <option value="phat-phap-ung-dung">Phật Pháp Ứng Dụng (phat-phap-ung-dung)</option>
+                  <option value="tam-an-van-su-an">Tâm An Vạn Sự An (tam-an-van-su-an)</option>
+                </select>
+              </div>
+
+              <div class="space-y-1.5">
+                <label class="text-[11px] font-mono text-slate-400 flex items-center gap-1">
+                  <span>Số Tập (#):</span>
+                </label>
+                <input
+                  v-model.number="form.episode_number"
+                  type="number"
+                  min="1"
+                  placeholder="VD: 1"
+                  class="w-full px-3 py-2 rounded-lg bg-black/40 border border-white/[0.08] text-xs font-mono text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-white/20 transition-all"
+                />
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-1 border-t border-white/[0.04] text-[11px] text-slate-500">
+              <span class="truncate">Tập sẽ được xếp thứ tự trong danh sách phát</span>
+              <button
+                type="button"
+                @click="handleSaveMetadata"
+                :disabled="form.processing"
+                class="px-3 py-1 rounded-lg bg-white/[0.06] hover:bg-white/[0.1] text-slate-200 text-xs font-medium transition-colors border border-white/[0.08] flex items-center gap-1.5 shrink-0 ml-2"
+              >
+                <Icons name="Check" :size="12" />
+                <span>{{ form.processing ? 'Lưu...' : 'Lưu Series' }}</span>
+              </button>
+            </div>
+          </div>
+
           <div class="p-5 sm:p-6 rounded-2xl bg-slate-900/40 border border-white/[0.08] space-y-4 shadow-sm">
             
             <!-- Platform Tabs: Clean Slate Pill Control -->
@@ -1239,6 +1327,76 @@ const getStatusDotClass = (status: string) => {
               <div>Task: <span class="text-slate-400">{{ article.pipeline_task_id || '—' }}</span></div>
               <div>{{ new Date(article.updated_at).toLocaleDateString('vi-VN') }}</div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- PLAYLIST EPISODE NAVIGATION BAR                          -->
+      <!-- ======================================================== -->
+      <div
+        v-if="article.playlist"
+        class="p-4 sm:p-5 rounded-2xl bg-slate-900/40 border border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm"
+      >
+        <!-- Prev Episode Button / Card -->
+        <div class="w-full sm:w-auto flex-1">
+          <Link
+            v-if="prevEpisode"
+            :href="`/admin/theravada/videos/${prevEpisode.id}`"
+            class="group flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.06] hover:border-white/[0.12] transition-all"
+          >
+            <div class="w-8 h-8 rounded-lg bg-white/[0.04] text-slate-400 group-hover:text-white flex items-center justify-center shrink-0 border border-white/[0.06]">
+              <Icons name="ChevronRight" :size="16" class="rotate-180" />
+            </div>
+            <div class="min-w-0 text-left">
+              <div class="text-[11px] font-mono text-slate-500 uppercase tracking-wider">
+                {{ prevEpisode.episode_number ? `Tập ${prevEpisode.episode_number}` : 'Tập trước' }}
+              </div>
+              <div class="text-xs sm:text-sm font-medium text-slate-300 group-hover:text-white truncate max-w-xs sm:max-w-md">
+                {{ prevEpisode.title }}
+              </div>
+            </div>
+          </Link>
+          <div v-else class="text-xs font-mono text-slate-600 italic px-3 py-2 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-700"></span>
+            <span>Đầu danh sách tập</span>
+          </div>
+        </div>
+
+        <!-- Center Playlist Badge -->
+        <div class="text-center px-4 shrink-0">
+          <Link
+            :href="`/admin/theravada/videos?playlist=${article.playlist}`"
+            class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white text-xs font-medium border border-white/[0.08] transition-colors"
+          >
+            <Icons name="List" :size="13" class="text-amber-400" />
+            <span>{{ article.playlist === 'phat-phap-ung-dung' ? 'Phật Pháp Ứng Dụng' : article.playlist === 'tam-an-van-su-an' ? 'Tâm An Vạn Sự An' : article.playlist }}</span>
+            <span v-if="article.episode_number" class="font-mono text-amber-400 font-bold">• Tập {{ article.episode_number }}</span>
+          </Link>
+        </div>
+
+        <!-- Next Episode Button / Card -->
+        <div class="w-full sm:w-auto flex-1 flex justify-end">
+          <Link
+            v-if="nextEpisode"
+            :href="`/admin/theravada/videos/${nextEpisode.id}`"
+            class="group flex items-center justify-end gap-3 p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.06] hover:border-white/[0.12] transition-all w-full sm:w-auto text-right"
+          >
+            <div class="min-w-0 text-right">
+              <div class="text-[11px] font-mono text-slate-500 uppercase tracking-wider">
+                {{ nextEpisode.episode_number ? `Tập ${nextEpisode.episode_number}` : 'Tập tiếp theo' }}
+              </div>
+              <div class="text-xs sm:text-sm font-medium text-slate-300 group-hover:text-white truncate max-w-xs sm:max-w-md">
+                {{ nextEpisode.title }}
+              </div>
+            </div>
+            <div class="w-8 h-8 rounded-lg bg-white/[0.04] text-slate-400 group-hover:text-white flex items-center justify-center shrink-0 border border-white/[0.06]">
+              <Icons name="ChevronRight" :size="16" />
+            </div>
+          </Link>
+          <div v-else class="text-xs font-mono text-slate-600 italic px-3 py-2 flex items-center justify-end gap-1.5">
+            <span>Cuối danh sách tập</span>
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-700"></span>
           </div>
         </div>
       </div>

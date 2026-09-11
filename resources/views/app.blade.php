@@ -17,6 +17,8 @@
         $isTheravadaSite = $isTheravadaSubdomain || request()->is('theravada*');
         $isCashbackSubdomain = str_starts_with($host, 'hoantien.');
         $isCashbackSite = $isCashbackSubdomain || request()->is('hoantien*');
+        $isDecodeSubdomain = str_starts_with($host, 'decode.');
+        $isDecodeSite = $isDecodeSubdomain || request()->is('decode*');
 
         if ($isTheravadaSite) {
             $siteUrl = 'https://theravada.' . $baseDomain;
@@ -37,16 +39,27 @@
             $siteName = 'Cổng Hoàn Tiền Shopee • MacaTung';
             $pageTitle = 'Cổng Hoàn Tiền Shopee — Tích Lũy Tới 80% Hoa Hồng | MacaTung';
             $pageDescription = 'Hệ thống hoàn tiền Shopee Affiliate tự động. Dán link sản phẩm Shopee, mua hàng và nhận hoàn tiền trực tiếp vào tài khoản ngân hàng.';
-            $authorName = 'MacaTung (macatung.dev)';
+            $authorName = 'MacaTung';
             $ogImage = $siteUrl . '/brand/macatung-logo-horizontal.png';
             $themeColor = '#0f172a';
+        } elseif ($isDecodeSite) {
+            $siteUrl = 'https://decode.' . $baseDomain;
+            $canonicalUrl = $isDecodeSubdomain
+                ? request()->url()
+                : $siteUrl . (request()->path() === 'decode' ? '' : '/' . preg_replace('#^decode/#', '', request()->path()));
+            $siteName = 'Ma Giải Mã • Decode Series';
+            $pageTitle = 'Ma Giải Mã — Khảo Cứu & Bóc Tách Hệ Thống Kỹ Thuật Số';
+            $pageDescription = 'Series khảo cứu kiến trúc hạ tầng thanh toán toàn cầu, độ trễ mạng liên lục địa và phần mềm quy mô lớn.';
+            $authorName = 'MacaTung';
+            $ogImage = $siteUrl . '/brand/decode/mascot-ma-giai-ma-3d.png';
+            $themeColor = '#04070d';
         } else {
             $siteUrl = 'https://' . $baseDomain;
             $canonicalUrl = request()->url();
-            $siteName = 'MacaTung • macatung.dev';
-            $pageTitle = config('app.name', 'MacaTung — Building AI Agents & Business Systems');
-            $pageDescription = 'MacaTung builds AI agents, automation systems and software products for real businesses — from architecture and workflows to production.';
-            $authorName = 'Ma Cà Tưng (macatung.dev)';
+            $siteName = 'MacaTung Ecosystem';
+            $pageTitle = config('app.name', 'MacaTung — Digital Ecosystem & Software Product Hub');
+            $pageDescription = 'MacaTung là hệ sinh thái kỹ thuật số đa nền tảng gồm 5 trụ cột sản phẩm: Nền tảng Phật giáo Theravāda, khảo cứu công nghệ Ma Giải Mã, Cổng Hoàn Tiền Shopee, Task Companion Desktop và các công cụ tương tác.';
+            $authorName = 'MacaTung';
             $ogImage = $siteUrl . '/brand/macatung-logo-horizontal.png';
             $themeColor = '#070b14';
         }
@@ -122,6 +135,28 @@
             ]
         }
     </script>
+    @elseif($isDecodeSite)
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "WebSite",
+                    "@id": "{{ $siteUrl }}/#website",
+                    "url": "{{ $siteUrl }}/",
+                    "name": "Ma Giải Mã — Decode Series",
+                    "description": "Series khảo cứu kiến trúc hạ tầng tài chính và phần mềm quy mô toàn cầu.",
+                    "inLanguage": ["vi"],
+                    "publisher": {
+                        "@type": "Organization",
+                        "name": "MacaTung Ecosystem",
+                        "url": "https://{{ $baseDomain }}/",
+                        "logo": "https://{{ $baseDomain }}/brand/macatung-logo-horizontal.png"
+                    }
+                }
+            ]
+        }
+    </script>
     @else
     <script type="application/ld+json">
         {
@@ -131,16 +166,17 @@
                     "@type": "WebSite",
                     "@id": "https://{{ $baseDomain }}/#website",
                     "url": "https://{{ $baseDomain }}/",
-                    "name": "MacaTung — Building AI Agents & Business Systems",
-                    "publisher": { "@id": "https://{{ $baseDomain }}/#person" }
+                    "name": "MacaTung — Digital Ecosystem & Software Product Hub",
+                    "description": "{{ $pageDescription }}",
+                    "publisher": { "@id": "https://{{ $baseDomain }}/#organization" }
                 },
                 {
-                    "@type": "Person",
-                    "@id": "https://{{ $baseDomain }}/#person",
+                    "@type": "Organization",
+                    "@id": "https://{{ $baseDomain }}/#organization",
                     "name": "MacaTung",
-                    "alternateName": "Ma Cà Tưng",
+                    "alternateName": "MacaTung Ecosystem",
                     "url": "https://{{ $baseDomain }}/",
-                    "jobTitle": "Software Engineer & AI Builder",
+                    "logo": "{{ $siteUrl }}/brand/macatung-logo-horizontal.png",
                     "sameAs": ["https://github.com/macatung"]
                 }
             ]
@@ -169,16 +205,27 @@
                 <a href="/ung-dung-tu-hoc">Ứng Dụng Tu Học &amp; Thẻ Pháp Cú</a>
             </nav>
         </main>
+        @elseif($isDecodeSite)
+        <main>
+            <h1>Ma Giải Mã — Khảo Cứu &amp; Bóc Tách Hệ Thống Kỹ Thuật Số</h1>
+            <p>Series khảo cứu kiến trúc hạ tầng thanh toán toàn cầu, độ trễ mạng liên lục địa và phần mềm quy mô lớn.</p>
+            <nav aria-label="Điều hướng Ma Giải Mã">
+                <a href="/">Trang Chủ MacaTung</a>
+                <a href="/tap-1-visa-100k">Tập 1: Visa 100K TPS Network</a>
+            </nav>
+        </main>
         @else
         <main>
-            <h1>MacaTung — Building AI Agents &amp; Business Systems</h1>
-            <p>I build AI agents, automation systems and software products that help real businesses operate better.</p>
-            <p>Explore software architecture, workflow automation, distributed systems and product engineering projects.</p>
-            <nav aria-label="Primary navigation">
-                <a href="/projects">Explore projects</a>
-                <a href="/about">About MacaTung</a>
-                <a href="/blog">Technical notes</a>
-                <a href="/contact">Contact</a>
+            <h1>MacaTung — Digital Ecosystem &amp; Software Product Hub</h1>
+            <p>Hệ sinh thái kỹ thuật số đa nền tảng gồm 5 trụ cột sản phẩm: Nền tảng Phật giáo Theravāda, khảo cứu công nghệ Ma Giải Mã, Cổng Hoàn Tiền Shopee, Task Companion Desktop và các công cụ tương tác.</p>
+            <nav aria-label="Ecosystem navigation">
+                <a href="/theravada">Nền Tảng Phật Giáo Theravāda</a>
+                <a href="/decode">Ma Giải Mã (Decode Series)</a>
+                <a href="/hoantien">Cổng Hoàn Tiền Shopee</a>
+                <a href="/desktop">Task Companion Desktop</a>
+                <a href="/projects">Kho Dự Án Grimoire</a>
+                <a href="/game">Phòng Máy Arcade</a>
+                <a href="/contact">Liên Hệ &amp; Hợp Tác</a>
             </nav>
         </main>
         @endif

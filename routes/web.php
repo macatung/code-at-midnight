@@ -92,6 +92,7 @@ Route::domain('decode.' . $baseDomain)->group(function () {
     Route::get('/', [DecodeController::class, 'index'])->name('decode.domain.index');
     Route::get('/tap/{slug}', [DecodeController::class, 'show'])->name('decode.domain.show');
     Route::get('/tap-1-visa-100k', [DecodeController::class, 'episode1'])->name('decode.domain.ep1');
+    Route::get('/tap-01-quet-the-visa-100k-2-giay-du-hanh', [DecodeController::class, 'episode1'])->name('decode.domain.episode1.alias');
     Route::get('/sitemap.xml', [DecodeController::class, 'sitemap'])->name('decode.domain.sitemap');
     Route::get('/robots.txt', [DecodeController::class, 'robots'])->name('decode.domain.robots');
     Route::get('/favicon.ico', function () {
@@ -107,6 +108,7 @@ Route::prefix('decode')->name('decode.')->group(function () {
     Route::get('/', [DecodeController::class, 'index'])->name('index');
     Route::get('/tap/{slug}', [DecodeController::class, 'show'])->name('show');
     Route::get('/tap-1-visa-100k', [DecodeController::class, 'episode1'])->name('ep1');
+    Route::get('/tap-01-quet-the-visa-100k-2-giay-du-hanh', [DecodeController::class, 'episode1'])->name('episode1.alias');
     Route::get('/sitemap.xml', [DecodeController::class, 'sitemap'])->name('sitemap');
 });
 
@@ -212,6 +214,7 @@ Route::get('/skills', [HomeController::class, 'about'])->name('skills.index');
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 Route::get('/game', [HomeController::class, 'game'])->name('game.index');
+Route::get('/tools', [HomeController::class, 'game'])->name('tools.index');
 Route::get('/talisman', [HomeController::class, 'talisman'])->name('talisman.index');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact.index');
 

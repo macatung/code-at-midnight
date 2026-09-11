@@ -34,12 +34,12 @@ const props = withDefaults(
 );
 
 // Site Brand Titles
-const siteName = computed(() => (props.isTheravada ? 'Ma Tọa Thiền • Theravāda' : 'Ma Cà Tưng • Code at midnight'));
+const siteName = computed(() => (props.isTheravada ? 'Ma Tọa Thiền • Theravāda' : 'MacaTung — Digital Ecosystem & Product Hub'));
 const fullTitle = computed(() => {
   if (!props.title) {
     return props.isTheravada
       ? 'Ma Tọa Thiền — Chánh Niệm Từng Giây • Tam Tạng Kinh Điển Theravāda'
-      : 'Ma Cà Tưng — Code at midnight | Full-Stack & Creative Engineering';
+      : 'MacaTung — Digital Ecosystem & Product Hub';
   }
   return `${props.title} | ${siteName.value}`;
 });
@@ -47,7 +47,7 @@ const fullTitle = computed(() => {
 const defaultDescription = computed(() => {
   return props.isTheravada
     ? 'Hệ thống tu học và bảo tồn kinh điển Phật giáo nguyên thủy Theravāda: Tứ Thánh Đế, Bát Chánh Đạo, Thiền Minh Sát Vipassanā, Thẻ ảnh Pháp Cú và Từ điển Pāḷi thuần khiết.'
-    : 'Khám phá Portfolio, các dự án Full-Stack, kiến trúc phần mềm, game tương tác và phòng thí nghiệm sáng tạo của Ma Cà Tưng (macatung.dev).';
+    : 'MacaTung — Hệ sinh thái kỹ thuật số đa nền tảng gồm 5 trụ cột sản phẩm: Nền tảng Phật giáo Theravāda, Ma Giải Mã (Decode), Cổng Hoàn Tiền Shopee, Task Companion Desktop và các công cụ tương tác.';
 });
 
 const metaDescription = computed(() => props.description || defaultDescription.value);
@@ -55,7 +55,7 @@ const metaDescription = computed(() => props.description || defaultDescription.v
 const defaultKeywords = computed(() => {
   return props.isTheravada
     ? 'Theravada, Pāḷi Tipiṭaka, Phật giáo nguyên thủy, Kinh Pháp Cú, Dhammapada, Thiền Vipassana, Tứ Niệm Xứ, Bát Chánh Đạo, Tứ Diệu Đế, Ma Tọa Thiền, Tam Tạng Kinh Điển'
-    : 'Full-Stack Developer, Creative Engineer, Laravel, Vue.js, Inertia.js, Tailwind CSS, TypeScript, Midnight Coder, Software Architecture, Portfolio, Ma Cà Tưng';
+    : 'MacaTung, Digital Ecosystem, Software Hub, Task Companion, Theravada, Decode, Shopee Cashback, Developer Tools, Rune Typer, Talisman Forge';
 });
 
 const defaultOgImage = computed(() => {
@@ -79,7 +79,7 @@ const formattedJsonLd = computed(() => {
     <!-- Basic Meta -->
     <meta name="description" :content="metaDescription" />
     <meta name="keywords" :content="metaKeywords" />
-    <meta name="author" :content="isTheravada ? 'Ma Tọa Thiền • Theravāda' : 'Ma Cà Tưng'" />
+    <meta name="author" :content="isTheravada ? 'Ma Tọa Thiền • Theravāda' : 'MacaTung Ecosystem'" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
 
     <!-- Canonical URL -->

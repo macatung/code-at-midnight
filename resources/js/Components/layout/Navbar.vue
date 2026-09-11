@@ -22,11 +22,11 @@ interface NavItem {
 
 const navLinks = computed<NavItem[]>(() => [
   { label: t('nav.home'), href: '/', iconName: 'Home' },
-  { label: 'Hoàn Tiền', href: '/hoantien', badge: '80%', iconName: 'Zap' },
-  { label: t('nav.desktop'), href: '/desktop', iconName: 'Monitor' },
-  { label: t('nav.projects'), href: '/projects', iconName: 'Layers' },
-  { label: t('nav.about'), href: '/about', iconName: 'User' },
-  { label: t('nav.contact'), href: '/contact', iconName: 'Mail' },
+  { label: t('nav.theravadaPillar'), href: '/theravada', badge: 'ZEN', iconName: 'Compass' },
+  { label: t('nav.decodePillar'), href: '/decode', badge: 'NEW', iconName: 'Terminal' },
+  { label: t('nav.cashbackPillar'), href: '/hoantien', badge: '80%', iconName: 'Zap' },
+  { label: t('nav.desktopPillar'), href: '/desktop', badge: 'Win', iconName: 'Monitor' },
+  { label: t('nav.toolsPillar'), href: '/tools', iconName: 'Gamepad' },
 ]);
 
 const isScrolled = ref(false);
@@ -36,6 +36,7 @@ const scrollProgress = ref(0);
 const isLinkActive = (href: string): boolean => {
   const currentUrl = page.url;
   if (href === '/') return currentUrl === '/';
+  if (href === '/tools') return currentUrl.startsWith('/tools') || currentUrl.startsWith('/game') || currentUrl.startsWith('/talisman');
   return currentUrl.startsWith(href);
 };
 
@@ -134,7 +135,7 @@ onUnmounted(() => {
           <span
             v-if="item.badge"
             class="text-[9px] px-1.5 py-0.2 rounded-full font-mono font-bold leading-tight"
-            :class="item.badge === 'HOT' ? 'bg-amber-500/20 text-talisman-gold border border-talisman-gold/40' : item.badge === 'ZEN' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' : 'bg-phantom-mint/20 text-phantom-mint border border-phantom-mint/30'"
+            :class="item.badge === 'HOT' ? 'bg-amber-500/20 text-talisman-gold border border-talisman-gold/40' : item.badge === 'ZEN' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' : item.badge === 'NEW' ? 'bg-[#00f5d4]/20 text-[#00f5d4] border border-[#00f5d4]/40' : item.badge === 'Win' ? 'bg-sky-500/20 text-sky-300 border border-sky-400/40' : 'bg-phantom-mint/20 text-phantom-mint border border-phantom-mint/30'"
           >
             {{ item.badge }}
           </span>
@@ -214,7 +215,7 @@ onUnmounted(() => {
             <span
               v-if="item.badge"
               class="text-[10px] px-2 py-0.5 rounded-full font-mono font-bold"
-              :class="item.badge === 'HOT' ? 'bg-amber-500/20 text-talisman-gold border border-talisman-gold/40' : item.badge === 'ZEN' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' : 'bg-phantom-mint/20 text-phantom-mint border border-phantom-mint/30'"
+              :class="item.badge === 'HOT' ? 'bg-amber-500/20 text-talisman-gold border border-talisman-gold/40' : item.badge === 'ZEN' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' : item.badge === 'NEW' ? 'bg-[#00f5d4]/20 text-[#00f5d4] border border-[#00f5d4]/40' : item.badge === 'Win' ? 'bg-sky-500/20 text-sky-300 border border-sky-400/40' : 'bg-phantom-mint/20 text-phantom-mint border border-phantom-mint/30'"
             >
               {{ item.badge }}
             </span>

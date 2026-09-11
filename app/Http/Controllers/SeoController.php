@@ -22,6 +22,11 @@ class SeoController extends Controller
             return $this->generateTheravadaSitemap($baseDomain);
         }
 
+        $isDecode = str_starts_with($host, 'decode.') || $request->path() === 'decode/sitemap.xml';
+        if ($isDecode) {
+            return app(\App\Http\Controllers\Decode\DecodeController::class)->sitemap();
+        }
+
         return $this->generateMainSitemap($baseDomain);
     }
 
@@ -33,9 +38,10 @@ class SeoController extends Controller
         $host = $request->getHost();
         $baseDomain = config('app.base_domain', 'macatung.dev');
         $isTheravada = str_starts_with($host, 'theravada.');
+        $isDecode = str_starts_with($host, 'decode.');
         $sitemapUrl = $isTheravada 
             ? 'https://theravada.' . $baseDomain . '/sitemap.xml'
-            : 'https://' . $baseDomain . '/sitemap.xml';
+            : ($isDecode ? 'https://decode.' . $baseDomain . '/sitemap.xml' : 'https://' . $baseDomain . '/sitemap.xml');
 
         $robots = <<<EOT
 User-agent: *
@@ -87,15 +93,18 @@ EOT;
         $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
         $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">' . "\n";
 
-        // Static Pages
+        // Static Pages (5 Core Ecosystem Pillars + Supporting Hub Sections)
         $staticPages = [
             ['url' => $baseUrl . '/', 'priority' => '1.0', 'changefreq' => 'daily'],
-            ['url' => $baseUrl . '/projects', 'priority' => '0.9', 'changefreq' => 'weekly'],
-            ['url' => $baseUrl . '/about', 'priority' => '0.8', 'changefreq' => 'monthly'],
-            ['url' => $baseUrl . '/skills', 'priority' => '0.8', 'changefreq' => 'monthly'],
-            ['url' => $baseUrl . '/blog', 'priority' => '0.9', 'changefreq' => 'daily'],
-            ['url' => $baseUrl . '/game', 'priority' => '0.7', 'changefreq' => 'monthly'],
-            ['url' => $baseUrl . '/talisman', 'priority' => '0.7', 'changefreq' => 'monthly'],
+            ['url' => $baseUrl . '/theravada', 'priority' => '0.95', 'changefreq' => 'daily'],
+            ['url' => $baseUrl . '/decode', 'priority' => '0.95', 'changefreq' => 'weekly'],
+            ['url' => $baseUrl . '/hoantien', 'priority' => '0.95', 'changefreq' => 'daily'],
+            ['url' => $baseUrl . '/desktop', 'priority' => '0.9', 'changefreq' => 'weekly'],
+            ['url' => $baseUrl . '/tools', 'priority' => '0.85', 'changefreq' => 'weekly'],
+            ['url' => $baseUrl . '/game', 'priority' => '0.8', 'changefreq' => 'monthly'],
+            ['url' => $baseUrl . '/talisman', 'priority' => '0.8', 'changefreq' => 'monthly'],
+            ['url' => $baseUrl . '/projects', 'priority' => '0.85', 'changefreq' => 'weekly'],
+            ['url' => $baseUrl . '/blog', 'priority' => '0.85', 'changefreq' => 'daily'],
             ['url' => $baseUrl . '/contact', 'priority' => '0.6', 'changefreq' => 'yearly'],
         ];
 

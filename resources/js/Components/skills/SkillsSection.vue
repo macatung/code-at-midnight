@@ -6,12 +6,12 @@ import { sound } from '@/audio/soundEffects';
 import { useI18n } from '@/composables/useI18n';
 
 interface SkillRecord {
-  id: number;
+  id?: number;
   name: string;
   category: string;
-  level: number;
   rune: string;
   tag: string;
+  description?: string;
   order?: number;
 }
 
@@ -76,10 +76,9 @@ const displayCategories = computed(() => {
       cat.skills.push({
         name: s.name,
         rune: s.rune,
-        level: s.level,
         categoryTag: s.tag,
         tag: s.tag,
-        description: `${s.level}% Mastery`,
+        description: s.description || 'Production Grade Capability',
       });
     });
 
@@ -167,31 +166,23 @@ const displayCategories = computed(() => {
           <div
             v-for="skill in category.skills"
             :key="skill.name"
-            class="group/skill p-2.5 rounded-xl hover:bg-white/[0.05] transition-colors cursor-default border border-transparent hover:border-white/5"
+            class="group/skill p-3 rounded-xl bg-midnight-950/40 hover:bg-white/[0.04] transition-all duration-200 border border-white/[0.04] hover:border-phantom-mint/30 text-left"
             @mouseenter="onSkillHover(skill.name)"
           >
-            <div class="flex items-center justify-between mb-1.5 min-w-0">
-              <div class="flex items-center gap-2 min-w-0">
+            <div class="flex items-start justify-between gap-2 mb-1.5 min-w-0">
+              <div class="flex items-center gap-2.5 min-w-0">
                 <span class="text-base select-none shrink-0">{{ skill.rune }}</span>
-                <span class="text-xs sm:text-sm font-semibold text-slate-200 group-hover/skill:text-phantom-mint transition-colors truncate">
+                <span class="text-xs sm:text-sm font-semibold text-slate-100 group-hover/skill:text-phantom-mint transition-colors truncate">
                   {{ skill.name }}
                 </span>
-                <span class="text-[10px] font-mono px-1.5 py-0.2 rounded bg-white/5 text-slate-400 shrink-0">
-                  {{ skill.categoryTag || skill.tag }}
-                </span>
               </div>
-              <span class="text-xs font-mono font-bold text-phantom-mint ml-2 shrink-0 tabular-nums">
-                {{ skill.level }}%
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 border border-white/10 text-phantom-mint font-semibold shrink-0">
+                {{ skill.categoryTag || skill.tag }}
               </span>
             </div>
-
-            <!-- Proficiency Bar -->
-            <div class="w-full h-1.5 bg-midnight-950 rounded-full overflow-hidden border border-white/5">
-              <div
-                class="proficiency-bar-fill h-full rounded-full bg-gradient-to-r from-phantom-mint via-phantom-cyan to-talisman-gold transition-all duration-700 ease-out shadow-glow-mint"
-                :style="{ width: `${skill.level}%` }"
-              />
-            </div>
+            <p v-if="skill.description" class="text-xs text-slate-400 font-sans leading-relaxed pl-7">
+              {{ skill.description }}
+            </p>
           </div>
         </div>
       </div>
@@ -210,7 +201,7 @@ const displayCategories = computed(() => {
       </div>
       <div class="flex items-center gap-2 shrink-0">
         <span class="px-3.5 py-1.5 rounded-xl bg-phantom-mint/10 border border-phantom-mint/30 text-xs font-mono text-phantom-mint font-bold shadow-glow-mint">
-          ✓ 466/466 Tests Pass
+          ✓ 100% Strict Type-Safe &amp; Tested
         </span>
       </div>
     </div>

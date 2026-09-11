@@ -362,8 +362,8 @@ class AdversarialContactTest extends TestCase
         $responseSummon->assertSessionHas('reference_id');
         $this->assertDatabaseHas('contact_submissions', ['email' => 'summon_route@macatung.dev']);
 
-        // Invalid HTTP methods on /contact
-        $this->get('/contact')->assertStatus(405);
+        // HTTP methods on /contact: GET returns 200, invalid methods return 405
+        $this->get('/contact')->assertStatus(200);
         $this->put('/contact', [])->assertStatus(405);
         $this->delete('/contact')->assertStatus(405);
 

@@ -13,6 +13,8 @@ interface ArticleItem {
   author?: string | null;
   excerpt?: string | null;
   video_status: 'draft' | 'processing' | 'completed' | 'published' | 'failed' | string;
+  playlist?: string | null;
+  episode_number?: number | null;
   video_long_url?: string | null;
   video_short_url?: string | null;
   youtube_url?: string | null;
@@ -49,10 +51,28 @@ interface PaginatedArticles {
   links: PaginationLink[];
 }
 
+interface PlaylistTabItem {
+  key: string;
+  label: string;
+  count: number;
+}
+
+interface PlaylistMeta {
+  slug: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  icon: string;
+  total_episodes: number;
+  completed_episodes: number;
+  published_episodes: number;
+}
+
 const props = defineProps<{
   articles: PaginatedArticles;
   filters: {
     status: string;
+    playlist?: string;
     search: string;
   };
   statusCounts: {
@@ -62,12 +82,15 @@ const props = defineProps<{
     completed: number;
     published: number;
   };
+  playlistTabs?: PlaylistTabItem[];
+  playlistsMetadata?: Record<string, PlaylistMeta>;
 }>();
 
 // View Mode State persisted in localStorage
 const viewMode = ref<'grid' | 'table'>('grid');
 
 const currentStatus = ref(props.filters.status || 'all');
+const currentPlaylist = ref(props.filters.playlist || 'all');
 const searchQuery = ref(props.filters.search || '');
 const isTriggering = ref<number | null>(null);
 
@@ -162,12 +185,29 @@ const getStatusDotClass = (status: string) => {
   }
 };
 
+const applyPlaylistFilter = (playlistKey: string) => {
+  currentPlaylist.value = playlistKey;
+  router.get(
+    '/admin/theravada/videos',
+    {
+      status: currentStatus.value !== 'all' ? currentStatus.value : undefined,
+      playlist: playlistKey !== 'all' ? playlistKey : undefined,
+      search: searchQuery.value || undefined,
+    },
+    {
+      preserveState: true,
+      preserveScroll: true,
+    }
+  );
+};
+
 const applyFilter = (statusKey: string) => {
   currentStatus.value = statusKey;
   router.get(
     '/admin/theravada/videos',
     {
-      status: statusKey,
+      status: statusKey !== 'all' ? statusKey : undefined,
+      playlist: currentPlaylist.value !== 'all' ? currentPlaylist.value : undefined,
       search: searchQuery.value || undefined,
     },
     {
@@ -182,6 +222,7 @@ const handleSearch = () => {
     '/admin/theravada/videos',
     {
       status: currentStatus.value !== 'all' ? currentStatus.value : undefined,
+      playlist: currentPlaylist.value !== 'all' ? currentPlaylist.value : undefined,
       search: searchQuery.value || undefined,
     },
     {
@@ -194,6 +235,24 @@ const handleSearch = () => {
 const clearSearch = () => {
   searchQuery.value = '';
   handleSearch();
+};
+
+const getPlaylistBadge = (pl?: string | null) => {
+  if (pl === 'phat-phap-ung-dung') {
+    return {
+      label: 'Phật Pháp Ứng Dụng',
+      color: 'text-amber-300 bg-amber-400/10 border-amber-400/20',
+      dot: 'bg-amber-400',
+    };
+  }
+  if (pl === 'tam-an-van-su-an') {
+    return {
+      label: 'Tâm An Vạn Sự An',
+      color: 'text-emerald-300 bg-emerald-400/10 border-emerald-400/20',
+      dot: 'bg-emerald-400',
+    };
+  }
+  return null;
 };
 
 const triggerPipeline = (article: ArticleItem) => {
@@ -331,6 +390,124 @@ const closeQuickCopy = () => {
             <Icons name="ExternalLink" :size="14" />
             <span>Mở Cổng Theravāda</span>
           </a>
+        </div>
+      </div>
+
+      <!-- 1. Playlist Tabs Ribbon -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-2 rounded-2xl bg-black/40 border border-white/[0.08] shadow-inner">
+        <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+          <button
+            v-for="plTab in (playlistTabs || [
+              { key: 'all', label: 'Tất cả Playlist', count: statusCounts.all },
+              { key: 'phat-phap-ung-dung', label: 'Phật Pháp Ứng Dụng', count: 2 },
+              { key: 'tam-an-van-su-an', label: 'Tâm An Vạn Sự An', count: 10 },
+              { key: 'unassigned', label: 'Chưa phân loại', count: 61 }
+            ])"
+            :key="plTab.key"
+            type="button"
+            class="px-3.5 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap flex items-center gap-2 border shrink-0"
+            :class="
+              currentPlaylist === plTab.key
+                ? 'bg-amber-400/15 text-amber-300 border-amber-400/30 shadow-sm font-semibold'
+                : 'bg-white/[0.03] text-slate-400 border-white/[0.06] hover:bg-white/[0.07] hover:text-slate-200'
+            "
+            @click="applyPlaylistFilter(plTab.key)"
+          >
+            <span v-if="plTab.key === 'all'" class="text-sm">🌟</span>
+            <span v-else-if="plTab.key === 'phat-phap-ung-dung'" class="text-sm">🧠</span>
+            <span v-else-if="plTab.key === 'tam-an-van-su-an'" class="text-sm">✨</span>
+            <span v-else class="text-sm">📁</span>
+
+            <span>{{ plTab.label }}</span>
+            <span
+              class="px-1.5 py-0.2 rounded-md font-mono text-[10px]"
+              :class="
+                currentPlaylist === plTab.key
+                  ? 'bg-amber-400/20 text-amber-200'
+                  : 'bg-white/[0.05] text-slate-500'
+              "
+            >
+              {{ plTab.count }}
+            </span>
+          </button>
+        </div>
+
+        <div v-if="currentPlaylist !== 'all'" class="flex items-center gap-2 px-2 shrink-0">
+          <button
+            type="button"
+            class="text-[11px] text-slate-400 hover:text-slate-200 transition-colors flex items-center gap-1 underline underline-offset-2"
+            @click="applyPlaylistFilter('all')"
+          >
+            <Icons name="RotateCcw" :size="11" />
+            <span>Xem tất cả</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. Playlist Hero Header Mini (when specific playlist is selected) -->
+      <div
+        v-if="currentPlaylist !== 'all' && currentPlaylist !== 'unassigned' && playlistsMetadata?.[currentPlaylist]"
+        class="relative overflow-hidden rounded-2xl p-5 border shadow-lg transition-all"
+        :class="
+          currentPlaylist === 'phat-phap-ung-dung'
+            ? 'bg-gradient-to-r from-amber-950/40 via-slate-900/60 to-slate-900/40 border-amber-500/25'
+            : 'bg-gradient-to-r from-emerald-950/40 via-slate-900/60 to-slate-900/40 border-emerald-500/25'
+        "
+      >
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div class="space-y-1.5 max-w-2xl">
+            <div class="flex items-center gap-2">
+              <span
+                class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold uppercase tracking-wider border"
+                :class="
+                  currentPlaylist === 'phat-phap-ung-dung'
+                    ? 'bg-amber-400/10 text-amber-300 border-amber-400/30'
+                    : 'bg-emerald-400/10 text-emerald-300 border-emerald-400/30'
+                "
+              >
+                PLAYLIST CHUYÊN ĐỀ
+              </span>
+              <span class="text-xs text-slate-400">•</span>
+              <span class="text-xs font-mono text-slate-300 font-medium">
+                {{ playlistsMetadata[currentPlaylist].subtitle }}
+              </span>
+            </div>
+
+            <h2 class="text-lg sm:text-xl font-bold text-white tracking-tight flex items-center gap-2">
+              <span v-if="currentPlaylist === 'phat-phap-ung-dung'">🧠</span>
+              <span v-else>✨</span>
+              <span>{{ playlistsMetadata[currentPlaylist].title }}</span>
+            </h2>
+
+            <p class="text-xs sm:text-sm text-slate-300/90 leading-relaxed font-sans">
+              {{ playlistsMetadata[currentPlaylist].description }}
+            </p>
+          </div>
+
+          <!-- Mini Stats Ribbon on right -->
+          <div class="flex items-center gap-3 shrink-0">
+            <div class="p-3 rounded-xl bg-black/40 border border-white/[0.08] text-center min-w-[90px]">
+              <div class="text-[10px] text-slate-400 uppercase font-mono tracking-wider">Tổng số tập</div>
+              <div class="text-lg font-bold text-white font-mono mt-0.5">
+                {{ playlistsMetadata[currentPlaylist].total_episodes }}
+              </div>
+            </div>
+
+            <div class="p-3 rounded-xl bg-black/40 border border-white/[0.08] text-center min-w-[100px]">
+              <div class="text-[10px] text-slate-400 uppercase font-mono tracking-wider">Đã hoàn thành</div>
+              <div class="text-lg font-bold text-teal-400 font-mono mt-0.5">
+                {{ playlistsMetadata[currentPlaylist].completed_episodes }}
+              </div>
+            </div>
+
+            <div class="hidden sm:block p-3 rounded-xl bg-black/40 border border-white/[0.08] text-left">
+              <div class="text-[10px] text-slate-400 uppercase font-mono tracking-wider">Thứ tự hiển thị</div>
+              <div class="text-xs font-semibold text-amber-300 mt-1 flex items-center gap-1">
+                <Icons name="ArrowDownUp" :size="12" />
+                <span>Tập 1 → Tập N</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -519,6 +696,14 @@ const closeQuickCopy = () => {
               </span>
             </div>
 
+            <!-- Episode Number Overlay -->
+            <span
+              v-if="item.episode_number"
+              class="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-amber-400 text-slate-950 font-mono text-[10px] font-bold shadow flex items-center gap-1 border border-amber-300"
+            >
+              TẬP {{ item.episode_number }}
+            </span>
+
             <!-- Duration Overlay -->
             <span
               v-if="item.video_long_duration"
@@ -547,10 +732,22 @@ const closeQuickCopy = () => {
           <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
             <div>
               <div class="flex items-center justify-between text-[11px] font-mono text-slate-400">
-                <div class="flex items-center gap-1.5">
-                  <span class="text-slate-300 font-semibold">#{{ item.id }}</span>
-                  <span>•</span>
-                  <span>{{ item.category || 'phap-thoai' }}</span>
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span
+                    v-if="getPlaylistBadge(item.playlist)"
+                    class="px-2 py-0.5 rounded-full text-[10px] font-medium border flex items-center gap-1"
+                    :class="getPlaylistBadge(item.playlist)?.color"
+                  >
+                    <span class="w-1.5 h-1.5 rounded-full" :class="getPlaylistBadge(item.playlist)?.dot"></span>
+                    <span>{{ getPlaylistBadge(item.playlist)?.label }}</span>
+                  </span>
+                  <span
+                    v-if="item.episode_number"
+                    class="px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30 font-mono text-[10px] font-bold"
+                  >
+                    Tập {{ item.episode_number }}
+                  </span>
+                  <span class="text-slate-400 font-semibold">#{{ item.id }}</span>
                 </div>
                 <div class="flex items-center gap-1">
                   <span
@@ -746,8 +943,22 @@ const closeQuickCopy = () => {
                     </div>
 
                     <div class="min-w-0">
-                      <div class="flex items-center gap-1.5 text-[11px] font-mono text-slate-400">
+                      <div class="flex items-center gap-1.5 text-[11px] font-mono text-slate-400 flex-wrap">
                         <span class="text-slate-300 font-semibold">#{{ item.id }}</span>
+                        <span>•</span>
+                        <span
+                          v-if="getPlaylistBadge(item.playlist)"
+                          class="px-1.5 py-0.2 rounded text-[10px] font-medium border"
+                          :class="getPlaylistBadge(item.playlist)?.color"
+                        >
+                          {{ getPlaylistBadge(item.playlist)?.label }}
+                        </span>
+                        <span
+                          v-if="item.episode_number"
+                          class="px-1.5 py-0.2 rounded bg-amber-500/15 border border-amber-500/30 text-amber-300 font-mono text-[10px] font-bold"
+                        >
+                          Tập {{ item.episode_number }}
+                        </span>
                         <span>•</span>
                         <span>{{ item.category || 'phap-thoai' }}</span>
                       </div>

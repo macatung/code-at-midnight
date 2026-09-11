@@ -344,14 +344,17 @@ class AdversarialSecurityHardeningTest extends TestCase
      */
     public function test_http_methods_boundary_and_unregistered_routes(): void
     {
-        $routes = ['/contact', '/summon'];
+        // /contact: GET returns 200, invalid methods return 405
+        $this->get('/contact')->assertStatus(200);
+        $this->put('/contact', [])->assertStatus(405);
+        $this->patch('/contact', [])->assertStatus(405);
+        $this->delete('/contact')->assertStatus(405);
 
-        foreach ($routes as $route) {
-            $this->get($route)->assertStatus(405);
-            $this->put($route, [])->assertStatus(405);
-            $this->patch($route, [])->assertStatus(405);
-            $this->delete($route)->assertStatus(405);
-        }
+        // /summon: strictly POST-only, all other methods return 405
+        $this->get('/summon')->assertStatus(405);
+        $this->put('/summon', [])->assertStatus(405);
+        $this->patch('/summon', [])->assertStatus(405);
+        $this->delete('/summon')->assertStatus(405);
 
         $this->get('/non-existent-altar-route')->assertStatus(404);
         $this->post('/non-existent-altar-route', [])->assertStatus(404);

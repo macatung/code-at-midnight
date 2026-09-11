@@ -198,23 +198,24 @@ const coffeeLabel = (value: string) => value === '1 Ly Cà Phê Muối Nửa Đ�
             </a>
           </div>
 
-          <!-- CV Download Badge -->
+          <!-- Studio Inquiries Badge -->
           <div class="pt-3 border-t border-white/5 flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <span class="text-lg">📄</span>
+              <span class="text-lg">🚀</span>
               <div class="text-xs font-mono">
-                <div class="text-white font-bold">Curriculum Vitae (PDF)</div>
-                <div class="text-[10px] text-slate-400">{{ t('contact.updated') }}</div>
+                <div class="text-white font-bold">Studio Collaboration</div>
+                <div class="text-[10px] text-slate-400">Architecture, AI &amp; Product Inquiries</div>
               </div>
             </div>
-            <button
-              type="button"
+            <a
+              href="https://github.com/macatung"
+              target="_blank"
+              rel="noopener noreferrer"
               class="px-3 py-1.5 rounded-xl bg-phantom-mint/10 border border-phantom-mint/30 text-phantom-mint hover:bg-phantom-mint hover:text-midnight-950 text-xs font-mono font-bold transition-all flex items-center gap-1.5 whitespace-nowrap"
-              @click="sound.playSuccess()"
             >
-              <span>{{ t('contact.viewCv') }}</span>
-              <span>↓</span>
-            </button>
+              <span>GitHub</span>
+              <span>↗</span>
+            </a>
           </div>
         </div>
       </div>
@@ -254,7 +255,7 @@ const coffeeLabel = (value: string) => value === '1 Ly Cà Phê Muối Nửa Đ�
                 <input
                   v-model="form.name"
                   type="text"
-                  placeholder="e.g. Founder Minh / Recruiter Anh"
+                  placeholder="e.g. Founder Minh / Partner Anh"
                   class="w-full px-4 py-3 rounded-xl bg-midnight-900 border border-white/10 text-white font-sans text-sm placeholder-slate-600 focus:border-phantom-mint focus:outline-none min-h-[44px] transition-colors"
                   :class="{ 'border-rose-500/80': form.errors.name }"
                   @input="form.clearErrors('name')"

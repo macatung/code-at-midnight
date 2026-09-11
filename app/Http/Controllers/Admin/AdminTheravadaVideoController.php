@@ -22,12 +22,21 @@ class AdminTheravadaVideoController extends Controller
     public function index(Request $request): Response
     {
         $status = $request->query('status', 'all');
+        $playlist = $request->query('playlist', 'all');
         $search = trim((string) $request->query('search', ''));
 
         $query = Article::query()->where('site_domain', 'theravada');
 
         if ($status !== 'all' && in_array($status, ['draft', 'processing', 'completed', 'published', 'failed'], true)) {
             $query->where('video_status', $status);
+        }
+
+        if ($playlist !== 'all') {
+            if ($playlist === 'unassigned') {
+                $query->whereNull('playlist');
+            } else {
+                $query->where('playlist', $playlist);
+            }
         }
 
         if ($search !== '') {
@@ -38,11 +47,21 @@ class AdminTheravadaVideoController extends Controller
             });
         }
 
-        $articles = $query
-            ->orderByRaw("CASE WHEN video_long_url IS NOT NULL OR video_status IN ('completed', 'published', 'processing') THEN 0 ELSE 1 END ASC")
-            ->orderBy('id', 'desc')
-            ->paginate(12)
-            ->withQueryString();
+        // Playlist-specific ordering vs Global ordering
+        if ($playlist !== 'all' && $playlist !== 'unassigned') {
+            $articles = $query
+                ->orderByRaw("CASE WHEN episode_number IS NOT NULL THEN 0 ELSE 1 END ASC")
+                ->orderBy('episode_number', 'asc')
+                ->orderBy('id', 'asc')
+                ->paginate(12)
+                ->withQueryString();
+        } else {
+            $articles = $query
+                ->orderByRaw("CASE WHEN video_long_url IS NOT NULL OR video_status IN ('completed', 'published', 'processing') THEN 0 ELSE 1 END ASC")
+                ->orderBy('id', 'desc')
+                ->paginate(12)
+                ->withQueryString();
+        }
 
         // Compute tab counts
         $baseTheravada = Article::where('site_domain', 'theravada');
@@ -54,13 +73,46 @@ class AdminTheravadaVideoController extends Controller
             'published' => (clone $baseTheravada)->where('video_status', 'published')->count(),
         ];
 
+        $playlistTabs = [
+            ['key' => 'all', 'label' => 'Tất cả Playlist', 'count' => (clone $baseTheravada)->count()],
+            ['key' => 'phat-phap-ung-dung', 'label' => 'Phật Pháp Ứng Dụng', 'count' => (clone $baseTheravada)->where('playlist', 'phat-phap-ung-dung')->count()],
+            ['key' => 'tam-an-van-su-an', 'label' => 'Tâm An Vạn Sự An', 'count' => (clone $baseTheravada)->where('playlist', 'tam-an-van-su-an')->count()],
+            ['key' => 'unassigned', 'label' => 'Chưa phân loại', 'count' => (clone $baseTheravada)->whereNull('playlist')->count()],
+        ];
+
+        $playlistsMetadata = [
+            'phat-phap-ung-dung' => [
+                'slug' => 'phat-phap-ung-dung',
+                'title' => 'Phật Pháp Ứng Dụng',
+                'subtitle' => 'Khoa Học Thần Kinh & Đời Thực Cho Người Trẻ',
+                'description' => 'Giải mã các hiện tượng tâm lý, áp lực cuộc sống, nghiện dopamine và căn bệnh trì hoãn qua lăng kính khoa học kết hợp cốt tủy Phật giáo nguyên thủy với giọng văn dí dỏm, gần gũi.',
+                'icon' => 'Brain',
+                'total_episodes' => (clone $baseTheravada)->where('playlist', 'phat-phap-ung-dung')->count(),
+                'completed_episodes' => (clone $baseTheravada)->where('playlist', 'phat-phap-ung-dung')->whereIn('video_status', ['completed', 'published'])->count(),
+                'published_episodes' => (clone $baseTheravada)->where('playlist', 'phat-phap-ung-dung')->where('video_status', 'published')->count(),
+            ],
+            'tam-an-van-su-an' => [
+                'slug' => 'tam-an-van-su-an',
+                'title' => 'Tâm An Vạn Sự An',
+                'subtitle' => 'Pháp Âm Tỉnh Thức & Hành Trình Chữa Lành Vô Ngã',
+                'description' => 'Chuỗi pháp thoại thiền quán, giải tỏa lo âu, tháo ngòi nổ bản ngã và nghệ thuật sống an nhiên tự tại giữa tám ngọn gió đời.',
+                'icon' => 'Sparkles',
+                'total_episodes' => (clone $baseTheravada)->where('playlist', 'tam-an-van-su-an')->count(),
+                'completed_episodes' => (clone $baseTheravada)->where('playlist', 'tam-an-van-su-an')->whereIn('video_status', ['completed', 'published'])->count(),
+                'published_episodes' => (clone $baseTheravada)->where('playlist', 'tam-an-van-su-an')->where('video_status', 'published')->count(),
+            ],
+        ];
+
         return Inertia::render('Admin/Theravada/Videos/Index', [
             'articles' => $articles,
             'filters' => [
                 'status' => $status,
+                'playlist' => $playlist,
                 'search' => $search,
             ],
             'statusCounts' => $statusCounts,
+            'playlistTabs' => $playlistTabs,
+            'playlistsMetadata' => $playlistsMetadata,
         ]);
     }
 
@@ -71,8 +123,37 @@ class AdminTheravadaVideoController extends Controller
      */
     public function show(Article $article): Response
     {
+        $prevEpisode = null;
+        $nextEpisode = null;
+
+        if ($article->playlist) {
+            if ($article->episode_number !== null) {
+                $prevEpisode = Article::where('playlist', $article->playlist)
+                    ->where('episode_number', '<', $article->episode_number)
+                    ->orderBy('episode_number', 'desc')
+                    ->first(['id', 'title', 'slug', 'episode_number', 'video_status', 'thumbnail_long_url']);
+
+                $nextEpisode = Article::where('playlist', $article->playlist)
+                    ->where('episode_number', '>', $article->episode_number)
+                    ->orderBy('episode_number', 'asc')
+                    ->first(['id', 'title', 'slug', 'episode_number', 'video_status', 'thumbnail_long_url']);
+            } else {
+                $prevEpisode = Article::where('playlist', $article->playlist)
+                    ->where('id', '<', $article->id)
+                    ->orderBy('id', 'desc')
+                    ->first(['id', 'title', 'slug', 'episode_number', 'video_status', 'thumbnail_long_url']);
+
+                $nextEpisode = Article::where('playlist', $article->playlist)
+                    ->where('id', '>', $article->id)
+                    ->orderBy('id', 'asc')
+                    ->first(['id', 'title', 'slug', 'episode_number', 'video_status', 'thumbnail_long_url']);
+            }
+        }
+
         return Inertia::render('Admin/Theravada/Videos/Show', [
             'article' => $article,
+            'prevEpisode' => $prevEpisode,
+            'nextEpisode' => $nextEpisode,
         ]);
     }
 
@@ -170,6 +251,8 @@ class AdminTheravadaVideoController extends Controller
     {
         $validated = $request->validate([
             'youtube_url' => ['nullable', 'string', 'max:500'],
+            'playlist' => ['nullable', 'string', 'max:100'],
+            'episode_number' => ['nullable', 'integer', 'min:1'],
             'seo_title' => ['nullable', 'string', 'max:255'],
             'seo_description' => ['nullable', 'string'],
             'social_caption' => ['nullable', 'string'],

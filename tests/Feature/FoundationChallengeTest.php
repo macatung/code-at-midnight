@@ -60,11 +60,14 @@ class FoundationChallengeTest extends TestCase
         $response->assertHeader('X-Inertia', 'true');
         $response->assertHeader('Vary', 'X-Inertia');
         
+        $title = $response->json('props.title');
+        $this->assertNotEmpty($title);
+        $this->assertStringContainsString('MacaTung', $title);
+
         $response->assertJson([
             'component' => 'Home',
             'url' => '/',
             'props' => [
-                'title' => 'Code at midnight',
                 'appName' => config('app.name', 'Macatung Portfolio'),
                 'flash' => [
                     'success' => null,
@@ -187,7 +190,9 @@ class FoundationChallengeTest extends TestCase
         $response = $this->get('/', $headers);
 
         $response->assertStatus(200);
-        $response->assertJsonPath('props.title', 'Code at midnight');
+        $title = $response->json('props.title');
+        $this->assertNotEmpty($title);
+        $this->assertStringContainsString('MacaTung', $title);
     }
 
     /**

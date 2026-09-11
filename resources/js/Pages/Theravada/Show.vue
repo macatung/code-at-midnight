@@ -757,6 +757,9 @@ const renderedMarkdown = computed(() => {
   // Sanitize math and raw LaTeX symbols into elegant typography
   md = sanitizeMathAndFlows(md, isPaperMode.value);
 
+  // 0. Clean stray empty code fences
+  md = md.replace(/```\s*```/g, '');
+
   // 1. Mermaid Diagrams (Isolated with double newlines)
   md = md.replace(/```\s*mermaid\s*\n([\s\S]*?)```/gim, (_match, code) => {
     const containerTheme = isPaperMode.value
@@ -779,8 +782,22 @@ const renderedMarkdown = computed(() => {
   // 1.5 Generic Code Blocks & ASCII Diagrams (Isolated with double newlines)
   md = md.replace(/```([a-zA-Z0-9_-]*)[^\n]*\n([\s\S]*?)```/gim, (_match, lang, code) => {
     const rawLang = (lang || '').trim().toLowerCase();
-    const cleanCode = escapeHtml(code.trim());
-    const isAsciiOrText = !rawLang || rawLang === 'text' || rawLang === 'ascii';
+    const trimmedCode = code.trim();
+    if (!trimmedCode) return '';
+
+    // If code block contains a Markdown table, unwrap it and strip any enclosing ASCII borders so parseMarkdownTables can render it
+    if (trimmedCode.includes('|') && /\|[^\n]+\|\r?\n\|[-:\|\s]+\|/m.test(trimmedCode)) {
+      const cleanedTable = trimmedCode
+        .split(/\r?\n/)
+        .filter(l => !/^\s*\+[-=+]+\+\s*$/.test(l))
+        .map(l => l.replace(/^\s*\|\s*/, '| ').replace(/\s*\|\s*$/, ' |'))
+        .join('\n');
+      return `\n\n${cleanedTable}\n\n`;
+    }
+
+    const cleanCode = escapeHtml(trimmedCode);
+    const isAscii = rawLang === 'ascii' || rawLang === 'diagram';
+    const isText = !rawLang || rawLang === 'text';
 
     const containerTheme = isPaperMode.value
       ? 'bg-amber-50/90 border-amber-300 shadow-sm text-stone-900'
@@ -790,11 +807,13 @@ const renderedMarkdown = computed(() => {
       ? 'border-amber-200/80 bg-amber-100/60 text-amber-900'
       : 'border-stone-800 bg-stone-950/60 text-amber-400';
 
-    const langTitle = isAsciiOrText
+    const langTitle = isAscii
       ? 'SƠ ĐỒ PHÁP HỌC & TIẾN TRÌNH QUÁN CHIẾU'
-      : (rawLang.toUpperCase() + ' CODE');
+      : isText
+        ? 'TRÍCH ĐOẠN & GHI CHÚ PHÁP HỌC'
+        : (rawLang.toUpperCase() + ' CODE');
 
-    const subBadge = isAsciiOrText ? 'ASCII Diagram' : rawLang.toUpperCase();
+    const subBadge = isAscii ? 'Diagram' : isText ? 'Ghi Chú' : rawLang.toUpperCase();
 
     return `\n\n<div class="zen-ascii-diagram my-8 rounded-2xl border ${containerTheme} overflow-hidden font-mono shadow-sm">
       <div class="px-4 py-2.5 border-b ${headerBorder} flex items-center justify-between text-xs font-semibold tracking-wider">
