@@ -22,7 +22,7 @@ class HomeController extends Controller
         $settings = SiteSetting::all()->pluck('value', 'key')->toArray();
 
         return Inertia::render('Home', [
-            'title' => $settings['site_title'] ?? 'MacaTung — Building AI Agents & Business Systems',
+            'title' => 'MacaTung — Hệ Sinh Thái Phần Mềm & Nền Tảng Kỹ Thuật Số',
             'settings' => $settings,
         ]);
     }

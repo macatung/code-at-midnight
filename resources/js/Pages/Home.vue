@@ -72,7 +72,7 @@ const ecosystemJsonLd = {
 
 <template>
   <SeoHead
-    :title="title || seoTitle"
+    :title="seoTitle"
     :description="seoDescription"
     keywords="MacaTung, MacaTung Ecosystem, Task Companion, Decode, Hoàn Tiền Shopee, Theravada, Pali, AI Agent, Windows Desktop, Talisman Forge, Rune Typer"
     canonical="https://macatung.dev"

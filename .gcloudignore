@@ -17,6 +17,11 @@ desktop/node_modules/
 desktop/dist/
 desktop/dist-electron/
 desktop/release/
+storage/
+public/build/
+dist/
 *.mp3
+*.wav
+*.mp4
 video_render_work/
 .agents/
