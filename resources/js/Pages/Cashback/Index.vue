@@ -85,6 +85,45 @@ const setMaxAmount = () => {
   withdrawForm.amount = Math.floor(props.wallet.available_balance);
 };
 
+// Live Commission Estimator
+const estimatedOrderValue = ref<number>(1000000);
+const estimatedShopeeRate = ref<number>(0.08); // 8% avg Shopee affiliate commission
+const calculatorPresets = [200000, 500000, 1000000, 2000000, 5000000];
+const estimatedShopeeCommission = computed(() => Math.round(estimatedOrderValue.value * estimatedShopeeRate.value));
+const estimatedUserCashback = computed(() => Math.round(estimatedShopeeCommission.value * (props.stats.cashback_rate_percent / 100)));
+
+// Popular Categories
+const popularCategories = [
+  { name: 'Thời Trang & Làm Đẹp', rate: 'Tới 15%', icon: 'Sparkles', desc: 'Quần áo, mỹ phẩm, phụ kiện' },
+  { name: 'Điện Thoại & Phụ Kiện', rate: 'Tới 8%', icon: 'Zap', desc: 'Smartphone, sạc cáp, tai nghe' },
+  { name: 'Nhà Cửa & Đời Sống', rate: 'Tới 12%', icon: 'Layout', desc: 'Đồ gia dụng, decor, nhà bếp' },
+  { name: 'Mẹ Bé & Tiêu Dùng', rate: 'Tới 10%', icon: 'Check', desc: 'Bỉm sữa, tạp hóa, bách hóa' },
+];
+
+// FAQs
+const openFaqIndex = ref<number | null>(null);
+const toggleFaq = (idx: number) => {
+  openFaqIndex.value = openFaqIndex.value === idx ? null : idx;
+};
+const faqs = [
+  {
+    q: 'Tiền hoàn Shopee được tính và đối soát như thế nào?',
+    a: 'Khi bạn mua hàng qua link đã tạo, Shopee ghi nhận đơn hàng và gửi báo cáo qua Shopee Affiliate API. Hệ thống sẽ trích 80% số tiền hoa hồng mà Shopee chi trả để hoàn trực tiếp vào ví của bạn.'
+  },
+  {
+    q: 'Sau bao lâu thì tiền hoàn về ví và có thể rút được?',
+    a: 'Đơn hàng vừa đặt sẽ hiển thị ở mục "Chờ Shopee đối soát" trong vòng 1-24 giờ. Khi đơn hàng được giao thành công và hết hạn đổi trả của Shopee (thường 7-14 ngày), số dư sẽ chuyển thành "Khả dụng" để bạn rút ngay lập tức.'
+  },
+  {
+    q: 'Rút tiền về tài khoản ngân hàng có mất phí không?',
+    a: 'Hoàn toàn miễn phí 100%. Hệ thống chuyển khoản liên ngân hàng 24/7 qua cổng VietQR Napas247 với hạn mức tối thiểu chỉ từ 50.000 ₫.'
+  },
+  {
+    q: 'Tôi chưa có tài khoản thì có nhận được tiền hoàn không?',
+    a: 'Được chứ! Bạn chỉ cần dán link và mua sắm bình thường. Hệ thống sẽ tự động cấp một mã ví ẩn danh trên thiết bị của bạn. Khi bạn bấm Đăng ký hoặc Đăng nhập, toàn bộ số dư và lịch sử đơn sẽ tự động được gộp vào tài khoản chính thức.'
+  },
+];
+
 // Formatters
 const formatVND = (num: number) => {
   return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(num || 0);
@@ -280,21 +319,44 @@ const handleManualSync = async () => {
   >
     <!-- Top Hero Header Section -->
     <section class="relative overflow-hidden pt-6 pb-4 sm:pt-8 sm:pb-5 border-b border-white/10 bg-midnight-950/60">
-      <div class="max-w-5xl mx-auto px-4 sm:px-6 text-center space-y-3 relative z-10">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 text-center space-y-3.5 relative z-10">
         <!-- Floating Badge -->
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-slate-300">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-midnight-900/90 border border-phantom-mint/30 text-xs font-mono text-slate-200 shadow-sm">
           <span class="w-2 h-2 rounded-full bg-phantom-mint animate-pulse"></span>
-          <span>Shopee Affiliate Open API v2</span>
-          <span class="text-phantom-mint font-bold">• Chia lại {{ stats.cashback_rate_percent }}% hoa hồng</span>
+          <span class="text-white font-medium">Shopee Affiliate Open API v2</span>
+          <span class="text-phantom-mint font-bold">• Chia sẻ {{ stats.cashback_rate_percent }}% hoa hồng trực tiếp</span>
         </div>
 
-        <h1 class="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight font-display text-white max-w-4xl mx-auto">
-          Mua Shopee Giá Gốc, <span class="bg-gradient-to-r from-phantom-mint via-emerald-300 to-amber-300 bg-clip-text text-transparent">Nhận Lại Tới {{ stats.cashback_rate_percent }}% Tiền Hoàn</span>
+        <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight font-display text-white max-w-3xl mx-auto leading-tight">
+          Cổng Hoàn Tiền Shopee
+          <span class="block mt-1 sm:mt-1.5 bg-gradient-to-r from-phantom-mint via-emerald-300 to-amber-300 bg-clip-text text-transparent">
+            Tích Lũy Lại {{ stats.cashback_rate_percent }}% Tiền Hoàn Mua Sắm
+          </span>
         </h1>
 
-        <p class="text-xs sm:text-sm text-slate-400 max-w-3xl mx-auto leading-normal">
-          Chỉ cần dán link sản phẩm Shopee, nhận link mua hàng đã gắn tracking và tiền hoàn sẽ tự động chảy về ví cá nhân của bạn sau khi giao hàng thành công.
+        <p class="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto leading-relaxed">
+          Dán link sản phẩm cần mua ➜ Nhận link tracking Shopee ➜ Tiền hoàn tự động cộng vào ví và rút về mọi ngân hàng qua Napas247 VietQR 24/7.
         </p>
+
+        <!-- 4 Quick Trust Badges -->
+        <div class="pt-1 flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-[11px] font-mono text-slate-300">
+          <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/5 border border-white/10">
+            <Icons name="Zap" :size="12" class="text-phantom-mint" />
+            <span>Tạo link tức thì</span>
+          </div>
+          <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/5 border border-white/10">
+            <Icons name="RotateCcw" :size="12" class="text-amber-400" />
+            <span>Tự đối soát đơn</span>
+          </div>
+          <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/5 border border-white/10">
+            <Icons name="Lock" :size="12" class="text-emerald-400" />
+            <span>Rút VietQR từ 50k</span>
+          </div>
+          <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/5 border border-white/10">
+            <Icons name="Check" :size="12" class="text-sky-400" />
+            <span>100% Miễn phí</span>
+          </div>
+        </div>
 
         <!-- Main Navigation Tabs Bar -->
         <div class="pt-2 flex justify-center">
@@ -453,6 +515,98 @@ const handleManualSync = async () => {
           </div>
         </div>
 
+        <!-- Live Commission Estimator Widget -->
+        <div class="bg-midnight-900/70 border border-white/10 rounded-2xl p-4 sm:p-5 shadow-xl backdrop-blur-md relative overflow-hidden">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 pb-3 border-b border-white/10">
+            <div>
+              <h3 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+                <span class="p-1 rounded-lg bg-phantom-mint/15 text-phantom-mint">
+                  <Icons name="Zap" :size="15" />
+                </span>
+                <span>Công Cụ Tính Tiền Hoàn Ước Tính</span>
+              </h3>
+              <p class="text-xs text-slate-400 mt-0.5">Chọn giá trị đơn hàng dự kiến để xem số tiền bạn sẽ nhận lại vào ví:</p>
+            </div>
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <button
+                v-for="p in calculatorPresets"
+                :key="p"
+                type="button"
+                class="px-2.5 py-1 rounded-lg text-xs font-mono font-semibold transition-all border"
+                :class="estimatedOrderValue === p ? 'bg-phantom-mint text-midnight-950 border-phantom-mint font-bold shadow-glow-mint' : 'bg-white/5 text-slate-300 border-white/10 hover:border-white/20'"
+                @click="estimatedOrderValue = p"
+              >
+                {{ formatVND(p) }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Slider Control -->
+          <div class="space-y-2 mb-4">
+            <div class="flex justify-between items-center text-xs font-mono">
+              <span class="text-slate-400">Kéo chọn giá trị đơn:</span>
+              <span class="text-white font-bold">{{ formatVND(estimatedOrderValue) }}</span>
+            </div>
+            <input
+              v-model.number="estimatedOrderValue"
+              type="range"
+              min="100000"
+              max="10000000"
+              step="50000"
+              class="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-phantom-mint"
+            />
+          </div>
+
+          <!-- 3-Column Calculation Result Box -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3.5 sm:p-4 rounded-xl bg-black/50 border border-white/10">
+            <div class="space-y-0.5">
+              <span class="text-[11px] text-slate-400 font-medium">Đơn hàng Shopee</span>
+              <div class="text-base sm:text-lg font-mono font-bold text-white">
+                {{ formatVND(estimatedOrderValue) }}
+              </div>
+            </div>
+
+            <div class="space-y-0.5">
+              <span class="text-[11px] text-slate-400 font-medium">Shopee trả hoa hồng (~8%)</span>
+              <div class="text-base sm:text-lg font-mono font-bold text-amber-300">
+                ~{{ formatVND(estimatedShopeeCommission) }}
+              </div>
+            </div>
+
+            <div class="space-y-0.5 sm:border-l sm:border-white/10 sm:pl-4">
+              <span class="text-[11px] text-phantom-mint font-bold uppercase tracking-wider">Tiền Hoàn Về Ví (80%)</span>
+              <div class="text-xl sm:text-2xl font-mono font-extrabold text-phantom-mint">
+                +{{ formatVND(estimatedUserCashback) }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Popular Cashback Categories Grid -->
+        <div class="space-y-2.5">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs sm:text-sm font-bold text-white flex items-center gap-1.5">
+              <Icons name="Sparkles" :size="14" class="text-amber-300" />
+              <span>Tỷ Lệ Hoàn Tiền Theo Ngành Hàng Shopee</span>
+            </h3>
+            <span class="text-[11px] text-slate-400">Cập nhật theo biểu phí Shopee</span>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+            <div
+              v-for="cat in popularCategories"
+              :key="cat.name"
+              class="p-3 rounded-xl bg-midnight-900/60 border border-white/10 hover:border-phantom-mint/30 transition-all group"
+            >
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-xs font-bold text-white group-hover:text-phantom-mint transition-colors">{{ cat.name }}</span>
+              </div>
+              <div class="text-xs font-mono font-bold text-phantom-mint mb-0.5">{{ cat.rate }}</div>
+              <p class="text-[10px] text-slate-400 truncate">{{ cat.desc }}</p>
+            </div>
+          </div>
+        </div>
+
         <!-- Compact 3-Step Horizontal Stepper Guide -->
         <div class="rounded-2xl border border-white/10 bg-midnight-900/50 p-3 sm:p-4 backdrop-blur-md">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-3 divide-y md:divide-y-0 md:divide-x divide-white/5">
@@ -480,6 +634,41 @@ const handleManualSync = async () => {
               <div class="min-w-0">
                 <h4 class="text-xs font-bold text-white tracking-wide">Nhận Tiền Về Ví</h4>
                 <p class="text-[11px] text-slate-400 truncate">Tiền hoàn tự động cộng vào ví rút ngay</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Frequently Asked Questions (Accordion) -->
+        <div class="rounded-2xl border border-white/10 bg-midnight-900/50 p-4 sm:p-5 backdrop-blur-md space-y-3">
+          <h3 class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+            <Icons name="Sun" :size="15" class="text-sky-400" />
+            <span>Câu Hỏi Thường Gặp Khi Mua Sắm & Rút Tiền</span>
+          </h3>
+
+          <div class="space-y-2">
+            <div
+              v-for="(faq, idx) in faqs"
+              :key="idx"
+              class="rounded-xl border border-white/5 bg-black/30 overflow-hidden transition-all"
+            >
+              <button
+                type="button"
+                class="w-full px-3.5 py-2.5 text-left text-xs font-semibold text-slate-200 hover:text-white flex items-center justify-between gap-2"
+                @click="toggleFaq(idx)"
+              >
+                <span>{{ faq.q }}</span>
+                <Icons
+                  :name="openFaqIndex === idx ? 'ChevronUp' : 'ChevronDown'"
+                  :size="14"
+                  class="text-slate-400 shrink-0 transition-transform"
+                />
+              </button>
+              <div
+                v-if="openFaqIndex === idx"
+                class="px-3.5 pb-3 text-xs text-slate-400 leading-relaxed border-t border-white/5 pt-2"
+              >
+                {{ faq.a }}
               </div>
             </div>
           </div>

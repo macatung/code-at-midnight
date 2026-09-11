@@ -22,6 +22,7 @@ interface NavItem {
 
 const navLinks = computed<NavItem[]>(() => [
   { label: t('nav.home'), href: '/', iconName: 'Home' },
+  { label: 'Hoàn Tiền', href: '/hoantien', badge: '80%', iconName: 'Zap' },
   { label: t('nav.desktop'), href: '/desktop', iconName: 'Monitor' },
   { label: t('nav.projects'), href: '/projects', iconName: 'Layers' },
   { label: t('nav.about'), href: '/about', iconName: 'User' },
