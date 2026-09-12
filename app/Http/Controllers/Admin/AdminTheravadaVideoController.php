@@ -298,6 +298,7 @@ class AdminTheravadaVideoController extends Controller
             'thumbnail_url' => ['nullable', 'string', 'max:500'],
             'duration' => ['nullable', 'string', 'max:50'],
             'script' => ['nullable', 'string'],
+            'description' => ['nullable', 'string'],
             'display_text' => ['nullable', 'string'],
             'spoken_text' => ['nullable', 'string'],
             'youtube_shorts_url' => ['nullable', 'string', 'max:500'],

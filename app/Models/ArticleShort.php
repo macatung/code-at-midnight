@@ -22,6 +22,7 @@ class ArticleShort extends Model
         'thumbnail_url',
         'duration',
         'script',
+        'description',
         'display_text',
         'spoken_text',
         'youtube_shorts_url',

@@ -14,6 +14,7 @@ interface ArticleShort {
   thumbnail_url?: string | null;
   duration?: string | null;
   script?: string | null;
+  description?: string | null;
   display_text?: string | null;
   spoken_text?: string | null;
   youtube_shorts_url?: string | null;
@@ -140,6 +141,7 @@ const shortForm = useForm({
   thumbnail_url: '',
   duration: '00:30',
   script: '',
+  description: '',
   youtube_shorts_url: '',
   tiktok_url: '',
   reels_url: '',
@@ -156,6 +158,8 @@ const openCreateShortModal = () => {
   shortForm.video_url = '';
   shortForm.thumbnail_url = props.article.thumbnail_short_url || '';
   shortForm.duration = '00:34';
+  shortForm.script = '';
+  shortForm.description = '';
   shortForm.order_index = currentShorts.value.length;
   shortForm.status = 'completed';
   isShortModalOpen.value = true;
@@ -170,6 +174,7 @@ const openEditShortModal = (short: ArticleShort) => {
   shortForm.thumbnail_url = short.thumbnail_url || '';
   shortForm.duration = short.duration || '00:30';
   shortForm.script = short.script || '';
+  shortForm.description = short.description || '';
   shortForm.youtube_shorts_url = short.youtube_shorts_url || '';
   shortForm.tiktok_url = short.tiktok_url || '';
   shortForm.reels_url = short.reels_url || '';
@@ -218,6 +223,7 @@ const handleQuickSaveShortUrl = (short: ArticleShort | null) => {
     thumbnail_url: short.thumbnail_url,
     duration: short.duration,
     script: short.script,
+    description: short.description,
     youtube_shorts_url: short.youtube_shorts_url,
     tiktok_url: short.tiktok_url,
     reels_url: short.reels_url,
@@ -231,8 +237,56 @@ const handleQuickSaveShortUrl = (short: ArticleShort | null) => {
   });
 };
 
+// Pregenerated Publishing Metadata Helpers for Multi-Shorts
+const activeShortPublishingTitle = computed(() => {
+  if (!activeShort.value) return '';
+  return activeShort.value.title || '';
+});
+
+const activeShortPublishingDescription = computed(() => {
+  if (!activeShort.value) return '';
+  if (activeShort.value.description) {
+    return activeShort.value.description;
+  }
+  const lines = [];
+  if (activeShort.value.focus_hook) {
+    lines.push(`✦ ${activeShort.value.focus_hook}`);
+    lines.push('');
+  }
+  if (activeShort.value.script) {
+    lines.push(activeShort.value.script);
+    lines.push('');
+  }
+  if (props.article.youtube_url) {
+    lines.push(`👉 Xem trọn vẹn bài giảng đầy đủ tại: ${props.article.youtube_url}`);
+  } else {
+    lines.push(`🎧 Đón xem tuyển tập trọn bộ tại: https://theravada.macatung.dev`);
+  }
+  lines.push('');
+  lines.push('#Shorts #TamAnVanSuAn #PhatPhap #DucPhat #ThienDinh #ChanhNiem #Buddhism #AnLac');
+  return lines.join('\n');
+});
+
+const activeShortFullKit = computed(() => {
+  if (!activeShort.value) return '';
+  return [
+    `=== TIÊU ĐỀ XUẤT BẢN SHORTS / REELS / TIKTOK ===`,
+    activeShortPublishingTitle.value,
+    ``,
+    `=== MÔ TẢ & HASHTAGS XUẤT BẢN ===`,
+    activeShortPublishingDescription.value,
+    ``,
+    `=== FILE VIDEO GỐC CDN 9:16 ===`,
+    activeShort.value.video_url || props.article.video_short_url || '',
+  ].join('\n');
+});
+
 const fillCaptionFromShortScript = () => {
   if (!activeShort.value) return;
+  if (activeShort.value.description) {
+    form.social_caption = activeShort.value.description;
+    return;
+  }
   const content = activeShort.value.script || activeShort.value.focus_hook || '';
   if (content) {
     form.social_caption = `${activeShort.value.title}\n\n${content}\n\n#phatphap #taman #buddha #thichca #tamly #xuhuong`;
@@ -915,14 +969,25 @@ const getStatusDotClass = (status: string) => {
                   </div>
                 </div>
 
-                <!-- Active Short Details Card -->
-                <div v-if="activeShort" class="w-full max-w-[340px] mt-3.5 p-3 rounded-xl bg-slate-900/50 border border-white/[0.06] space-y-2 text-xs">
-                  <div class="flex items-center justify-between">
+                <!-- Active Short Details & Pre-generated Publishing Kit Card -->
+                <div v-if="activeShort" class="w-full max-w-[340px] mt-3.5 p-3.5 rounded-xl bg-slate-900/60 border border-white/[0.08] space-y-3 text-xs shadow-lg">
+                  <!-- Header: Short title & Actions -->
+                  <div class="flex items-center justify-between border-b border-white/[0.06] pb-2">
                     <div class="flex items-center gap-1.5 truncate">
                       <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
-                      <span class="font-semibold text-slate-200 truncate">{{ activeShort.title }}</span>
+                      <span class="font-semibold text-slate-200 truncate">🎬 Short #{{ selectedShortIndex + 1 }}</span>
+                      <span v-if="activeShort.duration" class="text-[10px] font-mono text-slate-400">({{ formatDuration(activeShort.duration) }})</span>
                     </div>
                     <div class="flex items-center gap-1 shrink-0 ml-2">
+                      <button
+                        type="button"
+                        @click="copyToClipboard(activeShortFullKit, 'short-kit-' + (activeShort.id || selectedShortIndex))"
+                        class="px-2 py-0.5 rounded bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 transition-colors text-[11px] font-mono flex items-center gap-1"
+                        title="Sao chép toàn bộ Kit đăng bài của Short này"
+                      >
+                        <Icons name="Copy" :size="10" />
+                        <span>{{ copyFeedback['short-kit-' + (activeShort.id || selectedShortIndex)] ? '✓ Đã chép' : 'Copy Kit' }}</span>
+                      </button>
                       <button
                         type="button"
                         @click="openEditShortModal(activeShort)"
@@ -943,8 +1008,54 @@ const getStatusDotClass = (status: string) => {
                       </button>
                     </div>
                   </div>
+
                   <div v-if="activeShort.focus_hook" class="text-[11px] text-amber-400 font-mono flex items-center gap-1">
-                    <span>✦ {{ activeShort.focus_hook }}</span>
+                    <span>✦ Điểm nhấn: {{ activeShort.focus_hook }}</span>
+                  </div>
+
+                  <!-- 1. Tiêu đề xuất bản tạo sẵn (Pre-generated Title) -->
+                  <div class="space-y-1 pt-1">
+                    <div class="flex items-center justify-between text-[11px]">
+                      <span class="font-medium text-slate-300 flex items-center gap-1">
+                        <Icons name="FileText" :size="11" class="text-slate-400" />
+                        <span>Tiêu đề đăng Shorts / Reels / TikTok:</span>
+                      </span>
+                      <div class="flex items-center gap-2">
+                        <span class="font-mono text-[10px] text-slate-500">{{ (activeShort.title || '').length }}/100</span>
+                        <button
+                          type="button"
+                          @click="copyToClipboard(activeShort.title, 'st-title-' + (activeShort.id || selectedShortIndex))"
+                          class="text-slate-400 hover:text-amber-300 font-mono flex items-center gap-1 transition-colors"
+                        >
+                          <Icons name="Copy" :size="10" />
+                          <span>{{ copyFeedback['st-title-' + (activeShort.id || selectedShortIndex)] ? '✓ Đã chép' : 'Sao chép' }}</span>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="p-2 rounded-lg bg-black/50 border border-white/[0.06] font-sans text-xs text-slate-100 leading-snug">
+                      {{ activeShort.title }}
+                    </div>
+                  </div>
+
+                  <!-- 2. Mô tả xuất bản tạo sẵn (Pre-generated Description & SEO Tags) -->
+                  <div class="space-y-1 pt-1">
+                    <div class="flex items-center justify-between text-[11px]">
+                      <span class="font-medium text-slate-300 flex items-center gap-1">
+                        <Icons name="AlignLeft" :size="11" class="text-slate-400" />
+                        <span>Mô tả & Hashtags tạo sẵn:</span>
+                      </span>
+                      <button
+                        type="button"
+                        @click="copyToClipboard(activeShortPublishingDescription, 'st-desc-' + (activeShort.id || selectedShortIndex))"
+                        class="text-slate-400 hover:text-amber-300 font-mono flex items-center gap-1 transition-colors"
+                      >
+                        <Icons name="Copy" :size="10" />
+                        <span>{{ copyFeedback['st-desc-' + (activeShort.id || selectedShortIndex)] ? '✓ Đã chép' : 'Sao chép' }}</span>
+                      </button>
+                    </div>
+                    <div class="p-2 rounded-lg bg-black/50 border border-white/[0.06] font-sans text-[11px] text-slate-300 leading-relaxed max-h-36 overflow-y-auto whitespace-pre-line select-all scrollbar-thin">
+                      {{ activeShortPublishingDescription }}
+                    </div>
                   </div>
                 </div>
 
@@ -1361,12 +1472,31 @@ const getStatusDotClass = (status: string) => {
                       </div>
                     </div>
 
-                    <div class="flex items-center gap-2 shrink-0">
+                    <div class="flex items-center gap-1.5 shrink-0">
+                      <button
+                        type="button"
+                        @click="copyToClipboard(st.title, 'st-yt-title-' + (st.id || idx))"
+                        class="px-2 py-1 rounded bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white transition-colors text-[11px] font-mono flex items-center gap-1"
+                        title="Sao chép tiêu đề chuẩn SEO của Short này"
+                      >
+                        <Icons name="Copy" :size="11" />
+                        <span>{{ copyFeedback['st-yt-title-' + (st.id || idx)] ? '✓ Tiêu đề' : 'Tiêu đề' }}</span>
+                      </button>
+                      <button
+                        v-if="st.description"
+                        type="button"
+                        @click="copyToClipboard(st.description, 'st-yt-desc-' + (st.id || idx))"
+                        class="px-2 py-1 rounded bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white transition-colors text-[11px] font-mono flex items-center gap-1"
+                        title="Sao chép mô tả & hashtags của Short này"
+                      >
+                        <Icons name="AlignLeft" :size="11" />
+                        <span>{{ copyFeedback['st-yt-desc-' + (st.id || idx)] ? '✓ Mô tả' : 'Mô tả' }}</span>
+                      </button>
                       <input
                         v-model="st.youtube_shorts_url"
                         type="text"
                         placeholder="Link YT Shorts..."
-                        class="w-36 sm:w-48 px-2.5 py-1 rounded bg-slate-950 border border-white/[0.08] text-xs font-mono text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-white/20"
+                        class="w-32 sm:w-44 px-2.5 py-1 rounded bg-slate-950 border border-white/[0.08] text-xs font-mono text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-white/20"
                         @keydown.enter="handleQuickSaveShortUrl(st)"
                       />
                       <button
@@ -1500,23 +1630,57 @@ const getStatusDotClass = (status: string) => {
                 </div>
               </div>
 
-              <!-- Caption TikTok -->
+              <!-- Tiêu đề TikTok tạo sẵn -->
+              <div v-if="activeShort" class="p-4 rounded-xl bg-slate-900/30 border border-white/[0.06] space-y-2">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-medium text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                    <Icons name="FileText" :size="13" class="text-cyan-400" />
+                    <span>Tiêu đề TikTok tạo sẵn</span>
+                  </span>
+                  <div class="flex items-center gap-2">
+                    <span class="font-mono text-[11px] text-slate-500">{{ (activeShort.title || '').length }}/100</span>
+                    <button
+                      type="button"
+                      @click="copyToClipboard(activeShort.title, 'tt-title-' + (activeShort.id || selectedShortIndex))"
+                      class="text-slate-400 hover:text-cyan-300 flex items-center gap-1 font-mono transition-colors text-xs"
+                    >
+                      <Icons name="Copy" :size="12" />
+                      <span>{{ copyFeedback['tt-title-' + (activeShort.id || selectedShortIndex)] ? '✓ Đã chép' : 'Sao chép' }}</span>
+                    </button>
+                  </div>
+                </div>
+                <div class="p-2.5 rounded-lg bg-black/40 border border-white/[0.04] text-xs font-sans text-slate-200">
+                  {{ activeShort.title }}
+                </div>
+              </div>
+
+              <!-- Caption & Mô tả TikTok -->
               <div class="p-4 rounded-xl bg-slate-900/30 border border-white/[0.06] space-y-2 focus-within:border-white/[0.15] transition-colors">
                 <div class="flex items-center justify-between text-xs">
                   <span class="font-medium text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                    <Icons name="FileText" :size="13" class="text-slate-400" />
-                    <span>Caption TikTok</span>
+                    <Icons name="AlignLeft" :size="13" class="text-slate-400" />
+                    <span>Mô Tả & Caption TikTok</span>
                   </span>
                   <div class="flex items-center gap-2">
                     <button
-                      v-if="activeShort?.script"
+                      v-if="activeShort?.description || activeShort?.script"
                       type="button"
                       @click="fillCaptionFromShortScript"
-                      class="px-2 py-0.5 rounded bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 transition-colors text-xs flex items-center gap-1"
-                      title="Lấy kịch bản của Short đang chọn làm caption"
+                      class="px-2 py-0.5 rounded bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 transition-colors text-xs flex items-center gap-1"
+                      title="Lấy mô tả tạo sẵn của Short đang chọn"
                     >
                       <Icons name="Sparkles" :size="11" />
-                      <span>Lấy từ kịch bản</span>
+                      <span>Lấy từ Mô tả Short</span>
+                    </button>
+                    <button
+                      v-if="activeShort?.description"
+                      type="button"
+                      @click="copyToClipboard(activeShort.description, 'tt-desc-direct')"
+                      class="px-2 py-0.5 rounded bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white transition-colors text-xs flex items-center gap-1 font-mono"
+                      title="Sao chép trực tiếp mô tả tạo sẵn"
+                    >
+                      <Icons name="Copy" :size="11" />
+                      <span>{{ copyFeedback['tt-desc-direct'] ? '✓ Đã chép' : 'Chép Mô Tả' }}</span>
                     </button>
                     <button
                       type="button"
@@ -1687,23 +1851,57 @@ const getStatusDotClass = (status: string) => {
                 </div>
               </div>
 
+              <!-- Tiêu đề Reels tạo sẵn -->
+              <div v-if="activeShort" class="p-4 rounded-xl bg-slate-900/30 border border-white/[0.06] space-y-2">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-medium text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                    <Icons name="FileText" :size="13" class="text-rose-400" />
+                    <span>Tiêu đề Reels tạo sẵn</span>
+                  </span>
+                  <div class="flex items-center gap-2">
+                    <span class="font-mono text-[11px] text-slate-500">{{ (activeShort.title || '').length }}/100</span>
+                    <button
+                      type="button"
+                      @click="copyToClipboard(activeShort.title, 'reels-title-' + (activeShort.id || selectedShortIndex))"
+                      class="text-slate-400 hover:text-rose-300 flex items-center gap-1 font-mono transition-colors text-xs"
+                    >
+                      <Icons name="Copy" :size="12" />
+                      <span>{{ copyFeedback['reels-title-' + (activeShort.id || selectedShortIndex)] ? '✓ Đã chép' : 'Sao chép' }}</span>
+                    </button>
+                  </div>
+                </div>
+                <div class="p-2.5 rounded-lg bg-black/40 border border-white/[0.04] text-xs font-sans text-slate-200">
+                  {{ activeShort.title }}
+                </div>
+              </div>
+
               <!-- Caption Reels -->
               <div class="p-4 rounded-xl bg-slate-900/30 border border-white/[0.06] space-y-2 focus-within:border-white/[0.15] transition-colors">
                 <div class="flex items-center justify-between text-xs">
                   <span class="font-medium text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                    <Icons name="FileText" :size="13" class="text-slate-400" />
-                    <span>Caption Reels</span>
+                    <Icons name="AlignLeft" :size="13" class="text-slate-400" />
+                    <span>Mô Tả & Caption Reels</span>
                   </span>
                   <div class="flex items-center gap-2">
                     <button
-                      v-if="activeShort?.script"
+                      v-if="activeShort?.description || activeShort?.script"
                       type="button"
                       @click="fillCaptionFromShortScript"
-                      class="px-2 py-0.5 rounded bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 transition-colors text-xs flex items-center gap-1"
-                      title="Lấy kịch bản của Short đang chọn làm caption"
+                      class="px-2 py-0.5 rounded bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 transition-colors text-xs flex items-center gap-1"
+                      title="Lấy mô tả tạo sẵn của Short đang chọn"
                     >
                       <Icons name="Sparkles" :size="11" />
-                      <span>Lấy từ kịch bản</span>
+                      <span>Lấy từ Mô tả Short</span>
+                    </button>
+                    <button
+                      v-if="activeShort?.description"
+                      type="button"
+                      @click="copyToClipboard(activeShort.description, 'reels-desc-direct')"
+                      class="px-2 py-0.5 rounded bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white transition-colors text-xs flex items-center gap-1 font-mono"
+                      title="Sao chép trực tiếp mô tả tạo sẵn"
+                    >
+                      <Icons name="Copy" :size="11" />
+                      <span>{{ copyFeedback['reels-desc-direct'] ? '✓ Đã chép' : 'Chép Mô Tả' }}</span>
                     </button>
                     <button
                       type="button"
@@ -2179,6 +2377,20 @@ const getStatusDotClass = (status: string) => {
               v-model="shortForm.script"
               rows="4"
               placeholder="Lời thoại dẫn thiền hoặc đối thoại của Đức Phật..."
+              class="w-full px-3 py-2 rounded-lg bg-black/40 border border-white/[0.08] text-slate-100 placeholder:text-slate-600 focus:outline-none focus:border-white/20 transition-all font-sans text-xs leading-relaxed resize-y"
+            ></textarea>
+          </div>
+
+          <!-- Row 7: Mô Tả & Hashtags Xuất Bản (Publishing Description) -->
+          <div class="space-y-1.5">
+            <label class="font-mono text-slate-300 flex items-center justify-between">
+              <span>Mô Tả & Hashtags Xuất Bản Tạo Sẵn (Publishing Description)</span>
+              <span class="text-slate-500 text-[10px]">Tự động hiển thị tại Publishing Hub</span>
+            </label>
+            <textarea
+              v-model="shortForm.description"
+              rows="5"
+              placeholder="Nhập mô tả chi tiết đăng kèm Shorts/Reels/TikTok, lời khuyên thực hành, link xem bài giảng dài và bộ hashtag SEO..."
               class="w-full px-3 py-2 rounded-lg bg-black/40 border border-white/[0.08] text-slate-100 placeholder:text-slate-600 focus:outline-none focus:border-white/20 transition-all font-sans text-xs leading-relaxed resize-y"
             ></textarea>
           </div>
