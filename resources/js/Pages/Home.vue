@@ -3,12 +3,9 @@ import { computed } from 'vue';
 import SeoHead from '@/Components/common/SeoHead.vue';
 import Navbar from '@/Components/layout/Navbar.vue';
 import Footer from '@/Components/layout/Footer.vue';
-import TalismanCanvas from '@/Components/mascot/TalismanCanvas.vue';
-import EcosystemStatusBanner from '@/Components/ecosystem/EcosystemStatusBanner.vue';
-import EcosystemHero from '@/Components/ecosystem/EcosystemHero.vue';
-import EcosystemBentoGrid from '@/Components/ecosystem/EcosystemBentoGrid.vue';
+import MinimalHero from '@/Components/ecosystem/MinimalHero.vue';
+import CleanProductGrid from '@/Components/ecosystem/CleanProductGrid.vue';
 import EcosystemPhilosophy from '@/Components/ecosystem/EcosystemPhilosophy.vue';
-import EcosystemQuickLaunch from '@/Components/ecosystem/EcosystemQuickLaunch.vue';
 import { useI18n } from '@/composables/useI18n';
 
 defineProps<{
@@ -79,29 +76,20 @@ const ecosystemJsonLd = {
     :json-ld="ecosystemJsonLd"
   />
 
-  <div class="min-h-screen bg-midnight-950 text-slate-100 selection:bg-phantom-mint selection:text-midnight-950 flex flex-col overflow-x-hidden bg-grid-pattern relative">
-    <!-- Ambient particle background -->
-    <TalismanCanvas />
-
+  <div class="min-h-screen bg-midnight-950 text-slate-100 selection:bg-phantom-mint selection:text-midnight-950 flex flex-col overflow-x-hidden relative">
     <!-- Global Navigation -->
     <Navbar />
 
-    <!-- Live Telemetry Status Strip -->
-    <EcosystemStatusBanner />
-
     <!-- Main Content Area -->
     <main class="relative z-10 flex-1 flex flex-col">
-      <!-- 1. Ecosystem Hero Section & Refined Mascot Stage -->
-      <EcosystemHero />
+      <!-- 1. Centered Minimalist Hero -->
+      <MinimalHero />
 
-      <!-- 2. Master 5-Pillar Bento Grid -->
-      <EcosystemBentoGrid />
+      <!-- 2. Clean 5-Pillar Product Showcase Grid -->
+      <CleanProductGrid />
 
-      <!-- 3. Engineering Architecture & Standards -->
+      <!-- 3. Engineering Philosophy & Standards -->
       <EcosystemPhilosophy />
-
-      <!-- 4. Quick Launchpad -->
-      <EcosystemQuickLaunch />
     </main>
 
     <!-- Global Footer -->

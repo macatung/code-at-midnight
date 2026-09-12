@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
-import MidnightClock from '@/Components/mascot/MidnightClock.vue';
 import MiniMascotLogo from '@/Components/mascot/MiniMascotLogo.vue';
-import FloatingMascotCompanion from '@/Components/mascot/FloatingMascotCompanion.vue';
 import Icons from '@/Components/ui/Icons.vue';
 import { sound } from '@/audio/soundEffects';
 import { useTimeCycle } from '@/composables/useTimeCycle';
@@ -142,10 +140,8 @@ onUnmounted(() => {
         </Link>
       </nav>
 
-      <!-- Right Action Controls (Time Clock, Language Switch & Mobile Toggle) -->
+      <!-- Right Action Controls (Language Switch & Mobile Toggle) -->
       <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-        <!-- Dynamic Midnight Chronos Clock Pill -->
-        <MidnightClock />
 
         <!-- Language Selector -->
         <div class="hidden sm:flex items-center rounded-lg border border-white/10 bg-midnight-900/80 p-0.5 text-[10px] font-mono" role="group" :aria-label="t('common.language')">
@@ -234,7 +230,4 @@ onUnmounted(() => {
       </div>
     </transition>
   </header>
-
-  <!-- Global Floating Mascot Companion -->
-  <FloatingMascotCompanion />
 </template>
