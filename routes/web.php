@@ -65,8 +65,13 @@ Route::domain('theravada.' . $baseDomain)->group(function () {
         Route::patch('/theravada/videos/{article}/publish', [AdminTheravadaVideoController::class, 'publish'])->name('videos.theravada.publish');
         Route::put('/videos/{article}', [AdminTheravadaVideoController::class, 'update'])->name('videos.update');
         Route::put('/theravada/videos/{article}', [AdminTheravadaVideoController::class, 'update'])->name('videos.theravada.update');
+        Route::post('/videos/{article}/shorts', [AdminTheravadaVideoController::class, 'saveShort'])->name('videos.shorts.save');
+        Route::delete('/videos/{article}/shorts/{short}', [AdminTheravadaVideoController::class, 'deleteShort'])->name('videos.shorts.delete');
+        Route::post('/theravada/videos/{article}/shorts', [AdminTheravadaVideoController::class, 'saveShort'])->name('videos.theravada.shorts.save');
+        Route::delete('/theravada/videos/{article}/shorts/{short}', [AdminTheravadaVideoController::class, 'deleteShort'])->name('videos.theravada.shorts.delete');
     });
 });
+
 
 // 2. Theravāda Path-based Routes (Available on main domain /theravada/* & local testing)
 Route::prefix('theravada')->name('theravada.')->group(function () {
@@ -268,6 +273,9 @@ Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function
     Route::post('/theravada/videos/{article}/trigger', [AdminTheravadaVideoController::class, 'triggerPipeline'])->name('theravada.videos.trigger');
     Route::patch('/theravada/videos/{article}/publish', [AdminTheravadaVideoController::class, 'publish'])->name('theravada.videos.publish');
     Route::put('/theravada/videos/{article}', [AdminTheravadaVideoController::class, 'update'])->name('theravada.videos.update');
+    Route::post('/theravada/videos/{article}/shorts', [AdminTheravadaVideoController::class, 'saveShort'])->name('theravada.videos.shorts.save');
+    Route::delete('/theravada/videos/{article}/shorts/{short}', [AdminTheravadaVideoController::class, 'deleteShort'])->name('theravada.videos.shorts.delete');
+
 
     // Site Settings & Profile CMS
     Route::get('/settings', [AdminSettingController::class, 'index'])->name('settings.index');

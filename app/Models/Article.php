@@ -76,6 +76,12 @@ class Article extends Model
         return $this->belongsTo(Article::class, 'paired_article_id');
     }
 
+    public function shorts()
+    {
+        return $this->hasMany(ArticleShort::class, 'article_id')->orderBy('order_index');
+    }
+
+
     public function scopePublished($query)
     {
         return $query->where('is_published', true)->orderBy('published_at', 'desc');

@@ -377,5 +377,103 @@ class AdminTheravadaVideoTest extends TestCase
             ->where('nextEpisode.id', $ep3->id)
         );
     }
+
+    public function test_admin_can_create_and_update_article_short_and_syncs_primary(): void
+    {
+        $this->authenticateAdmin();
+
+        $article = Article::create([
+            'site_domain' => 'theravada',
+            'title' => 'Bài Giảng Test Shorts',
+            'slug' => 'bai-giang-test-shorts',
+            'content' => 'Nội dung test...',
+            'video_status' => 'completed',
+        ]);
+
+        // 1. Create short 1 (primary, order_index = 0)
+        $response = $this->post("/admin/theravada/videos/{$article->id}/shorts", [
+            'title' => 'Short 1: Lời Phật Khai Thị',
+            'focus_hook' => 'Dừng Lại Và An Trú',
+            'visual_style' => 'Buddha Majestic Golden Glow',
+            'video_url' => 'https://cdn.example.com/short1.mp4',
+            'thumbnail_url' => 'https://cdn.example.com/short1.jpg',
+            'duration' => '00:34',
+            'script' => 'Kịch bản ngắn...',
+            'youtube_shorts_url' => 'https://youtube.com/shorts/test1',
+            'tiktok_url' => 'https://tiktok.com/@user/video/test1',
+            'reels_url' => 'https://facebook.com/reel/test1',
+            'order_index' => 0,
+            'status' => 'completed',
+        ]);
+
+        $response->assertRedirect();
+        $this->assertDatabaseHas('article_shorts', [
+            'article_id' => $article->id,
+            'title' => 'Short 1: Lời Phật Khai Thị',
+            'video_url' => 'https://cdn.example.com/short1.mp4',
+        ]);
+
+        // Verify primary short synced to article
+        $article->refresh();
+        $this->assertEquals('https://cdn.example.com/short1.mp4', $article->video_short_url);
+        $this->assertEquals('https://cdn.example.com/short1.jpg', $article->thumbnail_short_url);
+        $this->assertEquals('00:34', $article->video_short_duration);
+
+        // 2. Create short 2
+        $response2 = $this->post("/admin/theravada/videos/{$article->id}/shorts", [
+            'title' => 'Short 2: Pháp Hành An Trú 30s',
+            'focus_hook' => 'Hơi Thở Chánh Niệm',
+            'visual_style' => 'Buddha Majestic Golden Glow',
+            'video_url' => 'https://cdn.example.com/short2.mp4',
+            'duration' => '00:30',
+            'order_index' => 1,
+            'status' => 'completed',
+        ]);
+
+        $response2->assertRedirect();
+        $this->assertEquals(2, $article->shorts()->count());
+
+        // 3. Update short 1
+        $short1 = $article->shorts()->where('order_index', 0)->first();
+        $response3 = $this->post("/admin/theravada/videos/{$article->id}/shorts", [
+            'id' => $short1->id,
+            'title' => 'Short 1: Đã Đổi Tiêu Đề',
+            'video_url' => 'https://cdn.example.com/short1_updated.mp4',
+            'order_index' => 0,
+        ]);
+
+        $response3->assertRedirect();
+        $short1->refresh();
+        $this->assertEquals('Short 1: Đã Đổi Tiêu Đề', $short1->title);
+        $article->refresh();
+        $this->assertEquals('https://cdn.example.com/short1_updated.mp4', $article->video_short_url);
+    }
+
+    public function test_admin_can_delete_article_short(): void
+    {
+        $this->authenticateAdmin();
+
+        $article = Article::create([
+            'site_domain' => 'theravada',
+            'title' => 'Bài Giảng Xóa Short',
+            'slug' => 'bai-giang-xoa-short',
+            'content' => 'Nội dung test...',
+            'video_status' => 'completed',
+        ]);
+
+        $short = $article->shorts()->create([
+            'title' => 'Short Cần Xóa',
+            'video_url' => 'https://cdn.example.com/delete_me.mp4',
+            'order_index' => 0,
+            'status' => 'completed',
+        ]);
+
+        $this->assertEquals(1, $article->shorts()->count());
+
+        $response = $this->delete("/admin/theravada/videos/{$article->id}/shorts/{$short->id}");
+        $response->assertRedirect();
+
+        $this->assertEquals(0, $article->shorts()->count());
+    }
 }
 

@@ -44,3 +44,5 @@ ORIGINAL_REQUEST.md
 PROJECT.md
 TEST_INFRA.md
 TEST_READY.md
+__pycache__/
+*.pyc

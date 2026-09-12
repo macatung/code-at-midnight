@@ -4,6 +4,25 @@ import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import Icons from '@/Components/ui/Icons.vue';
 
+interface ArticleShort {
+  id: number;
+  article_id: number;
+  title: string;
+  focus_hook?: string | null;
+  visual_style?: string | null;
+  video_url: string;
+  thumbnail_url?: string | null;
+  duration?: string | null;
+  script?: string | null;
+  display_text?: string | null;
+  spoken_text?: string | null;
+  youtube_shorts_url?: string | null;
+  tiktok_url?: string | null;
+  reels_url?: string | null;
+  order_index: number;
+  status: string;
+}
+
 interface ArticleDetail {
   id: number;
   title: string;
@@ -20,6 +39,7 @@ interface ArticleDetail {
   video_status: 'draft' | 'processing' | 'completed' | 'published' | 'failed' | string;
   video_long_url?: string | null;
   video_short_url?: string | null;
+  shorts?: ArticleShort[];
   youtube_url?: string | null;
   youtube_id?: string | null;
   thumbnail_long_url?: string | null;
@@ -42,6 +62,7 @@ interface ArticleDetail {
   published_at?: string | null;
   updated_at: string;
 }
+
 
 interface AdjacentEpisode {
   id: number;
@@ -74,6 +95,149 @@ const activeScriptTab = ref<'long' | 'reel' | 'original'>('long');
 const isDescExpanded = ref(false);
 const isDescFullscreen = ref(false);
 const isCaptionExpanded = ref(false);
+
+// Multi-Shorts Management State
+const selectedShortIndex = ref(0);
+
+const currentShorts = computed<ArticleShort[]>(() => {
+  if (props.article.shorts && props.article.shorts.length > 0) {
+    return props.article.shorts;
+  }
+  if (props.article.video_short_url) {
+    return [{
+      id: 0,
+      article_id: props.article.id,
+      title: 'Short 1 (Chính)',
+      focus_hook: 'Đức Phật Khai Thị',
+      visual_style: 'Buddha Majestic Golden Glow',
+      video_url: props.article.video_short_url,
+      thumbnail_url: props.article.thumbnail_short_url,
+      duration: props.article.video_short_duration || '00:30',
+      script: props.article.script_short,
+      youtube_shorts_url: null,
+      tiktok_url: null,
+      reels_url: null,
+      order_index: 0,
+      status: 'completed',
+    }];
+  }
+  return [];
+});
+
+const activeShort = computed<ArticleShort | null>(() => {
+  if (currentShorts.value.length === 0) return null;
+  return currentShorts.value[selectedShortIndex.value] || currentShorts.value[0];
+});
+
+// Modal state for creating / editing short
+const isShortModalOpen = ref(false);
+const shortForm = useForm({
+  id: null as number | null,
+  title: '',
+  focus_hook: '',
+  visual_style: 'Buddha Majestic Golden Glow',
+  video_url: '',
+  thumbnail_url: '',
+  duration: '00:30',
+  script: '',
+  youtube_shorts_url: '',
+  tiktok_url: '',
+  reels_url: '',
+  order_index: 0,
+  status: 'completed',
+});
+
+const openCreateShortModal = () => {
+  shortForm.reset();
+  shortForm.id = null;
+  shortForm.title = `Short ${currentShorts.value.length + 1}`;
+  shortForm.focus_hook = 'Lời Phật Khai Thị Vàng';
+  shortForm.visual_style = 'Buddha Majestic Golden Glow';
+  shortForm.video_url = '';
+  shortForm.thumbnail_url = props.article.thumbnail_short_url || '';
+  shortForm.duration = '00:34';
+  shortForm.order_index = currentShorts.value.length;
+  shortForm.status = 'completed';
+  isShortModalOpen.value = true;
+};
+
+const openEditShortModal = (short: ArticleShort) => {
+  shortForm.id = short.id || null;
+  shortForm.title = short.title;
+  shortForm.focus_hook = short.focus_hook || '';
+  shortForm.visual_style = short.visual_style || 'Buddha Majestic Golden Glow';
+  shortForm.video_url = short.video_url;
+  shortForm.thumbnail_url = short.thumbnail_url || '';
+  shortForm.duration = short.duration || '00:30';
+  shortForm.script = short.script || '';
+  shortForm.youtube_shorts_url = short.youtube_shorts_url || '';
+  shortForm.tiktok_url = short.tiktok_url || '';
+  shortForm.reels_url = short.reels_url || '';
+  shortForm.order_index = short.order_index;
+  shortForm.status = short.status || 'completed';
+  isShortModalOpen.value = true;
+};
+
+const handleSaveShort = () => {
+  shortForm.post(`/admin/theravada/videos/${props.article.id}/shorts`, {
+    preserveScroll: true,
+    onSuccess: () => {
+      isShortModalOpen.value = false;
+    },
+  });
+};
+
+const deleteShortItem = (short: ArticleShort) => {
+  if (!short.id) return;
+  if (confirm(`Bạn có chắc muốn xóa Short "${short.title}" không?`)) {
+    router.delete(`/admin/theravada/videos/${props.article.id}/shorts/${short.id}`, {
+      preserveScroll: true,
+      onSuccess: () => {
+        if (selectedShortIndex.value >= currentShorts.value.length - 1) {
+          selectedShortIndex.value = Math.max(0, currentShorts.value.length - 2);
+        }
+      },
+    });
+  }
+};
+
+const isSavingShortUrl = ref(false);
+const handleQuickSaveShortUrl = (short: ArticleShort | null) => {
+  if (!short) return;
+  if (!short.id) {
+    openEditShortModal(short);
+    return;
+  }
+  isSavingShortUrl.value = true;
+  router.post(`/admin/theravada/videos/${props.article.id}/shorts`, {
+    id: short.id,
+    title: short.title,
+    focus_hook: short.focus_hook,
+    visual_style: short.visual_style,
+    video_url: short.video_url,
+    thumbnail_url: short.thumbnail_url,
+    duration: short.duration,
+    script: short.script,
+    youtube_shorts_url: short.youtube_shorts_url,
+    tiktok_url: short.tiktok_url,
+    reels_url: short.reels_url,
+    order_index: short.order_index,
+    status: short.status,
+  }, {
+    preserveScroll: true,
+    onFinish: () => {
+      isSavingShortUrl.value = false;
+    },
+  });
+};
+
+const fillCaptionFromShortScript = () => {
+  if (!activeShort.value) return;
+  const content = activeShort.value.script || activeShort.value.focus_hook || '';
+  if (content) {
+    form.social_caption = `${activeShort.value.title}\n\n${content}\n\n#phatphap #taman #buddha #thichca #tamly #xuhuong`;
+  }
+};
 
 // Form
 const form = useForm({
@@ -589,11 +753,11 @@ const getStatusDotClass = (status: string) => {
                 <!-- If 9:16 Reel Player -->
                 <template v-else-if="mediaView === 'player_9_16'">
                   <span class="font-mono text-xs text-slate-400">
-                    {{ formatDuration(article.video_short_duration) }}
+                    {{ formatDuration(activeShort?.duration || article.video_short_duration) }}
                   </span>
                   <a
-                    v-if="article.video_short_url"
-                    :href="article.video_short_url"
+                    v-if="activeShort?.video_url || article.video_short_url"
+                    :href="activeShort?.video_url || article.video_short_url"
                     target="_blank"
                     class="px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white transition-colors border border-white/[0.08] flex items-center gap-1 text-xs"
                     title="Tải tệp video Reel 9:16"
@@ -601,6 +765,14 @@ const getStatusDotClass = (status: string) => {
                     <Icons name="ExternalLink" :size="12" />
                     <span>Tải MP4</span>
                   </a>
+                  <button
+                    v-if="activeShort?.video_url || article.video_short_url"
+                    type="button"
+                    @click="copyToClipboard(activeShort?.video_url || article.video_short_url, 'cdn-short')"
+                    class="hover:text-white font-mono text-xs transition-colors"
+                  >
+                    {{ copyFeedback['cdn-short'] ? '✓ Đã chép' : 'Copy CDN' }}
+                  </button>
                 </template>
 
                 <!-- If 16:9 Thumbnail -->
@@ -687,6 +859,30 @@ const getStatusDotClass = (status: string) => {
                 v-else-if="mediaView === 'player_9_16'"
                 class="rounded-xl bg-black/40 border border-white/[0.08] p-4 sm:p-6 flex flex-col items-center justify-center min-h-[460px] sm:min-h-[500px] relative"
               >
+                <!-- Multi-Shorts Selector Bar -->
+                <div v-if="currentShorts.length > 0" class="w-full max-w-[340px] flex items-center gap-1.5 p-1 rounded-xl bg-slate-900/80 border border-white/[0.08] mb-4 overflow-x-auto no-scrollbar">
+                  <button
+                    v-for="(st, idx) in currentShorts"
+                    :key="st.id || idx"
+                    type="button"
+                    @click="selectedShortIndex = idx"
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all shrink-0 flex items-center gap-1.5"
+                    :class="selectedShortIndex === idx ? 'bg-white/15 text-white font-semibold shadow-sm border border-white/[0.15]' : 'text-slate-400 hover:text-slate-200 border border-transparent'"
+                  >
+                    <span>🎬 Short {{ idx + 1 }}</span>
+                    <span v-if="st.duration" class="text-[10px] font-mono text-slate-400 opacity-80">({{ formatDuration(st.duration) }})</span>
+                  </button>
+                  <button
+                    type="button"
+                    @click="openCreateShortModal"
+                    class="px-2.5 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/[0.08] text-xs font-medium transition-colors flex items-center gap-1 shrink-0 ml-auto"
+                    title="Thêm Short Mới"
+                  >
+                    <Icons name="Plus" :size="12" />
+                    <span>Thêm</span>
+                  </button>
+                </div>
+
                 <!-- Smartphone Frame Mockup -->
                 <div class="w-full max-w-[260px] sm:max-w-[280px] aspect-[9/16] rounded-[2rem] overflow-hidden border-2 border-slate-700/80 bg-black relative shadow-2xl flex items-center justify-center">
                   <!-- Notch / Dynamic Island -->
@@ -695,12 +891,13 @@ const getStatusDotClass = (status: string) => {
                   </div>
 
                   <video
-                    v-if="article.video_short_url"
+                    v-if="activeShort?.video_url || article.video_short_url"
+                    :key="activeShort?.id || selectedShortIndex"
                     controls
                     playsinline
                     class="w-full h-full object-cover"
-                    :src="article.video_short_url"
-                    :poster="article.thumbnail_short_url || undefined"
+                    :src="activeShort?.video_url || article.video_short_url"
+                    :poster="activeShort?.thumbnail_url || article.thumbnail_short_url || undefined"
                   />
 
                   <div v-else class="text-center p-5 text-slate-400 font-sans text-xs space-y-2.5">
@@ -718,10 +915,44 @@ const getStatusDotClass = (status: string) => {
                   </div>
                 </div>
 
-                <div class="text-[11px] font-mono text-slate-500 mt-3">
-                  Định dạng chuẩn dọc 9:16 (1080x1920)
+                <!-- Active Short Details Card -->
+                <div v-if="activeShort" class="w-full max-w-[340px] mt-3.5 p-3 rounded-xl bg-slate-900/50 border border-white/[0.06] space-y-2 text-xs">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-1.5 truncate">
+                      <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+                      <span class="font-semibold text-slate-200 truncate">{{ activeShort.title }}</span>
+                    </div>
+                    <div class="flex items-center gap-1 shrink-0 ml-2">
+                      <button
+                        type="button"
+                        @click="openEditShortModal(activeShort)"
+                        class="px-2 py-0.5 rounded bg-white/[0.06] hover:bg-white/[0.1] text-slate-300 hover:text-white transition-colors text-[11px] flex items-center gap-1"
+                        title="Chỉnh sửa thông tin Short"
+                      >
+                        <Icons name="FileText" :size="11" />
+                        <span>Sửa</span>
+                      </button>
+                      <button
+                        v-if="currentShorts.length > 1 && activeShort.id"
+                        type="button"
+                        @click="deleteShortItem(activeShort)"
+                        class="p-1 rounded bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 transition-colors"
+                        title="Xóa Short này"
+                      >
+                        <Icons name="X" :size="12" />
+                      </button>
+                    </div>
+                  </div>
+                  <div v-if="activeShort.focus_hook" class="text-[11px] text-amber-400 font-mono flex items-center gap-1">
+                    <span>✦ {{ activeShort.focus_hook }}</span>
+                  </div>
+                </div>
+
+                <div class="text-[11px] font-mono text-slate-500 mt-2">
+                  Định dạng chuẩn dọc 9:16 (1080x1920) • Multi-Shorts Hub
                 </div>
               </div>
+
 
               <!-- 3. MODE: THUMBNAIL 16:9 -->
               <div
@@ -771,8 +1002,43 @@ const getStatusDotClass = (status: string) => {
               </div>
             </div>
 
-            <!-- YouTube Studio URL Toolbar (Quiet, Sleek, Unified) -->
-            <div class="p-3.5 rounded-xl bg-slate-900/40 border border-white/[0.06] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <!-- YouTube Studio / Shorts URL Toolbar -->
+            <div v-if="mediaView === 'player_9_16' && activeShort" class="p-3.5 rounded-xl bg-slate-900/40 border border-white/[0.06] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div class="flex items-center gap-2 text-xs font-medium text-slate-300 shrink-0">
+                <Icons name="Play" :size="14" class="text-rose-400" />
+                <span>YT Shorts ({{ activeShort.title }}):</span>
+              </div>
+              <div class="relative flex-1">
+                <input
+                  v-model="activeShort.youtube_shorts_url"
+                  type="text"
+                  placeholder="Dán link YouTube Shorts (youtube.com/shorts/...)"
+                  class="w-full pl-3 pr-3 py-1.5 rounded-lg bg-black/40 border border-white/[0.08] text-xs font-mono text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-white/20 transition-all"
+                  @keydown.enter="handleQuickSaveShortUrl(activeShort)"
+                />
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  @click="handleQuickSaveShortUrl(activeShort)"
+                  :disabled="isSavingShortUrl"
+                  class="px-3 py-1.5 rounded-lg bg-white/[0.06] hover:bg-white/[0.1] text-slate-200 text-xs font-medium transition-colors border border-white/[0.08] flex items-center gap-1.5"
+                >
+                  <Icons name="Check" :size="13" />
+                  <span>{{ isSavingShortUrl ? 'Lưu...' : 'Lưu Short' }}</span>
+                </button>
+                <a
+                  v-if="activeShort.youtube_shorts_url"
+                  :href="activeShort.youtube_shorts_url"
+                  target="_blank"
+                  class="text-[11px] font-mono text-rose-400 hover:underline flex items-center gap-1"
+                >
+                  <Icons name="ExternalLink" :size="11" />
+                  <span>Xem</span>
+                </a>
+              </div>
+            </div>
+            <div v-else class="p-3.5 rounded-xl bg-slate-900/40 border border-white/[0.06] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div class="flex items-center gap-2 text-xs font-medium text-slate-300 shrink-0">
                 <Icons name="Play" :size="14" class="text-rose-400" />
                 <span>YouTube Studio:</span>
@@ -806,7 +1072,8 @@ const getStatusDotClass = (status: string) => {
               <div class="flex items-center gap-3">
                 <span>16:9: <strong class="text-slate-200">{{ formatDuration(article.video_long_duration) }}</strong></span>
                 <span>•</span>
-                <span>9:16: <strong class="text-slate-200">{{ formatDuration(article.video_short_duration) }}</strong></span>
+                <span>Shorts: <strong class="text-slate-200">{{ currentShorts.length }} video</strong></span>
+                <span v-if="activeShort" class="text-slate-500">({{ activeShort.title }}: {{ formatDuration(activeShort.duration) }})</span>
               </div>
               <div class="flex items-center gap-3 font-sans">
                 <a
@@ -818,15 +1085,15 @@ const getStatusDotClass = (status: string) => {
                   <Icons name="ExternalLink" :size="12" />
                   <span>Tải 16:9</span>
                 </a>
-                <span v-if="article.video_long_url && article.video_short_url" class="text-slate-600">•</span>
+                <span v-if="article.video_long_url && (activeShort?.video_url || article.video_short_url)" class="text-slate-600">•</span>
                 <a
-                  v-if="article.video_short_url"
-                  :href="article.video_short_url"
+                  v-if="activeShort?.video_url || article.video_short_url"
+                  :href="activeShort?.video_url || article.video_short_url"
                   target="_blank"
                   class="hover:text-slate-200 flex items-center gap-1 text-xs"
                 >
                   <Icons name="ExternalLink" :size="12" />
-                  <span>Tải 9:16</span>
+                  <span>Tải 9:16 ({{ activeShort?.title || 'Short' }})</span>
                 </a>
               </div>
             </div>
@@ -1060,6 +1327,70 @@ const getStatusDotClass = (status: string) => {
                 />
               </div>
 
+              <!-- Multi-Shorts Section in YouTube Studio -->
+              <div v-if="currentShorts.length > 0" class="p-4 rounded-xl bg-slate-900/30 border border-white/[0.06] space-y-3">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-medium text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                    <Icons name="Play" :size="13" class="text-rose-400" />
+                    <span>Hệ Thống YouTube Shorts ({{ currentShorts.length }} Shorts)</span>
+                  </span>
+                  <button
+                    type="button"
+                    @click="openCreateShortModal"
+                    class="text-[11px] text-amber-400 hover:text-amber-300 flex items-center gap-1 font-medium"
+                  >
+                    <Icons name="Plus" :size="11" />
+                    <span>Thêm Short</span>
+                  </button>
+                </div>
+
+                <div class="space-y-2">
+                  <div
+                    v-for="(st, idx) in currentShorts"
+                    :key="st.id || idx"
+                    class="p-3 rounded-lg bg-black/40 border border-white/[0.04] flex flex-col sm:flex-row sm:items-center justify-between gap-2.5"
+                  >
+                    <div class="flex items-center gap-2 min-w-0">
+                      <span class="px-2 py-0.5 rounded bg-white/[0.06] text-white font-mono text-[11px] font-semibold shrink-0">#{{ idx + 1 }}</span>
+                      <div class="min-w-0">
+                        <div class="text-xs font-medium text-slate-200 truncate">{{ st.title }}</div>
+                        <div class="text-[10px] text-slate-400 font-mono flex items-center gap-2">
+                          <span v-if="st.duration">Thời lượng: {{ formatDuration(st.duration) }}</span>
+                          <span v-if="st.focus_hook" class="text-amber-400/90 truncate">✦ {{ st.focus_hook }}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="flex items-center gap-2 shrink-0">
+                      <input
+                        v-model="st.youtube_shorts_url"
+                        type="text"
+                        placeholder="Link YT Shorts..."
+                        class="w-36 sm:w-48 px-2.5 py-1 rounded bg-slate-950 border border-white/[0.08] text-xs font-mono text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-white/20"
+                        @keydown.enter="handleQuickSaveShortUrl(st)"
+                      />
+                      <button
+                        type="button"
+                        @click="handleQuickSaveShortUrl(st)"
+                        :disabled="isSavingShortUrl"
+                        class="p-1.5 rounded bg-white/[0.06] hover:bg-white/[0.1] text-slate-300 hover:text-white transition-colors"
+                        title="Lưu link YouTube Shorts này"
+                      >
+                        <Icons name="Check" :size="12" />
+                      </button>
+                      <button
+                        type="button"
+                        @click="openEditShortModal(st)"
+                        class="p-1.5 rounded bg-white/[0.06] hover:bg-white/[0.1] text-slate-300 hover:text-white transition-colors"
+                        title="Chỉnh sửa chi tiết Short"
+                      >
+                        <Icons name="FileText" :size="12" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <!-- Refined Action Bar -->
               <div class="pt-2 flex items-center gap-3">
                 <button
@@ -1084,6 +1415,92 @@ const getStatusDotClass = (status: string) => {
 
             <!-- TAB 2: TIKTOK HUB FORM -->
             <div v-else-if="activeTab === 'tiktok'" class="space-y-4">
+              <!-- Multi-Shorts Selector for TikTok -->
+              <div v-if="currentShorts.length > 0" class="p-3 rounded-xl bg-black/40 border border-white/[0.06] space-y-2">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="text-slate-400 font-medium">Chọn Short Đăng TikTok:</span>
+                  <button
+                    type="button"
+                    @click="openCreateShortModal"
+                    class="text-[11px] text-amber-400 hover:text-amber-300 flex items-center gap-1 font-medium"
+                  >
+                    <Icons name="Plus" :size="11" />
+                    <span>Thêm Short</span>
+                  </button>
+                </div>
+                <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+                  <button
+                    v-for="(st, idx) in currentShorts"
+                    :key="st.id || idx"
+                    type="button"
+                    @click="selectedShortIndex = idx"
+                    class="px-2.5 py-1.5 rounded-lg text-xs transition-all shrink-0 flex items-center gap-1.5"
+                    :class="selectedShortIndex === idx ? 'bg-white/15 text-white font-semibold border border-white/[0.15]' : 'text-slate-400 hover:text-slate-200 border border-transparent'"
+                  >
+                    <span>🎬 Short {{ idx + 1 }}</span>
+                    <span v-if="st.duration" class="text-[10px] font-mono opacity-80 font-normal">({{ formatDuration(st.duration) }})</span>
+                    <span v-if="st.tiktok_url" class="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0" title="Đã có link TikTok"></span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Active Short Info & TikTok Link -->
+              <div v-if="activeShort" class="p-4 rounded-xl bg-slate-900/30 border border-white/[0.06] space-y-3">
+                <div class="flex items-center justify-between text-xs">
+                  <div class="flex items-center gap-2 truncate">
+                    <span class="px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 font-semibold text-[11px] shrink-0 border border-cyan-500/20">TikTok</span>
+                    <span class="font-medium text-slate-200 truncate">{{ activeShort.title }}</span>
+                  </div>
+                  <div class="flex items-center gap-2 shrink-0">
+                    <button
+                      type="button"
+                      @click="openEditShortModal(activeShort)"
+                      class="text-[11px] text-slate-400 hover:text-white px-2 py-0.5 rounded bg-white/[0.04] hover:bg-white/[0.08] transition-colors"
+                    >
+                      Cấu hình
+                    </button>
+                    <a
+                      v-if="activeShort.tiktok_url"
+                      :href="activeShort.tiktok_url"
+                      target="_blank"
+                      class="text-[11px] text-cyan-400 hover:underline flex items-center gap-1"
+                    >
+                      <Icons name="ExternalLink" :size="11" />
+                      <span>Mở TikTok</span>
+                    </a>
+                  </div>
+                </div>
+
+                <div v-if="activeShort.focus_hook" class="text-[11px] text-amber-300/90 font-mono bg-black/30 px-2.5 py-1.5 rounded-lg border border-white/[0.04]">
+                  ✦ Hook: {{ activeShort.focus_hook }}
+                </div>
+
+                <div class="space-y-1.5">
+                  <label class="text-[11px] font-mono text-slate-400 flex items-center justify-between">
+                    <span>Link Video TikTok:</span>
+                    <span v-if="activeShort.tiktok_url" class="text-cyan-400 text-[10px]">Đã lưu liên kết</span>
+                  </label>
+                  <div class="flex items-center gap-2">
+                    <input
+                      v-model="activeShort.tiktok_url"
+                      type="text"
+                      placeholder="Dán link TikTok (https://www.tiktok.com/@.../video/...)"
+                      class="flex-1 px-3 py-1.5 rounded-lg bg-black/40 border border-white/[0.08] text-xs font-mono text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-white/20"
+                      @keydown.enter="handleQuickSaveShortUrl(activeShort)"
+                    />
+                    <button
+                      type="button"
+                      @click="handleQuickSaveShortUrl(activeShort)"
+                      :disabled="isSavingShortUrl"
+                      class="px-3 py-1.5 rounded-lg bg-white/[0.06] hover:bg-white/[0.1] text-slate-200 text-xs font-medium transition-colors border border-white/[0.08] shrink-0"
+                    >
+                      {{ isSavingShortUrl ? 'Lưu...' : 'Lưu Link' }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Caption TikTok -->
               <div class="p-4 rounded-xl bg-slate-900/30 border border-white/[0.06] space-y-2 focus-within:border-white/[0.15] transition-colors">
                 <div class="flex items-center justify-between text-xs">
                   <span class="font-medium text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
@@ -1091,6 +1508,16 @@ const getStatusDotClass = (status: string) => {
                     <span>Caption TikTok</span>
                   </span>
                   <div class="flex items-center gap-2">
+                    <button
+                      v-if="activeShort?.script"
+                      type="button"
+                      @click="fillCaptionFromShortScript"
+                      class="px-2 py-0.5 rounded bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 transition-colors text-xs flex items-center gap-1"
+                      title="Lấy kịch bản của Short đang chọn làm caption"
+                    >
+                      <Icons name="Sparkles" :size="11" />
+                      <span>Lấy từ kịch bản</span>
+                    </button>
                     <button
                       type="button"
                       @click="isCaptionExpanded = !isCaptionExpanded"
@@ -1139,7 +1566,7 @@ const getStatusDotClass = (status: string) => {
               <!-- Quick Switcher to 9:16 Canvas -->
               <div class="p-3.5 rounded-xl bg-slate-900/30 border border-white/[0.06] flex items-center justify-between">
                 <div class="text-xs text-slate-300">
-                  <span>Reel 9:16: <strong>{{ formatDuration(article.video_short_duration) }}</strong></span>
+                  <span>Reel 9:16: <strong>{{ formatDuration(activeShort?.duration || article.video_short_duration) }}</strong></span>
                 </div>
                 <button
                   type="button"
@@ -1175,20 +1602,118 @@ const getStatusDotClass = (status: string) => {
 
             <!-- TAB 3: FB & IG REELS FORM -->
             <div v-else-if="activeTab === 'reels'" class="space-y-4">
+              <!-- Multi-Shorts Selector for Reels -->
+              <div v-if="currentShorts.length > 0" class="p-3 rounded-xl bg-black/40 border border-white/[0.06] space-y-2">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="text-slate-400 font-medium">Chọn Short Đăng Reels:</span>
+                  <button
+                    type="button"
+                    @click="openCreateShortModal"
+                    class="text-[11px] text-amber-400 hover:text-amber-300 flex items-center gap-1 font-medium"
+                  >
+                    <Icons name="Plus" :size="11" />
+                    <span>Thêm Short</span>
+                  </button>
+                </div>
+                <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+                  <button
+                    v-for="(st, idx) in currentShorts"
+                    :key="st.id || idx"
+                    type="button"
+                    @click="selectedShortIndex = idx"
+                    class="px-2.5 py-1.5 rounded-lg text-xs transition-all shrink-0 flex items-center gap-1.5"
+                    :class="selectedShortIndex === idx ? 'bg-white/15 text-white font-semibold border border-white/[0.15]' : 'text-slate-400 hover:text-slate-200 border border-transparent'"
+                  >
+                    <span>🎬 Short {{ idx + 1 }}</span>
+                    <span v-if="st.duration" class="text-[10px] font-mono opacity-80 font-normal">({{ formatDuration(st.duration) }})</span>
+                    <span v-if="st.reels_url" class="w-1.5 h-1.5 rounded-full bg-rose-400 shrink-0" title="Đã có link Reels"></span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Active Short Info & Reels Link -->
+              <div v-if="activeShort" class="p-4 rounded-xl bg-slate-900/30 border border-white/[0.06] space-y-3">
+                <div class="flex items-center justify-between text-xs">
+                  <div class="flex items-center gap-2 truncate">
+                    <span class="px-2 py-0.5 rounded bg-rose-500/10 text-rose-300 font-semibold text-[11px] shrink-0 border border-rose-500/20">Reels</span>
+                    <span class="font-medium text-slate-200 truncate">{{ activeShort.title }}</span>
+                  </div>
+                  <div class="flex items-center gap-2 shrink-0">
+                    <button
+                      type="button"
+                      @click="openEditShortModal(activeShort)"
+                      class="text-[11px] text-slate-400 hover:text-white px-2 py-0.5 rounded bg-white/[0.04] hover:bg-white/[0.08] transition-colors"
+                    >
+                      Cấu hình
+                    </button>
+                    <a
+                      v-if="activeShort.reels_url"
+                      :href="activeShort.reels_url"
+                      target="_blank"
+                      class="text-[11px] text-rose-400 hover:underline flex items-center gap-1"
+                    >
+                      <Icons name="ExternalLink" :size="11" />
+                      <span>Mở Reels</span>
+                    </a>
+                  </div>
+                </div>
+
+                <div v-if="activeShort.focus_hook" class="text-[11px] text-amber-300/90 font-mono bg-black/30 px-2.5 py-1.5 rounded-lg border border-white/[0.04]">
+                  ✦ Hook: {{ activeShort.focus_hook }}
+                </div>
+
+                <div class="space-y-1.5">
+                  <label class="text-[11px] font-mono text-slate-400 flex items-center justify-between">
+                    <span>Link Video FB/IG Reels:</span>
+                    <span v-if="activeShort.reels_url" class="text-rose-400 text-[10px]">Đã lưu liên kết</span>
+                  </label>
+                  <div class="flex items-center gap-2">
+                    <input
+                      v-model="activeShort.reels_url"
+                      type="text"
+                      placeholder="Dán link Reels (https://www.facebook.com/reel/...)"
+                      class="flex-1 px-3 py-1.5 rounded-lg bg-black/40 border border-white/[0.08] text-xs font-mono text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-white/20"
+                      @keydown.enter="handleQuickSaveShortUrl(activeShort)"
+                    />
+                    <button
+                      type="button"
+                      @click="handleQuickSaveShortUrl(activeShort)"
+                      :disabled="isSavingShortUrl"
+                      class="px-3 py-1.5 rounded-lg bg-white/[0.06] hover:bg-white/[0.1] text-slate-200 text-xs font-medium transition-colors border border-white/[0.08] shrink-0"
+                    >
+                      {{ isSavingShortUrl ? 'Lưu...' : 'Lưu Link' }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Caption Reels -->
               <div class="p-4 rounded-xl bg-slate-900/30 border border-white/[0.06] space-y-2 focus-within:border-white/[0.15] transition-colors">
                 <div class="flex items-center justify-between text-xs">
                   <span class="font-medium text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
                     <Icons name="FileText" :size="13" class="text-slate-400" />
                     <span>Caption Reels</span>
                   </span>
-                  <button
-                    type="button"
-                    @click="copyToClipboard(form.social_caption, 'reels-caption')"
-                    class="text-slate-400 hover:text-slate-200 flex items-center gap-1 transition-colors"
-                  >
-                    <Icons name="Copy" :size="12" />
-                    <span>{{ copyFeedback['reels-caption'] ? '✓ Đã chép' : 'Sao chép' }}</span>
-                  </button>
+                  <div class="flex items-center gap-2">
+                    <button
+                      v-if="activeShort?.script"
+                      type="button"
+                      @click="fillCaptionFromShortScript"
+                      class="px-2 py-0.5 rounded bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 transition-colors text-xs flex items-center gap-1"
+                      title="Lấy kịch bản của Short đang chọn làm caption"
+                    >
+                      <Icons name="Sparkles" :size="11" />
+                      <span>Lấy từ kịch bản</span>
+                    </button>
+                    <button
+                      type="button"
+                      @click="copyToClipboard(form.social_caption, 'reels-caption')"
+                      class="text-slate-400 hover:text-slate-200 flex items-center gap-1 transition-colors"
+                    >
+                      <Icons name="Copy" :size="12" />
+                      <span>{{ copyFeedback['reels-caption'] ? '✓ Đã chép' : 'Sao chép' }}</span>
+                    </button>
+                  </div>
                 </div>
                 <textarea
                   v-model="form.social_caption"
@@ -1205,7 +1730,7 @@ const getStatusDotClass = (status: string) => {
 
               <div class="p-3.5 rounded-xl bg-slate-900/30 border border-white/[0.06] flex items-center justify-between">
                 <div class="text-xs text-slate-300">
-                  <span>Reel 9:16: <strong>{{ formatDuration(article.video_short_duration) }}</strong></span>
+                  <span>Reel 9:16: <strong>{{ formatDuration(activeShort?.duration || article.video_short_duration) }}</strong></span>
                 </div>
                 <button
                   type="button"
@@ -1469,6 +1994,216 @@ const getStatusDotClass = (status: string) => {
               class="px-5 py-2 rounded-xl bg-slate-100 hover:bg-white text-slate-950 font-semibold text-xs transition-all shadow"
             >
               Lưu Thay Đổi
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- MULTI-SHORTS MANAGEMENT MODAL (INVARIANT 12 STANDARD)     -->
+    <!-- ======================================================== -->
+    <div
+      v-if="isShortModalOpen"
+      class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto"
+      @click.self="isShortModalOpen = false"
+    >
+      <div class="w-full max-w-2xl max-h-[92vh] rounded-2xl bg-slate-900 border border-white/[0.1] shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-150 my-auto">
+        <!-- Header -->
+        <div class="px-6 py-4 border-b border-white/[0.06] flex items-center justify-between bg-black/40">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-300 flex items-center justify-center">
+              <Icons name="Play" :size="16" />
+            </div>
+            <div>
+              <h3 class="text-sm font-semibold text-white">
+                {{ shortForm.id ? 'Chỉnh Sửa Video Short' : 'Thêm Video Short Mới' }}
+              </h3>
+              <p class="text-[11px] font-mono text-slate-400">
+                Chuẩn Invariant 12: ≥ 70% hình ảnh Đức Phật Thích Ca quang minh
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            @click="isShortModalOpen = false"
+            class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-colors"
+          >
+            <Icons name="X" :size="16" />
+          </button>
+        </div>
+
+        <!-- Body -->
+        <div class="p-6 flex-1 overflow-y-auto space-y-4 bg-black/20 text-xs">
+          <!-- Row 1: Tiêu đề & Focus Hook -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <div class="space-y-1.5">
+              <label class="font-mono text-slate-300 flex items-center justify-between">
+                <span>Tiêu Đề Short <strong class="text-rose-400">*</strong></span>
+              </label>
+              <input
+                v-model="shortForm.title"
+                type="text"
+                placeholder="VD: Short 1: Lời Phật Khai Thị"
+                class="w-full px-3 py-2 rounded-lg bg-black/40 border border-white/[0.08] text-slate-100 placeholder:text-slate-600 focus:outline-none focus:border-white/20 transition-all font-sans text-xs"
+              />
+              <span v-if="shortForm.errors.title" class="text-rose-400 text-[11px]">{{ shortForm.errors.title }}</span>
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="font-mono text-slate-300">
+                <span>Điểm Nhấn / Focus Hook</span>
+              </label>
+              <input
+                v-model="shortForm.focus_hook"
+                type="text"
+                placeholder="VD: Ta Đã Dừng Lại, Chỉ Có Ngươi Chưa Dừng"
+                class="w-full px-3 py-2 rounded-lg bg-black/40 border border-white/[0.08] text-slate-100 placeholder:text-slate-600 focus:outline-none focus:border-white/20 transition-all font-sans text-xs"
+              />
+            </div>
+          </div>
+
+          <!-- Row 2: Visual Style & Duration & Order Index -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+            <div class="space-y-1.5">
+              <label class="font-mono text-slate-300">
+                <span>Visual Style (Invariant 12)</span>
+              </label>
+              <select
+                v-model="shortForm.visual_style"
+                class="w-full px-3 py-2 rounded-lg bg-black/40 border border-white/[0.08] text-slate-200 focus:outline-none focus:border-white/20 transition-all cursor-pointer text-xs"
+              >
+                <option value="Buddha Majestic Golden Glow">Buddha Majestic Golden Glow</option>
+                <option value="Zen Minimalist Cinematic">Zen Minimalist Cinematic</option>
+                <option value="Dhamma Wheel & Sangha">Dhamma Wheel & Sangha</option>
+                <option value="Mindfulness Practice 30s">Mindfulness Practice 30s</option>
+              </select>
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="font-mono text-slate-300">
+                <span>Thời Lượng (mm:ss)</span>
+              </label>
+              <input
+                v-model="shortForm.duration"
+                type="text"
+                placeholder="00:34"
+                class="w-full px-3 py-2 rounded-lg bg-black/40 border border-white/[0.08] text-slate-100 placeholder:text-slate-600 focus:outline-none focus:border-white/20 transition-all font-mono text-xs"
+              />
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="font-mono text-slate-300">
+                <span>Thứ Tự Hiển Thị (#)</span>
+              </label>
+              <input
+                v-model.number="shortForm.order_index"
+                type="number"
+                min="0"
+                class="w-full px-3 py-2 rounded-lg bg-black/40 border border-white/[0.08] text-slate-100 placeholder:text-slate-600 focus:outline-none focus:border-white/20 transition-all font-mono text-xs"
+              />
+            </div>
+          </div>
+
+          <!-- Row 3: Video URL 9:16 (Required) -->
+          <div class="space-y-1.5">
+            <label class="font-mono text-slate-300 flex items-center justify-between">
+              <span>Video MP4 9:16 CDN URL <strong class="text-rose-400">*</strong></span>
+              <span class="text-slate-500 text-[10px]">Tải lên CDN bunny/local</span>
+            </label>
+            <input
+              v-model="shortForm.video_url"
+              type="text"
+              placeholder="https://macatung.b-cdn.net/theravada/..._short.mp4"
+              class="w-full px-3 py-2 rounded-lg bg-black/40 border border-white/[0.08] text-slate-100 placeholder:text-slate-600 focus:outline-none focus:border-white/20 transition-all font-mono text-xs"
+            />
+            <span v-if="shortForm.errors.video_url" class="text-rose-400 text-[11px]">{{ shortForm.errors.video_url }}</span>
+          </div>
+
+          <!-- Row 4: Thumbnail URL 9:16 -->
+          <div class="space-y-1.5">
+            <label class="font-mono text-slate-300">
+              <span>Thumbnail Poster 9:16 URL</span>
+            </label>
+            <input
+              v-model="shortForm.thumbnail_url"
+              type="text"
+              placeholder="https://macatung.b-cdn.net/theravada/..._short_thumb.jpg"
+              class="w-full px-3 py-2 rounded-lg bg-black/40 border border-white/[0.08] text-slate-100 placeholder:text-slate-600 focus:outline-none focus:border-white/20 transition-all font-mono text-xs"
+            />
+          </div>
+
+          <!-- Row 5: Platform Direct Links -->
+          <div class="p-3.5 rounded-xl bg-slate-900/40 border border-white/[0.06] space-y-3">
+            <div class="font-mono text-[11px] uppercase tracking-wider text-slate-400 font-semibold">
+              Liên Kết Xuất Bản Nền Tảng (Publishing URLs)
+            </div>
+
+            <div class="space-y-2.5">
+              <div class="flex items-center gap-2">
+                <span class="w-20 font-mono text-slate-400 shrink-0 text-[11px]">YT Shorts:</span>
+                <input
+                  v-model="shortForm.youtube_shorts_url"
+                  type="text"
+                  placeholder="https://youtube.com/shorts/..."
+                  class="flex-1 px-3 py-1.5 rounded-lg bg-black/40 border border-white/[0.08] text-slate-100 placeholder:text-slate-600 focus:outline-none focus:border-white/20 transition-all font-mono text-xs"
+                />
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="w-20 font-mono text-slate-400 shrink-0 text-[11px]">TikTok:</span>
+                <input
+                  v-model="shortForm.tiktok_url"
+                  type="text"
+                  placeholder="https://www.tiktok.com/@.../video/..."
+                  class="flex-1 px-3 py-1.5 rounded-lg bg-black/40 border border-white/[0.08] text-slate-100 placeholder:text-slate-600 focus:outline-none focus:border-white/20 transition-all font-mono text-xs"
+                />
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="w-20 font-mono text-slate-400 shrink-0 text-[11px]">FB/IG Reels:</span>
+                <input
+                  v-model="shortForm.reels_url"
+                  type="text"
+                  placeholder="https://www.facebook.com/reel/..."
+                  class="flex-1 px-3 py-1.5 rounded-lg bg-black/40 border border-white/[0.08] text-slate-100 placeholder:text-slate-600 focus:outline-none focus:border-white/20 transition-all font-mono text-xs"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 6: Kịch bản đọc (Script) -->
+          <div class="space-y-1.5">
+            <label class="font-mono text-slate-300">
+              <span>Kịch Bản Đọc / Lời Dẫn Short (Narration Script)</span>
+            </label>
+            <textarea
+              v-model="shortForm.script"
+              rows="4"
+              placeholder="Lời thoại dẫn thiền hoặc đối thoại của Đức Phật..."
+              class="w-full px-3 py-2 rounded-lg bg-black/40 border border-white/[0.08] text-slate-100 placeholder:text-slate-600 focus:outline-none focus:border-white/20 transition-all font-sans text-xs leading-relaxed resize-y"
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="px-6 py-3.5 border-t border-white/[0.06] bg-black/40 flex items-center justify-between">
+          <div class="text-[11px] text-slate-500">
+            Short #1 sẽ tự động đồng bộ làm video short đại diện cho bài viết.
+          </div>
+          <div class="flex items-center gap-2.5">
+            <button
+              type="button"
+              @click="isShortModalOpen = false"
+              class="px-4 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 text-xs font-medium transition-colors"
+            >
+              Hủy
+            </button>
+            <button
+              type="button"
+              @click="handleSaveShort"
+              :disabled="shortForm.processing || !shortForm.title || !shortForm.video_url"
+              class="px-5 py-2 rounded-xl bg-slate-100 hover:bg-white text-slate-950 font-semibold text-xs transition-all shadow disabled:opacity-50"
+            >
+              {{ shortForm.processing ? 'Đang lưu...' : 'Lưu Video Short' }}
             </button>
           </div>
         </div>

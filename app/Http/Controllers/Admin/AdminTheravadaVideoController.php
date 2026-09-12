@@ -6,6 +6,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Article;
+use App\Models\ArticleShort;
+
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -150,11 +152,14 @@ class AdminTheravadaVideoController extends Controller
             }
         }
 
+        $article->load('shorts');
+
         return Inertia::render('Admin/Theravada/Videos/Show', [
             'article' => $article,
             'prevEpisode' => $prevEpisode,
             'nextEpisode' => $nextEpisode,
         ]);
+
     }
 
     /**
@@ -276,4 +281,76 @@ class AdminTheravadaVideoController extends Controller
 
         return redirect()->back()->with('success', 'Đã cập nhật thông tin video và metadata thành công!');
     }
+
+    /**
+     * Create or update an ArticleShort item in the Multi-Shorts ecosystem.
+     *
+     * POST /admin/theravada/videos/{article}/shorts
+     */
+    public function saveShort(Article $article, Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'id' => ['nullable', 'integer'],
+            'title' => ['required', 'string', 'max:255'],
+            'focus_hook' => ['nullable', 'string', 'max:255'],
+            'visual_style' => ['nullable', 'string', 'max:100'],
+            'video_url' => ['required', 'string', 'max:500'],
+            'thumbnail_url' => ['nullable', 'string', 'max:500'],
+            'duration' => ['nullable', 'string', 'max:50'],
+            'script' => ['nullable', 'string'],
+            'display_text' => ['nullable', 'string'],
+            'spoken_text' => ['nullable', 'string'],
+            'youtube_shorts_url' => ['nullable', 'string', 'max:500'],
+            'tiktok_url' => ['nullable', 'string', 'max:500'],
+            'reels_url' => ['nullable', 'string', 'max:500'],
+            'order_index' => ['nullable', 'integer'],
+            'status' => ['nullable', 'string', 'max:50'],
+        ]);
+
+        if (!empty($validated['id'])) {
+            $short = $article->shorts()->findOrFail($validated['id']);
+            $short->update($validated);
+        } else {
+            $validated['order_index'] = $validated['order_index'] ?? $article->shorts()->count();
+            $short = $article->shorts()->create($validated);
+        }
+
+        // Backward compatibility: If this is the primary short (order_index == 0), sync to article
+        if (($validated['order_index'] ?? 0) === 0) {
+            $article->update([
+                'video_short_url' => $validated['video_url'],
+                'thumbnail_short_url' => $validated['thumbnail_url'] ?? $article->thumbnail_short_url,
+                'video_short_duration' => $validated['duration'] ?? $article->video_short_duration,
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Đã lưu thông tin Video Short thành công!');
+    }
+
+    /**
+     * Delete an ArticleShort item.
+     *
+     * DELETE /admin/theravada/videos/{article}/shorts/{short}
+     */
+    public function deleteShort(Article $article, ArticleShort $short): RedirectResponse
+    {
+        if ($short->article_id !== $article->id) {
+            abort(403);
+        }
+
+        $short->delete();
+
+        // If another short remains, sync the first one back to article
+        $firstShort = $article->shorts()->orderBy('order_index')->first();
+        if ($firstShort) {
+            $article->update([
+                'video_short_url' => $firstShort->video_url,
+                'thumbnail_short_url' => $firstShort->thumbnail_url,
+                'video_short_duration' => $firstShort->duration,
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Đã xóa Video Short thành công!');
+    }
 }
+
