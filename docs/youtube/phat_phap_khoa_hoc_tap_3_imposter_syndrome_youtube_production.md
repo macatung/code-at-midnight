@@ -108,15 +108,20 @@ Có bao giờ bạn vừa đạt được một thành tích lớn, nhưng thay 
 | `flex / flexing` | flex / flexing | phơ-lếch / phơ-lếch-xinh | Khoe khoang thành tích |
 | `filter` | filter | phin-tơ | Bộ lọc hình ảnh |
 | `highlight` | highlight | hai-lai | Điểm sáng nổi bật |
-| `Channa` | Channa | Xan-na | Tỳ-kheo Xa-nặc |
-| `Māna` | Māna | Ma-na | Ngã mạn (so sánh) |
-| `Atimāna` | Atimāna | A-ti-ma-na | Quá mạn (thấy mình hơn) |
-| `Hīnamāna` | Hīnamāna | Hi-na-ma-na | Ty mạn (thấy mình thua) |
-| `Brahma-daṇḍa` | Brahma-daṇḍa | Bờ-ram-ma đan-đa | Án phạt Phạm đàn |
-| `Muditā` | Muditā | Mu-đi-ta | Tâm Tùy hỷ |
-| `Atta-dīpa` | Atta-dīpa | Át-ta đi-pa | Ngọn đèn tự thân |
-| `Abhidhamma` | Abhidhamma | A-bhi-đham-ma | Vi Diệu Pháp |
-| `Sati` | Sati | Sa-ti | Chánh niệm nhận diện |
+| `A-la-hán` | A-la-hán | A la hán | Quả vị A la hán (không gạch nối để tránh đọc 'Ây la hán') |
+| `Channa` | Channa (Xa-nặc) | Xa-nặc / Chan-na | Tỳ-kheo Xa-nặc (âm Ch, không đọc 'Xan-na') |
+| `Sāriputta` | Sāriputta | Xá Lợi Phất | Tôn giả Xá-lợi-phất (tránh đọc 'Xa-ri-pút-ta') |
+| `Moggallāna` | Moggallāna | Mục Kiền Liên | Tôn giả Mục-kiền-liên (triệt tiêu đọc 'Mốc-gơ-la-na') |
+| `Ānanda` | Ānanda | A Nan | Đại đức A Nan (tránh gạch nối đọc 'Ây-nan-đa') |
+| `Māna` | Māna | Ma na | Ngã mạn (so sánh) |
+| `Atimāna` | Atimāna | A ti ma na | Quá mạn (không gạch nối tránh đọc 'Ây') |
+| `Hīnamāna` | Hīnamāna | Hi na ma na | Ty mạn (thấy mình thua kém) |
+| `Brahma-daṇḍa` | Brahma-daṇḍa | Bram ma đan đa | Án phạt Phạm Đàn (tránh đọc thô 'Bờ-ram-ma') |
+| `Muditā` | Muditā | Mu đi ta | Tâm Tùy hỷ |
+| `Atta-dīpa` | Atta-dīpa | Át ta đi pa | Ngọn đèn tự thân |
+| `Abhidhamma` | Abhidhamma | A bi đam ma | Vi Diệu Pháp A-tỳ-đàm (tránh lỗi vần 'đham') |
+| `Sati` | Sati | Sa ti | Chánh niệm nhận diện |
+| `Imposter Syndrome` | Imposter Syndrome | Im-pót-stơ Xin-đrôm | Hội chứng kẻ mạo danh |
 
 ---
 
@@ -153,7 +158,7 @@ Có bao giờ bạn vừa đạt được một thành tích lớn, nhưng thay 
     "speaker": "An",
     "visual_cue": "An bước vào phòng với nụ cười hiền từ, đặt một tách trà hoa cúc bốc khói nhẹ nhàng xuống bàn Nhiên",
     "display_text": "Chào Nhiên, bạn vừa tự chẩn đoán cho mình một căn bệnh tâm lý phổ biến nhất của thời đại số: Hội chứng Kẻ Mạo Danh, tức là Imposter Syndrome.",
-    "spoken_text": "Chào Nhiên, bạn vừa tự chẩn đoán cho mình một căn bệnh tâm lý phổ biến nhất của thời đại số: Hội chứng Kẻ Mạo Danh, tức là hội chứng kẻ mạo danh.",
+    "spoken_text": "Chào Nhiên, bạn vừa tự chẩn đoán cho mình một căn bệnh tâm lý phổ biến nhất của thời đại số: Hội chứng Kẻ Mạo Danh, tiếng Anh gọi là Im-pót-stơ Xin-đrôm.",
     "est_seconds": 14.3
   },
   {
@@ -337,7 +342,7 @@ Có bao giờ bạn vừa đạt được một thành tích lớn, nhưng thay 
     "speaker": "An",
     "visual_cue": "Đồ họa chữ Phạn và Pali 'Māna' tỏa ra ánh sáng huyền bí trên nền tranh thiền tối giản",
     "display_text": "Cách đây hơn 2.600 năm, Đức Phật đã định danh căn bệnh so sánh này bằng một thuật ngữ cốt lõi: Ngã Mạn, tức là Māna.",
-    "spoken_text": "Cách đây hơn 2. 600 năm, Đức Phật đã định danh căn bệnh so sánh này bằng một thuật ngữ cốt lõi: Ngã Mạn, tức là Ma-na.",
+    "spoken_text": "Cách đây hơn hai nghìn sáu trăm năm, Đức Phật đã định danh căn bệnh so sánh này bằng một thuật ngữ cốt lõi: Ngã Mạn, tiếng Pa-li gọi là Ma na.",
     "est_seconds": 11.7
   },
   {
@@ -361,7 +366,7 @@ Có bao giờ bạn vừa đạt được một thành tích lớn, nhưng thay 
     "speaker": "An",
     "visual_cue": "Đồ họa bảng phân loại Vi Diệu Pháp Abhidhamma với 9 dạng thức của Ngã Mạn",
     "display_text": "Nhưng trong Vi Diệu Pháp Abhidhamma, Đức Phật chỉ ra rằng Māna có tới chín dạng thức so sánh tinh vi.",
-    "spoken_text": "Nhưng trong Vi Diệu Pháp A-bhi-đham-ma, Đức Phật chỉ ra rằng Ma-na có tới chín dạng thức so sánh tinh vi.",
+    "spoken_text": "Nhưng trong Vi Diệu Pháp A bi đam ma, Đức Phật chỉ ra rằng Ma na có tới chín dạng thức so sánh tinh vi.",
     "est_seconds": 9.1
   },
   {
@@ -369,7 +374,7 @@ Có bao giờ bạn vừa đạt được một thành tích lớn, nhưng thay 
     "speaker": "An",
     "visual_cue": "Nhánh 1 của cán cân vươn cao với chữ 'Atimāna - Hơn người'",
     "display_text": "Dạng thứ nhất: Thấy mình hơn người khác, sinh tâm kiêu ngạo và coi thường chung quanh, gọi là Quá mạn Atimāna.",
-    "spoken_text": "Dạng thứ nhất: Thấy mình hơn người khác, sinh tâm kiêu ngạo và coi thường chung quanh, gọi là Quá mạn A-ti-ma-na.",
+    "spoken_text": "Dạng thứ nhất: Thấy mình hơn người khác, sinh tâm kiêu ngạo và coi thường chung quanh, gọi là Quá mạn, tiếng Pa-li là A ti ma na.",
     "est_seconds": 9.6
   },
   {
@@ -385,7 +390,7 @@ Có bao giờ bạn vừa đạt được một thành tích lớn, nhưng thay 
     "speaker": "An",
     "visual_cue": "Nhánh 3 của cán cân chìm sâu xuống đáy với chữ 'Hīnamāna - Ty mạn / Kém người'",
     "display_text": "Và dạng thứ ba đặc biệt nguy hiểm: Thấy mình thua kém người khác, rơi vào tự ti, tuyệt vọng, gọi là Ty mạn Hīnamāna!",
-    "spoken_text": "Và dạng thứ ba đặc biệt nguy hiểm: Thấy mình thua kém người khác, rơi vào tự ti, tuyệt vọng, gọi là Ty mạn Hi-na-ma-na!",
+    "spoken_text": "Và dạng thứ ba đặc biệt nguy hiểm: Thấy mình thua kém người khác, rơi vào tự ti, tuyệt vọng, gọi là Ty mạn, tiếng Pa-li là Hi na ma na!",
     "est_seconds": 10.9
   },
   {
@@ -440,8 +445,8 @@ Có bao giờ bạn vừa đạt được một thành tích lớn, nhưng thay 
     "scene_id": 40,
     "speaker": "An",
     "visual_cue": "Bức tranh thủy mặc tái hiện không gian cổ xưa thời Đức Phật tại thành Ca-tỳ-la-vệ",
-    "display_text": "Đó là câu chuyện về Tỳ-kheo Channa, người cận vệ từng ôm chiếc gai ngã mạn đau đớn suốt nửa đời tu tập.",
-    "spoken_text": "Đó là câu chuyện về Tỳ-kheo Xan-na, người cận vệ từng ôm chiếc gai ngã mạn đau đớn suốt nửa đời tu tập.",
+    "display_text": "Đó là câu chuyện về Tỳ-kheo Channa (Xa-nặc), người cận vệ từng ôm chiếc gai ngã mạn đau đớn suốt nửa đời tu tập.",
+    "spoken_text": "Đó là câu chuyện về Tỳ kheo Xa-nặc, trong tiếng Pa-li là Chan-na, người cận vệ từng ôm chiếc gai ngã mạn đau đớn suốt nửa đời tu tập.",
     "est_seconds": 10.0
   },
   {
@@ -449,7 +454,7 @@ Có bao giờ bạn vừa đạt được một thành tích lớn, nhưng thay 
     "speaker": "An",
     "visual_cue": "Tranh hoạt họa 2D Thái tử Tất-đạt-đa cưỡi ngựa Kiền-trắc và chàng cận vệ Channa vượt sông trong đêm",
     "display_text": "Channa, trong tiếng Hán dịch là Xa-nặc, chính là người cận vệ thân tín đã dắt ngựa đưa Thái tử Tất-đạt-đa vượt sông xuất gia.",
-    "spoken_text": "Xan-na, trong tiếng Hán dịch là Xa-nặc, chính là người cận vệ thân tín đã dắt ngựa đưa Thái tử Tất-đạt-đa vượt sông xuất gia.",
+    "spoken_text": "Tỳ kheo Xa-nặc chính là người cận vệ thân tín đã dắt ngựa đưa Thái tử Tất Đạt Đa vượt sông xuất gia.",
     "est_seconds": 10.9
   },
   {
@@ -457,7 +462,7 @@ Có bao giờ bạn vừa đạt được một thành tích lớn, nhưng thay 
     "speaker": "An",
     "visual_cue": "Channa trong y áo tu sĩ nhưng gương mặt kiêu ngạo, khoanh tay đứng nhìn chư Tăng",
     "display_text": "Về sau khi Đức Phật thành đạo, Channa cũng xin xuất gia vào Tăng đoàn. Nhưng một cái bẫy tâm lý khổng lồ đã ập xuống đời ông.",
-    "spoken_text": "Về sau khi Đức Phật thành đạo, Xan-na cũng xin xuất gia vào Tăng đoàn. Nhưng một cái bẫy tâm lý khổng lồ đã ập xuống đời ông.",
+    "spoken_text": "Về sau khi Đức Phật thành đạo, Xa-nặc cũng xin xuất gia vào Tăng đoàn. Nhưng một cái bẫy tâm lý khổng lồ đã ập xuống đời ông.",
     "est_seconds": 12.2
   },
   {
@@ -465,7 +470,7 @@ Có bao giờ bạn vừa đạt được một thành tích lớn, nhưng thay 
     "speaker": "Nhiên",
     "visual_cue": "Nhiên tò mò nghiêng đầu lắng nghe",
     "display_text": "Cái bẫy gì vậy An? Có phải Channa ỷ mình có công lớn với Đức Phật không?",
-    "spoken_text": "Cái bẫy gì vậy An? Có phải Xan-na ỷ mình có công lớn với Đức Phật không?",
+    "spoken_text": "Cái bẫy gì vậy An? Có phải Xa-nặc ỷ mình có công lớn với Đức Phật không?",
     "est_seconds": 7.4
   },
   {
@@ -473,7 +478,7 @@ Có bao giờ bạn vừa đạt được một thành tích lớn, nhưng thay 
     "speaker": "An",
     "visual_cue": "Channa chỉ tay lớn tiếng tranh cãi với Tôn giả Sāriputta và Moggallāna dưới cội cây",
     "display_text": "Đúng thế! Channa luôn tự nhủ: Ta là người đưa Phật đi tu! Còn Sāriputta và Moggallāna chỉ là những kẻ theo sau, có tư cách gì dạy bảo ta?",
-    "spoken_text": "Đúng thế! Xan-na luôn tự nhủ: Ta là người đưa Phật đi tu! Còn Xa-ri-pút-ta và Mốc-gơ-la-na chỉ là những kẻ theo sau, có tư cách gì dạy bảo ta?",
+    "spoken_text": "Đúng thế! Xa-nặc luôn tự nhủ: Ta là người đưa Phật đi tu! Còn hai Tôn giả Xá Lợi Phất và Mục Kiền Liên chỉ là những kẻ theo sau, có tư cách gì dạy bảo ta?",
     "est_seconds": 13.0
   },
   {
@@ -497,7 +502,7 @@ Có bao giờ bạn vừa đạt được một thành tích lớn, nhưng thay 
     "speaker": "An",
     "visual_cue": "Đức Phật nằm nhập Niết-bàn dưới hai cội cây Sa-la, Đại đức Ānanda quỳ bên cạnh lắng nghe lời dặn cuối",
     "display_text": "Cho đến đêm Đức Phật sắp nhập Niết-bàn, Đại đức Ānanda hỏi: Bạch Thế Tôn, sau khi Ngài ra đi, chúng con phải đối xử với Channa thế nào?",
-    "spoken_text": "Cho đến đêm Đức Phật sắp nhập Niết-bàn, Đại đức A-nan-đa hỏi: Bạch Thế Tôn, sau khi Ngài ra đi, chúng con phải đối xử với Xan-na thế nào?",
+    "spoken_text": "Cho đến đêm Đức Phật sắp nhập Niết-bàn, Đại đức A Nan hỏi: Bạch Thế Tôn, sau khi Ngài ra đi, chúng con phải đối xử với Xa-nặc thế nào?",
     "est_seconds": 12.6
   },
   {
@@ -505,7 +510,7 @@ Có bao giờ bạn vừa đạt được một thành tích lớn, nhưng thay 
     "speaker": "An",
     "visual_cue": "Cận cảnh gương mặt Đức Phật tỏa ánh hào quang từ bi, buông lời giáo huấn cuối cùng",
     "display_text": "Đức Phật dạy: Hãy áp dụng án phạt Phạm Đàn, tức Brahma-daṇḍa đối với Channa.",
-    "spoken_text": "Đức Phật dạy: Hãy áp dụng án phạt Phạm Đàn, tức Bờ-ram-ma đan-đa đối với Xan-na.",
+    "spoken_text": "Đức Phật dạy: Hãy áp dụng án phạt Phạm Đàn, tức hình phạt Bram ma đan đa đối với Xa-nặc.",
     "est_seconds": 7.0
   },
   {
@@ -513,7 +518,7 @@ Có bao giờ bạn vừa đạt được một thành tích lớn, nhưng thay 
     "speaker": "Nhiên",
     "visual_cue": "Nhiên ngạc nhiên hỏi dồn",
     "display_text": "Phạm đàn Brahma-daṇḍa là gì hả An? Nghe có vẻ nghiêm khắc quá!",
-    "spoken_text": "Phạm đàn Bờ-ram-ma đan-đa là gì hả An? Nghe có vẻ nghiêm khắc quá!",
+    "spoken_text": "Phạm Đàn Bram ma đan đa là gì hả An? Nghe có vẻ nghiêm khắc quá!",
     "est_seconds": 6.1
   },
   {
@@ -521,7 +526,7 @@ Có bao giờ bạn vừa đạt được một thành tích lớn, nhưng thay 
     "speaker": "An",
     "visual_cue": "Channa đi qua tịnh xá, chư Tăng vẫn thiền tọa an nhiên, không ai nói chuyện hay tranh cãi với ông",
     "display_text": "Brahma-daṇḍa là sự im lặng thánh thiện: Channa muốn nói gì tùy ý, nhưng không ai trong Tăng đoàn đáp lại, không ai tranh cãi hay tán dương.",
-    "spoken_text": "Bờ-ram-ma đan-đa là sự im lặng thánh thiện: Xan-na muốn nói gì tùy ý, nhưng không ai trong Tăng đoàn đáp lại, không ai tranh cãi hay tán dương.",
+    "spoken_text": "Bram ma đan đa là sự im lặng thánh thiện: Xa-nặc muốn nói gì tùy ý, nhưng không ai trong Tăng đoàn đáp lại, không ai tranh cãi hay tán dương.",
     "est_seconds": 12.6
   },
   {
@@ -529,7 +534,7 @@ Có bao giờ bạn vừa đạt được một thành tích lớn, nhưng thay 
     "speaker": "An",
     "visual_cue": "Channa quỳ sụp xuống đất ôm mặt khóc nức nở, chiếc vỏ bọc ngã mạn vỡ tan thành từng mảnh",
     "display_text": "Khi không còn ai để so sánh, không còn sân khấu để gồng mình thể hiện, chiếc vỏ bọc kiêu mạn của Channa hoàn toàn sụp đổ.",
-    "spoken_text": "Khi không còn ai để so sánh, không còn sân khấu để gồng mình thể hiện, chiếc vỏ bọc kiêu mạn của Xan-na hoàn toàn sụp đổ.",
+    "spoken_text": "Khi không còn ai để so sánh, không còn sân khấu để gồng mình thể hiện, chiếc vỏ bọc kiêu mạn của Xa-nặc hoàn toàn sụp đổ.",
     "est_seconds": 11.7
   },
   {
@@ -545,7 +550,7 @@ Có bao giờ bạn vừa đạt được một thành tích lớn, nhưng thay 
     "speaker": "An",
     "visual_cue": "Channa thiền định dưới gốc cây đại thụ, vầng hào quang đắc quả A-la-hán bừng sáng",
     "display_text": "Chính nhờ buông bỏ chiếc thước đo so sánh đó, Channa đã nỗ lực tinh tấn và không lâu sau chứng đắc quả vị A-la-hán cao quý.",
-    "spoken_text": "Chính nhờ buông bỏ chiếc thước đo so sánh đó, Xan-na đã nỗ lực tinh tấn và không lâu sau chứng đắc quả vị A-la-hán cao quý.",
+    "spoken_text": "Chính nhờ buông bỏ chiếc thước đo so sánh đó, Xa-nặc đã nỗ lực tinh tấn và không lâu sau chứng đắc quả vị A la hán cao quý.",
     "est_seconds": 11.7
   },
   {
@@ -569,7 +574,7 @@ Có bao giờ bạn vừa đạt được một thành tích lớn, nhưng thay 
     "speaker": "An",
     "visual_cue": "Đồ họa Bước 1: Icon chiếc chuông chánh niệm rung lên với chữ 'Nhận diện Sati'",
     "display_text": "Bước thứ nhất: Chánh niệm nhận diện Cơn Sốt So Sánh, tức là thực hành Sati.",
-    "spoken_text": "Bước thứ nhất: Chánh niệm nhận diện Cơn Sốt So Sánh, tức là thực hành Sa-ti.",
+    "spoken_text": "Bước thứ nhất: Chánh niệm nhận diện Cơn Sốt So Sánh, tức là thực hành Sa ti.",
     "est_seconds": 7.0
   },
   {
@@ -617,7 +622,7 @@ Có bao giờ bạn vừa đạt được một thành tích lớn, nhưng thay 
     "speaker": "An",
     "visual_cue": "Đồ họa Bước 3: Đóa hoa sen nở rộ trong trái tim phát ra làn sóng ánh sáng ấm áp 'Muditā - Tùy Hỷ'",
     "display_text": "Bước thứ ba: Chuyển hóa đố kỵ thành cam lồ Tùy Hỷ, tức là Muditā.",
-    "spoken_text": "Bước thứ ba: Chuyển hóa đố kỵ thành cam lồ Tùy Hỷ, tức là Mu-đi-ta.",
+    "spoken_text": "Bước thứ ba: Chuyển hóa đố kỵ thành cam lồ Tùy Hỷ, tức là Mu đi ta.",
     "est_seconds": 6.5
   },
   {
@@ -649,7 +654,7 @@ Có bao giờ bạn vừa đạt được một thành tích lớn, nhưng thay 
     "speaker": "An",
     "visual_cue": "Đồ họa Bước 4: Một ngọn đèn dầu cổ bằng đất nung tỏa sáng soi rọi lối đi 'Atta-dīpa - Ngọn đèn tự thân'",
     "display_text": "Và bước thứ tư: Thiết lập Chiếc Thước Đo Nội Tâm, tức là Nương Tựa Ngọn Đèn Tự Thân Atta-dīpa.",
-    "spoken_text": "Và bước thứ tư: Thiết lập Chiếc Thước Đo Nội Tâm, tức là Nương Tựa Ngọn Đèn Tự Thân Át-ta đi-pa.",
+    "spoken_text": "Và bước thứ tư: Thiết lập Chiếc Thước Đo Nội Tâm, tức là Nương Tựa Ngọn Đèn Tự Thân Át ta đi pa.",
     "est_seconds": 9.1
   },
   {
@@ -745,7 +750,7 @@ Có bao giờ bạn vừa đạt được một thành tích lớn, nhưng thay 
     "speaker": "Nhiên",
     "visual_cue": "Nhiên chỉ tay về phía nút chia sẻ",
     "display_text": "Và đừng quên CHIA SẺ video này đến người bạn hay đồng nghiệp đang cảm thấy tự ti và áp lực ngoài kia.",
-    "spoken_text": "Và đừng quên CHIA SẺ video này đến người bạn hay đồng nghiệp đang cảm thấy tự ti và áp lực ngoài kia.",
+    "spoken_text": "Và đừng quên chia sẻ video này đến người bạn hay đồng nghiệp đang cảm thấy tự ti và áp lực ngoài kia.",
     "est_seconds": 10.0
   },
   {
