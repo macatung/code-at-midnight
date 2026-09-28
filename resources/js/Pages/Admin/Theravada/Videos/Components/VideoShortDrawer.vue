@@ -19,11 +19,14 @@ const emit = defineEmits<{
 }>();
 
 // Active tab state
-type TabKey = 'info' | 'media' | 'channels' | 'script';
+type TabKey = 'info' | 'media' | 'tiktok' | 'channels' | 'script';
 const activeTab = ref<TabKey>('info');
 
 // Preview mode in Media tab: 'poster' or 'video'
 const previewMode = ref<'poster' | 'video'>('poster');
+
+// TikTok Safe Zone visual overlay toggle
+const showTikTokSafeZone = ref(false);
 
 // Copy feedback helper
 const copiedKey = ref<string | null>(null);
@@ -48,6 +51,44 @@ const countChars = (text?: string) => {
   return text ? text.length : 0;
 };
 
+// Algorithmic TikTok Caption Builder (Hook + Core Insight + CTA + Viral Tags)
+const tiktokCaption = computed(() => {
+  const f = props.form;
+  const hook = f.focus_hook ? `✦ ${f.focus_hook.trim()}` : `✦ ${f.title ? f.title.trim() : ''}`;
+  const script = f.script ? f.script.trim() : '';
+  let body = '';
+  if (script) {
+    const sentences = script.split(/[.!?]+/).map((s: string) => s.trim()).filter(Boolean);
+    body = sentences.slice(0, 2).join('. ') + (sentences.length > 0 ? '.' : '');
+  }
+  const cta = '🙏 Thả tim & Follow kênh để đón nhận năng lượng bình an mỗi ngày.';
+  const tags = '#xuhuong #fyp #phatphap #thien #tamlinh #tritue #loiphatday #taman #theravada #anlac';
+
+  const parts = [hook];
+  if (body) parts.push(body);
+  parts.push(cta);
+  parts.push(tags);
+  return parts.join('\n\n');
+});
+
+// Download native 9:16 MP4 video for local TikTok upload
+const downloadShortVideo = () => {
+  const url = props.form.video_url;
+  if (!url) return;
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `tiktok_short_${props.form.id || (props.form.order_index !== undefined ? props.form.order_index + 1 : 'video')}_1080x1920.mp4`;
+  a.target = '_blank';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+};
+
+// Open TikTok Creator Studio Web
+const openTikTokUpload = () => {
+  window.open('https://www.tiktok.com/creator-center/upload', '_blank');
+};
+
 // Tab completion and error helpers
 const hasErrors = (fields: string[]) => {
   if (!props.form?.errors) return false;
@@ -65,6 +106,10 @@ const tabStatus = computed(() => {
       hasError: hasErrors(['video_url', 'thumbnail_url']),
       isFilled: !!f.video_url?.trim(),
     },
+    tiktok: {
+      hasError: hasErrors(['tiktok_url']),
+      isFilled: !!f.tiktok_url?.trim(),
+    },
     channels: {
       hasError: hasErrors(['youtube_shorts_url', 'tiktok_url', 'reels_url']),
       isFilled: !!(f.youtube_shorts_url?.trim() || f.tiktok_url?.trim() || f.reels_url?.trim()),
@@ -75,6 +120,7 @@ const tabStatus = computed(() => {
     },
   };
 });
+
 
 // Close drawer handler
 const closeDrawer = () => {
@@ -250,7 +296,27 @@ watch(
             />
           </button>
 
-          <!-- Tab 3: Kênh Xuất Bản -->
+          <!-- Tab 3: TikTok Studio -->
+          <button
+            type="button"
+            @click="activeTab = 'tiktok'"
+            class="px-3.5 py-3 text-xs sm:text-sm font-medium flex items-center gap-2 border-b-2 transition-all whitespace-nowrap"
+            :class="[
+              activeTab === 'tiktok'
+                ? 'text-cyan-300 border-cyan-400 bg-cyan-500/10'
+                : 'text-slate-400 border-transparent hover:text-slate-200 hover:bg-slate-800/40'
+            ]"
+          >
+            <span class="w-2 h-2 rounded-full bg-cyan-400" />
+            <span>TikTok Studio</span>
+            <span
+              v-if="form.tiktok_url"
+              class="w-1.5 h-1.5 rounded-full bg-cyan-400"
+              title="Đã có link TikTok"
+            />
+          </button>
+
+          <!-- Tab 4: Kênh Xuất Bản -->
           <button
             type="button"
             @click="activeTab = 'channels'"
@@ -490,39 +556,57 @@ watch(
                   Khung Xem Trước Trực Quan (Tỷ Lệ 9:16)
                 </span>
 
-                <!-- Switch Preview Mode -->
-                <div class="flex items-center p-1 rounded-xl bg-slate-950 border border-slate-800">
+                <!-- Switch Preview Mode & Safe Zone -->
+                <div class="flex items-center gap-2 flex-wrap justify-end">
+                  <!-- TikTok Safe Zone Toggle Button -->
                   <button
                     type="button"
-                    @click="previewMode = 'poster'"
-                    class="px-3 py-1 rounded-lg text-xs font-medium transition-all"
+                    @click="showTikTokSafeZone = !showTikTokSafeZone"
+                    class="px-2.5 py-1 rounded-lg text-xs font-mono font-medium transition-all flex items-center gap-1.5 border"
                     :class="[
-                      previewMode === 'poster'
-                        ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
-                        : 'text-slate-400 hover:text-white'
+                      showTikTokSafeZone
+                        ? 'bg-cyan-500/20 text-cyan-300 border-cyan-400/50 shadow-sm shadow-cyan-500/20'
+                        : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-slate-200'
                     ]"
+                    title="Bật/Tắt hiển thị vùng an toàn và các nút bấm giao diện TikTok trên màn hình 9:16"
                   >
-                    Poster
+                    <Icons name="ShieldCheck" :size="13" :class="showTikTokSafeZone ? 'text-cyan-400' : 'text-slate-500'" />
+                    <span>TikTok Safe Zone: {{ showTikTokSafeZone ? 'BẬT' : 'TẮT' }}</span>
                   </button>
-                  <button
-                    type="button"
-                    @click="previewMode = 'video'"
-                    class="px-3 py-1 rounded-lg text-xs font-medium transition-all"
-                    :class="[
-                      previewMode === 'video'
-                        ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
-                        : 'text-slate-400 hover:text-white'
-                    ]"
-                  >
-                    Video MP4
-                  </button>
+
+                  <div class="flex items-center p-1 rounded-xl bg-slate-950 border border-slate-800">
+                    <button
+                      type="button"
+                      @click="previewMode = 'poster'"
+                      class="px-3 py-1 rounded-lg text-xs font-medium transition-all"
+                      :class="[
+                        previewMode === 'poster'
+                          ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                          : 'text-slate-400 hover:text-white'
+                      ]"
+                    >
+                      Poster
+                    </button>
+                    <button
+                      type="button"
+                      @click="previewMode = 'video'"
+                      class="px-3 py-1 rounded-lg text-xs font-medium transition-all"
+                      :class="[
+                        previewMode === 'video'
+                          ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                          : 'text-slate-400 hover:text-white'
+                      ]"
+                    >
+                      Video MP4
+                    </button>
+                  </div>
                 </div>
               </div>
 
               <!-- Preview Display Area -->
               <div class="flex flex-col sm:flex-row items-center justify-center gap-6 p-4 rounded-xl bg-slate-950/80 border border-slate-800/80 min-h-[360px]">
                 <!-- Phone Frame Container (9:16 ratio) -->
-                <div class="w-[210px] aspect-[9/16] rounded-2xl bg-black border-2 border-slate-700/80 shadow-2xl relative overflow-hidden flex flex-col justify-between shrink-0">
+                <div class="w-[210px] aspect-[9/16] rounded-2xl bg-black border-2 border-slate-700/80 shadow-2xl relative overflow-hidden flex flex-col justify-between shrink-0 select-none">
                   <!-- Mode 1: Video Player -->
                   <template v-if="previewMode === 'video'">
                     <video
@@ -563,8 +647,88 @@ watch(
                     </div>
                   </template>
 
-                  <!-- Overlay Simulated Short Badge & Title -->
-                  <div class="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/90 via-black/50 to-transparent pointer-events-none space-y-1">
+                  <!-- ============================================== -->
+                  <!-- TikTok UI Safe Zone Simulation Overlay         -->
+                  <!-- ============================================== -->
+                  <div
+                    v-if="showTikTokSafeZone"
+                    class="absolute inset-0 pointer-events-none z-20 flex flex-col justify-between text-white font-sans"
+                  >
+                    <!-- Top Bar (~14% Height) -->
+                    <div class="pt-2 px-2.5 pb-1 bg-gradient-to-b from-black/80 to-transparent flex items-center justify-between text-[8px] font-semibold text-slate-300 border-b border-dashed border-red-500/40">
+                      <div class="flex items-center gap-1 text-slate-400">
+                        <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                        <span class="text-[7px]">LIVE</span>
+                      </div>
+                      <div class="flex items-center gap-1.5 text-[8px]">
+                        <span class="opacity-50">Bạn bè</span>
+                        <span class="opacity-50">Follow</span>
+                        <span class="text-white font-bold underline decoration-white decoration-1 underline-offset-2">Dành cho bạn</span>
+                      </div>
+                      <Icons name="Search" :size="10" class="opacity-70" />
+                    </div>
+
+                    <!-- Center Safe Box -->
+                    <div class="flex-1 mx-2 my-1 border border-dashed border-emerald-400/80 bg-emerald-400/[0.04] rounded-lg relative flex flex-col justify-end p-1.5">
+                      <span class="absolute top-1 left-1 px-1 py-0.5 rounded bg-emerald-500/90 text-black text-[6.5px] font-bold font-mono uppercase tracking-wider">
+                        Vùng An Toàn TikTok
+                      </span>
+                    </div>
+
+                    <!-- Right Floating Actions -->
+                    <div class="absolute right-1.5 bottom-12 flex flex-col items-center gap-2 z-30">
+                      <!-- Avatar with (+) -->
+                      <div class="relative w-6 h-6 rounded-full border border-white bg-slate-800 flex items-center justify-center text-[7px] text-amber-300 font-bold shadow">
+                        <span>☸</span>
+                        <span class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-rose-500 text-white flex items-center justify-center text-[7px] leading-none font-bold">+</span>
+                      </div>
+                      <!-- Like -->
+                      <div class="flex flex-col items-center">
+                        <Icons name="Heart" :size="12" class="text-white fill-white/80" />
+                        <span class="text-[6.5px] font-bold mt-0.5">142K</span>
+                      </div>
+                      <!-- Comment -->
+                      <div class="flex flex-col items-center">
+                        <Icons name="MessageCircle" :size="12" class="text-white" />
+                        <span class="text-[6.5px] font-bold mt-0.5">1.2K</span>
+                      </div>
+                      <!-- Bookmark -->
+                      <div class="flex flex-col items-center">
+                        <Icons name="Bookmark" :size="12" class="text-white" />
+                        <span class="text-[6.5px] font-bold mt-0.5">35K</span>
+                      </div>
+                      <!-- Share -->
+                      <div class="flex flex-col items-center">
+                        <Icons name="Share2" :size="12" class="text-white" />
+                        <span class="text-[6.5px] font-bold mt-0.5">8.9K</span>
+                      </div>
+                      <!-- Spinning Disc -->
+                      <div class="w-5 h-5 rounded-full bg-black/80 border border-slate-700 flex items-center justify-center text-[6px] text-slate-300 animate-spin">
+                        <span>♫</span>
+                      </div>
+                    </div>
+
+                    <!-- Bottom Metadata Bar (~22% Height) -->
+                    <div class="p-2 pb-1.5 bg-gradient-to-t from-black/90 via-black/60 to-transparent border-t border-dashed border-red-500/40 space-y-0.5 max-w-[78%]">
+                      <p class="text-[8px] font-bold text-white tracking-tight flex items-center gap-1">
+                        <span>@phapthoai.theravada</span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                      </p>
+                      <p class="text-[7.5px] text-slate-200 line-clamp-2 leading-tight">
+                        {{ form.focus_hook || form.title || 'Ý thức đi về đâu khi hơi thở dừng lại?' }} #xuhuong #phatphap
+                      </p>
+                      <p class="text-[6.5px] text-slate-400 flex items-center gap-1 truncate pt-0.5 font-mono">
+                        <Icons name="Music" :size="7" class="text-slate-300 shrink-0" />
+                        <span>♫ Âm thanh gốc - Thiền 432Hz</span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <!-- Regular Overlay when Safe Zone toggle is OFF -->
+                  <div
+                    v-else
+                    class="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/90 via-black/50 to-transparent pointer-events-none space-y-1"
+                  >
                     <span class="inline-block px-1.5 py-0.5 rounded bg-amber-500/80 text-black text-[9px] font-bold font-mono uppercase tracking-wider">
                       {{ form.visual_style ? 'Invariant 12' : 'Short' }}
                     </span>
@@ -605,7 +769,175 @@ watch(
           </div>
 
           <!-- ==================================================== -->
-          <!-- BLOCK 3: KÊNH XUẤT BẢN                               -->
+          <!-- BLOCK 3: TIKTOK STUDIO (INVARIANT 13)                -->
+          <!-- ==================================================== -->
+          <div v-show="activeTab === 'tiktok'" class="space-y-5 animate-in fade-in-50 duration-200">
+            <!-- Hero Action Card: Tải Video & Mở TikTok Studio -->
+            <div class="bg-gradient-to-r from-cyan-950/40 via-slate-900 to-slate-900 border border-cyan-500/30 rounded-2xl p-5 shadow-xl space-y-4">
+              <div class="flex items-center justify-between pb-2 border-b border-cyan-500/20">
+                <span class="text-xs font-semibold uppercase tracking-wider text-cyan-300 font-mono flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                  TikTok Fast Publishing Studio • Invariant 13
+                </span>
+                <span
+                  class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider border"
+                  :class="[
+                    form.tiktok_url
+                      ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40'
+                      : 'bg-amber-500/10 text-amber-300 border-amber-500/30'
+                  ]"
+                >
+                  {{ form.tiktok_url ? 'ĐÃ ĐĂNG TIKTOK' : 'CHƯA ĐĂNG TIKTOK' }}
+                </span>
+              </div>
+
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Tối ưu hóa toàn diện cho thuật toán phân phối TikTok: Tải nhanh video MP4 chuẩn tỷ lệ 9:16, tự động tạo Caption có Hook 3s kèm Call-To-Action và hệ thống Hashtags thịnh hành.
+              </p>
+
+              <!-- Quick Action Buttons -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                <!-- Button 1: Tải Video MP4 -->
+                <button
+                  type="button"
+                  @click="downloadShortVideo"
+                  :disabled="!form.video_url"
+                  class="px-4 py-2.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-400/40 text-cyan-200 hover:text-white text-xs font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-sm shadow-cyan-500/10"
+                >
+                  <Icons name="Download" :size="15" class="text-cyan-400" />
+                  <span>Tải Video MP4 Đăng TikTok</span>
+                </button>
+
+                <!-- Button 2: Mở TikTok Creator Studio Web -->
+                <button
+                  type="button"
+                  @click="openTikTokUpload"
+                  class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 hover:text-white text-xs font-semibold flex items-center justify-center gap-2 transition-all"
+                >
+                  <Icons name="ExternalLink" :size="15" class="text-cyan-400" />
+                  <span>Mở TikTok Web Upload Studio</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Card 2: 1-Click Algorithmic TikTok Caption -->
+            <div class="bg-slate-900/90 border border-slate-700/70 rounded-2xl p-5 shadow-lg space-y-3">
+              <div class="flex items-center justify-between pb-2 border-b border-slate-800 flex-wrap gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="text-xs font-semibold uppercase tracking-wider text-cyan-400 font-mono flex items-center gap-1.5">
+                    <Icons name="Sparkles" :size="13" />
+                    Caption TikTok Tạo Sẵn (Chuẩn Thuật Toán 2026)
+                  </span>
+                  <span class="text-[11px] font-mono text-cyan-300/80 bg-cyan-400/10 px-2 py-0.5 rounded border border-cyan-400/20">
+                    {{ countChars(tiktokCaption) }}/2,200 ký tự (Chuẩn vàng: 150–300)
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  @click="copyText(tiktokCaption, 'tiktok-caption')"
+                  class="px-3 py-1 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-200 text-xs font-mono flex items-center gap-1.5 transition-all border border-cyan-400/30 font-semibold"
+                >
+                  <Icons :name="copiedKey === 'tiktok-caption' ? 'Check' : 'Copy'" :size="13" />
+                  <span>{{ copiedKey === 'tiktok-caption' ? 'Đã sao chép!' : 'Sao chép 1-Click' }}</span>
+                </button>
+              </div>
+
+              <!-- Display Preview Box -->
+              <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 font-sans text-xs leading-relaxed whitespace-pre-line space-y-2">
+                {{ tiktokCaption }}
+              </div>
+
+              <div class="flex items-center justify-between text-[11px] text-slate-400 font-mono pt-1">
+                <span class="flex items-center gap-1 text-emerald-400">
+                  <Icons name="Check" :size="12" />
+                  <span>Đã tích hợp Hook 3s + Lời dạy cốt lõi + CTA + Hashtags viral</span>
+                </span>
+                <button
+                  type="button"
+                  @click="copyText(tiktokCaption, 'tiktok-caption-sec')"
+                  class="text-cyan-400 hover:text-cyan-300 hover:underline flex items-center gap-1"
+                >
+                  <Icons name="Copy" :size="11" />
+                  <span>Chép vào Clipboard</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Card 3: TikTok URL & Status -->
+            <div class="bg-slate-900/90 border border-slate-700/70 rounded-2xl p-5 shadow-lg space-y-3">
+              <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                <span class="text-xs font-semibold uppercase tracking-wider text-slate-200 font-mono flex items-center gap-1.5">
+                  <Icons name="ExternalLink" :size="13" class="text-cyan-400" />
+                  Liên Kết Video TikTok Đã Xuất Bản
+                </span>
+                <a
+                  v-if="form.tiktok_url"
+                  :href="form.tiktok_url"
+                  target="_blank"
+                  rel="noopener"
+                  class="text-cyan-400 hover:text-cyan-300 text-xs font-mono flex items-center gap-1 hover:underline"
+                >
+                  <span>Mở xem trên TikTok</span>
+                  <Icons name="ExternalLink" :size="12" />
+                </a>
+              </div>
+
+              <div class="space-y-1.5">
+                <label class="block text-xs font-medium text-slate-300">
+                  TikTok Video URL:
+                </label>
+                <div class="flex items-center gap-2">
+                  <input
+                    v-model="form.tiktok_url"
+                    type="text"
+                    placeholder="https://www.tiktok.com/@kenh_phat_phap/video/..."
+                    class="flex-1 px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder:text-slate-500 text-sm font-mono focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/30 transition-all"
+                  />
+                  <button
+                    type="button"
+                    @click="triggerSave"
+                    class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-semibold transition-all shrink-0"
+                  >
+                    Lưu Link
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 4: TikTok Checklist Invariant 13 -->
+            <div class="bg-slate-950/60 border border-slate-800 rounded-2xl p-4.5 space-y-2.5">
+              <h5 class="text-xs font-semibold uppercase tracking-wider text-amber-300 font-mono flex items-center gap-1.5">
+                <Icons name="Sparkles" :size="13" />
+                Bộ Quy Chuẩn Video Ngắn TikTok (Invariant 13)
+              </h5>
+              <ul class="space-y-1.5 text-xs text-slate-300">
+                <li class="flex items-center gap-2">
+                  <span class="text-emerald-400 shrink-0">✓</span>
+                  <span><strong>Tỷ lệ 9:16 dọc bản địa (1080x1920)</strong>: Không dùng dải đen hay ghép mờ trên dưới.</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <span class="text-emerald-400 shrink-0">✓</span>
+                  <span><strong>Hook 3 giây đầu</strong>: Câu hỏi hoặc trăn trở nhân sinh lôi cuốn giữ chân người xem lướt qua.</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <span class="text-emerald-400 shrink-0">✓</span>
+                  <span><strong>Đức Phật quang minh &ge; 70%</strong>: Hình ảnh Đức Phật uy nghiêm, y vàng rực rỡ làm chủ thể thị giác.</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <span class="text-emerald-400 shrink-0">✓</span>
+                  <span><strong>TikTok Safe Zone</strong>: Phụ đề và chủ thể không bị các nút Like, Comment, Share che khuất.</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <span class="text-emerald-400 shrink-0">✓</span>
+                  <span><strong>Âm thanh đa tầng 432Hz</strong>: Giọng trầm ấm phối nhạc thiền sâu lắng xoa dịu tâm trí.</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- ==================================================== -->
+          <!-- BLOCK 4: KÊNH XUẤT BẢN                               -->
           <!-- ==================================================== -->
           <div v-show="activeTab === 'channels'" class="space-y-5 animate-in fade-in-50 duration-200">
             <div class="bg-slate-900/90 border border-slate-700/70 rounded-2xl p-5 shadow-lg space-y-4">

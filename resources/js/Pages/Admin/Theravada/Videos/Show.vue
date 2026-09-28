@@ -268,6 +268,41 @@ const activeShortPublishingDescription = computed(() => {
   return lines.join('\n');
 });
 
+const activeShortTikTokCaption = computed(() => {
+  if (!activeShort.value) return '';
+  const hook = activeShort.value.focus_hook ? `✦ ${activeShort.value.focus_hook.trim()}` : `✦ ${activeShort.value.title || ''}`;
+  const script = activeShort.value.script ? activeShort.value.script.trim() : (activeShort.value.description || '');
+  let body = '';
+  if (script) {
+    const sentences = script.split(/[.!?]+/).map(s => s.trim()).filter(Boolean);
+    body = sentences.slice(0, 2).join('. ') + (sentences.length > 0 ? '.' : '');
+  }
+  const cta = '🙏 Thả tim & Follow kênh để đón nhận năng lượng bình an mỗi ngày.';
+  const tags = '#xuhuong #fyp #phatphap #thien #tamlinh #tritue #loiphatday #taman #theravada #anlac';
+
+  const parts = [hook];
+  if (body) parts.push(body);
+  parts.push(cta);
+  parts.push(tags);
+  return parts.join('\n\n');
+});
+
+const downloadActiveShortVideo = () => {
+  const url = activeShort.value?.video_url || props.article.video_short_url;
+  if (!url) return;
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `tiktok_short_${activeShort.value?.id || selectedShortIndex.value + 1}_1080x1920.mp4`;
+  a.target = '_blank';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+};
+
+const openTikTokCreatorUpload = () => {
+  window.open('https://www.tiktok.com/creator-center/upload', '_blank');
+};
+
 const activeShortFullKit = computed(() => {
   if (!activeShort.value) return '';
   return [
@@ -276,6 +311,9 @@ const activeShortFullKit = computed(() => {
     ``,
     `=== MÔ TẢ & HASHTAGS XUẤT BẢN ===`,
     activeShortPublishingDescription.value,
+    ``,
+    `=== CAPTION XU HƯỚNG TIKTOK (INVARIANT 13) ===`,
+    activeShortTikTokCaption.value,
     ``,
     `=== FILE VIDEO GỐC CDN 9:16 ===`,
     activeShort.value.video_url || props.article.video_short_url || '',
@@ -515,11 +553,15 @@ const youtubeFullKit = computed(() => {
 });
 
 const tiktokFullKit = computed(() => {
+  if (activeShortTikTokCaption.value) {
+    return activeShortTikTokCaption.value;
+  }
   return [
     formattedCaption.value || props.article.title,
     ``,
+    `🙏 Thả tim & Follow kênh để đón nhận năng lượng bình an mỗi ngày.`,
     `🎧 Nghe trọn bài giảng tại link bio!`,
-    formattedHashtagsString.value + ' #shorts #reels #xuhuong',
+    formattedHashtagsString.value + ' #xuhuong #fyp #phatphap #thien #tamlinh #tritue #loiphatday #taman #theravada #anlac',
   ].join('\n');
 });
 
@@ -1631,6 +1673,27 @@ const getStatusDotClass = (status: string) => {
                     </button>
                   </div>
                 </div>
+
+                <!-- TikTok Quick Action Buttons -->
+                <div class="flex items-center gap-2 pt-1 flex-wrap">
+                  <button
+                    type="button"
+                    @click="downloadActiveShortVideo"
+                    :disabled="!activeShort.video_url && !article.video_short_url"
+                    class="px-3 py-1.5 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-400/30 text-cyan-200 text-xs font-medium transition-colors flex items-center gap-1.5 disabled:opacity-40"
+                  >
+                    <Icons name="Download" :size="12" class="text-cyan-400" />
+                    <span>Tải Video MP4 TikTok</span>
+                  </button>
+                  <button
+                    type="button"
+                    @click="openTikTokCreatorUpload"
+                    class="px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white text-xs font-medium transition-colors flex items-center gap-1.5"
+                  >
+                    <Icons name="ExternalLink" :size="12" class="text-cyan-400" />
+                    <span>Mở TikTok Web Upload Studio</span>
+                  </button>
+                </div>
               </div>
 
               <!-- Tiêu đề TikTok tạo sẵn -->
@@ -1659,12 +1722,21 @@ const getStatusDotClass = (status: string) => {
 
               <!-- Caption & Mô tả TikTok -->
               <div class="p-4 rounded-xl bg-slate-900/30 border border-white/[0.06] space-y-2 focus-within:border-white/[0.15] transition-colors">
-                <div class="flex items-center justify-between text-xs">
+                <div class="flex items-center justify-between text-xs flex-wrap gap-2">
                   <span class="font-medium text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
                     <Icons name="AlignLeft" :size="13" class="text-slate-400" />
                     <span>Mô Tả & Caption TikTok</span>
                   </span>
-                  <div class="flex items-center gap-2">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <button
+                      type="button"
+                      @click="copyToClipboard(activeShortTikTokCaption, 'tt-viral-caption')"
+                      class="px-2.5 py-1 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-400/40 text-cyan-200 transition-colors text-xs flex items-center gap-1 font-semibold shadow-sm"
+                      title="Sao chép Caption TikTok chuẩn thuật toán (Hook 3s + CTA + Tags)"
+                    >
+                      <Icons name="Sparkles" :size="12" class="text-cyan-400" />
+                      <span>{{ copyFeedback['tt-viral-caption'] ? '✓ Đã chép Caption Viral!' : 'Chép Caption Viral TikTok' }}</span>
+                    </button>
                     <button
                       v-if="activeShort?.description || activeShort?.script"
                       type="button"
