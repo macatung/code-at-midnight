@@ -238,11 +238,25 @@ const clearSearch = () => {
 };
 
 const getPlaylistBadge = (pl?: string | null) => {
+  if (pl === 'thuat-ngu-phat-hoc') {
+    return {
+      label: 'Thuật Ngữ Phật Học',
+      color: 'text-cyan-300 bg-cyan-400/10 border-cyan-400/20',
+      dot: 'bg-cyan-400',
+    };
+  }
   if (pl === 'phat-phap-ung-dung') {
     return {
       label: 'Phật Pháp Ứng Dụng',
       color: 'text-amber-300 bg-amber-400/10 border-amber-400/20',
       dot: 'bg-amber-400',
+    };
+  }
+  if (pl === 'tam-va-ta') {
+    return {
+      label: 'Tâm Và Ta',
+      color: 'text-purple-300 bg-purple-400/10 border-purple-400/20',
+      dot: 'bg-purple-400',
     };
   }
   if (pl === 'tam-an-van-su-an') {
@@ -399,8 +413,9 @@ const closeQuickCopy = () => {
           <button
             v-for="plTab in (playlistTabs || [
               { key: 'all', label: 'Tất cả Playlist', count: statusCounts.all },
-              { key: 'phat-phap-ung-dung', label: 'Phật Pháp Ứng Dụng', count: 2 },
-              { key: 'tam-an-van-su-an', label: 'Tâm An Vạn Sự An', count: 10 },
+              { key: 'thuat-ngu-phat-hoc', label: 'Thuật Ngữ Phật Học', count: 1 },
+              { key: 'phat-phap-ung-dung', label: 'Phật Pháp Ứng Dụng', count: 3 },
+              { key: 'tam-an-van-su-an', label: 'Tâm An Vạn Sự An', count: 12 },
               { key: 'unassigned', label: 'Chưa phân loại', count: 61 }
             ])"
             :key="plTab.key"
@@ -414,6 +429,8 @@ const closeQuickCopy = () => {
             @click="applyPlaylistFilter(plTab.key)"
           >
             <span v-if="plTab.key === 'all'" class="text-sm">🌟</span>
+            <span v-else-if="plTab.key === 'tam-va-ta'" class="text-sm">🧘</span>
+            <span v-else-if="plTab.key === 'thuat-ngu-phat-hoc'" class="text-sm">📖</span>
             <span v-else-if="plTab.key === 'phat-phap-ung-dung'" class="text-sm">🧠</span>
             <span v-else-if="plTab.key === 'tam-an-van-su-an'" class="text-sm">✨</span>
             <span v-else class="text-sm">📁</span>
@@ -449,7 +466,9 @@ const closeQuickCopy = () => {
         v-if="currentPlaylist !== 'all' && currentPlaylist !== 'unassigned' && playlistsMetadata?.[currentPlaylist]"
         class="relative overflow-hidden rounded-2xl p-5 border shadow-lg transition-all"
         :class="
-          currentPlaylist === 'phat-phap-ung-dung'
+          currentPlaylist === 'thuat-ngu-phat-hoc'
+            ? 'bg-gradient-to-r from-cyan-950/40 via-slate-900/60 to-slate-900/40 border-cyan-500/25'
+            : currentPlaylist === 'phat-phap-ung-dung'
             ? 'bg-gradient-to-r from-amber-950/40 via-slate-900/60 to-slate-900/40 border-amber-500/25'
             : 'bg-gradient-to-r from-emerald-950/40 via-slate-900/60 to-slate-900/40 border-emerald-500/25'
         "
@@ -460,7 +479,9 @@ const closeQuickCopy = () => {
               <span
                 class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold uppercase tracking-wider border"
                 :class="
-                  currentPlaylist === 'phat-phap-ung-dung'
+                  currentPlaylist === 'thuat-ngu-phat-hoc'
+                    ? 'bg-cyan-400/10 text-cyan-300 border-cyan-400/30'
+                    : currentPlaylist === 'phat-phap-ung-dung'
                     ? 'bg-amber-400/10 text-amber-300 border-amber-400/30'
                     : 'bg-emerald-400/10 text-emerald-300 border-emerald-400/30'
                 "
@@ -474,7 +495,8 @@ const closeQuickCopy = () => {
             </div>
 
             <h2 class="text-lg sm:text-xl font-bold text-white tracking-tight flex items-center gap-2">
-              <span v-if="currentPlaylist === 'phat-phap-ung-dung'">🧠</span>
+              <span v-if="currentPlaylist === 'thuat-ngu-phat-hoc'">📖</span>
+              <span v-else-if="currentPlaylist === 'phat-phap-ung-dung'">🧠</span>
               <span v-else>✨</span>
               <span>{{ playlistsMetadata[currentPlaylist].title }}</span>
             </h2>

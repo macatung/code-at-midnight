@@ -77,12 +77,34 @@ class AdminTheravadaVideoController extends Controller
 
         $playlistTabs = [
             ['key' => 'all', 'label' => 'Tất cả Playlist', 'count' => (clone $baseTheravada)->count()],
+            ['key' => 'tam-va-ta', 'label' => 'Tâm Và Ta', 'count' => (clone $baseTheravada)->where('playlist', 'tam-va-ta')->count()],
+            ['key' => 'thuat-ngu-phat-hoc', 'label' => 'Thuật Ngữ Phật Học', 'count' => (clone $baseTheravada)->where('playlist', 'thuat-ngu-phat-hoc')->count()],
             ['key' => 'phat-phap-ung-dung', 'label' => 'Phật Pháp Ứng Dụng', 'count' => (clone $baseTheravada)->where('playlist', 'phat-phap-ung-dung')->count()],
             ['key' => 'tam-an-van-su-an', 'label' => 'Tâm An Vạn Sự An', 'count' => (clone $baseTheravada)->where('playlist', 'tam-an-van-su-an')->count()],
             ['key' => 'unassigned', 'label' => 'Chưa phân loại', 'count' => (clone $baseTheravada)->whereNull('playlist')->count()],
         ];
 
         $playlistsMetadata = [
+            'tam-va-ta' => [
+                'slug' => 'tam-va-ta',
+                'title' => 'Tâm Và Ta — Hành Trình Vô Ngã',
+                'subtitle' => 'Dựa trên tác phẩm kinh điển của Thượng tọa Thích Trí Siêu',
+                'description' => 'Đại chuỗi pháp thoại 6 tập bóc tách bản chất ảo tưởng của Cái Ta, giải mã Cái Biết nguyên sơ và nghệ thuật tháo ngòi nổ bản ngã.',
+                'icon' => 'Compass',
+                'total_episodes' => (clone $baseTheravada)->where('playlist', 'tam-va-ta')->count(),
+                'completed_episodes' => (clone $baseTheravada)->where('playlist', 'tam-va-ta')->whereIn('video_status', ['completed', 'published'])->count(),
+                'published_episodes' => (clone $baseTheravada)->where('playlist', 'tam-va-ta')->where('video_status', 'published')->count(),
+            ],
+            'thuat-ngu-phat-hoc' => [
+                'slug' => 'thuat-ngu-phat-hoc',
+                'title' => 'Giải Thích Thuật Ngữ Phật Học',
+                'subtitle' => 'Gốc Nghĩa Pāḷi & Nhân Quả Đời Thường',
+                'description' => 'Giải mã các thuật ngữ Phật học cốt lõi (Kamma, Anatta, Dukkha...) từ gốc nghĩa Pāḷi nguyên bản, gắn liền với những câu chuyện nhân quả đời thường sâu sắc và pháp thực hành chuyển hóa thân tâm.',
+                'icon' => 'BookOpen',
+                'total_episodes' => (clone $baseTheravada)->where('playlist', 'thuat-ngu-phat-hoc')->count(),
+                'completed_episodes' => (clone $baseTheravada)->where('playlist', 'thuat-ngu-phat-hoc')->whereIn('video_status', ['completed', 'published'])->count(),
+                'published_episodes' => (clone $baseTheravada)->where('playlist', 'thuat-ngu-phat-hoc')->where('video_status', 'published')->count(),
+            ],
             'phat-phap-ung-dung' => [
                 'slug' => 'phat-phap-ung-dung',
                 'title' => 'Phật Pháp Ứng Dụng',

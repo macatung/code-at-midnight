@@ -46,3 +46,6 @@ TEST_INFRA.md
 TEST_READY.md
 __pycache__/
 *.pyc
+/public/videos/
+/public/thumbnails/
+/public/branding/

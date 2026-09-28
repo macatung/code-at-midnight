@@ -639,7 +639,7 @@ const getStatusDotClass = (status: string) => {
                 :href="`/admin/theravada/videos?playlist=${article.playlist}`"
                 class="text-amber-400/90 hover:text-amber-300 transition-colors"
               >
-                {{ article.playlist === 'phat-phap-ung-dung' ? 'Phật Pháp Ứng Dụng' : article.playlist === 'tam-an-van-su-an' ? 'Tâm An Vạn Sự An' : article.playlist }}
+                {{ article.playlist === 'tam-va-ta' ? 'Tâm Và Ta' : article.playlist === 'phat-phap-ung-dung' ? 'Phật Pháp Ứng Dụng' : article.playlist === 'tam-an-van-su-an' ? 'Tâm An Vạn Sự An' : article.playlist === 'thuat-ngu-phat-hoc' ? 'Thuật Ngữ Phật Học' : article.playlist }}
               </Link>
               <span>/</span>
             </template>
@@ -1241,6 +1241,8 @@ const getStatusDotClass = (status: string) => {
                   class="w-full px-3 py-2 rounded-lg bg-black/40 border border-white/[0.08] text-xs text-slate-200 focus:outline-none focus:border-white/20 transition-all cursor-pointer"
                 >
                   <option value="">— Chưa phân loại —</option>
+                  <option value="tam-va-ta">Tâm Và Ta — Hành Trình Vô Ngã (tam-va-ta)</option>
+                  <option value="thuat-ngu-phat-hoc">Thuật Ngữ Phật Học (thuat-ngu-phat-hoc)</option>
                   <option value="phat-phap-ung-dung">Phật Pháp Ứng Dụng (phat-phap-ung-dung)</option>
                   <option value="tam-an-van-su-an">Tâm An Vạn Sự An (tam-an-van-su-an)</option>
                 </select>
@@ -2094,7 +2096,7 @@ const getStatusDotClass = (status: string) => {
             class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white text-xs font-medium border border-white/[0.08] transition-colors"
           >
             <Icons name="List" :size="13" class="text-amber-400" />
-            <span>{{ article.playlist === 'phat-phap-ung-dung' ? 'Phật Pháp Ứng Dụng' : article.playlist === 'tam-an-van-su-an' ? 'Tâm An Vạn Sự An' : article.playlist }}</span>
+            <span>{{ article.playlist === 'tam-va-ta' ? 'Tâm Và Ta' : article.playlist === 'phat-phap-ung-dung' ? 'Phật Pháp Ứng Dụng' : article.playlist === 'tam-an-van-su-an' ? 'Tâm An Vạn Sự An' : article.playlist === 'thuat-ngu-phat-hoc' ? 'Thuật Ngữ Phật Học' : article.playlist }}</span>
             <span v-if="article.episode_number" class="font-mono text-amber-400 font-bold">• Tập {{ article.episode_number }}</span>
           </Link>
         </div>
